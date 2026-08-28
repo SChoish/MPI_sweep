@@ -15,12 +15,110 @@ actors are regularized toward the previous actor with a stopped gradient:
 reference_1(s) = dataset action
 reference_k(s) = stop_gradient(actor_(k-1)(s))
 
-lambda_k = 2 (tau / K) / (mean(abs(Q(s, reference_k(s)))) + epsilon)
+q_scale_1 = mean(abs(Q(s, actor_1(s))))
+q_scale_k = mean(abs(Q(s, reference_k(s))))  for k > 1
+lambda_k  = 2 (tau / K) / (q_scale_k + epsilon)
 loss_k   = -lambda_k mean(Q(s, actor_k(s)))
            + mean(square(actor_k(s) - reference_k(s)))
 ```
 
 `--no-q-scale-norm` replaces `lambda_k` with `2 * tau / K`.
+
+### Wasserstein-2 gradient-flow interpretation
+
+The conceptual starting point is the Jordan--Kinderlehrer--Otto (JKO)
+*minimizing-movement* discretization of a gradient flow in the space
+`P_2(A)` of action distributions with finite second moment. Hold the offline
+state marginal `d_D(s)` fixed and represent a stochastic policy by the kernel
+`pi(da | s)`. A convenient state-conditioned transport metric is
+
+```text
+W_D^2(pi, nu) = E_{s ~ d_D}[W_2^2(pi(. | s), nu(. | s))].
+```
+
+For a frozen critic, define the energy
+
+```text
+E_Q(pi) = -E_{s ~ d_D, a ~ pi(. | s)}[Q(s, a)].
+```
+
+One implicit time step of length `h` is then formally
+
+```text
+pi_next in argmin_pi E_Q(pi) + W_D^2(pi, pi_ref) / (2 h).
+```
+
+This is an implicit-Euler step in `W_2` space: the energy term moves policy
+mass toward actions with larger `Q`, while the transport term penalizes moving
+too far in a single step. In this repository, `h = tau / K`, so composing `K`
+proximal steps approximates the flow up to total time `tau`.
+
+The deterministic-policy limit makes the transport term especially simple.
+If the conditional policies collapse to Dirac measures,
+
+```text
+pi(. | s)     = delta_{u(s)},
+pi_ref(. | s) = delta_{u_ref(s)},
+```
+
+then
+
+```text
+W_2^2(delta_{u(s)}, delta_{u_ref(s)}) = ||u(s) - u_ref(s)||_2^2.
+```
+
+Consequently, after multiplying the JKO objective by `2 h`, its deterministic
+form is
+
+```text
+u_next in argmin_u
+    -2 h E_s[Q(s, u(s))] + E_s[||u(s) - u_ref(s)||_2^2].
+```
+
+This is the `-lambda * Q + MSE` actor loss used here. Q-scale normalization
+replaces `h` by the locally rescaled time step
+`h / (mean(abs(Q)) + epsilon)`, making the nominal flow time less sensitive to
+the critic's numerical scale.
+
+Formally, as `h -> 0`, a policy density `rho_t(a | s)` follows the continuity
+equation
+
+```text
+partial_t rho_t + div_a(rho_t v_t) = 0,
+v_t(a, s) = grad_a Q(s, a) / q_scale.
+```
+
+In the deterministic limit, the corresponding characteristics satisfy
+
+```text
+d u_t(s) / dt = grad_a Q(s, u_t(s)) / q_scale,
+```
+
+so deterministic actions behave like particles transported along the critic's
+action gradient. There is no diffusion term because this implementation has no
+policy entropy or stochastic temperature; “deterministic limit” describes the
+Dirac/particle interpretation of the Wasserstein flow.
+
+This correspondence should be read as a modeling interpretation rather than
+an exact JKO solver:
+
+- The state marginal is fixed, and transport occurs only within each action
+  fiber. The MSE is exactly the conditional `W_2^2` cost for Dirac policies,
+  not unrestricted optimal transport over joint state-action measures.
+- Neural actors restrict the admissible maps `u(s)`, and minibatch Adam updates
+  only approximate each proximal minimization.
+- The critic is learned, non-convex, and changes during training. Classical JKO
+  convergence or uniqueness results for a fixed geodesically convex energy do
+  not automatically apply.
+- Action clipping and finite step sizes further modify the formal continuous
+  gradient flow.
+
+The variational construction originates with
+[Jordan, Kinderlehrer, and Otto (1998)](https://doi.org/10.1137/S0036141096303359).
+For the general metric-space theory, see
+[Ambrosio, Gigli, and Savare (2005)](https://doi.org/10.1007/b137080), and for
+an accessible overview see
+[Santambrogio (2017)](https://arxiv.org/abs/1609.03890).
 
 ## Installation
 

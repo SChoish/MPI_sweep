@@ -1,0 +1,7 @@
+# For an editable installation, prefer: pip install -e .
+flax>=0.10
+gymnasium[mujoco]>=1.0
+h5py>=3.10
+jax>=0.4.30
+numpy>=1.26
+optax>=0.2.3

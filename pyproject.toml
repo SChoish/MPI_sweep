@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mpi-sweep"
+version = "1.0.0"
+description = "Multi-step policy improvement sweeps for offline TD3+BC in JAX"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{name = "MPI Sweep contributors"}]
+dependencies = [
+  "flax>=0.10",
+  "gymnasium[mujoco]>=1.0",
+  "h5py>=3.10",
+  "jax>=0.4.30",
+  "numpy>=1.26",
+  "optax>=0.2.3",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+mpi-sweep = "launch_mpi_sweep:main"
+mpi-train = "train_td3bc:main"
+
+[tool.setuptools]
+py-modules = ["d4rl_data", "launch_mpi_sweep", "tau_grids", "train_td3bc"]
+license-files = ["LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

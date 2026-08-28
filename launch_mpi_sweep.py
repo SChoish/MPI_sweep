@@ -35,6 +35,12 @@ def _split(value: str) -> list[str]:
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--hops", type=int, required=True)
+    parser.add_argument(
+        "--integrator",
+        choices=("implicit", "explicit"),
+        default="implicit",
+        help="implicit JKO hops or matched-scale projected explicit hops",
+    )
     parser.add_argument("--n-tau", type=int, default=len(MPI_TAU_GRID))
     parser.add_argument(
         "--taus",
@@ -129,11 +135,12 @@ def is_complete(save_dir: Path, tag: str, max_timesteps: int) -> bool:
 
 def build_jobs(args: argparse.Namespace) -> list[Job]:
     jobs: list[Job] = []
+    method_tag = "mpi" if args.integrator == "implicit" else "exp"
     for env_name, tau, seed_text in product(
         selected_envs(args), selected_taus(args), _split(args.seeds)
     ):
         seed = int(seed_text)
-        tag = f"{env_name}_tau{tau}_mpi{args.hops}_seed{seed}"
+        tag = f"{env_name}_tau{tau}_{method_tag}{args.hops}_seed{seed}"
         if not is_complete(args.save_dir, tag, args.max_timesteps):
             jobs.append(Job(env_name, tau, seed, tag))
     return jobs
@@ -169,6 +176,8 @@ def worker_command(
         job.tau,
         "--mpi-steps",
         str(args.hops),
+        "--integrator",
+        args.integrator,
         "--polyak",
         str(args.polyak),
         "--seed",
@@ -213,7 +222,8 @@ def run(args: argparse.Namespace) -> int:
     gpus = _split(args.gpus)
     concurrency = len(gpus) * args.slots_per_gpu
     print(
-        f"[sweep] hops={args.hops} jobs={len(jobs)} gpus={gpus} "
+        f"[sweep] integrator={args.integrator} hops={args.hops} "
+        f"jobs={len(jobs)} gpus={gpus} "
         f"slots/gpu={args.slots_per_gpu} concurrency={concurrency}",
         flush=True,
     )

@@ -53,6 +53,15 @@ def test_completed_job_is_skipped(tmp_path: Path):
     assert [job.tau for job in build_jobs(args)] == ["0.4"]
 
 
+def test_explicit_jobs_use_separate_tags_and_worker_mode(tmp_path: Path):
+    args = small_args(tmp_path)
+    args.integrator = "explicit"
+    jobs = build_jobs(args)
+    assert jobs[0].tag == "hopper-medium-v2_tau0.1_exp4_seed0"
+    command = worker_command(args, jobs[0], slot_index=0)
+    assert command[command.index("--integrator") + 1] == "explicit"
+
+
 def test_dry_run_has_no_filesystem_side_effects(tmp_path: Path):
     args = small_args(tmp_path)
     args.dry_run = True

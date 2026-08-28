@@ -14,6 +14,7 @@ from train_td3bc import (
     latest_checkpoint,
     load_checkpoint,
     normalized_q_weight,
+    projected_explicit_target,
     qlearning_from_hdf5,
     restore_train_state,
     save_checkpoint,
@@ -34,6 +35,28 @@ def test_normalized_q_objective_is_scale_invariant():
 def test_unnormalized_weight_is_two_tau():
     q = jnp.asarray([1.0, -3.0])
     assert float(normalized_q_weight(q, tau=1.25, scale_norm=False)) == pytest.approx(2.5)
+
+
+def test_projected_explicit_target_matches_mean_action_metric_scale():
+    observations = jnp.zeros((2, 1), dtype=jnp.float32)
+    references = jnp.zeros((2, 3), dtype=jnp.float32)
+
+    def linear_critic(_params, _observations, actions):
+        q1 = 2.0 + jnp.sum(actions, axis=-1, keepdims=True)
+        return q1, q1
+
+    target = projected_explicit_target(
+        linear_critic,
+        None,
+        observations,
+        references,
+        tau_step=0.5,
+        scale_norm=True,
+        max_action=10.0,
+    )
+
+    # d * h / q_scale = 3 * 0.5 / 2 = 0.75 for every coordinate.
+    np.testing.assert_allclose(np.asarray(target), 0.75, rtol=1e-5, atol=1e-5)
 
 
 def test_tau_grid_is_stable_and_validated():
@@ -67,7 +90,10 @@ def test_hdf5_conversion_drops_timeout_boundaries(tmp_path: Path):
     assert data["not_dones"][:, 0].tolist() == [1.0, 0.0, 1.0]
 
 
-def test_arbitrary_four_hop_update_and_checkpoint_smoke(tmp_path: Path):
+@pytest.mark.parametrize("integrator", ["implicit", "explicit"])
+def test_arbitrary_four_hop_update_and_checkpoint_smoke(
+    tmp_path: Path, integrator: str
+):
     observations = jnp.zeros((16, 3), dtype=jnp.float32)
     actions = jnp.zeros((16, 2), dtype=jnp.float32)
     data = Transition(
@@ -100,6 +126,7 @@ def test_arbitrary_four_hop_update_and_checkpoint_smoke(tmp_path: Path):
         polyak=0.005,
         policy_freq=1,
         scale_norm=True,
+        integrator=integrator,
     )
 
     assert len(updated.actors) == 4

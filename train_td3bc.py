@@ -7,7 +7,10 @@ tau = alpha / 2:
   L_pi = -lambda * mean(Q1) + MSE(π, a)
 
 ``--tau`` is alpha / 2, not the Polyak coefficient. With ``--mpi-steps K``,
-the actor performs K implicit JKO hops of size tau/K. The final actor is
+the actor performs K hops of size tau/K. ``--integrator implicit`` uses JKO
+updates. ``--integrator explicit`` regresses to a projected Euler target whose
+gradient coefficient includes the action dimension, matching the
+per-coordinate-mean transport metric used by the JKO loss. The final actor is
 evaluated at total time tau.
 
 Other defaults: lr=3e-4, policy_noise=0.2*max_a, noise_clip=0.5*max_a,
@@ -269,6 +272,84 @@ def update_jko(
     return actor.apply_gradients(grads=grads), loss
 
 
+def projected_explicit_target(
+    critic_apply_fn,
+    critic_params,
+    observations: jax.Array,
+    ref_actions: jax.Array,
+    tau_step: float,
+    scale_norm: bool,
+    max_action: float,
+) -> jax.Array:
+    """Matched explicit Euler target for the mean-per-action W2 metric.
+
+    The implicit loss averages ``square(delta)`` over states and action
+    coordinates. Its ground cost is therefore ``||delta||^2 / action_dim``,
+    so the matching Euclidean-coordinate velocity is
+    ``action_dim * grad(Q) / q_scale``.
+    """
+    ref = jax.lax.stop_gradient(ref_actions)
+
+    def q_sum(actions):
+        q1, _ = critic_apply_fn(critic_params, observations, actions)
+        return jnp.sum(q1)
+
+    grad = jax.grad(q_sum)(ref)
+    action_dim = ref.shape[-1]
+    if scale_norm:
+        q_ref, _ = critic_apply_fn(critic_params, observations, ref)
+        q_scale = jnp.mean(jnp.abs(q_ref)) + 1e-6
+        step = (action_dim * tau_step / q_scale) * grad
+    else:
+        step = (action_dim * tau_step) * grad
+    return jax.lax.stop_gradient(
+        jnp.clip(ref + step, -max_action, max_action)
+    )
+
+
+def update_explicit_actor_hop(
+    ts: TD3BCTrainState,
+    batch: Transition,
+    actor_index: int,
+    tau_step: float,
+    polyak: float,
+    scale_norm: bool,
+) -> tuple[TD3BCTrainState, jax.Array]:
+    """Fit one actor to the matched projected-Euler target."""
+    actor = ts.actors[actor_index]
+    if actor_index == 0:
+        ref = batch.actions
+    else:
+        previous_actor = ts.actors[actor_index - 1]
+        ref = previous_actor.apply_fn(
+            previous_actor.params, batch.observations
+        )
+    target = projected_explicit_target(
+        ts.critic.apply_fn,
+        ts.critic.params,
+        batch.observations,
+        ref,
+        tau_step,
+        scale_norm,
+        ts.max_action,
+    )
+
+    def loss_fn(params):
+        pi = actor.apply_fn(params, batch.observations)
+        return jnp.mean(jnp.square(pi - target))
+
+    loss, grads = jax.value_and_grad(loss_fn)(actor.params)
+    actor = actor.apply_gradients(grads=grads)
+    actors = (*ts.actors[:actor_index], actor, *ts.actors[actor_index + 1 :])
+    ts = ts._replace(actors=actors)
+    if actor_index == 0:
+        ts = ts._replace(
+            target_actor=target_update(actor, ts.target_actor, polyak),
+            target_critic=target_update(ts.critic, ts.target_critic, polyak),
+        )
+    return ts, loss
+
+
 def update_actor_hop(
     ts: TD3BCTrainState,
     batch: Transition,
@@ -299,7 +380,10 @@ def update_n_times(
     polyak: float,
     policy_freq: int,
     scale_norm: bool,
+    integrator: str = "implicit",
 ) -> tuple[TD3BCTrainState, dict]:
+    if integrator not in ("implicit", "explicit"):
+        raise ValueError(f"unknown integrator: {integrator}")
     tau_step = tau / float(len(ts.actors))
     initial_actor_losses = tuple(jnp.array(0.0) for _ in ts.actors)
 
@@ -312,15 +396,28 @@ def update_n_times(
 
         def do_actor(operands):
             ts, batch, _actor_losses = operands
-            ts, first_loss = update_first_actor(
-                ts, batch, tau_step, polyak, scale_norm
-            )
-            losses = [first_loss]
-            for actor_index in range(1, len(ts.actors)):
-                ts, loss = update_actor_hop(
-                    ts, batch, actor_index, tau_step, scale_norm
+            if integrator == "implicit":
+                ts, first_loss = update_first_actor(
+                    ts, batch, tau_step, polyak, scale_norm
                 )
-                losses.append(loss)
+                losses = [first_loss]
+                for actor_index in range(1, len(ts.actors)):
+                    ts, loss = update_actor_hop(
+                        ts, batch, actor_index, tau_step, scale_norm
+                    )
+                    losses.append(loss)
+            else:
+                losses = []
+                for actor_index in range(len(ts.actors)):
+                    ts, loss = update_explicit_actor_hop(
+                        ts,
+                        batch,
+                        actor_index,
+                        tau_step,
+                        polyak,
+                        scale_norm,
+                    )
+                    losses.append(loss)
             return ts, tuple(losses)
 
         def skip_actor(operands):
@@ -474,7 +571,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--mpi-steps",
         type=int,
         default=2,
-        help="Positive number K of implicit JKO hops; each uses tau / K",
+        help="Positive number K of policy-improvement hops; each uses tau / K",
+    )
+    parser.add_argument(
+        "--integrator",
+        choices=("implicit", "explicit"),
+        default="implicit",
+        help=(
+            "implicit: JKO/proximal hops; explicit: matched-scale projected "
+            "Euler-target regression"
+        ),
     )
     return parser.parse_args(argv)
 
@@ -600,7 +706,10 @@ def main(argv: list[str] | None = None) -> int:
         raise ValueError("save_interval must be divisible by n_jitted_updates")
 
     mpi_steps = args.mpi_steps
-    run_name = f"{args.env}_tau{args.tau:g}_mpi{mpi_steps}_seed{args.seed}"
+    method_tag = "mpi" if args.integrator == "implicit" else "exp"
+    run_name = (
+        f"{args.env}_tau{args.tau:g}_{method_tag}{mpi_steps}_seed{args.seed}"
+    )
     out_dir = args.save_dir / run_name
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "config.json").write_text(
@@ -649,6 +758,7 @@ def main(argv: list[str] | None = None) -> int:
             polyak=args.polyak,
             policy_freq=args.policy_freq,
             scale_norm=bool(args.q_scale_norm),
+            integrator=args.integrator,
         )
     )
 

@@ -54,10 +54,32 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--datasets", default="medium medium-replay expert")
     parser.add_argument("--polyak", type=float, default=0.005)
     parser.add_argument("--max-timesteps", type=int, default=1_000_000)
-    parser.add_argument("--eval-freq", type=int, default=50_000)
+    parser.add_argument(
+        "--eval-freq",
+        type=int,
+        default=1_000_000,
+        help="Eval period. Default 1M so tau plots use a single final score.",
+    )
     parser.add_argument("--eval-episodes", type=int, default=10)
     parser.add_argument("--n-jitted-updates", type=int, default=8)
-    parser.add_argument("--save-interval", type=int, default=100_000)
+    parser.add_argument(
+        "--updates-per-dispatch",
+        type=int,
+        default=64,
+        help="Updates fused into each host-to-GPU dispatch",
+    )
+    parser.add_argument(
+        "--compilation-cache-dir",
+        type=Path,
+        default=Path.home() / ".cache" / "mpi-sweep" / "jax",
+        help="Shared persistent JAX compilation cache",
+    )
+    parser.add_argument(
+        "--save-interval",
+        type=int,
+        default=0,
+        help="Periodic checkpoint interval; 0 = only 1M + emergency save",
+    )
     parser.add_argument("--save-dir", type=Path, default=ROOT / "results")
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data")
     parser.add_argument("--log-dir", type=Path, default=ROOT / "logs")
@@ -96,6 +118,10 @@ def validate_args(args: argparse.Namespace) -> None:
         raise ValueError("--slots-per-gpu must be positive")
     if args.cpus_per_job < 1:
         raise ValueError("--cpus-per-job must be positive")
+    if args.updates_per_dispatch < 1:
+        raise ValueError("--updates-per-dispatch must be positive")
+    if args.updates_per_dispatch % args.n_jitted_updates != 0:
+        raise ValueError("--updates-per-dispatch must be divisible by --n-jitted-updates")
     if not _split(args.gpus):
         raise ValueError("--gpus must contain at least one GPU ID")
     if args.cpu_affinity and shutil.which("taskset") is None:
@@ -190,6 +216,10 @@ def worker_command(
         str(args.eval_episodes),
         "--n-jitted-updates",
         str(args.n_jitted_updates),
+        "--updates-per-dispatch",
+        str(args.updates_per_dispatch),
+        "--compilation-cache-dir",
+        str(args.compilation_cache_dir),
         "--save-interval",
         str(args.save_interval),
         "--data-dir",

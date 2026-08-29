@@ -38,6 +38,10 @@ def test_job_matrix_and_worker_command(tmp_path: Path):
     command = worker_command(args, jobs[0], slot_index=0)
     assert command[0] == args.python
     assert command[command.index("--mpi-steps") + 1] == "4"
+    assert command[command.index("--eval-freq") + 1] == "1000000"
+    assert command[command.index("--save-interval") + 1] == "0"
+    assert command[command.index("--updates-per-dispatch") + 1] == "64"
+    assert "--compilation-cache-dir" in command
     assert "--q-scale-norm" in command
 
 

@@ -18,6 +18,7 @@ from train_td3bc import (
     qlearning_from_hdf5,
     restore_train_state,
     save_checkpoint,
+    update_in_blocks,
     update_n_times,
 )
 
@@ -150,3 +151,78 @@ def test_arbitrary_four_hop_update_and_checkpoint_smoke(
     restored = restore_train_state(state, load_checkpoint(checkpoint))
     assert len(restored.actors) == 4
     assert all(actor.step == 1 for actor in restored.actors)
+
+
+def test_fused_dispatch_preserves_block_rng_and_updates():
+    observations = jnp.arange(48, dtype=jnp.float32).reshape(16, 3) / 10
+    actions = jnp.zeros((16, 2), dtype=jnp.float32)
+    data = Transition(
+        observations=observations,
+        actions=actions,
+        rewards=jnp.ones((16, 1), dtype=jnp.float32),
+        next_observations=observations,
+        not_dones=jnp.ones((16, 1), dtype=jnp.float32),
+    )
+    state = create_train_state(
+        jax.random.PRNGKey(10),
+        observations[:1],
+        actions[:1],
+        max_action=1.0,
+        lr=3e-4,
+        policy_noise=0.2,
+        noise_clip=0.5,
+        mpi_steps=2,
+    )
+
+    baseline = state
+    baseline_rng = jax.random.PRNGKey(11)
+    for block in range(2):
+        baseline_rng, update_rng = jax.random.split(baseline_rng)
+        baseline, _ = update_n_times(
+            baseline,
+            data,
+            update_rng,
+            start_it=jnp.asarray(block),
+            n_updates=1,
+            batch_size=4,
+            discount=0.99,
+            tau=0.01,
+            polyak=0.005,
+            policy_freq=1,
+            scale_norm=False,
+        )
+
+    fused, fused_rng, _ = update_in_blocks(
+        state,
+        data,
+        jax.random.PRNGKey(11),
+        start_it=jnp.asarray(0),
+        tau=jnp.asarray(0.01),
+        n_blocks=2,
+        updates_per_block=1,
+        batch_size=4,
+        discount=0.99,
+        polyak=0.005,
+        policy_freq=1,
+        scale_norm=False,
+    )
+
+    np.testing.assert_array_equal(fused_rng, baseline_rng)
+    baseline_params = (
+        tuple(actor.params for actor in baseline.actors),
+        baseline.critic.params,
+        baseline.target_actor.params,
+        baseline.target_critic.params,
+    )
+    fused_params = (
+        tuple(actor.params for actor in fused.actors),
+        fused.critic.params,
+        fused.target_actor.params,
+        fused.target_critic.params,
+    )
+    for actual, expected in zip(
+        jax.tree_util.tree_leaves(fused_params),
+        jax.tree_util.tree_leaves(baseline_params),
+        strict=True,
+    ):
+        np.testing.assert_array_equal(actual, expected)

@@ -445,6 +445,51 @@ def update_n_times(
     }
 
 
+def update_in_blocks(
+    ts: TD3BCTrainState,
+    data: Transition,
+    rng: jax.Array,
+    start_it: jax.Array,
+    tau: jax.Array,
+    n_blocks: int,
+    updates_per_block: int,
+    batch_size: int,
+    discount: float,
+    polyak: float,
+    policy_freq: int,
+    scale_norm: bool,
+    integrator: str = "implicit",
+) -> tuple[TD3BCTrainState, jax.Array, dict]:
+    """Fuse host dispatches while preserving the original block-wise RNG stream."""
+    initial_metrics = {
+        "critic_loss": jnp.array(0.0),
+        "actor_loss": jnp.array(0.0),
+        "final_actor_loss": jnp.array(0.0),
+    }
+
+    def body(block_index, carry):
+        ts, rng, _metrics = carry
+        rng, update_rng = jax.random.split(rng)
+        block_start = start_it + block_index * updates_per_block
+        ts, metrics = update_n_times(
+            ts,
+            data,
+            update_rng,
+            block_start,
+            n_updates=updates_per_block,
+            batch_size=batch_size,
+            discount=discount,
+            tau=tau,
+            polyak=polyak,
+            policy_freq=policy_freq,
+            scale_norm=scale_norm,
+            integrator=integrator,
+        )
+        return ts, rng, metrics
+
+    return jax.lax.fori_loop(0, n_blocks, body, (ts, rng, initial_metrics))
+
+
 def create_train_state(
     rng: jax.Array,
     observations: jax.Array,
@@ -549,6 +594,22 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Divide λ by mean(|Q|)",
     )
     parser.add_argument("--n-jitted-updates", type=int, default=8)
+    parser.add_argument(
+        "--updates-per-dispatch",
+        type=int,
+        default=64,
+        help=(
+            "Updates fused into one host dispatch. Must be a multiple of "
+            "--n-jitted-updates; 64 suits modern GPUs while preserving the "
+            "8-update RNG stream."
+        ),
+    )
+    parser.add_argument(
+        "--compilation-cache-dir",
+        type=Path,
+        default=Path.home() / ".cache" / "mpi-sweep" / "jax",
+        help="Shared persistent JAX compilation cache",
+    )
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
     parser.add_argument("--save-dir", type=Path, default=Path("results"))
     parser.add_argument(
@@ -695,8 +756,16 @@ def main(argv: list[str] | None = None) -> int:
         raise ValueError("mpi_steps must be positive")
     if not 0.0 < args.polyak <= 1.0:
         raise ValueError("polyak must lie in (0, 1]")
-    if args.eval_freq < 1 or args.n_jitted_updates < 1:
-        raise ValueError("eval_freq and n_jitted_updates must be positive")
+    if (
+        args.eval_freq < 1
+        or args.n_jitted_updates < 1
+        or args.updates_per_dispatch < 1
+    ):
+        raise ValueError(
+            "eval_freq, n_jitted_updates, and updates_per_dispatch must be positive"
+        )
+    if args.updates_per_dispatch % args.n_jitted_updates != 0:
+        raise ValueError("updates_per_dispatch must be divisible by n_jitted_updates")
     if args.eval_freq % args.n_jitted_updates != 0:
         raise ValueError("eval_freq must be divisible by n_jitted_updates")
     if args.max_timesteps % args.n_jitted_updates != 0:
@@ -704,6 +773,11 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.save_interval and args.save_interval % args.n_jitted_updates != 0:
         raise ValueError("save_interval must be divisible by n_jitted_updates")
+
+    args.compilation_cache_dir.mkdir(parents=True, exist_ok=True)
+    jax.config.update(
+        "jax_compilation_cache_dir", str(args.compilation_cache_dir.expanduser())
+    )
 
     mpi_steps = args.mpi_steps
     method_tag = "mpi" if args.integrator == "implicit" else "exp"
@@ -748,19 +822,24 @@ def main(argv: list[str] | None = None) -> int:
         start_step = int(payload["step"])
         print(f"[resume] loaded {restore_path} step={start_step}", flush=True)
 
-    update_fn = jax.jit(
-        partial(
-            update_n_times,
-            n_updates=args.n_jitted_updates,
-            batch_size=args.batch_size,
-            discount=args.discount,
-            tau=args.tau,
-            polyak=args.polyak,
-            policy_freq=args.policy_freq,
-            scale_norm=bool(args.q_scale_norm),
-            integrator=args.integrator,
-        )
-    )
+    update_fns = {}
+
+    def get_update_fn(n_blocks: int):
+        if n_blocks not in update_fns:
+            update_fns[n_blocks] = jax.jit(
+                partial(
+                    update_in_blocks,
+                    n_blocks=n_blocks,
+                    updates_per_block=args.n_jitted_updates,
+                    batch_size=args.batch_size,
+                    discount=args.discount,
+                    polyak=args.polyak,
+                    policy_freq=args.policy_freq,
+                    scale_norm=bool(args.q_scale_norm),
+                    integrator=args.integrator,
+                )
+            )
+        return update_fns[n_blocks]
 
     def _act(params, obs):
         obs = jnp.asarray(obs, dtype=jnp.float32)
@@ -791,25 +870,39 @@ def main(argv: list[str] | None = None) -> int:
         if write_header:
             writer.writeheader()
 
-        n_outer = args.max_timesteps // args.n_jitted_updates
-        start_outer = start_step // args.n_jitted_updates
-        eval_every = args.eval_freq // args.n_jitted_updates
-        save_every = (
-            args.save_interval // args.n_jitted_updates if args.save_interval else 0
-        )
         start = time.time()
         metrics = {
             "critic_loss": 0.0,
             "actor_loss": 0.0,
             "final_actor_loss": 0.0,
         }
-        for i in range(start_outer + 1, n_outer + 1):
-            rng, update_rng = jax.random.split(rng)
-            start_it = jnp.asarray((i - 1) * args.n_jitted_updates)
-            ts, metrics = update_fn(ts, data, update_rng, start_it)
-            step = i * args.n_jitted_updates
+        step = start_step
+        tau_value = jnp.asarray(args.tau, dtype=jnp.float32)
+        while step < args.max_timesteps:
+            dispatch_remaining = args.updates_per_dispatch - (
+                step % args.updates_per_dispatch
+            )
+            eval_remaining = args.eval_freq - (step % args.eval_freq)
+            boundaries = [
+                dispatch_remaining,
+                eval_remaining,
+                args.max_timesteps - step,
+            ]
+            if args.save_interval:
+                boundaries.append(args.save_interval - (step % args.save_interval))
+            dispatch_updates = min(boundaries)
+            n_blocks = dispatch_updates // args.n_jitted_updates
+            update_fn = get_update_fn(n_blocks)
+            ts, rng, metrics = update_fn(
+                ts,
+                data,
+                rng,
+                jnp.asarray(step),
+                tau_value,
+            )
+            step += dispatch_updates
             emergency_stop = bool(stop_requested["flag"])
-            if i % eval_every == 0 or i == n_outer:
+            if step % args.eval_freq == 0 or step == args.max_timesteps:
                 policy = partial(act_fn, ts.actors[0].params)
                 avg_ret, score = evaluate(
                     policy, args.env, args.seed, mean, std, args.eval_episodes
@@ -844,7 +937,11 @@ def main(argv: list[str] | None = None) -> int:
                     f"d4rl={score:.1f}{extra} elapsed={elapsed/60:.1f}m",
                     flush=True,
                 )
-            if (save_every and i % save_every == 0) or i == n_outer or emergency_stop:
+            if (
+                (args.save_interval and step % args.save_interval == 0)
+                or step == args.max_timesteps
+                or emergency_stop
+            ):
                 ckpt_path = out_dir / f"params_{step}.pkl"
                 save_checkpoint(ckpt_path, ts, step, rng, mean, std, args)
                 print(f"[ckpt] Saved to {ckpt_path}", flush=True)

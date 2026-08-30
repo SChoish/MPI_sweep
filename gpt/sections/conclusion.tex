@@ -1,6 +1,0 @@
-\section{Conclusion}
-\label{sec:conclusion}
-
-Multi-step proximal policy improvement splits a nominal TD3+BC actor budget across a persistent chain and uses different branches for critic targets and deployment. The deterministic squared anchor admits a fiberwise Wasserstein interpretation, but its finite-step guarantee is conditional on solving the proximal objective and is relative to the learned critic. The expanded two-seed phase diagram shows a strong end-to-end stability pattern: proximal $K=4$ raises the high-budget mean from $25.97$ to $63.61$ and reduces collapsed cells from $35/63$ to $9/63$, with most of the gain coming from lower-tail rescue. A linearized realization exhibits the same qualitative direction, and the one-hop phase diagram replicates on two new seeds.
-
-The scientific conclusion is correspondingly specific. The current artifact supports the claim that the implemented $K$-actor training bundle broadens the empirical stability envelope on D4RL locomotion. It does not yet support a causal attribution to proximal implicitness, re-centering, target routing, or reduced local truncation error. A $K$-invariant critic initialization, complete compute-matched controls, additional seeds, and committed raw diagnostics are the highest-priority steps for converting the descriptive result into a cleaner mechanism claim.

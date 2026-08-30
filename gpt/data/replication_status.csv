@@ -1,6 +1,0 @@
-condition,completed_cells,planned_cells,status,notes
-K=1 Prox seeds 2-3,252,252,complete,Four-seed baseline replication available
-K=2 Prox seeds 2-3,232,252,incomplete,Missing 20 cells at the 2026-08-30 18:09 KST snapshot
-K=3 Prox seeds 2-3,0,252,not started,No seed2/3 files at snapshot
-K=4 Prox seeds 0-1,252,252,complete,New full grid used in GPT manuscript
-K=4 Prox seeds 2-3,0,252,not started,Not used

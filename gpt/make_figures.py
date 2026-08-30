@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+"""Generate AAAI-26 manuscript figures from the compact bundled CSV/JSON data."""
 from __future__ import annotations
 
 import csv
@@ -10,218 +12,199 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
-RAW = DATA / "raw"
 OUT = ROOT / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
 
-mpl.rcParams.update(
-    {
-        "pdf.fonttype": 42,
-        "ps.fonttype": 42,
-        "font.size": 8.0,
-        "axes.titlesize": 8.5,
-        "axes.labelsize": 8.0,
-        "legend.fontsize": 6.8,
-    }
-)
+mpl.rcParams.update({
+    "font.family": "serif",
+    "font.size": 8.2,
+    "axes.labelsize": 8.2,
+    "axes.titlesize": 8.8,
+    "legend.fontsize": 6.8,
+    "xtick.labelsize": 7.2,
+    "ytick.labelsize": 7.2,
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
+})
 
 
-def read_budget_means() -> tuple[np.ndarray, dict[str, np.ndarray]]:
-    with (DATA / "budget_means.csv").open(newline="", encoding="utf-8") as f:
-        rows = list(csv.reader(f))
-    tau = np.asarray([float(x) for x in rows[0][1:]], dtype=float)
-    values = {row[0]: np.asarray([float(x) for x in row[1:]], dtype=float) for row in rows[1:]}
-    return tau, values
+def rows(path: Path) -> list[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8") as handle:
+        return list(csv.DictReader(handle))
 
 
-def read_summary() -> dict[str, dict[str, float]]:
-    with (DATA / "aggregate_summary.csv").open(newline="", encoding="utf-8") as f:
-        rows = csv.DictReader(f)
-        return {
-            row["method"]: {
-                k: float(v) if "." in v else int(v)
-                for k, v in row.items()
-                if k != "method"
-            }
-            for row in rows
-        }
-
-
-def read_matrix(path: Path) -> tuple[np.ndarray, list[str], np.ndarray]:
-    with path.open(newline="", encoding="utf-8") as f:
-        rows = list(csv.reader(f))
-    envs = rows[0][1:]
-    tau = np.asarray([float(row[0]) for row in rows[1:]], dtype=float)
-    matrix = np.asarray([[float(x) for x in row[1:]] for row in rows[1:]], dtype=float)
-    return tau, envs, matrix
-
-
-def save(fig: plt.Figure, stem: str) -> None:
-    fig.savefig(OUT / f"{stem}.pdf", bbox_inches="tight")
-    fig.savefig(OUT / f"{stem}.png", dpi=240, bbox_inches="tight")
+def save(fig: plt.Figure, name: str) -> None:
+    fig.savefig(OUT / f"{name}.pdf", bbox_inches="tight", pad_inches=0.02)
+    fig.savefig(OUT / f"{name}.png", dpi=250, bbox_inches="tight", pad_inches=0.02)
     plt.close(fig)
 
 
-def stability_figure() -> None:
-    tau, curves = read_budget_means()
-    summary = read_summary()
-    order = [
-        "TD3+BC",
-        "MPI-Prox K=2",
-        "MPI-Prox K=3",
-        "MPI-Prox K=4",
-        "MPI-Lin K=2",
-        "MPI-Lin K=3",
-    ]
-    labels = {
-        "TD3+BC": "TD3+BC ($K=1$)",
-        "MPI-Prox K=2": "MPI-Prox ($K=2$)",
-        "MPI-Prox K=3": "MPI-Prox ($K=3$)",
-        "MPI-Prox K=4": "MPI-Prox ($K=4$)",
-        "MPI-Lin K=2": "MPI-Lin ($K=2$)",
-        "MPI-Lin K=3": "MPI-Lin ($K=3$)",
-    }
-    markers = ["o", "s", "^", "P", "D", "v"]
-
-    fig, axes = plt.subplots(1, 2, figsize=(7.05, 2.5), constrained_layout=True)
-    ax = axes[0]
-    for method, marker in zip(order, markers, strict=True):
-        ax.plot(
-            tau,
-            curves[method],
-            marker=marker,
-            markersize=3.1,
-            linewidth=1.15,
-            label=labels[method],
-        )
-    ax.set_xscale("log")
-    ax.set_xlabel("total nominal actor budget $T$")
-    ax.set_ylabel("mean D4RL score")
-    ax.set_title("(a) Fixed-budget stability envelope")
-    ax.grid(True, alpha=0.25, linewidth=0.5)
-    ax.legend(frameon=False, ncol=2, loc="best")
-
-    x = np.arange(len(order))
-    cell = np.asarray([summary[m]["collapsed_cells_lt20_of63"] for m in order], dtype=float)
-    raw = np.asarray([summary[m]["collapsed_runs_lt20_of126"] for m in order], dtype=float)
-    width = 0.36
-    axes[1].bar(x - width / 2, cell / 63.0, width, label="environment-budget cells")
-    axes[1].bar(x + width / 2, raw / 126.0, width, label="seeded runs")
-    axes[1].set_xticks(x, ["TD3", "P2", "P3", "P4", "L2", "L3"])
-    axes[1].set_ylim(0, 0.62)
-    axes[1].set_ylabel("collapse rate (score $<20$)")
-    axes[1].set_title("(b) High-budget failures ($T\\geq4$)")
-    axes[1].grid(True, axis="y", alpha=0.25, linewidth=0.5)
-    axes[1].legend(frameon=False, loc="upper right")
-    for i, (c, r) in enumerate(zip(cell.astype(int), raw.astype(int), strict=True)):
-        axes[1].text(i - width / 2, c / 63.0 + 0.010, f"{c}/63", ha="center", va="bottom", rotation=90, fontsize=5.7)
-        axes[1].text(i + width / 2, r / 126.0 + 0.010, f"{r}/126", ha="center", va="bottom", rotation=90, fontsize=5.7)
-
-    save(fig, "stability_envelope")
+# Figure 1: architecture, deliberately rendered outside LaTeX to avoid label collisions.
+fig, ax = plt.subplots(figsize=(3.35, 1.38))
+ax.set_xlim(-0.15, 7.15)
+ax.set_ylim(-1.65, 1.0)
+ax.axis("off")
+xs = [0.45, 2.05, 3.62, 5.82]
+labels = [r"data $a$", r"$\mu_1$", r"$\mu_2$", r"$\mu_K$"]
+for x, label in zip(xs, labels):
+    ax.text(x, 0.28, label, ha="center", va="center", fontsize=8.2,
+            bbox=dict(boxstyle="round,pad=0.24", facecolor="white", edgecolor="black", linewidth=0.8))
+# chain arrows
+segments = [(0.83, 1.67, r"$h_1$"), (2.43, 3.24, r"$h_2$"), (4.05, 5.45, r"$h_K$")]
+for xa, xb, h in segments:
+    ax.annotate("", xy=(xb, 0.28), xytext=(xa, 0.28), arrowprops=dict(arrowstyle="->", linewidth=0.9))
+    ax.text((xa+xb)/2, 0.52, h, ha="center", va="bottom", fontsize=8)
+ax.text(4.55, 0.28, r"$\cdots$", ha="center", va="center", fontsize=11)
+# branch roles
+ax.annotate("", xy=(2.05, -0.52), xytext=(2.05, 0.03), arrowprops=dict(arrowstyle="->", linewidth=0.95))
+ax.text(2.05, -0.78, r"TD target via $\mu_1^{-}$", ha="center", va="center", fontsize=7.7,
+        bbox=dict(boxstyle="round,pad=0.20", facecolor="white", edgecolor="black", linewidth=0.75))
+ax.annotate("", xy=(5.82, -0.52), xytext=(5.82, 0.03), arrowprops=dict(arrowstyle="->", linewidth=0.95))
+ax.text(5.82, -0.78, r"deploy $\mu_K$", ha="center", va="center", fontsize=7.7,
+        bbox=dict(boxstyle="round,pad=0.20", facecolor="white", edgecolor="black", linewidth=0.75))
+ax.annotate("", xy=(5.45, -1.35), xytext=(2.42, -1.35), arrowprops=dict(arrowstyle="<->", linewidth=0.75))
+ax.text(3.94, -1.30, "separated target and deployment roles", ha="center", va="bottom", fontsize=7.4)
+save(fig, "architecture")
 
 
-def k4_figure() -> None:
-    summary = read_summary()
-    t3, envs3, s30 = read_matrix(RAW / "prox3_seed0.csv")
-    t3b, envs3b, s31 = read_matrix(RAW / "prox3_seed1.csv")
-    t4, envs4, s40 = read_matrix(RAW / "prox4_seed0.csv")
-    t4b, envs4b, s41 = read_matrix(RAW / "prox4_seed1.csv")
-    if not (np.array_equal(t3, t3b) and np.array_equal(t3, t4) and np.array_equal(t3, t4b)):
-        raise ValueError("K=3 and K=4 tau grids differ")
-    if not (envs3 == envs3b == envs4 == envs4b):
-        raise ValueError("K=3 and K=4 environment orders differ")
+# Figure 2: score curves, collapse rates, and task-cluster uncertainty.
+budget_rows = rows(DATA / "budget_means.csv")
+summary_rows = rows(DATA / "aggregate_summary.csv")
+uncertainty_rows = rows(DATA / "task_cluster_uncertainty.csv")
 
-    m3 = (s30 + s31) / 2.0
-    m4 = (s40 + s41) / 2.0
-    high = t3 >= 4
-    x3 = m3[high].reshape(-1)
-    x4 = m4[high].reshape(-1)
-    rescued = int(np.sum((x3 < 20) & (x4 >= 20)))
-    harmed = int(np.sum((x3 >= 20) & (x4 < 20)))
-    both_failed = int(np.sum((x3 < 20) & (x4 < 20)))
-    both_stable = int(np.sum((x3 >= 20) & (x4 >= 20)))
-    diff = x4 - x3
+budgets = np.asarray([float(k) for k in budget_rows[0] if k != "method"], dtype=float)
+line_styles = ["-", "--", "-.", ":", (0, (4, 1, 1, 1)), (0, (1, 1))]
+markers = ["o", "s", "^", "P", "D", "v"]
+shades = [0.08, 0.25, 0.4, 0.55, 0.68, 0.8]
 
-    ks = np.asarray([1, 2, 3, 4])
-    prox_methods = ["TD3+BC", "MPI-Prox K=2", "MPI-Prox K=3", "MPI-Prox K=4"]
-    high_mean = np.asarray([summary[m]["mean_T_ge_4"] for m in prox_methods], dtype=float)
-    collapse = np.asarray([summary[m]["collapsed_cells_lt20_of63"] for m in prox_methods], dtype=float)
+fig, axes = plt.subplots(1, 3, figsize=(7.0, 2.24), gridspec_kw={"width_ratios": [1.25, 1.0, 1.0]})
+ax = axes[0]
+for row, ls, marker, shade in zip(budget_rows, line_styles, markers, shades):
+    y = np.asarray([float(row[f"{b:g}"]) for b in budgets])
+    label = row["method"].replace("BAR-", "").replace(" K=", "-")
+    ax.plot(budgets, y, linestyle=ls, marker=marker, markersize=2.7,
+            linewidth=1.1, color=str(shade), label=label)
+ax.axvline(4, linewidth=0.65, linestyle=(0, (2, 2)), color="0.3")
+ax.set_xscale("log")
+ax.set_xlabel(r"nominal coefficient budget $T$")
+ax.set_ylabel("mean normalized score")
+ax.set_title("(a) Fixed-budget phase diagram")
+ax.grid(True, linewidth=0.35, alpha=0.35)
+ax.legend(frameon=False, ncol=2, loc="lower left", handlelength=2.4, columnspacing=0.8)
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.05, 2.55), constrained_layout=True)
-    left = axes[0]
-    left.plot(ks, high_mean, marker="o", linewidth=1.3, label="high-budget mean")
-    left.set_xlabel("number of proximal actors $K$")
-    left.set_xticks(ks)
-    left.set_ylabel("mean score for $T\\geq4$")
-    left.set_title("(a) Descriptive scaling with $K$")
-    left.grid(True, alpha=0.25, linewidth=0.5)
-    right_axis = left.twinx()
-    right_axis.plot(ks, collapse / 63.0, marker="s", linestyle="--", linewidth=1.2, label="collapse rate")
-    right_axis.set_ylabel("cell collapse rate")
-    left.text(3.08, high_mean[2] + 1.2, "high-budget mean", fontsize=6.8)
-    right_axis.text(3.02, collapse[2] / 63.0 - 0.035, "collapse rate", fontsize=6.8)
+ax = axes[1]
+methods = [r["method"].replace("BAR-", "").replace(" K=", "-") for r in summary_rows]
+cell = np.asarray([int(r["collapsed_cells_lt20_of63"]) / 63 for r in summary_rows])
+run = np.asarray([int(r["collapsed_runs_lt20_of126"]) / 126 for r in summary_rows])
+x = np.arange(len(methods))
+w = 0.36
+ax.bar(x-w/2, cell, width=w, facecolor="white", edgecolor="black", linewidth=0.7, hatch="///", label="cell")
+ax.bar(x+w/2, run, width=w, facecolor="0.65", edgecolor="black", linewidth=0.7, label="seeded run")
+ax.set_xticks(x, methods, rotation=37, ha="right")
+ax.set_ylim(0, 0.62)
+ax.set_ylabel("score $<20$ rate")
+ax.set_title(r"(b) Tested stability envelope ($T\geq4$)")
+ax.grid(True, axis="y", linewidth=0.35, alpha=0.35)
+ax.legend(frameon=False, loc="upper right")
 
-    ax = axes[1]
-    ax.scatter(x3, x4, s=18, alpha=0.78)
-    lim_lo = min(-5.0, float(np.min([x3.min(), x4.min()])))
-    lim_hi = max(118.0, float(np.max([x3.max(), x4.max()])))
-    ax.plot([lim_lo, lim_hi], [lim_lo, lim_hi], linestyle="--", linewidth=0.8)
-    ax.axvline(20, linestyle=":", linewidth=0.8)
-    ax.axhline(20, linestyle=":", linewidth=0.8)
-    ax.set_xlim(lim_lo, lim_hi)
-    ax.set_ylim(lim_lo, lim_hi)
-    ax.set_xlabel("MPI-Prox $K=3$ cell mean")
-    ax.set_ylabel("MPI-Prox $K=4$ cell mean")
-    ax.set_title("(b) High-budget cells: $K=3$ vs. $K=4$")
-    ax.grid(True, alpha=0.2, linewidth=0.45)
-    ax.text(
-        0.03,
-        0.97,
-        f"rescued: {rescued}    harmed: {harmed}\n"
-        f"both stable: {both_stable}    both failed: {both_failed}\n"
-        f"mean $\\Delta$: {diff.mean():.2f}; median $\\Delta$: {np.median(diff):.2f}",
-        transform=ax.transAxes,
-        va="top",
-        fontsize=6.6,
-    )
-    save(fig, "k4_analysis")
-
-    derived = {
-        "k4_minus_k3_high_budget_mean_difference": float(diff.mean()),
-        "k4_minus_k3_high_budget_median_difference": float(np.median(diff)),
-        "k4_wins_by_more_than_one": int(np.sum(diff > 1)),
-        "within_one_point": int(np.sum(np.abs(diff) <= 1)),
-        "k3_wins_by_more_than_one": int(np.sum(diff < -1)),
-        "k3_collapsed_k4_stable": rescued,
-        "k3_stable_k4_collapsed": harmed,
-        "both_collapsed": both_failed,
-        "both_stable": both_stable,
-    }
-    (DATA / "derived_metrics.json").write_text(json.dumps(derived, indent=2), encoding="utf-8")
+ax = axes[2]
+contrasts = [uncertainty_rows[0], uncertainty_rows[1]]
+y = np.array([1, 0])
+est = np.asarray([float(r["estimate"]) for r in contrasts])
+lo = np.asarray([float(r["ci_low"]) for r in contrasts])
+hi = np.asarray([float(r["ci_high"]) for r in contrasts])
+ax.errorbar(est, y, xerr=np.vstack([est-lo, hi-est]), fmt="o", color="black",
+            capsize=2.5, linewidth=1.0, markersize=4)
+ax.axvline(0, color="0.45", linewidth=0.7, linestyle="--")
+ax.set_yticks(y, [r"P4 $-$ TD3", r"P4 $-$ P3"])
+ax.set_xlabel("high-budget score difference")
+ax.set_title("(c) Task-cluster intervals")
+ax.grid(True, axis="x", linewidth=0.35, alpha=0.35)
+ax.text(0.03, -0.36, "descriptive 95% percentile intervals; 9 tasks",
+        transform=ax.transAxes, fontsize=6.6, va="top")
+fig.tight_layout(w_pad=1.0)
+save(fig, "stability_summary")
 
 
-def replication_figure() -> None:
-    tau, curves = read_budget_means()
-    t2, envs2, s2 = read_matrix(RAW / "k1_rep_seed2.csv")
-    t3, envs3, s3 = read_matrix(RAW / "k1_rep_seed3.csv")
-    if not (np.array_equal(tau, t2) and np.array_equal(tau, t3) and envs2 == envs3):
-        raise ValueError("replication grid differs from the core grid")
-    new_mean = ((s2 + s3) / 2.0).mean(axis=1)
+# Figure 3: target-action displacement audit and failure signature.
+claims = json.loads((DATA / "audit_claims.json").read_text(encoding="utf-8"))
+fig, axes = plt.subplots(1, 2, figsize=(7.0, 2.28), gridspec_kw={"width_ratios": [1.0, 1.35]})
+ax = axes[0]
+labels = ["P3/TD3\ntarget", "P3/P2\ntarget", "P3/TD3\nfinal proxy"]
+fractions = [88/90, 84/90, 36/90]
+intervals = [
+    claims["target_exposure"]["prox3_vs_td3"]["fraction_lower_cluster95"],
+    claims["target_exposure"]["prox3_vs_prox2"]["fraction_lower_cluster95"],
+    [0.25555555555555554, 0.5444444444444444],
+]
+xx = np.arange(3)
+yerr = np.vstack([
+    np.asarray(fractions)-np.asarray([v[0] for v in intervals]),
+    np.asarray([v[1] for v in intervals])-np.asarray(fractions),
+])
+ax.errorbar(xx, fractions, yerr=yerr, fmt="o", color="black", capsize=3, linewidth=1.0)
+ax.axhline(0.5, color="0.45", linestyle="--", linewidth=0.7)
+ax.set_xticks(xx, labels)
+ax.set_ylim(0.15, 1.04)
+ax.set_ylabel("fraction with left quantity lower")
+ax.set_title("(a) Sample-anchored movement audit")
+ax.grid(True, axis="y", linewidth=0.35, alpha=0.35)
+ax.text(0.02, 0.02, "18-cluster bootstrap; 90 matched cells",
+        transform=ax.transAxes, fontsize=6.7)
 
-    fig, ax = plt.subplots(figsize=(3.6, 2.35), constrained_layout=True)
-    ax.plot(tau, curves["TD3+BC"], marker="o", linewidth=1.25, label="original seeds 0-1")
-    ax.plot(tau, new_mean, marker="s", linewidth=1.25, label="replication seeds 2-3")
-    ax.set_xscale("log")
-    ax.set_xlabel("total nominal actor budget $T$")
-    ax.set_ylabel("mean D4RL score")
-    ax.set_title("One-hop phase diagram replication")
-    ax.grid(True, alpha=0.25, linewidth=0.5)
-    ax.legend(frameon=False)
-    save(fig, "k1_replication")
+ax = axes[1]
+fields = ["TD error p99", r"$|Q|$", "critic loss", r"$D_{\rm critic}$", r"$D_{\rm final}$"]
+# log10 collapsed/stable ratios from the reported medians.
+lin_stable = np.array([270.3539518, 311.4305363, 33.9614086, .1118297, .1471883])
+lin_col = np.array([9.5967646e23, 8.4764882e11, 1.2327059e23, .5384217, .6256434])
+prox_stable = np.array([160.7724583, 346.6620483, 18.6603565, .0644033, .0943493])
+prox_col = np.array([5.0304927e21, 6.9064901e10, 8.8210556e20, .4458609, .5780357])
+lin_ratio = np.log10(lin_col / lin_stable)
+prox_ratio = np.log10(prox_col / prox_stable)
+x = np.arange(len(fields))
+w = .36
+ax.bar(x-w/2, lin_ratio, width=w, facecolor="white", edgecolor="black", hatch="///", linewidth=.7, label="Lin-2")
+ax.bar(x+w/2, prox_ratio, width=w, facecolor="0.65", edgecolor="black", linewidth=.7, label="Prox-2")
+ax.set_xticks(x, fields, rotation=25, ha="right")
+ax.set_ylabel(r"$\log_{10}$ collapsed/stable median ratio")
+ax.set_title("(b) Failure signature at the final checkpoint")
+ax.grid(True, axis="y", linewidth=0.35, alpha=0.35)
+ax.legend(frameon=False, loc="upper right")
+fig.tight_layout(w_pad=1.2)
+save(fig, "diagnostics_summary")
 
+# Single-column versions used by the AAAI main paper to avoid a float-only page.
+fig, ax = plt.subplots(figsize=(3.35, 2.15))
+labels = ["P3/TD3\ntarget", "P3/P2\ntarget", "P3/TD3\nfinal proxy"]
+fractions = [88/90, 84/90, 36/90]
+intervals = [
+    claims["target_exposure"]["prox3_vs_td3"]["fraction_lower_cluster95"],
+    claims["target_exposure"]["prox3_vs_prox2"]["fraction_lower_cluster95"],
+    [0.25555555555555554, 0.5444444444444444],
+]
+xx = np.arange(3)
+yerr = np.vstack([
+    np.asarray(fractions)-np.asarray([v[0] for v in intervals]),
+    np.asarray([v[1] for v in intervals])-np.asarray(fractions),
+])
+ax.errorbar(xx, fractions, yerr=yerr, fmt="o", color="black", capsize=3, linewidth=1.0)
+ax.axhline(0.5, color="0.45", linestyle="--", linewidth=0.7)
+ax.set_xticks(xx, labels)
+ax.set_ylim(0.15, 1.04)
+ax.set_ylabel("fraction with left quantity lower")
+ax.grid(True, axis="y", linewidth=0.35, alpha=0.35)
+ax.text(0.02, 0.02, "18-cluster bootstrap; 90 matched cells", transform=ax.transAxes, fontsize=6.7)
+fig.tight_layout()
+save(fig, "movement_audit")
 
-if __name__ == "__main__":
-    stability_figure()
-    k4_figure()
-    replication_figure()
-    print(f"Wrote figures to {OUT}")
+fig, ax = plt.subplots(figsize=(3.35, 2.15))
+fields = ["TD p99", r"$|Q|$", "loss", r"$D_c$", r"$D_f$"]
+x = np.arange(len(fields)); w = .36
+ax.bar(x-w/2, lin_ratio, width=w, facecolor="white", edgecolor="black", hatch="///", linewidth=.7, label="Lin-2")
+ax.bar(x+w/2, prox_ratio, width=w, facecolor="0.65", edgecolor="black", linewidth=.7, label="Prox-2")
+ax.set_xticks(x, fields, rotation=22, ha="right")
+ax.set_ylabel(r"$\log_{10}$ collapsed/stable median ratio")
+ax.grid(True, axis="y", linewidth=0.35, alpha=0.35)
+ax.legend(frameon=False, loc="upper right")
+fig.tight_layout()
+save(fig, "failure_signature")

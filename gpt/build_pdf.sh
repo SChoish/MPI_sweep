@@ -1,13 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$DIR"
-python3 make_figures.py
-latexmk -pdf -interaction=nonstopmode -halt-on-error paper.tex
-cp paper.pdf mpi_gpt_aistats27_manuscript.pdf
-if grep -Eq 'Overfull \\[hv]box|Undefined control sequence|Emergency stop|Fatal error' paper.log; then
-  echo "blocking TeX warning detected" >&2
-  grep -En 'Overfull \\[hv]box|Undefined control sequence|Emergency stop|Fatal error' paper.log >&2
-  exit 1
-fi
-printf 'built: %s\n' "$DIR/mpi_gpt_aistats27_manuscript.pdf"
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+PDFLATEX_BIN="${PDFLATEX_BIN:-pdflatex}"
+RESULTS_DIR="${SWEEP_RESULTS_DIR:-$ROOT/../sweep_results}"
+
+cd "$ROOT"
+"$PYTHON_BIN" verify_bundle.py --results-dir "$RESULTS_DIR" --prebuild
+"$PYTHON_BIN" make_figures.py
+
+for source in paper supplement; do
+  "$PDFLATEX_BIN" -interaction=nonstopmode -halt-on-error "$source.tex" >"$source.build1.log"
+  "$PDFLATEX_BIN" -interaction=nonstopmode -halt-on-error "$source.tex" >"$source.build2.log"
+done
+
+cp paper.pdf gpt_aaai26_manuscript.pdf
+cp supplement.pdf gpt_aaai26_supplement.pdf
+
+"$PYTHON_BIN" verify_bundle.py --results-dir "$RESULTS_DIR" --postbuild
+
+echo "built: $ROOT/gpt_aaai26_manuscript.pdf"
+echo "built: $ROOT/gpt_aaai26_supplement.pdf"

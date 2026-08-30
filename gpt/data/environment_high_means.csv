@@ -1,10 +1,10 @@
-environment,TD3+BC,MPI-Prox K=2,MPI-Prox K=3,MPI-Prox K=4,MPI-Lin K=2,MPI-Lin K=3
+environment,TD3+BC,BAR-Prox K=2,BAR-Prox K=3,BAR-Prox K=4,BAR-Lin K=2,BAR-Lin K=3
 Hopper-M,16.0,35.2,69.4,88.273,25.5,46.3
 Hopper-MR,41.4,90.6,99.7,99.7358,90.5,99.4
-Hopper-ME,3.4,17.5,30.7,45.2725,16.6,27.7
+Hopper-E,3.4,17.5,30.7,45.2725,16.6,27.7
 HalfCheetah-M,59.0,59.1,59.2,57.922,53.4,55.8
 HalfCheetah-MR,51.7,52.6,51.6,52.4707,46.5,49.2
-HalfCheetah-ME,18.4,24.5,28.5,34.6482,18.8,22.4
+HalfCheetah-E,18.4,24.5,28.5,34.6482,18.8,22.4
 Walker2d-M,10.3,24.3,34.3,47.6474,9.3,26.5
 Walker2d-MR,31.3,49.0,76.6,72.7005,51.2,43.5
-Walker2d-ME,2.2,25.4,25.0,73.8235,18.5,24.4
+Walker2d-E,2.2,25.4,25.0,73.8235,18.5,24.4

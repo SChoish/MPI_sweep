@@ -501,7 +501,7 @@ def failure_diagnostics(
 
 
 def symmetric_relative_error(estimate: np.ndarray, reference: np.ndarray) -> np.ndarray:
-    return 2.0 * np.abs(estimate - reference) / (
+    return np.abs(estimate - reference) / (
         np.abs(estimate) + np.abs(reference) + EPS
     )
 

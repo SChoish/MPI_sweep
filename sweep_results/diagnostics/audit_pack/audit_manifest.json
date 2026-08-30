@@ -6,7 +6,7 @@
     "unit": "(env, seed) cluster for target; training run for route"
   },
   "checksums": {
-    "bytes": 3180555266,
+    "bytes": 3180555260,
     "files": 2135
   },
   "counts": {
@@ -16,7 +16,7 @@
     "simulator_checkpoint.csv": 60,
     "target_exposure_run.csv": 270
   },
-  "created_at_utc": "2026-08-30T10:40:51.448874+00:00",
+  "created_at_utc": "2026-08-30T10:42:57.830060+00:00",
   "filters": {
     "collapse_primary": "D4RL normalized score < 20",
     "route_aggregation": "state median -> checkpoint -> training-run mean",
@@ -70,7 +70,7 @@
   },
   "lab_git_commit": "9c8a9918e9b9c22360f012b8ab777364404c546d",
   "output_dir": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/audit_pack",
-  "repo_git_commit": "0f382090f4410c8a4118c99cfd0589a06c0848d7",
+  "repo_git_commit": "c5d86e6e0e7b26cb00212c1a5f60efdf01927ae2",
   "schema_version": 1,
   "understood_as": "re-audit existing local raw/per-state diagnostics without rerunning training or simulator rollouts; publish compact run/checkpoint outputs"
 }

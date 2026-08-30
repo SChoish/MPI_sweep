@@ -11,7 +11,7 @@ No policy training or simulator rollout was rerun.
 - Failure diagnostics: 180/180 rows; exact validation-state pairing; NaN=0, inf=0.
 - Simulator reference: 60/60 checkpoints and 720/720 states.
 - Route intervention: 8/8 runs; 32 checkpoint arm-pair checks passed.
-- Checksums: 2135 inputs, 3180555266 bytes.
+- Checksums: 2135 inputs, 3180555260 bytes.
 
 ## Claim reproduction
 

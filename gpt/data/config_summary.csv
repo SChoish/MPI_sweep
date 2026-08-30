@@ -1,0 +1,18 @@
+item,value,provenance
+actor architecture,MLP 256-256 ReLU with tanh output,train_td3bc.py
+critic architecture,twin MLP 256-256 ReLU,train_td3bc.py
+optimizer,Adam,train_td3bc.py
+learning rate,3e-4,archived sweep and implementation
+batch size,256,archived sweep and implementation
+discount,0.99,archived sweep and implementation
+policy delay,2 critic updates,implementation
+target Polyak coefficient,0.005,archived sweep and implementation
+target policy noise,0.2 times action bound,implementation
+target noise clip,0.5 times action bound,implementation
+state normalization,mean/std plus 1e-3,implementation
+critic updates,1000000,archived sweep
+evaluation frequency,50000 critic updates,archived run configs
+evaluation episodes,10,archived run configs
+reported score,10-episode D4RL normalized mean at 1M,archived run configs and eval.csv
+timeout handling,timeout rows omitted from transition construction,implementation
+terminal handling,terminal flag stops bootstrap,implementation

@@ -1,0 +1,48 @@
+{
+  "experiment": "frozen_critic_action_level_small_step",
+  "claim_scope": "local explicit/implicit consistency under a fixed learned critic; not a return or causal actor-critic stability result",
+  "reference_actions": "interior actions sampled from each offline dataset",
+  "implicit_solver": "projected fixed-point iteration for a=a0+(d*h/C)*grad_Q(a)",
+  "explicit_step": "clip(a0+(d*h/C)*grad_Q(a0))",
+  "critic_scale": "C=mean absolute frozen Q1 over the sampled batch",
+  "expected_local_behavior": "relative explicit/implicit discrepancy tends to zero. In smooth regions the absolute discrepancy is O(h^2); a ReLU critic is locally affine and can give exact agreement until a kink is crossed.",
+  "checkpoint_rule": "canonical TD3+BC T=1 final checkpoint",
+  "steps": [
+    0.001,
+    0.003,
+    0.01,
+    0.03,
+    0.1
+  ],
+  "environments": [
+    "halfcheetah-medium-v2",
+    "halfcheetah-medium-replay-v2",
+    "halfcheetah-expert-v2",
+    "hopper-medium-v2",
+    "hopper-medium-replay-v2",
+    "hopper-expert-v2",
+    "walker2d-medium-v2",
+    "walker2d-medium-replay-v2",
+    "walker2d-expert-v2"
+  ],
+  "seeds": [
+    0,
+    1
+  ],
+  "n_states": 512,
+  "interior_margin": 0.05,
+  "tolerance": 1e-07,
+  "max_iterations": 200,
+  "cli": {
+    "results_dir": "/home/ext_csv/mpi_sweep_lab/results_qnorm",
+    "data_dir": "/raid/ext_csv/datasets/d4rl",
+    "out_dir": "/home/ext_csv/mpi_sweep_lab/audit_report_20260829/frozen_critic_small_step",
+    "envs": "halfcheetah-medium-v2 halfcheetah-medium-replay-v2 halfcheetah-expert-v2 hopper-medium-v2 hopper-medium-replay-v2 hopper-expert-v2 walker2d-medium-v2 walker2d-medium-replay-v2 walker2d-expert-v2",
+    "seeds": "0 1",
+    "n_states": 512,
+    "interior_margin": 0.05,
+    "steps": "0.001 0.003 0.01 0.03 0.1",
+    "max_iterations": 200,
+    "tolerance": 1e-07
+  }
+}

@@ -1,0 +1,244 @@
+{
+  "by_method": {
+    "mpi2": {
+      "cells": 90,
+      "polyak_lag": {
+        "mean": 0.0018504512581920972,
+        "median": 0.0012964085100766738,
+        "p90": 0.0036357192342523236,
+        "p99": 0.005697798161028583
+      },
+      "proxy": {
+        "mean": 0.2080963048099577,
+        "median": 0.1170078747215126,
+        "p90": 0.6898168066187349,
+        "p99": 0.9159908118557512
+      },
+      "smoothing_minus_deterministic_mean": 0.01151713382854084,
+      "target_deterministic": {
+        "mean": 0.20820459449469317,
+        "median": 0.11605435478567525,
+        "p90": 0.6930810118407004,
+        "p99": 0.9141982881417877
+      },
+      "target_smoothed": {
+        "mean": 0.21972172832323397,
+        "median": 0.14797824720611497,
+        "p90": 0.6291439492607501,
+        "p99": 0.8389469308723827
+      }
+    },
+    "mpi3": {
+      "cells": 90,
+      "polyak_lag": {
+        "mean": 0.0017708120978776644,
+        "median": 0.0012408591605282391,
+        "p90": 0.0037693207767211,
+        "p99": 0.005254919153057073
+      },
+      "proxy": {
+        "mean": 0.17142477679223758,
+        "median": 0.09561125816498503,
+        "p90": 0.5779598588555193,
+        "p99": 0.8398818409818133
+      },
+      "smoothing_minus_deterministic_mean": 0.015592228297174233,
+      "target_deterministic": {
+        "mean": 0.17130550348772214,
+        "median": 0.09546657373250642,
+        "p90": 0.5731824903051698,
+        "p99": 0.8498987912485036
+      },
+      "target_smoothed": {
+        "mean": 0.18689773178489633,
+        "median": 0.12598979171860103,
+        "p90": 0.5264047562078912,
+        "p99": 0.770014011896772
+      }
+    },
+    "td3": {
+      "cells": 90,
+      "polyak_lag": {
+        "mean": 0.002489405245870453,
+        "median": 0.0018626425926180504,
+        "p90": 0.004731282110988988,
+        "p99": 0.008554805112758246
+      },
+      "proxy": {
+        "mean": 0.362451096189032,
+        "median": 0.19432216327821852,
+        "p90": 0.9080811175666752,
+        "p99": 1.083989450921329
+      },
+      "smoothing_minus_deterministic_mean": -0.00847377988227389,
+      "target_deterministic": {
+        "mean": 0.361728325174701,
+        "median": 0.1937304345026914,
+        "p90": 0.9039111992223828,
+        "p99": 1.0777550890799183
+      },
+      "target_smoothed": {
+        "mean": 0.35325454529242706,
+        "median": 0.21099948647342115,
+        "p90": 0.8234117866248498,
+        "p99": 0.9772165334585053
+      }
+    }
+  },
+  "completed_cells": 270,
+  "interpretation_limits": [
+    "Post-hoc associative diagnostic, not a causal routing intervention.",
+    "The paired next dataset action is one observed action, so absolute distance includes conditional action variance.",
+    "High proxy alignment validates the existing proxy empirically on these checkpoints; it does not establish a universal critic-valid radius."
+  ],
+  "metric_units": "mean squared displacement per action coordinate",
+  "missing_checkpoints": 0,
+  "paired_method_comparisons": {
+    "mpi2_vs_td3": {
+      "pairs": 90,
+      "polyak_lag": {
+        "equal_cells": 0,
+        "left_smaller_cells": 67,
+        "mean_difference": -0.0006389539876783558,
+        "median_left_over_right_nonzero": 0.8570611181232638,
+        "ratio_nonzero_pairs": 89
+      },
+      "proxy": {
+        "equal_cells": 0,
+        "left_smaller_cells": 86,
+        "mean_difference": -0.15435479137907424,
+        "median_left_over_right_nonzero": 0.7686663739715629,
+        "ratio_nonzero_pairs": 90
+      },
+      "target_deterministic": {
+        "equal_cells": 0,
+        "left_smaller_cells": 86,
+        "mean_difference": -0.1535237306800078,
+        "median_left_over_right_nonzero": 0.7647202717144397,
+        "ratio_nonzero_pairs": 90
+      },
+      "target_smoothed": {
+        "equal_cells": 0,
+        "left_smaller_cells": 86,
+        "mean_difference": -0.13353281696919306,
+        "median_left_over_right_nonzero": 0.8028789144540733,
+        "ratio_nonzero_pairs": 90
+      }
+    },
+    "mpi3_vs_mpi2": {
+      "pairs": 90,
+      "polyak_lag": {
+        "equal_cells": 0,
+        "left_smaller_cells": 50,
+        "mean_difference": -7.96391603144326e-05,
+        "median_left_over_right_nonzero": 0.9618897965680563,
+        "ratio_nonzero_pairs": 90
+      },
+      "proxy": {
+        "equal_cells": 0,
+        "left_smaller_cells": 83,
+        "mean_difference": -0.03667152801772014,
+        "median_left_over_right_nonzero": 0.902715160006953,
+        "ratio_nonzero_pairs": 90
+      },
+      "target_deterministic": {
+        "equal_cells": 0,
+        "left_smaller_cells": 84,
+        "mean_difference": -0.03689909100697105,
+        "median_left_over_right_nonzero": 0.9030389792549756,
+        "ratio_nonzero_pairs": 90
+      },
+      "target_smoothed": {
+        "equal_cells": 0,
+        "left_smaller_cells": 81,
+        "mean_difference": -0.032823996538337646,
+        "median_left_over_right_nonzero": 0.9302322110187702,
+        "ratio_nonzero_pairs": 90
+      }
+    },
+    "mpi3_vs_td3": {
+      "pairs": 90,
+      "polyak_lag": {
+        "equal_cells": 0,
+        "left_smaller_cells": 68,
+        "mean_difference": -0.0007185931479927885,
+        "median_left_over_right_nonzero": 0.806387073498467,
+        "ratio_nonzero_pairs": 89
+      },
+      "proxy": {
+        "equal_cells": 0,
+        "left_smaller_cells": 88,
+        "mean_difference": -0.19102631939679438,
+        "median_left_over_right_nonzero": 0.6585123485572937,
+        "ratio_nonzero_pairs": 90
+      },
+      "target_deterministic": {
+        "equal_cells": 0,
+        "left_smaller_cells": 88,
+        "mean_difference": -0.1904228216869788,
+        "median_left_over_right_nonzero": 0.6576946525242814,
+        "ratio_nonzero_pairs": 90
+      },
+      "target_smoothed": {
+        "equal_cells": 0,
+        "left_smaller_cells": 88,
+        "mean_difference": -0.16635681350753068,
+        "median_left_over_right_nonzero": 0.7252317758808451,
+        "ratio_nonzero_pairs": 90
+      }
+    }
+  },
+  "proxy_alignment": {
+    "all_cells": {
+      "max_abs_relative_difference_deterministic_vs_proxy": 0.05687865175339188,
+      "median_target_deterministic_over_proxy": 0.996979585711143,
+      "pearson_proxy_vs_target_deterministic": 0.9999114535076423,
+      "pearson_proxy_vs_target_smoothed": 0.9992799627436582
+    },
+    "halfcheetah-expert-v2": {
+      "cells": 30,
+      "pearson_proxy_vs_target_deterministic": 0.9994585935849893,
+      "pearson_proxy_vs_target_smoothed": 0.9989429251464976
+    },
+    "halfcheetah-medium-replay-v2": {
+      "cells": 30,
+      "pearson_proxy_vs_target_deterministic": 0.9979681663741269,
+      "pearson_proxy_vs_target_smoothed": 0.9981077790766999
+    },
+    "halfcheetah-medium-v2": {
+      "cells": 30,
+      "pearson_proxy_vs_target_deterministic": 0.9974044741083026,
+      "pearson_proxy_vs_target_smoothed": 0.9977147205207283
+    },
+    "hopper-expert-v2": {
+      "cells": 30,
+      "pearson_proxy_vs_target_deterministic": 0.9998760037830118,
+      "pearson_proxy_vs_target_smoothed": 0.9998523246716798
+    },
+    "hopper-medium-replay-v2": {
+      "cells": 30,
+      "pearson_proxy_vs_target_deterministic": 0.9963856261221187,
+      "pearson_proxy_vs_target_smoothed": 0.9963812283491852
+    },
+    "hopper-medium-v2": {
+      "cells": 30,
+      "pearson_proxy_vs_target_deterministic": 0.999963032422093,
+      "pearson_proxy_vs_target_smoothed": 0.9999401881443292
+    },
+    "walker2d-expert-v2": {
+      "cells": 30,
+      "pearson_proxy_vs_target_deterministic": 0.999950113507156,
+      "pearson_proxy_vs_target_smoothed": 0.999901083833234
+    },
+    "walker2d-medium-replay-v2": {
+      "cells": 30,
+      "pearson_proxy_vs_target_deterministic": 0.9998604767835997,
+      "pearson_proxy_vs_target_smoothed": 0.9996754005871727
+    },
+    "walker2d-medium-v2": {
+      "cells": 30,
+      "pearson_proxy_vs_target_deterministic": 0.9999829718773982,
+      "pearson_proxy_vs_target_smoothed": 0.9998436905326142
+    }
+  }
+}

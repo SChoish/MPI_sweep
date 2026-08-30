@@ -1,0 +1,36 @@
+{
+  "methods": [
+    "exp2m"
+  ],
+  "envs": [
+    "hopper-medium-v2",
+    "hopper-medium-replay-v2",
+    "hopper-expert-v2",
+    "halfcheetah-medium-v2",
+    "halfcheetah-medium-replay-v2",
+    "halfcheetah-expert-v2",
+    "walker2d-medium-v2",
+    "walker2d-medium-replay-v2",
+    "walker2d-expert-v2"
+  ],
+  "taus": [
+    4.0,
+    7.0,
+    10.0,
+    14.0,
+    20.0
+  ],
+  "seeds": [
+    0,
+    1
+  ],
+  "n_states": 512,
+  "sample_seed": 20260824,
+  "canonical_critic": "TD3+BC checkpoint from same env/seed at tau=1",
+  "diagnostic_time": "final checkpoint only",
+  "target_reconstruction": "matched d*(tau/K)*grad(Q)/q_scale target under own final critic; fixed validation batch, while training used minibatch q-scale",
+  "legacy_config_inference": "missing q_scale_norm -> True; missing explicit_q_term -> False",
+  "missing_checkpoints": [],
+  "hop_rows": 180,
+  "run_rows": 90
+}

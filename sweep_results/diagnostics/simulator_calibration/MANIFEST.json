@@ -1,0 +1,52 @@
+{
+  "aggregate_summary": "audit_report_20260829/mc_value_pilot_cpu/SUMMARY.json",
+  "backend": "CPU forced in mc_value_audit.py",
+  "cell_summary_csv": "audit_report_20260829/mc_value_pilot_cpu/cells.csv",
+  "cpu_affinity": "logical CPUs 180-189, one worker per CPU",
+  "dead_zone_return_units": 1.0,
+  "environments": [
+    "halfcheetah-medium-v2",
+    "hopper-medium-v2",
+    "hopper-medium-replay-v2"
+  ],
+  "external_collapse_label": "D4RL score < 20",
+  "gamma": 0.99,
+  "horizon": 1000,
+  "jax_backend": "cpu",
+  "jax_devices": [
+    "cpu:0 per worker"
+  ],
+  "methods": [
+    "mpi2",
+    "mpi3"
+  ],
+  "occupancy_episodes": 6,
+  "per_cell_files": [
+    "MANIFEST.json",
+    "summary.json",
+    "per_state.csv",
+    "sampled_states.pkl"
+  ],
+  "sampled_states_per_cell": 12,
+  "software_versions": {
+    "gymnasium": "1.3.0",
+    "jax": "0.10.2",
+    "mujoco": "3.10.0",
+    "numpy": "2.5.0"
+  },
+  "state_snapshot_scope": "Gymnasium MuJoCo-v4 integration state, model fingerprint, TimeLimit clock, and environment RNG",
+  "status": "exploratory_cpu_screening_not_submission_estimate",
+  "target_smoothing_rollouts": 4,
+  "taus": [
+    4,
+    7,
+    10,
+    14,
+    20
+  ],
+  "time_limit_semantics": "reset for continuing-task critic calibration",
+  "training_seeds": [
+    0,
+    1
+  ]
+}

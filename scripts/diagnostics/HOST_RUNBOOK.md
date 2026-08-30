@@ -11,15 +11,18 @@
 
 Release `train_td3bc.py` uses `actors_params` tuples and is **not** compatible
 with lab matched-sweep checkpoints. Always set `LAB_ROOT`.
+`RESULTS_ROOT` may be a different directory; it only needs to contain the
+expected local `results_*` trees.
 
 ## Seed ownership (example)
 
 | Host | Seeds |
 | --- | --- |
-| primary / ext_csv | 0 1 |
-| offrl / other | 2 3 |
+| example host A | 0 1 |
+| example host B | 2 3 |
 
-Only dump seeds that exist **locally**.
+This table is illustrative, not an assignment. Only dump seeds that exist
+**locally**, and use a stable unique host label for the output folder.
 
 ## Jobs
 
@@ -48,15 +51,20 @@ bash scripts/diagnostics/run_host.sh --host offrl --seeds 2 3 \
 ```bash
 cd MPI_sweep
 git add sweep_results/diagnostics/hosts/<host>
+git status --short
 git commit -m "Add <host> checkpoint diagnostics"
 git push
 ```
 
-Do not edit another host's directory.
+The repository allowlist under `hosts/.gitignore` stages only CSV, JSON, and
+Markdown summaries. Generated `raw/*.npz`, `common_batches/*.npy`, and logs
+stay local. Do not use `git add -f` for them, and do not edit another host's
+directory.
 
 ## Manual script calls
 
 ```bash
+export HOST="$(hostname -s)"
 export PYTHONPATH=$LAB_ROOT:$PYTHONPATH
 
 $PY -u scripts/diagnostics/dump_mpi_frontier_geometry.py \

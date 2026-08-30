@@ -11,6 +11,10 @@ Legend:
 - **aggregate**: derived from score tables / multiple dumps
 - **archive**: frozen manuscript snapshot; not the host-dump schema
 
+“Partial” means the packaged script can regenerate the core measurements, but
+not necessarily the archive's curated summary, exact filenames, or frozen
+selection of runs.
+
 | Path under `sweep_results/diagnostics/` | Kind | Regenerable with this package? | Script / note |
 | --- | --- | --- | --- |
 | `hosts/<host>/matched_geometry/` | ckpt | **yes** (new layout) | `dump_mpi_frontier_geometry.py` → `hop_geometry.csv`, `run_diagnostics.csv` + summarize |
@@ -29,7 +33,8 @@ Legend:
 ## Recommended workflow
 
 1. Each host runs `run_host.sh --job ckpt` for its seeds.
-2. Push `hosts/<host>/` only.
+2. Push `hosts/<host>/` only. The host `.gitignore` allowlists CSV/JSON/MD;
+   per-state NPZ/NPY data and logs remain local.
 3. Keep top-level archive folders as the manuscript-frozen copies unless you
    explicitly regenerate and replace them with a reviewed merge.
 

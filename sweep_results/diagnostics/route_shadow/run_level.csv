@@ -1,0 +1,9 @@
+env,tau,seed,n_checkpoints,mean_paired_delta_muk_minus_mu1
+hopper-medium-v2,10,0,4,0.01724274816447432
+hopper-medium-v2,10,1,4,0.02680443713799697
+hopper-medium-v2,20,0,4,2.054576127924479e-06
+hopper-medium-v2,20,1,4,0.0023001456840614776
+walker2d-medium-v2,4,0,4,0.004745871047369135
+walker2d-medium-v2,4,1,4,0.009293197744527209
+walker2d-medium-v2,7,0,4,0.8026987538878703
+walker2d-medium-v2,7,1,4,0.12503057174045706

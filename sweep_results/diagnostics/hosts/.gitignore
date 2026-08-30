@@ -1,0 +1,8 @@
+# Host folders may contain large per-state arrays and logs. Release only
+# compact, reviewable summaries.
+*
+!*/
+!.gitignore
+!*.csv
+!*.json
+!*.md

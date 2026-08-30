@@ -446,8 +446,12 @@ def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", default=str(_ROOT))
-    parser.add_argument("--data-dir", default="/raid/ext_csv/datasets/d4rl")
+    parser.add_argument(
+        "--root", default=os.environ.get("RESULTS_ROOT", str(_ROOT))
+    )
+    parser.add_argument(
+        "--data-dir", default=os.environ.get("DATA_DIR", str(_ROOT / "data"))
+    )
     parser.add_argument(
         "--out-dir", default=str(_ROOT / "target_policy_exposure")
     )

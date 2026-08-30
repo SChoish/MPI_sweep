@@ -1,0 +1,26 @@
+{
+  "protocol": "paired_route_shadow_simulator_reference",
+  "primary_key": "critic_symmetric_relative_error_rho_at_ak_p50",
+  "arguments": {
+    "cells": "hopper-medium-v2:10,20 walker2d-medium-v2:4,7",
+    "seeds": "0 1",
+    "mpi_steps": 3,
+    "steps": "250000 500000 750000 1000000",
+    "results_dir": "/home/ext_csv/mpi_sweep_lab/results_route_shadow",
+    "out_dir": "/home/ext_csv/mpi_sweep_lab/audit_report_20260829/route_shadow_mc",
+    "episodes": 6,
+    "n_states": 12,
+    "horizon": 1000,
+    "gamma": 0.99,
+    "smoothing_rollouts": 4,
+    "rollout_seed": 20260829,
+    "sample_seed": 20260830,
+    "audit_seed": 20260831,
+    "dead_zone": 1.0,
+    "workers": 4,
+    "threads_per_job": 4,
+    "bootstrap_samples": 10000,
+    "overwrite": false,
+    "dry_run": false
+  }
+}

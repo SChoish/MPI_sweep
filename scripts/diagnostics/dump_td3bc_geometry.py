@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -245,9 +246,18 @@ def dump_cell(
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--results-dir", default="/home/ext_csv/mpi_sweep_lab/results_qnorm")
-    parser.add_argument("--data-dir", default="/raid/ext_csv/datasets/d4rl")
-    parser.add_argument("--out-dir", default="/home/ext_csv/mpi_sweep_lab/geometry_logs")
+    parser.add_argument(
+        "--results-dir",
+        default=str(Path(os.environ.get("RESULTS_ROOT", str(_ROOT))) / "results_qnorm"),
+    )
+    parser.add_argument(
+        "--data-dir",
+        default=os.environ.get("DATA_DIR", str(_ROOT / "data")),
+    )
+    parser.add_argument(
+        "--out-dir",
+        default=str(_ROOT / "diagnostic_outputs" / "td3bc_geometry"),
+    )
     parser.add_argument("--n-states", type=int, default=4096)
     parser.add_argument("--seeds", default="0 1")
     args = parser.parse_args()

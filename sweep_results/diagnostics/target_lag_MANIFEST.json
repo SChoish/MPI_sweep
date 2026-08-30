@@ -1,0 +1,56 @@
+{
+  "experiment": "target-lag",
+  "status": "launched",
+  "cells": [
+    {
+      "env": "hopper-medium-v2",
+      "T": "10"
+    },
+    {
+      "env": "hopper-medium-v2",
+      "T": "20"
+    },
+    {
+      "env": "walker2d-medium-v2",
+      "T": "4"
+    },
+    {
+      "env": "walker2d-medium-v2",
+      "T": "7"
+    }
+  ],
+  "seeds": [
+    0,
+    1
+  ],
+  "definitions": {
+    "baseline": "existing canonical K=1 with actor/critic Polyak 0.005",
+    "intervention": "K=1 actor target Polyak=0.005/3; critic target Polyak remains 0.005",
+    "limitation": "nominal lag match; actual target displacement must be checked"
+  },
+  "baseline_root": "/home/ext_csv/mpi_sweep_lab/results_qnorm",
+  "polyak": 0.005,
+  "target_lag_factor": 3.0,
+  "max_timesteps": 1000000,
+  "eval_freq": 50000,
+  "save_interval": 250000,
+  "cli": {
+    "experiment": "target-lag",
+    "cells": null,
+    "seeds": "0 1",
+    "gpus": "0 1",
+    "slots_per_gpu": 4,
+    "cpus_per_job": 16,
+    "polyak": 0.005,
+    "target_lag_factor": 3.0,
+    "max_timesteps": 1000000,
+    "eval_freq": 50000,
+    "n_jitted": 8,
+    "save_interval": 250000,
+    "save_dir": "/home/ext_csv/mpi_sweep_lab/results_target_lag",
+    "log_dir": "/home/ext_csv/mpi_sweep_lab/nohup_logs/causal_controls/target_lag_jobs",
+    "data_dir": "/raid/ext_csv/datasets/d4rl",
+    "q_scale_norm": true,
+    "dry_run": false
+  }
+}

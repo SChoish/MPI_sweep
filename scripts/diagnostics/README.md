@@ -21,17 +21,35 @@ export PY=/path/to/offrl/bin/python
 
 bash scripts/diagnostics/run_host.sh \
   --host "$(hostname -s)" \
-  --seeds 2 3 \
+  --seeds 0 1 \
   --job ckpt
 ```
 
-Writes compact CSVs to:
+Replace `0 1` with the seeds stored on this machine. Use a stable, unique
+`--host` label; the short hostname is the default. `RESULTS_ROOT` may differ
+from `LAB_ROOT` as long as it contains the local `results_*` directories.
+
+Writes diagnostics to:
 
 ```text
 sweep_results/diagnostics/hosts/<host>/
 ```
 
-Then commit **only that host folder** and push. Do not move large `params_*.pkl`.
+The host output policy tracks only `*.csv`, `*.json`, and `*.md`.
+Per-state `raw/*.npz`, `common_batches/*.npy`, and logs remain local and are
+excluded by `sweep_results/diagnostics/hosts/.gitignore`.
+
+Then commit **only that host folder** and push:
+
+```bash
+git add sweep_results/diagnostics/hosts/<host>
+git status --short
+git commit -m "Add <host> checkpoint diagnostics"
+git push
+```
+
+Review `git status` before committing. Do not move checkpoints or force-add
+ignored raw artifacts.
 
 ## Important
 

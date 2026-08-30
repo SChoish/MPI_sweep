@@ -1,0 +1,195 @@
+{
+  "n_runs": 18,
+  "n_runs_with_identifiable_slope": 1,
+  "median_identifiable_local_loglog_slope": 1.2685220207506227,
+  "median_run_max_local_relative_difference": 0.00554893014643609,
+  "max_run_max_local_relative_difference": 0.02681592753751174,
+  "local_relative_tolerance": 0.05,
+  "all_runs_within_local_relative_tolerance": false,
+  "all_runs_local_converged": false,
+  "all_runs_local_projection_free": true,
+  "interpretation": "An unidentifiable O(h^2) slope can be expected when the frozen ReLU critic stays in one locally affine activation region and explicit and implicit steps agree to floating-point precision.",
+  "runs": [
+    {
+      "environment": "halfcheetah-medium-v2",
+      "seed": 0,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 1,
+      "local_max_relative_difference": 0.00554893014643609,
+      "local_exact_agreement_fraction": 0.0,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "seed": 1,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 2,
+      "local_max_relative_difference": 0.010653106945140127,
+      "local_exact_agreement_fraction": 0.0,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "seed": 0,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 1,
+      "local_max_relative_difference": 0.01683165987608444,
+      "local_exact_agreement_fraction": 0.0,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "seed": 1,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 0,
+      "local_max_relative_difference": null,
+      "local_exact_agreement_fraction": null,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "halfcheetah-expert-v2",
+      "seed": 0,
+      "local_loglog_slope_when_identifiable": 1.2685220207506227,
+      "local_points_eligible": 3,
+      "local_max_relative_difference": 0.02681592753751174,
+      "local_exact_agreement_fraction": 0.0,
+      "all_local_points_converged": true,
+      "local_projection_free": true
+    },
+    {
+      "environment": "halfcheetah-expert-v2",
+      "seed": 1,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 2,
+      "local_max_relative_difference": 0.001740060548498603,
+      "local_exact_agreement_fraction": 0.5,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "seed": 0,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 1,
+      "local_max_relative_difference": 0.0,
+      "local_exact_agreement_fraction": 1.0,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "seed": 1,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 3,
+      "local_max_relative_difference": 0.006801503156475255,
+      "local_exact_agreement_fraction": 0.6666666666666666,
+      "all_local_points_converged": true,
+      "local_projection_free": true
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "seed": 0,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 2,
+      "local_max_relative_difference": 0.012851674091272447,
+      "local_exact_agreement_fraction": 0.0,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "seed": 1,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 2,
+      "local_max_relative_difference": 0.010864509293605443,
+      "local_exact_agreement_fraction": 0.5,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "seed": 0,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 3,
+      "local_max_relative_difference": 0.0,
+      "local_exact_agreement_fraction": 1.0,
+      "all_local_points_converged": true,
+      "local_projection_free": true
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "seed": 1,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 3,
+      "local_max_relative_difference": 0.0,
+      "local_exact_agreement_fraction": 1.0,
+      "all_local_points_converged": true,
+      "local_projection_free": true
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "seed": 0,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 2,
+      "local_max_relative_difference": 0.023899077149252868,
+      "local_exact_agreement_fraction": 0.0,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "seed": 1,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 1,
+      "local_max_relative_difference": 0.0,
+      "local_exact_agreement_fraction": 1.0,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "seed": 0,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 0,
+      "local_max_relative_difference": null,
+      "local_exact_agreement_fraction": null,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "seed": 1,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 0,
+      "local_max_relative_difference": null,
+      "local_exact_agreement_fraction": null,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "seed": 0,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 2,
+      "local_max_relative_difference": 0.0,
+      "local_exact_agreement_fraction": 1.0,
+      "all_local_points_converged": false,
+      "local_projection_free": true
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "seed": 1,
+      "local_loglog_slope_when_identifiable": null,
+      "local_points_eligible": 3,
+      "local_max_relative_difference": 0.0,
+      "local_exact_agreement_fraction": 1.0,
+      "all_local_points_converged": true,
+      "local_projection_free": true
+    }
+  ],
+  "csv": "/home/ext_csv/mpi_sweep_lab/audit_report_20260829/frozen_critic_small_step/frozen_critic_small_step.csv"
+}

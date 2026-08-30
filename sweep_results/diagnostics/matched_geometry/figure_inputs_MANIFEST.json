@@ -1,0 +1,18 @@
+{
+  "protocol": "derived_action_displacement_figure_inputs",
+  "sources": {
+    "lin2_complete": "/home/ext_csv/mpi_sweep_lab/audit_report_20260829/matched_explicit_geometry",
+    "lin2_extra_hopper": "/home/ext_csv/mpi_sweep_lab/audit_report_20260829/matched_exp2_hopper_medium_extra",
+    "lin3_hopper": "/home/ext_csv/mpi_sweep_lab/audit_report_20260829/matched_exp3_hopper_medium_geometry"
+  },
+  "formula": {
+    "critic_displacement_sq_mean_metric_mean": "mean_i ||action_hop1_i - dataset_action_i||^2 / action_dim",
+    "final_displacement_sq_mean_metric_mean": "mean_i ||action_hopK_i - dataset_action_i||^2 / action_dim",
+    "final_over_critic_rms": "sqrt(final_displacement / critic_displacement)"
+  },
+  "outputs": {
+    "lin2_run_movement.csv": 90,
+    "hopper_lin_frontier.csv": 28
+  },
+  "note": "Compact derived rows retain scores and action-displacement summaries; per-state NPZ files remain in the local audit tree."
+}

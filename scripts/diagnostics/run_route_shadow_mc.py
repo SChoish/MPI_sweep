@@ -95,7 +95,7 @@ def audit_command(job: dict[str, Any], args: argparse.Namespace) -> list[str]:
     command = [
         sys.executable,
         "-u",
-        str(ROOT / "scripts" / "mc_value_audit.py"),
+        str(Path(__file__).with_name("mc_value_audit.py")),
         f"--checkpoint={job['checkpoint']}",
         f"--env={job['env']}",
         f"--out-dir={job['output']}",
@@ -239,7 +239,18 @@ def summarize(jobs: list[dict[str, Any]], args: argparse.Namespace) -> None:
         "primary_key": PRIMARY_KEY,
         "run_estimand": (
             "mean over requested checkpoints of shadow_muk minus shadow_mu1 "
-            "per-checkpoint state-median symmetric relative calibration error"
+            "per-checkpoint state-median symmetric relative error against the "
+            "common Q_MC^{rho_1} first-route estimand"
+        ),
+        "reference_estimand": (
+            "simulator return under the effective first-route backup "
+            "continuation rho_1"
+        ),
+        "interpretation_caveat": (
+            "routes imply different continuation policies; this measures "
+            "relative alignment with the common Q_MC^{rho_1} first-route "
+            "estimand, not each shadow critic's calibration to its own "
+            "continuation"
         ),
         "inference_unit": "training run",
         "n_runs": int(len(run_deltas)),

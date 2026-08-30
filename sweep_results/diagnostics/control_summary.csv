@@ -1,0 +1,6 @@
+experiment,condition,n_runs,mean_d4rl_score,median_d4rl_score,collapse_below_20
+compute,sequential,8,71.385210,88.859370,2
+compute,fixed_reference,8,69.966238,87.898587,2
+compute,direct_final,8,59.411400,89.607715,3
+target_lag,canonical,8,13.564146,0.819636,6
+target_lag,actor_lag_3x,8,12.009041,1.539742,7

@@ -111,4 +111,5 @@ case "$JOB" in
 esac
 
 echo "[diag] done → $OUT_ROOT"
-echo "[diag] next: git add sweep_results/diagnostics/hosts/$HOST && commit && push"
+echo "[diag] publishable: CSV/JSON/MD only (raw NPZ/NPY and logs stay local)"
+echo "[diag] next: git add sweep_results/diagnostics/hosts/$HOST && git status --short"

@@ -25,7 +25,7 @@ folders below in place — see ARTIFACT_MAP.
 | `matched_geometry/` | Proximal/linearized movement, effective-step, critic-error, common-critic, and data-derived figure inputs |
 | `target_policy_exposure/` | Next-state Polyak-target displacement for 270 audited runs |
 | `simulator_calibration/` | Exploratory 60-checkpoint simulator-reference screening |
-| `route_shadow/` | Paired first-hop versus final-hop shadow-critic error against a common first-route value estimand on eight targeted runs |
+| `route_shadow/` | Paired first-hop versus final-hop shadow-critic alignment against the common \(Q_{\mathrm{MC}}^{\rho_1}\) first-route estimand on eight targeted runs |
 | `frozen_critic_small_step/` | Explicit/implicit local-consistency audit on 18 frozen critics |
 | `environment_t_sensitivity.csv` | Return versus realized first-hop displacement by environment |
 | `control_final_scores.csv` | Run-level compute-matched and actor-target-lag scores |
@@ -36,8 +36,9 @@ folders below in place — see ARTIFACT_MAP.
 
 - MPI-Prox `K=3` lowers deterministic target-policy displacement versus
   TD3+BC in 88/90 paired runs; its final-policy proxy is lower in 36/90.
-- Final-hop shadow routing has higher error against the common first-route
-  simulator estimand in all eight run-level comparisons (mean delta `0.1235147`, exact sign-flip
+- Final-hop shadow routing has higher symmetric relative error against the
+  common \(Q_{\mathrm{MC}}^{\rho_1}\) first-route estimand in all eight
+  run-level comparisons (mean delta `0.1235147`, exact sign-flip
   `p=0.0078125`).
 - Compute-matched sequential, fixed-reference, and direct-final controls have
   means `71.3852`, `69.9662`, and `59.4114`, with collapse counts

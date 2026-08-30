@@ -1,0 +1,20 @@
+{
+  "primary_key": "critic_symmetric_relative_error_rho_at_ak_p50",
+  "run_estimand": "mean over requested checkpoints of shadow_muk minus shadow_mu1 per-checkpoint state-median symmetric relative error against common Q_MC^rho1",
+  "reference_estimand": "simulator return under the effective first-route backup continuation rho1",
+  "interpretation_caveat": "routes imply different continuation policies; this measures relative alignment with the primary first-route value estimand, not each shadow critic's calibration to its own continuation",
+  "inference_unit": "training run",
+  "n_runs": 8,
+  "mean_delta": 0.12351472249786054,
+  "median_delta": 0.013267972954500763,
+  "positive_delta_runs": 8,
+  "two_sided_exact_sign_flip_p": 0.0078125,
+  "run_bootstrap_mean_95_interval": [
+    0.007879117398574416,
+    0.3234793470293291
+  ],
+  "bootstrap_samples": 10000,
+  "directional_hypothesis": "mean_delta > 0",
+  "decision_rule": "support requires mean_delta > 0 and two_sided_exact_sign_flip_p < 0.05",
+  "scope": "targeted mechanism study; not a universal task-level estimate"
+}

@@ -1,0 +1,57 @@
+{
+  "experiment": "compute",
+  "status": "launched",
+  "cells": [
+    {
+      "env": "hopper-medium-v2",
+      "T": "10"
+    },
+    {
+      "env": "hopper-medium-v2",
+      "T": "20"
+    },
+    {
+      "env": "walker2d-medium-v2",
+      "T": "4"
+    },
+    {
+      "env": "walker2d-medium-v2",
+      "T": "7"
+    }
+  ],
+  "seeds": [
+    0,
+    1
+  ],
+  "definitions": {
+    "baseline": "existing sequential MPI-Prox K=3: actor1(T/3), actor2(T/3|actor1), actor3(T/3|actor2)",
+    "fixed_reference": "actor1(T/3), actor2(T/3|actor1), actor3(T/3|actor1)",
+    "direct_final": "actor1(T/3), then two optimizer calls on actor3 with one 2T/3 objective anchored at actor1",
+    "matched_quantity": "three actor optimizer calls per delayed actor update"
+  },
+  "baseline_root": "/home/ext_csv/mpi_sweep_lab/results_mpi3",
+  "polyak": 0.005,
+  "target_lag_factor": null,
+  "max_timesteps": 1000000,
+  "eval_freq": 50000,
+  "save_interval": 250000,
+  "cli": {
+    "experiment": "compute",
+    "cells": null,
+    "seeds": "0 1",
+    "gpus": "0 1",
+    "slots_per_gpu": 4,
+    "cpus_per_job": 16,
+    "polyak": 0.005,
+    "target_lag_factor": 3.0,
+    "max_timesteps": 1000000,
+    "eval_freq": 50000,
+    "n_jitted": 8,
+    "save_interval": 250000,
+    "save_dir": "/home/ext_csv/mpi_sweep_lab/results_compute_matched",
+    "log_dir": "/home/ext_csv/mpi_sweep_lab/nohup_logs/causal_controls/compute_jobs",
+    "data_dir": "/raid/ext_csv/datasets/d4rl",
+    "q_scale_norm": true,
+    "dry_run": false
+  }
+}

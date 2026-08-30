@@ -1,0 +1,41 @@
+name: Install GPT AAAI-26 bundle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - gpt_aaai26_source.tar.gz.b64
+      - .github/workflows/install-gpt-aaai26.yml
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Decode and install source bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 --decode gpt_aaai26_source.tar.gz.b64 > /tmp/gpt_aaai26_source.tar.gz
+          printf '%s  %s\n' '60e7a71d7479be12568c32b780461cd0cdeba25cdf9ab45542fdf75129865f69' '/tmp/gpt_aaai26_source.tar.gz' | sha256sum -c -
+          rm -rf gpt
+          tar -xzf /tmp/gpt_aaai26_source.tar.gz
+          rm -f gpt_aaai26_source.tar.gz.b64
+          rm -f .github/workflows/install-gpt-aaai26.yml
+
+      - name: Commit installed bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A gpt gpt_aaai26_source.tar.gz.b64 .github/workflows/install-gpt-aaai26.yml
+          git commit -m 'Rewrite gpt manuscript bundle in AAAI-26 format'
+          git pull --rebase origin main
+          git push origin HEAD:main

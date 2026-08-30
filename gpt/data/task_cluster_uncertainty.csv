@@ -1,0 +1,5 @@
+contrast,estimate,ci_low,ci_high,positive_tasks,total_tasks,unit,note
+BAR-Prox K=4 minus TD3+BC,37.64,20.51,54.35,8,9,task,descriptive task-cluster percentile interval
+BAR-Prox K=4 minus BAR-Prox K=3,10.83,2.23,21.97,6,9,task,descriptive task-cluster percentile interval
+collapse-risk BAR-Prox K=4 minus TD3+BC,-0.3095,,,8,9,raw seeded run,point estimate only
+collapse-risk BAR-Prox K=4 minus BAR-Prox K=3,-0.0952,-0.206,0.0,,9,task-cluster,interval reaches zero

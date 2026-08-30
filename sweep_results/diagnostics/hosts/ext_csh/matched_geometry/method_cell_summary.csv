@@ -1,0 +1,2 @@
+method,cells,score_mean,collapse_cells,critic_displacement_median,final_displacement_median
+mpi2,12,62.81686661604602,3,0.1422210611936675,0.21344154162992068

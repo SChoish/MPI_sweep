@@ -1,0 +1,165 @@
+{
+  "analysis": "actual_next_state_target_policy_displacement",
+  "checkpoint_step": 1000000,
+  "common_batches": {
+    "hopper-medium-replay-v2": {
+      "action_dim": 3,
+      "bootstrap_transition_count": 399959,
+      "candidate_indices": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/common_batches/hopper-medium-replay-v2_indices.npy",
+      "candidate_row_pairs": 401999,
+      "dataset": "/home/ext_csh/MPI_sweep/data/hopper_medium_replay-v2.hdf5",
+      "hdf5_rows": 402000,
+      "hdf5_source_indices": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/common_batches/hopper-medium-replay-v2_hdf5_indices.npy",
+      "loader_transition_count": 401598,
+      "noise_seed": 2878185706246234393,
+      "sample_seed": 2878185706246234392,
+      "selected_states": 4096,
+      "standard_noises": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/common_batches/hopper-medium-replay-v2_standard_noises.npy",
+      "terminal_rows_excluded_from_bootstrap": 1639,
+      "timeout_rows_excluded_by_loader": 401
+    },
+    "hopper-medium-v2": {
+      "action_dim": 3,
+      "bootstrap_transition_count": 997813,
+      "candidate_indices": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/common_batches/hopper-medium-v2_indices.npy",
+      "candidate_row_pairs": 999999,
+      "dataset": "/home/ext_csh/MPI_sweep/data/hopper_medium-v2.hdf5",
+      "hdf5_rows": 1000000,
+      "hdf5_source_indices": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/common_batches/hopper-medium-v2_hdf5_indices.npy",
+      "loader_transition_count": 999998,
+      "noise_seed": 2906793565201608552,
+      "sample_seed": 2906793565201608551,
+      "selected_states": 4096,
+      "standard_noises": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/common_batches/hopper-medium-v2_standard_noises.npy",
+      "terminal_rows_excluded_from_bootstrap": 2185,
+      "timeout_rows_excluded_by_loader": 1
+    },
+    "walker2d-expert-v2": {
+      "action_dim": 6,
+      "bootstrap_transition_count": 998999,
+      "candidate_indices": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/common_batches/walker2d-expert-v2_indices.npy",
+      "candidate_row_pairs": 999999,
+      "dataset": "/home/ext_csh/MPI_sweep/data/walker2d_expert-v2.hdf5",
+      "hdf5_rows": 1000000,
+      "hdf5_source_indices": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/common_batches/walker2d-expert-v2_hdf5_indices.npy",
+      "loader_transition_count": 999000,
+      "noise_seed": 3045260074449983414,
+      "sample_seed": 3045260074449983413,
+      "selected_states": 4096,
+      "standard_noises": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/common_batches/walker2d-expert-v2_standard_noises.npy",
+      "terminal_rows_excluded_from_bootstrap": 1,
+      "timeout_rows_excluded_by_loader": 999
+    },
+    "walker2d-medium-v2": {
+      "action_dim": 6,
+      "bootstrap_transition_count": 998809,
+      "candidate_indices": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/common_batches/walker2d-medium-v2_indices.npy",
+      "candidate_row_pairs": 999999,
+      "dataset": "/home/ext_csh/MPI_sweep/data/walker2d_medium-v2.hdf5",
+      "hdf5_rows": 1000000,
+      "hdf5_source_indices": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/common_batches/walker2d-medium-v2_hdf5_indices.npy",
+      "loader_transition_count": 999322,
+      "noise_seed": 8446265429259683419,
+      "sample_seed": 8446265429259683418,
+      "selected_states": 4096,
+      "standard_noises": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/common_batches/walker2d-medium-v2_standard_noises.npy",
+      "terminal_rows_excluded_from_bootstrap": 513,
+      "timeout_rows_excluded_by_loader": 677
+    }
+  },
+  "completed_cells": 24,
+  "cpu_environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "JAX_PLATFORMS": "cpu",
+    "JAX_PLATFORM_NAME": "cpu",
+    "OMP_NUM_THREADS": "4",
+    "XLA_FLAGS": "--xla_cpu_multi_thread_eigen=false intra_op_parallelism_threads=4"
+  },
+  "cpu_only": true,
+  "created_utc": "2026-08-30T09:38:46.214549+00:00",
+  "data_dir": "/home/ext_csh/MPI_sweep/data",
+  "envs": [
+    "hopper-medium-v2",
+    "hopper-medium-replay-v2",
+    "walker2d-medium-v2",
+    "walker2d-expert-v2"
+  ],
+  "interpretation_limits": {
+    "causality": "post-hoc associative diagnostic; it does not identify target policy displacement as the cause of critic or return changes",
+    "paired_next_action": "a single observed action at the paired next state, not the conditional-mean behavior action; absolute distances include conditional action variance"
+  },
+  "jax_backend": "cpu",
+  "jax_devices": [
+    "TFRT_CPU_0"
+  ],
+  "max_episode_steps": 1000,
+  "methods": [
+    "mpi2"
+  ],
+  "metric_units": "mean squared displacement per action coordinate",
+  "metrics": [
+    "target_deterministic_to_next_data_sq_mean_metric",
+    "target_smoothed_to_next_data_sq_mean_metric",
+    "polyak_lag_sq_mean_metric",
+    "current_sample_anchor_proxy_sq_mean_metric"
+  ],
+  "missing_checkpoints": [],
+  "noise_seed_base": 20260830,
+  "normalization_fingerprints": {
+    "hopper-medium-replay-v2": {
+      "hopper-medium-replay-v2_tau10_mpi2_seed2": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
+      "hopper-medium-replay-v2_tau10_mpi2_seed3": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
+      "hopper-medium-replay-v2_tau4_mpi2_seed2": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
+      "hopper-medium-replay-v2_tau4_mpi2_seed3": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
+      "hopper-medium-replay-v2_tau7_mpi2_seed2": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
+      "hopper-medium-replay-v2_tau7_mpi2_seed3": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29"
+    },
+    "hopper-medium-v2": {
+      "hopper-medium-v2_tau10_mpi2_seed2": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
+      "hopper-medium-v2_tau10_mpi2_seed3": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
+      "hopper-medium-v2_tau4_mpi2_seed2": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
+      "hopper-medium-v2_tau4_mpi2_seed3": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
+      "hopper-medium-v2_tau7_mpi2_seed2": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
+      "hopper-medium-v2_tau7_mpi2_seed3": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6"
+    },
+    "walker2d-expert-v2": {
+      "walker2d-expert-v2_tau10_mpi2_seed2": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547",
+      "walker2d-expert-v2_tau10_mpi2_seed3": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547",
+      "walker2d-expert-v2_tau4_mpi2_seed2": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547",
+      "walker2d-expert-v2_tau4_mpi2_seed3": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547",
+      "walker2d-expert-v2_tau7_mpi2_seed2": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547",
+      "walker2d-expert-v2_tau7_mpi2_seed3": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547"
+    },
+    "walker2d-medium-v2": {
+      "walker2d-medium-v2_tau10_mpi2_seed2": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
+      "walker2d-medium-v2_tau10_mpi2_seed3": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
+      "walker2d-medium-v2_tau4_mpi2_seed2": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
+      "walker2d-medium-v2_tau4_mpi2_seed3": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
+      "walker2d-medium-v2_tau7_mpi2_seed2": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
+      "walker2d-medium-v2_tau7_mpi2_seed3": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106"
+    }
+  },
+  "out_dir": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure",
+  "post_hoc_only": true,
+  "requested_n_states": 4096,
+  "root": "/home/ext_csh/MPI_sweep/logs/_diag_results_root",
+  "sample_seed_base": 20260829,
+  "seeds": [
+    2,
+    3
+  ],
+  "smoothing_estimand": "Monte Carlo mean over fixed common standard-normal noises of distance after stored policy_noise scaling, stored noise_clip, and stored max_action clipping",
+  "smoothing_samples": 64,
+  "summary_csv": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/target_policy_exposure_summary.csv",
+  "taus": [
+    4.0,
+    7.0,
+    10.0
+  ],
+  "transition_convention": {
+    "next_dataset_action": "actions[hdf5_index + 1]",
+    "next_observation": "observations[hdf5_index + 1]",
+    "terminal": "retained by training loader, excluded from this bootstrap-only audit",
+    "timeout": "excluded exactly as train_td3bc.qlearning_from_hdf5"
+  }
+}

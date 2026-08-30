@@ -1,0 +1,68 @@
+\section{Background}
+\label{sec:background}
+
+\subsection{Offline actor--critic learning}
+
+We consider a discounted Markov decision process
+$\langle\mathcal S,\mathcal A,P,r,\gamma\rangle$ with continuous action space
+$\mathcal A\subset\mathbb R^d$. Offline RL receives only a fixed dataset
+$\mathcal D=\{(s_i,a_i,r_i,s_i')\}_{i=1}^N$ and must learn a policy without
+additional data collection. A critic $\widehat Q$ is trained from bootstrapped
+targets of the form
+\begin{equation}
+ y_{\rho}=r+\gamma\min_{j}Q^-_j(s',\rho(s')),
+ \label{eq:td_target_background}
+\end{equation}
+where $\rho$ is the target policy and $Q^-_j$ are target critics. When $\rho$
+selects actions outside dataset support, errors in $Q^-_j$ enter both the
+regression target and the next actor update. This feedback is a central source
+of offline instability \citep{fujimoto2019offpolicy,kumar2019bear}.
+
+Behavior-anchored algorithms control this feedback by optimizing a value term
+together with a cloning or divergence penalty. For a deterministic actor
+$\mu_\theta$, the normalized TD3+BC form is
+\begin{equation}
+ \mathcal L_{\rm actor}(\theta)
+ =-\alpha\,\mathbb E_s\bar Q(s,\mu_\theta(s))
+ +\mathbb E_{(s,a)\sim\mathcal D}\frac{1}{d}
+   \|\mu_\theta(s)-a\|_2^2,
+ \label{eq:td3bc_background}
+\end{equation}
+where $\bar Q=\widehat Q/C$ and $C>0$ is a stop-gradient critic scale. The
+anchor makes the update conservative, but a one-step method uses the same
+policy branch for both roles: a Polyak target copy enters the TD target, while
+the online actor is deployed. Consequently, the displacement that perturbs
+bootstrapping is tied to the total displacement used for policy improvement.
+
+\subsection{Proximal updates and Wasserstein geometry}
+
+Fix a state distribution $\rho$ and a policy family $\mathcal M$. Given an
+estimated energy $\widehat{\mathcal E}$ and a metric $d_{\mathcal M}$, a
+proximal policy update is
+\begin{equation}
+ \pi^+\in\argmin_{\pi\in\mathcal M}
+ \left\{\widehat{\mathcal E}(\pi)
+ +\frac{1}{2h}d_{\mathcal M}^2(\pi,\pi^{\rm ref})\right\}.
+ \label{eq:generic_prox}
+\end{equation}
+This is the minimizing-movement, or implicit-Euler, construction associated
+with a metric gradient flow \citep{ambrosio2005gradient,otto2001geometry}. The
+variational problem in Eq.~\eqref{eq:generic_prox} is meaningful for finite
+$h$ whenever a minimizer exists. Its interpretation as an accurate time step
+of a continuous flow is more restrictive: it requires a fixed energy,
+sufficiently small realized moves, and increasingly accurate solves as the
+step size vanishes.
+
+For state-conditioned deterministic policies
+$\pi_\mu(\cdot\mid s)=\delta_{\mu(s)}$, the quadratic Wasserstein distance has
+the Dirac limit
+\begin{equation}
+ W_2^2\!\left(\pi_\mu(\cdot\mid s),\pi_\nu(\cdot\mid s)\right)
+ =\|\mu(s)-\nu(s)\|_2^2.
+ \label{eq:dirac_w2_background}
+\end{equation}
+Thus squared action anchoring is a Wasserstein movement cost, up to a fixed
+metric scaling. We use this observation to separate three levels of analysis:
+(i) a local Wasserstein-flow limit, (ii) finite-step inexact proximal
+improvement relative to the learned critic, and (iii) the coupled actor--critic
+branch dynamics that dominate at large policy-improvement budgets.

@@ -1,0 +1,202 @@
+\section{Experiments}
+\label{sec:experiments}
+
+We evaluate MPI on the nine D4RL locomotion tasks formed by HalfCheetah,
+Hopper, and Walker2d with medium, medium-replay, and medium-expert datasets
+\citep{fu2020d4rl}. Base implementations follow CORL configurations
+\citep{tarasov2022corl}; scores are D4RL normalized returns. Additional
+per-task results and diagnostic definitions are in
+Appendix~\ref{app:experiments}.
+
+\paragraph{Fixed-budget protocol and estimand.}
+We hold a total nominal budget $T$ fixed, split it across $K$ actor hops as
+$h=T/K$, and sweep
+\begin{equation*}
+\begin{split}
+T\in\{&0.05,0.1,0.2,0.4,0.7,1.5,2.5,\\
+      &4,7,10,12,14,17,20\}.
+\end{split}
+\end{equation*}
+over all nine tasks with two paired seeds. The sweep is complete over this
+specified grid and contains $9\times14\times2$ runs per method. It is designed
+as a high-resolution stability phase diagram rather than a final benchmark
+alone. For $K=1$, Proposition~\ref{prop:spi_equiv} maps $T$ to the normalized
+TD3+BC coefficient $\alpha=2T$.
+
+We compare TD3+BC ($K=1$), proximal MPI with $K\in\{2,3\}$ (MPI-Prox), and a
+scale-matched projected linearized target with $K\in\{2,3\}$ (MPI-Lin):
+\begin{equation}
+ a_{k+1}^{\rm tar}=\Pi_{\mathcal A}\!\left[
+ a_k+d\frac{T}{K}\frac{\nabla_a\widehat Q(s,a_k)}{C_k}\right].
+ \label{eq:linearized_target}
+\end{equation}
+Here $a_0$ is the sampled dataset action. At each hop, MPI-Lin detaches the
+current reference, recomputes the $\widehat Q$ gradient and $C_k$, clips the
+target to the action box, and takes one mean-squared-error optimizer step with
+the corresponding persistent actor. It uses the same first-hop target and
+final-hop evaluation routing as MPI-Prox. The factor $d$ matches the local
+action-space coefficient induced by the action-averaged metric in
+Eq.~\eqref{eq:mean_metric}. All conditions match datasets, critic updates, and
+the horizon of $10^6$ critic updates; checkpoint diagnostics use the final
+checkpoint. A $K$-hop condition performs $K$ actor optimizer steps at each
+delayed policy update, and $C_k$ is recomputed at each reference. The primary
+estimand is the end-to-end effect of the fixed-budget refinement bundle, which
+jointly changes local step size, re-centering frequency, actor compute, and
+target/deployment dataflow.
+
+The analyses test whether this bundle reduces large-budget low-return
+outcomes, whether the effect persists under the linearized realization, how
+first-hop target-policy displacement differs from final-policy reach, and which
+critic-validity diagnostics characterize failed training trajectories.
+
+\subsection{Fixed-budget splitting broadens the stability envelope}
+
+Figure~\ref{fig:stability} and Table~\ref{tab:stability} summarize the fixed-budget sweep. We descriptively call a high-budget cell collapsed when its two-seed mean score is below $20$; this is a locomotion failure indicator, not a theoretical threshold. MPI-Prox with $K=3$ has the strongest high-budget average and reduces the seed-mean collapse count from $35/63$ to $17/63$. MPI-Lin with $K=3$ reduces the same count to $24/63$, compared with $29/63$ for two linearized hops, and raises the high-budget average from $36.68$ to $43.91$. The raw-seed counts confirm the lower failure rate of both three-hop realizations. The proximal $K=2$ to $K=3$ mean improvement for $T\ge4$ is $+10.76$, whereas the median is only $+0.50$; the corresponding linearized differences are $+7.23$ and $+0.86$. Thus additional hops primarily rescue low-return outcomes rather than uniformly shifting settings. Appendix~\ref{app:results} reports sensitivity to thresholds $0,10,20,30,$ and $40$.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/stability_envelope.pdf}
+\caption{Fixed-budget sweep over nine locomotion tasks. (a) Mean score over
+tasks. (b) Collapse rates for $T\ge4$, reported both by environment--budget
+cell and by seeded run. Fixed-budget substepping broadens the stable
+high-budget region for both proximal and scale-matched linearized realizations.}
+\label{fig:stability}
+\end{figure*}
+
+\begin{table}[t]
+\centering
+\caption{Aggregate fixed-budget results. High denotes $T\ge4$ and tail denotes
+$T\ge10$. Collapse entries are seed-mean cells / raw seeded runs.}
+\label{tab:stability}
+\footnotesize
+\begin{tabular}{lrrrr}
+\toprule
+Method & $T\le2.5$ & High & Tail & Collapse\\
+\midrule
+TD3+BC & 68.35 & 25.97 & 20.46 & 35 / 68\\
+MPI-Prox, $K=2$ & \textbf{71.62} & 42.02 & 31.49 & 25 / 53\\
+MPI-Prox, $K=3$ & 70.56 & \textbf{52.78} & \textbf{43.55} & \textbf{17 / 41}\\
+MPI-Lin, $K=2$ & 69.02 & 36.68 & 27.44 & 29 / 58\\
+MPI-Lin, $K=3$ & 68.54 & 43.91 & 33.12 & 24 / 53\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Task-dependent budget response.}
+Environment-level curves exhibit recurring response motifs rather than a
+scalar task-specific optimum. HalfCheetah medium and replay are comparatively
+smooth, Hopper-replay has a wide high-return plateau, Hopper-medium and
+Walker2d-medium show sharp, nonmonotone transitions, and expert
+datasets show asymmetric high-budget failure. These motifs are descriptive,
+not disjoint task classes.
+In the matched Prox-2 audit, the current-state critic-coupled displacement
+proxy organizes many of these transitions more directly than nominal $T$
+(Appendix Figure~\ref{fig:environment_sensitivity}). HalfCheetah-medium remains
+stable as $\widehat D_{\rm critic}$ grows from $.033$ to $.056$, whereas
+Hopper-expert falls from $101.9$ to $1.8$ as the proxy grows from $.052$ to
+$.907$. At comparable proxy values near $.1$, however, returns still differ
+substantially across tasks. Nominal budget is therefore an indirect control
+mapped through a task- and trajectory-dependent actor path and critic
+evolution. Reversals and cross-task dispersion prevent these curves from being
+summarized by a universal critic-valid radius; we use realized movement only
+to organize within-task transitions.
+
+\paragraph{Targeted $K=4$ extension.}
+A separate-machine, four-seed MPI-Prox run on Hopper-medium shifts the high-return window to larger budgets. At $T=17$, the $K=3$ two-seed mean is $0.7$, whereas $K=4$ reaches $100.9\pm1.7$. The $K=4$ means at $T=\{10,12,14,17\}$ are $100.4,101.2,101.1,$ and $100.9$, with standard deviations at most $1.7$. At $T=20$, however, the four scores $99.7,51.0,0.7,$ and $15.8$ yield $41.8\pm44.0$; at $T=7$, $K=4$ scores $84.8\pm8.0$ versus $94.4$ for $K=3$. These per-seed results support a $K$-dependent, nonmonotone stability window with a sharp variance increase near $T/K=5$, not a verified $T_{\rm frontier}\propto K$ law. Changing $K$ jointly changes $T/K$, re-centering, compute, normalization, and routing, so this result does not identify a local-step mechanism (Appendix Table~\ref{tab:hopper_k4}). The per-seed scores have been transferred, but the external raw evaluation files, configurations, and checkpoints have not; we therefore exclude this targeted run from the complete-grid aggregate.
+
+The completed linearized sweep shows that the stability gain survives linear-target regression and is therefore not unique to the proximal actor objective. Three linearized hops exceed TD3+BC by $17.94$ high-budget points and reduce collapse cells from $35$ to $24$; relative to two linearized hops, the average gain is $7.23$ points and the collapse count falls from $29$ to $24$. MPI-Prox $K=3$ remains stronger: over 63 paired high-budget cells, MPI-Lin $K=3$ wins by more than one point in 8, 21 are within one point, and MPI-Prox wins in 34; the mean and median Lin-minus-Prox differences are $-8.87$ and $-1.69$. Because the actor objectives differ, these remain comparisons of complete training procedures rather than isolated integrator effects.
+
+\subsection{Large-budget behavior is nonlocal and critic dependent}
+
+At $T=20$, the raw linearized target reaches the action box in
+$94$--$95\%$ of states, and the effective action-step coefficient
+$h_{\rm eff}$ is only $14\%$ and $9\%$ of the nominal $dT/K$ coefficient in
+the two hops. These are medians over 18 environment--seed runs per hop. The
+practical operation is projected target generation followed by amortized neural
+regression under a moving critic. The sweep measures the resulting end-to-end
+stability envelope; local truncation error lies outside this estimand.
+
+Figure~\ref{fig:failure} shows the common failure signature. Environment
+return supplies the external label: collapsed runs score below $20$. These
+runs have orders-of-magnitude larger TD-error tails, larger critic magnitudes,
+and larger realized movements. The controlled common critic is the frozen
+final TD3+BC $T=1$ critic matched by environment and seed. A run-total gain
+sums the mean $Q$ change across actor hops on the shared state batch. For
+collapsed MPI-Lin runs, its median under the jointly trained critic is
+$3.33\times10^{11}$; under the common critic it is $-1.42$, compared with
+$+2.11$ for stable runs. For MPI-Prox, the common-critic gain changes from
+$+2.51$ in stable runs to $-1.06$ in collapsed runs. This sign reversal
+diagnoses cross-critic disagreement consistent with
+Eq.~\eqref{eq:critic_error_margin}; environment return remains the criterion
+for policy failure.
+
+An exploratory CPU audit supplies a simulator reference for critic calibration.
+Across 60 MPI-Prox checkpoints, the median signed error
+$\widehat Q_1(s,a_K)-Q_{\rm MC}^{\rho_1}(s,a_K)$ is
+$+1.70\times10^{12}$ in five collapsed cells and $-38.7$ in 55 stable cells,
+corroborating severe overestimation in the collapsed screening cells. The
+action-ranking subset is sparse: only 69 of 720 cloned states have both action
+differences outside a one-return-unit dead zone, and 29 of those signs
+disagree. We therefore use this audit as checkpoint-level calibration evidence
+rather than as a routing or action-ranking estimand.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/failure_signature.pdf}
+\caption{Median diagnostics over the matched
+$T\in\{4,7,10,14,20\}$ audit. Proximal and linearized realizations share a
+diagnostic pattern consistent with critic miscalibration: critic errors and
+realized movements increase sharply, and run-total gains under a common critic become
+negative. Environment return labels failure; the common critic diagnoses
+cross-critic disagreement.}
+\label{fig:failure}
+\end{figure*}
+
+\subsection{Target-policy displacement and final-policy reach}
+
+At the same nominal budget, MPI-Prox realizes a smaller current-state first-hop
+displacement proxy than MPI-Lin once $T\ge7$ (Appendix Figure~\ref{fig:exposure}a). At
+$T=20$, their median $\widehat D_{\rm critic}$ values are $0.195$ and $0.323$.
+Across 90 paired seeded comparisons at $T\in\{4,7,10,14,20\}$, exactly one
+realization collapses in 11 cases. In all 11, the stable realization has both
+smaller $\widehat D_{\rm critic}$ and smaller $\widehat D_{\rm final}$.
+These paired outcomes associate smaller realized movement with the stable
+optimization trajectory. Because the proxy is measured on current validation
+states rather than the Polyak target policy on next states, this result
+organizes the observed failure transition without identifying a causal route
+through the TD target.
+
+We directly measure Eq.~\eqref{eq:direct_target_displacement} on all 270
+audited cells. The current-state proxy closely tracks deterministic
+target-policy displacement ($r=.9999$). MPI-Prox $K=3$ has lower target-policy
+displacement than TD3+BC in 88 of 90 paired runs (median ratio $.658$), while
+the current-state $\widehat D_{\rm final}$ proxy is lower in only 36 of 90
+(median ratio $1.057$). Thus the three-hop refinement can reduce movement in
+the target-policy branch without merely shrinking its measured final-policy
+reach. Against $K=2$, $K=3$ lowers target-policy
+displacement in 84 of 90 runs but loses by more than one score point in 17 of
+those 84, showing that target-policy displacement alone does not determine
+performance (Appendix Table~\ref{tab:direct_exposure}).
+
+A targeted $K=3$ study on Hopper-medium reveals two modes of decoupling
+(Appendix Figure~\ref{fig:exposure}b). For $T=4$--$10$, $K=2$ and $K=3$ have nearly
+identical $\widehat D_{\rm critic}$, whereas $K=3$ increases
+$\widehat D_{\rm final}$ and score;
+at $T=10$, the scores are $58.12$ and $85.35$. In the observed transition
+region from stable to collapsed scores ($T=12,14$), $K=3$ instead contracts
+both displacements and avoids the low-return outcome.
+At $T=20$, both enter severe projection and saturation and collapse. The third
+hop changes target-policy movement, re-centering frequency, and the
+optimization trajectory rather than the formal order of the local update.
+
+\subsection{Targeted component controls}
+
+We next hold the actor trajectory fixed and change only the backup route. Two actor-detached shadow critics start from the same parameters and receive identical minibatches and target-smoothing noise; one bootstraps through the first-hop target actor and the other through the final-hop target actor. The study covers Hopper-medium at $T\in\{10,20\}$ and Walker2d-medium at $T\in\{4,7\}$, with two seeds and four checkpoints. Relative to simulator returns under the effective backup continuation, the final-route shadow has greater state-median symmetric relative calibration error in all eight run-level averages. The final-minus-first route delta has mean $.124$, median $.013$, a run-bootstrap mean 95\% interval $[.008,.323]$, and an exact two-sided sign-flip $p=.0078$. Because neither shadow critic drives the actors, this isolates routing effects on critic calibration along the observed trajectory, not routing effects on return.
+
+Two additional eight-run controls probe simpler explanations (Appendix Table~\ref{tab:targeted_controls}). With three actor optimizer calls in every condition, sequential $K=3$, a fixed-reference chain, and a direct-final control have means $71.4,70.0,$ and $59.4$ and collapse counts $2/8,2/8,$ and $3/8$. Fixed-reference refinement therefore matches sequential re-centering in this targeted sample, so the experiment does not establish re-centering alone as the source of the sweep-wide gain. Slowing only the $K=1$ actor-target Polyak rate by a factor of three changes the matched collapse count from $6/8$ to $7/8$ and does not reproduce the $K=3$ rescue; actual displacement under this lag intervention was not audited. Together, the controls support first-hop backup routing while retaining the implemented bundle, rather than any isolated component, as the main estimand.
+
+\subsection{Discussion and limitations}
+
+Both three-hop realizations reduce large-budget failures, although MPI-Prox remains stronger overall. Direct measurements show that lower first-hop target movement need not shrink final-policy reach, and fixed-trajectory shadows are less calibrated under final-hop routing in all eight targeted runs. Fixed-reference refinement matches sequential re-centering, while slower target averaging does not rescue the selected one-hop cells. Thus the primary estimate remains the implemented bundle: $K$ changes local step, re-centering, compute, normalization, and routing together. The fourth-hop study likewise relocates rather than uniformly improves the high-return window.
+
+The complete grid covers TD3+BC on nine locomotion datasets with two paired seeds per cell. The separate-machine four-seed $K=4$ study lacks transferred raw artifacts. Collapse is descriptive, and the common-critic, simulator, and eight-run controls are targeted rather than exhaustive. The finite-step margin concerns the learned critic; the Wasserstein-flow account assumes small realized steps under a fixed critic.

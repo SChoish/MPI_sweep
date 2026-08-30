@@ -1,0 +1,66 @@
+\documentclass[10pt,twocolumn,twoside]{article}
+\usepackage{aistats2027_provisional}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{natbib}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,decorations.pathreplacing}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{xspace}
+
+\hypersetup{
+  colorlinks=true,
+  citecolor=blue!55!black,
+  linkcolor=blue!55!black,
+  urlcolor=blue!55!black,
+  pdftitle={Multi-Step Proximal Policy Improvement: Separating Target-Policy Displacement from Deployment Reach in Offline Actor--Critic Learning},
+  pdfauthor={Anonymous Authors},
+  pdfsubject={Offline reinforcement learning, proximal policy improvement, actor--critic stability}
+}
+\setlist[itemize]{leftmargin=1.35em,itemsep=1pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=1.55em,itemsep=1pt,topsep=2pt}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+\newcommand{\E}{\mathbb E}
+\newcommand{\R}{\mathbb R}
+\newcommand{\M}{\mathcal M}
+\newcommand{\D}{\mathcal D}
+\newcommand{\A}{\mathcal A}
+\newcommand{\sg}{\operatorname{sg}}
+\newcommand{\prox}{\operatorname{prox}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\MPI}{\textsc{MPI}\xspace}
+
+\title{Multi-Step Proximal Policy Improvement:\\Separating Target-Policy Displacement from Deployment Reach in Offline Actor--Critic Learning}
+\author{Anonymous Authors}
+\date{Anonymous Institution}
+\renewcommand{\paperrunningtitle}{Multi-Step Proximal Policy Improvement}
+\renewcommand{\paperrunningauthor}{Anonymous Authors}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Behavior-regularized offline actor--critic methods commonly use one policy branch both to construct bootstrapped critic targets and to form the deployed policy. This ties the target-policy displacement seen during critic training to the total reach of policy improvement. We introduce multi-step proximal policy improvement (MPI), a re-centered $K$-hop refinement of TD3+BC in which a target copy of the first hop supplies TD actions and the final hop supplies the evaluated policy. For deterministic actors, squared action anchoring defines a Wasserstein--2 proximal step. We derive a finite-step margin relative to the learned critic, an explicit critic-error transfer term, a first-hop target-perturbation bound, and a fixed-$K$ small-budget expansion. In a complete sweep over nine D4RL locomotion tasks and fourteen fixed budgets, three proximal hops reduce large-budget low-return cells from $35/63$ to $17/63$; three scale-matched linearized hops reduce them to $24/63$. Across audited checkpoints, three-hop MPI lowers deterministic target-policy displacement relative to TD3+BC in $88/90$ paired runs, while its current-state final-policy displacement proxy is lower in only $36/90$. In a paired shadow-critic intervention on eight targeted runs, bootstrapping through the final hop yields worse simulator-referenced calibration than bootstrapping through the first hop in all eight. Together with the failure diagnostics, these results show that the implemented fixed-budget refinement bundle broadens the empirical stability envelope while keeping the theoretical guarantee explicitly relative to the learned critic.
+\end{abstract}
+
+\input{sections/introduction}
+\input{sections/background}
+\input{sections/related}
+\input{sections/method}
+\input{sections/experiments}
+\input{sections/conclusion}
+
+\input{sections/references}
+
+\input{sections/appendix}
+
+\end{document}

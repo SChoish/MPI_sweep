@@ -1,0 +1,76 @@
+{
+  "audit_root": "/home/ext_csv/mpi_sweep_lab/audit_report_20260829",
+  "bootstrap": {
+    "samples": 100000,
+    "seed": 20260830,
+    "unit": "(env, seed) cluster for target; training run for route"
+  },
+  "checksums": {
+    "bytes": 3180555266,
+    "files": 2135
+  },
+  "counts": {
+    "failure_diagnostics_run.csv": 180,
+    "route_intervention_run.csv": 8,
+    "sensitivity.csv": 79,
+    "simulator_checkpoint.csv": 60,
+    "target_exposure_run.csv": 270
+  },
+  "created_at_utc": "2026-08-30T10:40:51.448874+00:00",
+  "filters": {
+    "collapse_primary": "D4RL normalized score < 20",
+    "route_aggregation": "state median -> checkpoint -> training-run mean",
+    "simulator_aggregation": "rollout mean -> state error -> checkpoint median",
+    "target": "bootstrap-mask-valid transitions; timeout filtering from source manifest"
+  },
+  "input_policy": "raw NPZ/per-state CSV plus run-level TD diagnostics where source NPZ did not retain TD residual arrays; no manuscript aggregate table",
+  "integrity": {
+    "failure": {
+      "primary_key_duplicates": 0,
+      "raw_inf": 0,
+      "raw_nan": 0,
+      "rows": 180,
+      "state_pairing_exact_across_methods": true,
+      "td_error_max_unavailable_rows": 90,
+      "td_error_source": "run-level diagnostic CSV; source NPZ did not retain TD residual arrays"
+    },
+    "route": {
+      "all_pairings_exact": true,
+      "checkpoint_state_pair_checks": 32,
+      "n_inf": 0,
+      "n_nan": 0,
+      "primary_key_duplicates": 0,
+      "rows": 8
+    },
+    "simulator": {
+      "collapsed_checkpoints": 5,
+      "n_inf": 0,
+      "n_nan": 0,
+      "primary_key_duplicates": 0,
+      "rows": 60,
+      "stable_checkpoints": 55,
+      "states": 720
+    },
+    "target_exposure": {
+      "common_noise_files_by_environment": 9,
+      "deterministic_formula_max_abs_error": 3.2756361179053783e-07,
+      "geometry_sample_sizes": [
+        512,
+        4096
+      ],
+      "geometry_state_pairing_exact_within_sample_size": true,
+      "normalization_hash_exact_by_environment": true,
+      "primary_key_duplicates": 0,
+      "raw_inf": 0,
+      "raw_nan": 0,
+      "rows": 270,
+      "smoothed_summary_max_abs_error": 4.440892098500626e-16,
+      "state_pairing_exact_by_environment": true
+    }
+  },
+  "lab_git_commit": "9c8a9918e9b9c22360f012b8ab777364404c546d",
+  "output_dir": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/audit_pack",
+  "repo_git_commit": "0f382090f4410c8a4118c99cfd0589a06c0848d7",
+  "schema_version": 1,
+  "understood_as": "re-audit existing local raw/per-state diagnostics without rerunning training or simulator rollouts; publish compact run/checkpoint outputs"
+}

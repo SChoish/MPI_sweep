@@ -1,0 +1,65 @@
+\documentclass[10pt,twocolumn,twoside]{article}
+\usepackage{aistats2027_provisional}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{natbib}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,decorations.pathreplacing}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{xspace}
+
+\hypersetup{
+  colorlinks=true,
+  citecolor=blue!55!black,
+  linkcolor=blue!55!black,
+  urlcolor=blue!55!black,
+  pdftitle={Multi-Step Proximal Policy Improvement: Budget Splitting for Stable Offline Actor--Critic Learning},
+  pdfauthor={Anonymous Authors},
+  pdfsubject={Offline reinforcement learning, proximal policy improvement, actor--critic stability}
+}
+\setlist[itemize]{leftmargin=1.35em,itemsep=1pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=1.55em,itemsep=1pt,topsep=2pt}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newcommand{\E}{\mathbb E}
+\newcommand{\R}{\mathbb R}
+\newcommand{\M}{\mathcal M}
+\newcommand{\D}{\mathcal D}
+\newcommand{\A}{\mathcal A}
+\newcommand{\sg}{\operatorname{sg}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\MPI}{\textsc{MPI}\xspace}
+\newcommand{\Pthree}{\textsc{Prox-3}\xspace}
+\newcommand{\Pfour}{\textsc{Prox-4}\xspace}
+
+\title{Multi-Step Proximal Policy Improvement:\\Budget Splitting for Stable Offline Actor--Critic Learning}
+\author{Anonymous Authors}
+\date{Anonymous Institution}
+\renewcommand{\paperrunningtitle}{Multi-Step Proximal Policy Improvement}
+\renewcommand{\paperrunningauthor}{Anonymous Authors}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Offline actor--critic learning must control how far policy improvement moves before critic error feeds back through bootstrapped targets. In TD3+BC, one actor branch determines both target actions and the deployed policy. Multi-step proximal policy improvement (MPI) instead divides a nominal actor budget $T$ across $K$ persistent, behavior-anchored actors: the first branch supplies TD-target actions and the last branch is deployed. For deterministic policies, the squared anchor is a fiberwise Wasserstein--2 movement cost. We derive a conditional finite-step descent inequality relative to the learned critic and a first-hop target-perturbation bound, while distinguishing these statements from the implemented one-Adam-step realization. In a complete two-seed sweep over nine D4RL locomotion tasks and fourteen budgets, proximal MPI with $K=4$ raises the high-budget mean score from $25.97$ to $63.61$ and reduces low-return cells from $35/63$ to $9/63$. Relative to $K=3$, it rescues eight collapsed cells without creating a new collapsed cell at the two-seed cell level; the mean improvement is $10.83$ but the median is only $0.32$, locating the gain in the lower tail. A linearized realization also improves with additional hops, and the one-hop phase diagram reproduces on two further seeds. These results support an end-to-end stability effect of budget splitting. They do not isolate re-centering, routing, compute, or initialization; in particular, the released implementation changes critic initialization with $K$, which remains a required controlled rerun.
+\end{abstract}
+
+\input{sections/introduction}
+\input{sections/method}
+\input{sections/analysis}
+\input{sections/experiments}
+\input{sections/related}
+\input{sections/conclusion}
+
+\input{sections/references}
+\input{sections/appendix}
+
+\end{document}

@@ -1,0 +1,91 @@
+\section{Method}
+\label{sec:method}
+
+\subsection{Offline deterministic actor--critic learning}
+
+Let $\D=\{(s_i,a_i,r_i,s_i')\}_{i=1}^N$ be an offline dataset for an MDP with continuous action space $\A\subset\R^d$. A twin critic $\widehat Q=(\widehat Q_1,\widehat Q_2)$ is trained from targets
+\begin{equation}
+ y_\rho=r+\gamma\min_j Q_j^-(s',\rho(s')),                    \label{eq:tdtarget}
+\end{equation}
+where $Q_j^-$ are target critics and $\rho$ is a target actor with clipped smoothing noise in the implementation. For a deterministic actor $\mu$, normalized TD3+BC uses
+\begin{equation}
+ \mathcal L_{\rm BC}(\mu)
+ =-\alpha\,\E_s \bar Q(s,\mu(s))
+ +\E_{(s,a)\sim\D}\frac{1}{d}\|\mu(s)-a\|_2^2,             \label{eq:td3bc}
+\end{equation}
+where $\bar Q=\widehat Q_1/C$ and $C$ is a positive stop-gradient scale.
+
+\subsection{A persistent $K$-actor chain}
+
+MPI maintains actors $\mu_1,\ldots,\mu_K$ with independent parameters and optimizer states. At each delayed policy update, the critic is updated first and then the actors are updated in order on the same minibatch. Let $h=T/K$. The proximal-loss realization uses
+\begin{equation}
+\begin{aligned}
+\mathcal L_1(\mu_1)
+ &=-2h\,\E_s\bar Q_1(s,\mu_1(s))\\[-2pt]
+ &\quad+\E_{(s,a)\sim\D}\frac{1}{d}\|\mu_1(s)-a\|_2^2,\\
+\mathcal L_k(\mu_k\mid\mu_{k-1})
+ &=-2h\,\E_s\bar Q_k(s,\mu_k(s))\\[-2pt]
+ &\quad+\E_s\frac{1}{d}\|\mu_k(s)-\sg\mu_{k-1}(s)\|_2^2,
+\end{aligned}                                                     \label{eq:actorchain}
+\end{equation}
+for $k=2,\ldots,K$. The normalizer for later hops is computed at the detached reference action. A Polyak target copy of $\mu_1$ supplies $\rho$ in Eq.~\eqref{eq:tdtarget}; $\mu_K$ is deployed.
+
+\begin{figure}[t]
+\centering
+\resizebox{.98\columnwidth}{!}{%
+\begin{tikzpicture}[x=0.93cm,y=0.92cm,>=Stealth,every node/.style={font=\small}]
+  \node[draw,rounded corners,minimum width=.85cm,minimum height=.47cm] (d) at (0,0) {data};
+  \node[draw,rounded corners,minimum width=.85cm,minimum height=.47cm] (p1) at (1.45,0) {$\mu_1$};
+  \node[draw,rounded corners,minimum width=.85cm,minimum height=.47cm] (p2) at (2.90,0) {$\mu_2$};
+  \node at (4.00,0) {$\cdots$};
+  \node[draw,rounded corners,minimum width=.85cm,minimum height=.47cm] (pk) at (5.05,0) {$\mu_K$};
+  \draw[->] (d)--node[above,font=\scriptsize] {$h$}(p1);
+  \draw[->] (p1)--node[above,font=\scriptsize] {$h$}(p2);
+  \draw[->] (p2)--(3.68,0);
+  \draw[->] (4.30,0)--node[above,font=\scriptsize] {$h$}(pk);
+  \node[draw,rounded corners,minimum width=1.20cm,minimum height=.45cm] (td) at (1.45,-1.02) {TD target};
+  \node[draw,rounded corners,minimum width=1.20cm,minimum height=.45cm] (eval) at (5.05,-1.02) {evaluation};
+  \draw[->,thick] (p1)--node[right,font=\scriptsize] {Polyak copy}(td);
+  \draw[->,thick] (pk)--(eval);
+  \draw[decorate,decoration={brace,mirror,amplitude=3pt},yshift=-.48cm]
+     (d.south west)--node[below=4pt,font=\scriptsize] {deployment reach}(pk.south east);
+\end{tikzpicture}}
+\caption{MPI splits the nominal actor budget across a persistent chain. Only the first actor is critic-coupled through the TD target; the final actor is evaluated.}
+\label{fig:architecture}
+\end{figure}
+
+The scale-matched linearized realization replaces each value-plus-anchor update with one regression step toward
+\begin{equation}
+ a_k^{\rm tar}
+ =\Pi_{\A}\!\left[a_{k-1}
+ +d h\frac{\nabla_a\widehat Q_1(s,a_{k-1})}{C_k}\right],           \label{eq:linearized}
+\end{equation}
+where $a_0$ is the sampled dataset action and $a_{k-1}$ is detached. Projection and neural regression make this an approximate, constrained Euler target rather than an exact explicit flow step.
+
+\subsection{What changes when $K$ changes}
+
+The experimental intervention is deliberately broad. At fixed $T$, changing $K$ changes: (i) the first-hop coefficient $T/K$, (ii) the number of actor optimizer calls, (iii) re-centering frequency, (iv) target/deployment dataflow, (v) the number and initialization of persistent actors, and (vi) the path-dependent sequence of critic normalizers. In the released code, it also changes the initial critic parameters because the critic uses the last key in a random-key split of length $K+1$. Consequently, the current sweep compares complete training procedures; it is not a controlled estimate of a single numerical-integration variable.
+
+\subsection{Proximal interpretation}
+
+For state-conditioned Dirac policies $\pi_\mu(\cdot\mid s)=\delta_{\mu(s)}$, define
+\begin{equation}
+ \mathsf d_{\rho}^2(\mu,\nu)
+ :=\E_{s\sim\rho}\frac{1}{d}\|\mu(s)-\nu(s)\|_2^2.              \label{eq:fiber_metric}
+\end{equation}
+This is the state-averaged quadratic Wasserstein distance with ground cost $\|a-b\|_2^2/d$. For a fixed critic and reference $\nu$, the idealized proximal operator is
+\begin{equation}
+ \operatorname{SPI}_{h}^{\widehat Q}(\nu)
+ \in\argmin_{\mu\in\M}
+ \left\{-\E_s\bar Q(s,\mu(s))
+ +\frac{1}{2h}\mathsf d_{\rho}^2(\mu,\nu)\right\}.             \label{eq:spi}
+\end{equation}
+Multiplying Eq.~\eqref{eq:spi} by $2h$ recovers Eq.~\eqref{eq:actorchain} at the population level. The empirical first hop uses a sampled action rather than a feasible deterministic reference; its population counterpart is the conditional mean behavior map $b(s)=\E[a\mid s]$, since
+\begin{equation}
+ \E[\|\mu(s)-a\|_2^2\mid s]
+ =\|\mu(s)-b(s)\|_2^2+\E[\|a-b(s)\|_2^2\mid s].               \label{eq:biasvariance}
+\end{equation}
+
+\begin{remark}[Implementation is not an exact proximal solve]
+Each actor receives one Adam update per delayed policy step and remains a persistent independently initialized network. Thus Eq.~\eqref{eq:spi} is an organizing variational objective, not a statement that the code computes its argmin. This distinction is central when interpreting both the theory and the large-budget experiments.
+\end{remark}

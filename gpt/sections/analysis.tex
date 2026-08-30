@@ -1,0 +1,71 @@
+\section{What the Proximal View Guarantees}
+\label{sec:analysis}
+
+The geometric formulation is useful only if its scope is explicit. We separate a conditional finite-step statement, an architectural target-perturbation statement, and a local small-step interpretation.
+
+\subsection{Conditional learned-critic descent}
+
+Let
+\begin{equation}
+ \mathcal L_{h,k}(\mu\mid\nu)
+ =-\frac{2h}{C_k}\E_s\widehat Q_1(s,\mu(s))
+ +\mathsf d_\rho^2(\mu,\nu).                                  \label{eq:proxloss_analysis}
+\end{equation}
+
+\begin{proposition}[Conditional proximal descent]
+\label{prop:conditional_descent}
+Suppose $\mu_{k-1}$ is feasible for the $k$th actor class and the computed actor satisfies
+\begin{equation*}
+ \mathcal L_{h,k}(\mu_k\mid\mu_{k-1})
+ \leq \mathcal L_{h,k}(\mu_{k-1}\mid\mu_{k-1})+\varepsilon_k.
+\end{equation*}
+Then
+\begin{equation}
+\begin{aligned}
+ &\frac{2h}{C_k}\E_s[\widehat Q_1(s,\mu_k(s))
+ -\widehat Q_1(s,\mu_{k-1}(s))]\\
+ &\qquad-\mathsf d_\rho^2(\mu_k,\mu_{k-1})\geq-\varepsilon_k.
+\end{aligned}\label{eq:conditional_descent}
+\end{equation}
+\end{proposition}
+
+This is a comparator inequality, not an unconditional property of one Adam step. It applies literally to later hops because the previous actor belongs to the same network class. The sampled first-hop action is not generally the output of a feasible deterministic policy, so a population behavior map or an explicit behavior actor is required for the same comparator argument.
+
+Let $\widehat Q_1=Q^\dagger+e$ for a trusted objective $Q^\dagger$. Substitution gives
+\begin{equation}
+ m_k^{Q^\dagger}=m_k^{\widehat Q_1}
+ -\frac{2h}{C_k}\E_s[e(s,\mu_k(s))-e(s,\mu_{k-1}(s))].          \label{eq:error_transfer}
+\end{equation}
+Thus even exact descent of the learned objective transfers only when critic error is controlled along the realized actor path. No true-return monotonicity follows without occupancy and value-estimation assumptions.
+
+\subsection{Only the first hop directly perturbs the TD target}
+
+Let $y_{\mu}=r+\gamma\min_jQ_j^-(s',\mu(s'))$ and assume each $Q_j^-(s',\cdot)$ is $L(s')$-Lipschitz.
+
+\begin{proposition}[First-hop target perturbation]
+\label{prop:target_perturbation}
+For any reference $\mu_0$,
+\begin{equation}
+ \|y_{\mu_1}-y_{\mu_0}\|_{L_2(\D)}
+ \leq\gamma\left(
+ \E_{s'}L(s')^2\|\mu_1(s')-\mu_0(s')\|_2^2
+ \right)^{1/2}.                                                \label{eq:target_bound}
+\end{equation}
+Conditional on $\mu_1$, later actors do not enter this one-step bound.
+\end{proposition}
+
+The same statement applies to a Polyak target copy, and a same-noise comparison with clipped target smoothing remains nonexpansive. The bound isolates an architectural fact, not a stability theorem: it omits the action-Lipschitz factor's evolution, critic fitting error, repeated bootstrapping, and the mismatch between the first-hop continuation and the final deployed policy.
+
+\subsection{Local flow interpretation}
+
+For an interior action $a_0$, a fixed critic, and an exact statewise proximal solution, let $g=\nabla_a\widehat Q_1(a_0)$, $H=\nabla_a^2\widehat Q_1(a_0)$, and $\beta=dh/C$. The linearized and proximal displacements satisfy
+\begin{equation}
+ \Delta a_{\rm lin}=\beta g,
+ \qquad
+ \Delta a_{\rm prox}=\beta\nabla_a\widehat Q_1(a_0+\Delta a_{\rm prox}). \label{eq:local}
+\end{equation}
+When $\beta\|H\|\ll1$,
+\begin{equation}
+ \Delta a_{\rm prox}=\beta g+\beta^2Hg+O(\beta^3).             \label{eq:local_expansion}
+\end{equation}
+Both therefore agree to first order with the fiberwise Wasserstein gradient direction. This interpretation requires a fixed critic, inactive projection, small realized movement, and an accurate proximal solve. The observed large-budget regime violates several of these conditions; its end-to-end behavior should not be presented as a numerical-order test.

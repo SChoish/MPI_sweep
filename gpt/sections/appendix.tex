@@ -1,0 +1,160 @@
+\appendix
+
+\section{Proofs}
+\label{app:proofs}
+
+\subsection{Behavior-anchor decomposition}
+For $b(s)=\E[a\mid s]$,
+\begin{align*}
+\E[\|\mu(s)-a\|_2^2\mid s]
+&=\E[\|\mu(s)-b(s)+b(s)-a\|_2^2\mid s]\\
+&=\|\mu(s)-b(s)\|_2^2\\
+&\quad+\E[\|a-b(s)\|_2^2\mid s],
+\end{align*}
+because the cross term vanishes conditionally. Averaging over states and dividing by $d$ proves Eq.~\eqref{eq:biasvariance}. For Dirac policies, the only coupling places the mass at $(\mu(s),\nu(s))$, hence $W_2^2(\delta_{\mu(s)},\delta_{\nu(s)})=\|\mu(s)-\nu(s)\|_2^2$.
+
+\subsection{Proof of Proposition~\ref{prop:conditional_descent}}
+The assumed comparator inequality is
+\begin{align*}
+-&\frac{2h}{C_k}\E_s\widehat Q_1(s,\mu_k(s))
++\mathsf d_\rho^2(\mu_k,\mu_{k-1})\\
+&\leq-\frac{2h}{C_k}\E_s\widehat Q_1(s,\mu_{k-1}(s))+\varepsilon_k.
+\end{align*}
+Rearranging gives Eq.~\eqref{eq:conditional_descent}. Writing $\widehat Q_1=Q^\dagger+e$ and collecting the $e$ terms gives Eq.~\eqref{eq:error_transfer}.
+
+\subsection{Proof of Proposition~\ref{prop:target_perturbation}}
+Let $F_{s'}(a)=\min_jQ_j^-(s',a)$. Since the minimum of functions sharing Lipschitz constant $L(s')$ is also $L(s')$-Lipschitz,
+\begin{equation*}
+ |F_{s'}(a)-F_{s'}(b)|\leq L(s')\|a-b\|_2.
+\end{equation*}
+Therefore,
+\begin{equation*}
+ |y_{\mu_1}-y_{\mu_0}|\leq\gamma L(s')\|\mu_1(s')-\mu_0(s')\|_2.
+\end{equation*}
+Squaring, averaging over transitions, and taking a square root proves Eq.~\eqref{eq:target_bound}.
+
+\subsection{Local explicit--proximal expansion}
+The statewise first-order condition of the exact proximal objective gives
+\begin{equation*}
+ \Delta a=\beta\nabla_a\widehat Q_1(a_0+\Delta a),\qquad \beta=dh/C.
+\end{equation*}
+Taylor expansion yields
+\begin{equation*}
+ (I-\beta H)\Delta a=\beta g+O(\beta\|\Delta a\|^2).
+\end{equation*}
+For sufficiently small $\beta$ with $\beta\|H\|<1$, Neumann expansion gives Eq.~\eqref{eq:local_expansion}. This calculation concerns an exact action-space solution under a fixed smooth critic. It does not describe one Adam step through a ReLU network at large $T$.
+
+\section{Detailed Sweep Tables}
+\label{app:tables}
+
+\begin{table*}[t]
+\centering
+\caption{Mean score over nine tasks at each nominal budget. P denotes MPI-Prox and L denotes MPI-Lin.}
+\label{tab:budget_means}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrrrrrrrr}
+\toprule
+Method&.05&.1&.2&.4&.7&1.5&2.5&4&7&10&12&14&17&20\\
+\midrule
+TD3&65.19&62.81&64.85&64.22&69.14&75.43&76.80&49.16&30.35&27.14&22.08&18.51&15.35&19.21\\
+P2&61.11&66.50&68.87&70.11&74.69&78.52&81.57&72.13&64.57&44.67&30.43&30.73&24.01&27.61\\
+P3&58.31&60.69&68.61&71.32&75.25&78.21&81.55&80.91&70.84&53.91&52.60&41.47&29.23&40.51\\
+P4&58.97&66.70&70.44&72.16&72.97&76.03&81.21&82.32&81.63&72.12&68.57&48.99&52.27&39.37\\
+L2&60.98&63.12&66.20&72.07&67.98&72.70&80.10&73.95&45.63&39.98&27.09&25.10&24.41&20.63\\
+L3&58.32&59.97&63.69&70.52&73.23&77.14&76.94&75.31&66.47&45.78&30.65&39.54&25.74&23.88\\
+\bottomrule
+\end{tabular}}
+\end{table*}
+
+\begin{table}[t]
+\centering
+\caption{Collapse-count sensitivity for $T\geq4$. Each entry is two-seed cells / raw seeded runs.}
+\label{tab:collapse_sensitivity}
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{r|rrrrrr}
+\toprule
+Threshold&TD3&P2&P3&P4&L2&L3\\
+\midrule
+0 &2/12&2/6&1/6&0/2&0/6&2/12\\
+10&29/66&20/51&15/39&9/26&28/54&21/46\\
+20&35/68&25/53&17/41&9/29&29/58&24/53\\
+30&36/74&26/56&19/44&11/29&29/63&24/55\\
+40&39/83&26/60&20/48&12/30&32/64&24/57\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Per-environment mean score over $T\geq4$. Bold marks the best value in each row.}
+\label{tab:env_high}
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+Environment&TD3&P2&P3&P4&L2&L3\\
+\midrule
+Hopper-M&16.0&35.2&69.4&\textbf{88.3}&25.5&46.3\\
+Hopper-MR&41.4&90.6&99.7&\textbf{99.7}&90.5&99.4\\
+Hopper-E&3.4&17.5&30.7&\textbf{45.3}&16.6&27.7\\
+HalfCheetah-M&59.0&59.1&\textbf{59.2}&57.9&53.4&55.8\\
+HalfCheetah-MR&51.7&\textbf{52.6}&51.6&52.5&46.5&49.2\\
+HalfCheetah-E&18.4&24.5&28.5&\textbf{34.6}&18.8&22.4\\
+Walker2d-M&10.3&24.3&34.3&\textbf{47.6}&9.3&26.5\\
+Walker2d-MR&31.3&49.0&\textbf{76.6}&72.7&51.2&43.5\\
+Walker2d-E&2.2&25.4&25.0&\textbf{73.8}&18.5&24.4\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\section{One-Hop Replication}
+\label{app:replication}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{figures/k1_replication.pdf}
+\caption{The aggregate one-hop phase diagram reproduces on seeds 2--3. Both seed pairs yield $35/63$ collapsed high-budget cells.}
+\label{fig:k1_replication}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{One-hop high-budget replication.}
+\label{tab:k1_replication}
+\footnotesize
+\begin{tabular}{lrrr}
+\toprule
+Seed pair&Mean&Cell collapse&Raw collapse\\
+\midrule
+0--1&25.97&35/63&68/126\\
+2--3&24.79&35/63&74/126\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Artifact and Claim Ledger}
+\label{app:ledger}
+
+\paragraph{Directly recomputable from committed matrices.}
+The central sweep curves, aggregate table, $K=3$ versus $K=4$ cell comparison, threshold sensitivity, per-environment high-budget table, and one-hop replication are generated from CSV snapshots in \texttt{gpt/data} and the repository's \texttt{sweep\_results} directory. The figure script also writes the derived cell-transition counts to \texttt{data/derived\_metrics.json}.
+
+\paragraph{Present only as aggregate claims in the prior bundle.}
+The target-exposure audit, common-critic gains, simulator-reference screening, shadow-critic intervention, fixed-reference control, target-lag control, and frozen-critic local audit are described in the pre-existing manuscript sources. Their raw transition-level outputs, checkpoints, and analysis scripts are not present in the repository snapshot reviewed here. They are therefore not used as headline numerical evidence in this revision.
+
+\paragraph{Incomplete replications at the snapshot.}
+The additional proximal $K=2$ seeds contain 232 of 252 planned cells, while proximal $K=3$ seeds 2--3 were not yet present. These incomplete matrices are excluded from all tables. The status is frozen in \texttt{data/replication\_status.csv}.
+
+\paragraph{Source/build drift.}
+The uploaded PDF predates several source-level additions, including the complete linearized $K=3$ result and targeted controls. This bundle compiles the PDF from its own exact sources and includes a source manifest. The official AISTATS 2027 style was not available in the reviewed package; the included style is explicitly provisional.
+
+\section{Recommended Controlled Rerun}
+\label{app:rerun}
+
+The highest-value rerun should preserve actor~1 and critic initialization across $K$. One safe key allocation is
+\begin{equation*}
+ k_{\rm actor1},k_{\rm critic},k_{\rm aux}
+ =\operatorname{split}(k_{\rm seed},3),
+\end{equation*}
+then initialize auxiliary actors from $\operatorname{split}(k_{\rm aux},K-1)$. The comparison should additionally include: (i) auxiliary actors initialized as copies of their references versus independent networks, (ii) a complete-grid compute-matched control, (iii) a target-exposure-matched one-hop control, and (iv) logging of the premise in Proposition~\ref{prop:conditional_descent}. At minimum, log pre/post actor objective, learned-critic gain, step displacement, target-policy displacement, and the exact critic/actor initialization hashes.

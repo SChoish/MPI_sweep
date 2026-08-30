@@ -1,6 +1,6 @@
 tau,hopper-medium-v2,hopper-medium-replay-v2,hopper-expert-v2,halfcheetah-medium-v2,halfcheetah-medium-replay-v2,halfcheetah-expert-v2,walker2d-medium-v2,walker2d-medium-replay-v2,walker2d-expert-v2
-0.05,52.7203,17.9815,99.6157,,,,,,
-0.1,50.9787,24.1508,102.9732,,,,,,
+0.05,52.7203,17.9815,99.6157,43.2510,,,,,
+0.1,50.9787,24.1508,102.9732,43.6226,,,,,
 0.2,54.2305,22.0045,103.7949,,,,,,
 0.4,49.1318,32.1019,101.1614,,,,,,
 0.7,51.6905,37.1445,103.3277,,,,,,
@@ -12,4 +12,4 @@ tau,hopper-medium-v2,hopper-medium-replay-v2,hopper-expert-v2,halfcheetah-medium
 12,0.7960,100.4138,1.7321,,,,,,
 14,0.5810,65.6994,1.8137,,,,,,
 17,0.7477,82.2673,1.8137,,,,,,
-20,0.5816,72.4185,,,,,,,
+20,0.5816,72.4185,1.8137,,,,,,

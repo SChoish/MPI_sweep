@@ -1,0 +1,12 @@
+claim,status,scope
+Complete fixed-budget BAR grid values reproduce,pass,"9 datasets x 14 budgets x 2 seeds per method"
+K4-vs-K1 high-budget mean difference,pass,"37.64; dataset-bootstrap 95% [20.46,54.27]"
+K4-vs-K3 high-budget mean difference,pass,"10.83; dataset-bootstrap 95% [2.26,22.04]"
+K4-vs-K3 collapse-risk decrease,qualified,"point -0.095; 95% [-0.206,0]"
+P3 target-action displacement below TD3,pass,"88/90; median ratio 0.6577"
+Final-policy displacement uniformly preserved,not_supported,"current-state proxy is heterogeneous; 36/90 lower, median ratio 1.057"
+Collapsed screens exhibit critic miscalibration,targeted_support,"55 stable vs 5 collapsed simulator checkpoints"
+Final-route critic is worse at final checkpoint,not_supported,"5/8 final-checkpoint-only contrasts positive"
+Final-route four-checkpoint average less aligned,targeted_support,"8/8 post-hoc selected runs; common first-route estimand"
+Proximal analysis certifies live BAR,not_supported,"one-Adam persistent actor premise unverified"
+Cross-K identical critic initialization required,not_required,"shared initialization is optional variance reduction for marginal seed-average estimands"

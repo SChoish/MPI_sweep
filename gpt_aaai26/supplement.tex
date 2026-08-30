@@ -1,0 +1,372 @@
+\documentclass[letterpaper]{article}
+\usepackage[submission]{aaai2026}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[hyphens]{url}
+\usepackage{graphicx}
+\urlstyle{rm}
+\def\UrlFont{\rm}
+\usepackage{natbib}
+\usepackage{caption}
+\frenchspacing
+\setlength{\pdfpagewidth}{8.5in}
+\setlength{\pdfpageheight}{11in}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tikz}
+\usepackage{xr}
+\externaldocument{paper}
+\setcounter{secnumdepth}{0}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newcommand{\E}{\mathbb E}
+\newcommand{\D}{\mathcal D}
+\newcommand{\A}{\mathcal A}
+\newcommand{\sg}{\operatorname{sg}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\title{Supplementary Material for ``BAR: Budgeted Actor Refinement''}
+\author{Anonymous Submission}
+\affiliations{}
+
+\begin{document}
+\onecolumn
+\begin{center}
+{\Large\bfseries Supplementary Material for ``BAR: Budgeted Actor Refinement''}\\[.4em]
+{\normalsize Anonymous Submission}
+\end{center}
+\vspace{1em}
+
+\section{Proofs and Theoretical Scope}
+\label{app:proofs}
+
+\subsection{Behavior-anchor decomposition}
+Let $(s,a)$ follow the data-generating behavior distribution, let $b(s)=\E[a\mid s]$, and let $\mu$ be any square-integrable deterministic actor. The conditional bias--variance identity gives
+\begin{equation}
+\E[\|\mu(s)-a\|_2^2\mid s]
+=\|\mu(s)-b(s)\|_2^2+\E[\|a-b(s)\|_2^2\mid s].
+\end{equation}
+Averaging over $s$ and dividing by the action dimension $d$ shows that population squared behavior cloning is the integrated squared distance to the conditional-mean behavior map plus a term independent of $\mu$. For state-conditioned Dirac policies,
+\begin{equation}
+W_2^2(\delta_{\mu(s)},\delta_{\nu(s)})=\|\mu(s)-\nu(s)\|_2^2.
+\end{equation}
+Consequently, the action-coordinate-averaged anchoring term is a fixed rescaling of the integrated squared Wasserstein distance. This identity does not imply that minibatch Adam exactly solves a Wasserstein proximal problem.
+
+\subsection{Conditional learned-critic margin}
+Fix hop $k$ and its realized positive scale $C_k$. By the premise
+\begin{equation}
+\mathcal L_k^{\rm P}(\mu_k\mid\mu_{k-1})
+\leq \mathcal L_k^{\rm P}(\mu_{k-1}\mid\mu_{k-1})+\varepsilon_k,
+\end{equation}
+we have
+\begin{equation}
+-\frac{2h}{C_k}\E\widehat Q(s,\mu_k(s))
++d_d^2(\mu_k,\mu_{k-1})
+\leq-\frac{2h}{C_k}\E\widehat Q(s,\mu_{k-1}(s))+\varepsilon_k.
+\end{equation}
+Rearranging proves Eq.~\eqref{eq:conditional_margin}. If $\widehat Q=Q^\dagger+e$, substitution yields
+\begin{equation}
+\begin{split}
+m_k^{Q^\dagger}=m_k^{\widehat Q}
+-\frac{2h}{C_k}\E_s[ e(s,\mu_k(s))-e(s,\mu_{k-1}(s))].
+\end{split}
+\end{equation}
+Thus a learned-critic margin transfers to a trusted objective only under pathwise critic-error control. The expression is an algebraic decomposition, not a return-improvement theorem.
+
+For $k\ge2$, the previous persistent actor belongs to the same architecture class and is a feasible comparator. For $k=1$, a sampled action $a_i$ does not generally define one deterministic policy value for every repeated state. A literal population certificate can instead use $b(s)$ or a fitted behavior actor. The implementation does not record pre/post objective values needed to verify that its one Adam update satisfies the premise.
+
+\subsection{Target perturbation}
+Let $F_{s'}(a)=\min_jQ_j^-(s',a)$. If each $Q_j^-(s',\cdot)$ is $L(s')$-Lipschitz, then so is $F_{s'}$ because
+\begin{equation}
+|F_{s'}(a)-F_{s'}(b)|\leq\max_j|Q_j^-(s',a)-Q_j^-(s',b)|\leq L(s')\|a-b\|_2.
+\end{equation}
+Therefore
+\begin{equation}
+|y_{\mu_1}-y_{\mu_0}|\leq\gamma L(s')\|\mu_1(s')-\mu_0(s')\|_2.
+\end{equation}
+Squaring and averaging proves Eq.~\eqref{eq:target_bound}. Under a uniform bound $L(s')\leq\bar L$, the right side is at most $\gamma\bar L\sqrt{dD_{\rm critic}}$. With common TD3 smoothing noise, action clipping is nonexpansive, so the same comparison applies to the noisy actions. The bound still omits the magnitude of the Lipschitz factor and says nothing about subsequent critic optimization.
+
+\subsection{Local explicit--implicit expansion with sufficient regularity}
+Fix a critic and an interior action $a_0$. Let $g=\nabla_a\widehat Q(a_0)$, $H=\nabla_a^2\widehat Q(a_0)$, and $\beta=dh/C$. Suppose the Hessian is locally Lipschitz near $a_0$ (equivalently, a $C^3$ assumption is sufficient). The scale-matched coordinate updates satisfy
+\begin{equation}
+\Delta a_{\rm lin}=\beta g,
+\qquad
+\Delta a_{\rm prox}=\beta\nabla_a\widehat Q(a_0+\Delta a_{\rm prox}).
+\end{equation}
+Taylor expansion with Lipschitz Hessian gives
+\begin{equation}
+\nabla_a\widehat Q(a_0+\Delta a)=g+H\Delta a+O(\|\Delta a\|^2).
+\end{equation}
+For sufficiently small $\beta$ and $\beta\|H\|<1$, the implicit solution obeys $\Delta a_{\rm prox}=O(\beta)$ and hence
+\begin{equation}
+\Delta a_{\rm prox}=(I-\beta H)^{-1}\beta g+O(\beta^3)
+=\beta g+\beta^2Hg+O(\beta^3).
+\end{equation}
+Under only $C^2$ regularity, the safe remainder is $o(\beta^2)$ rather than $O(\beta^3)$. The paper uses the stronger locally Lipschitz-Hessian assumption wherever the cubic remainder is stated.
+
+\subsection{Fixed-$K$ composition and the live-actor gap}
+Let an abstract one-step map in local coordinates satisfy the explicit near-identity expansion
+\begin{equation}
+\Psi_h(x)=x+hf(x)+h^2p(x)+O(h^3),\qquad \Psi_0(x)=x,
+\label{eq:near_identity}
+\end{equation}
+with sufficient uniform smoothness in a neighborhood of $x_0$. For fixed $K$ and $T\to0$, write $h=T/K$. Inductively, $x_j=x_0+jhf_0+O(h^2)$, so
+\begin{equation}
+f(x_j)=f_0+jhJ_0f_0+O(h^2).
+\end{equation}
+Summing $K$ increments gives
+\begin{equation}
+\Psi_{T/K}^{K}(x_0)=x_0+Tf_0+T^2\left[\frac{K-1}{2K}J_0f_0+\frac1Kp_0\right]+O(T^3).
+\end{equation}
+Coordinate explicit Euler has $p_0=0$ and exact backward Euler has $p_0=J_0f_0$, so their leading fixed-$K$ flow biases scale as $1/K$ with opposite signs.
+
+Equation~\eqref{eq:near_identity} is not established for the live BAR actor update. A persistent actor can differ from its predecessor before the update; at $h=0$, the anchoring gradient can therefore remain nonzero. One Adam step also includes optimizer momentum and parameterization effects. The frozen-critic audit compares ideal action-space explicit and fixed-point updates, not this persistent optimizer map. Accordingly, the composition result is a local motivation for an idealized operator, not a certificate for the implementation.
+
+\section{Implementation and Experimental Protocol}
+\label{app:implementation}
+
+\subsection{Pseudocode}
+\begin{center}
+\begin{minipage}{.94\textwidth}
+\small
+\textbf{Algorithm 1: One delayed BAR actor update.}\\
+\textbf{Input:} minibatch $(s,a,r,s')$, actors $\mu_{1:K}$, online critic $Q$, target networks, total nominal coefficient $T$, path $X\in\{\mathrm{P},\mathrm{L}\}$.\\
+1. Set $h\leftarrow T/K$.\\
+2. For $k=1,\ldots,K$ in chain order: construct $r_k^X,z_k^X$ by Eqs.~\eqref{eq:prox_refs_a}--\eqref{eq:lin_refs_b}; compute $C_k^X$ by Eq.~\eqref{eq:qscale}.\\
+3. If $X=\mathrm{P}$, take one Adam step on Eq.~\eqref{eq:prox_loss}. If $X=\mathrm{L}$, build Eq.~\eqref{eq:lin_target} and take one Adam step on its MSE.\\
+4. Immediately after $k=1$, Polyak-update the target actor from $\mu_1$ and the target critic from the online critic.\\
+5. Return the updated persistent actors. The critic's next Bellman target uses $\mu_1^-$ plus clipped TD3 smoothing noise; evaluation uses $\mu_K$.
+\end{minipage}
+\end{center}
+
+\subsection{Configuration table}
+\begin{table}[h]
+\caption{Audited fixed-budget configuration. Framework defaults are used where no initializer is overridden.}
+\centering
+\small
+\begin{tabular}{ll}
+\toprule
+Item & Setting\\
+\midrule
+Actor & MLP $(256,256)$, ReLU, tanh-scaled action output\\
+Twin critics & Two MLPs $(256,256)$, ReLU, scalar outputs\\
+Optimizer & Adam, learning rate $3\times10^{-4}$\\
+Initialization & Framework default Dense initialization; all actors independently initialized\\
+Target initialization & Exact copies of actor 1 and online critic at step 0\\
+Batch size / discount & $256$ / $.99$\\
+Actor update frequency & Every second critic update\\
+Polyak rate & $.005$ for first actor target and target critic\\
+Target smoothing & Gaussian scale $.2\,a_{\max}$; clip $.5\,a_{\max}$; action clipping\\
+State preprocessing & Dataset mean/std normalization with $10^{-3}$ added to std\\
+Reward preprocessing & None in the released trainer\\
+Training horizon & $10^6$ critic updates\\
+Evaluation & Every $50{,}000$ updates; 10 episodes; final result is the 1M row\\
+Dataset terminal handling & Terminal transition retained with no bootstrap\\
+Dataset timeout handling & Timeout transition dropped\\
+Randomness & Integer seed initializes parameters, minibatch sampling, smoothing, and evaluation seeds\\
+Compute scaling & Actor update time and actor memory $O(K)$; critic/sample count unchanged\\
+\bottomrule
+\end{tabular}
+\label{tab:config}
+\end{table}
+
+The exact environment IDs are
+\begin{quote}\small
+\texttt{halfcheetah-medium-v2}, \texttt{halfcheetah-medium-replay-v2}, \texttt{halfcheetah-expert-v2};\\
+\texttt{hopper-medium-v2}, \texttt{hopper-medium-replay-v2}, \texttt{hopper-expert-v2};\\
+\texttt{walker2d-medium-v2}, \texttt{walker2d-medium-replay-v2}, \texttt{walker2d-expert-v2}.
+\end{quote}
+We use ``M'', ``MR'', and ``E'' only as compact table labels for these IDs. In particular, ``E'' denotes \texttt{expert-v2}; the released implementation uses the shorter \texttt{expert-v2} identifier rather than an alternative medium-expert naming convention.
+
+\section{Full Sweep Results and Uncertainty}
+\label{app:results}
+
+\begin{table}[h]
+\caption{Mean score over nine datasets at every nominal coefficient budget.}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2.8pt}
+\begin{tabular}{lrrrrrrrrrrrrrr}
+\toprule
+Method&.05&.1&.2&.4&.7&1.5&2.5&4&7&10&12&14&17&20\\
+\midrule
+TD3&65.19&62.81&64.85&64.22&69.14&75.43&76.80&49.16&30.35&27.14&22.08&18.51&15.35&19.21\\
+P2&61.11&66.50&68.87&70.11&74.69&78.52&81.57&72.13&64.57&44.67&30.43&30.73&24.01&27.61\\
+P3&58.31&60.69&68.61&71.32&75.25&78.21&81.55&80.91&70.84&53.91&52.60&41.47&29.23&40.51\\
+P4&58.97&66.70&70.44&72.16&72.97&76.03&81.21&82.32&81.63&72.12&68.57&48.99&52.27&39.37\\
+L2&60.98&63.12&66.20&72.07&67.98&72.70&80.10&73.95&45.63&39.98&27.09&25.10&24.41&20.63\\
+L3&58.32&59.97&63.69&70.52&73.23&77.14&76.94&75.31&66.47&45.78&30.65&39.54&25.74&23.88\\
+\bottomrule
+\end{tabular}
+\label{tab:budget_means}
+\end{table}
+
+\begin{table}[h]
+\caption{Collapse sensitivity at $T\ge4$. Entries are two-seed-mean cells / seeded runs out of 63 / 126.}
+\centering
+\small
+\begin{tabular}{r|rrrrrr}
+\toprule
+Threshold&TD3&P2&P3&P4&L2&L3\\
+\midrule
+0&2/12&2/6&1/6&0/2&0/6&2/12\\
+10&29/66&20/51&15/39&9/26&28/54&21/46\\
+20&35/68&25/53&17/41&9/29&29/58&24/53\\
+30&36/74&26/56&19/44&11/29&29/63&24/55\\
+40&39/83&26/60&20/48&12/30&32/64&24/57\\
+\bottomrule
+\end{tabular}
+\label{tab:thresholds}
+\end{table}
+
+\begin{table}[h]
+\caption{Per-dataset high-budget means. E abbreviates the exact \texttt{expert-v2} IDs listed above.}
+\centering
+\small
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lrrrrrr}
+\toprule
+Dataset&TD3&P2&P3&P4&L2&L3\\
+\midrule
+Hopper-M&16.0&35.2&69.4&\textbf{88.3}&25.5&46.3\\
+Hopper-MR&41.4&90.6&99.7&\textbf{99.7}&90.5&99.4\\
+Hopper-E&3.4&17.5&30.7&\textbf{45.3}&16.6&27.7\\
+HalfCheetah-M&59.0&59.1&\textbf{59.2}&57.9&53.4&55.8\\
+HalfCheetah-MR&51.7&\textbf{52.6}&51.6&52.5&46.5&49.2\\
+HalfCheetah-E&18.4&24.5&28.5&\textbf{34.6}&18.8&22.4\\
+Walker2d-M&10.3&24.3&34.3&\textbf{47.6}&9.3&26.5\\
+Walker2d-MR&31.3&49.0&\textbf{76.6}&72.7&51.2&43.5\\
+Walker2d-E&2.2&25.4&25.0&\textbf{73.8}&18.5&24.4\\
+\bottomrule
+\end{tabular}
+\label{tab:env_means}
+\end{table}
+
+\subsection{Dataset-cluster resampling}
+For each comparison, we first average the score difference over high budgets and both seeds within each of the nine D4RL datasets. We then resample the nine dataset-level values with replacement $100{,}000$ times using seed 20260830. For collapse risk, the within-dataset statistic is the difference in the fraction of its 14 high-budget seeded runs with score below 20. Table~\ref{tab:task_bootstrap} reports percentile intervals.
+
+\begin{table}[h]
+\caption{Descriptive dataset-cluster uncertainty. The nine datasets arise from only three dynamics families, so these intervals do not represent broad task-population uncertainty.}
+\centering
+\small
+\begin{tabular}{lrrr@{\qquad}rr}
+\toprule
+Comparison&Mean diff.&95\% interval&Positive datasets&Risk diff.&95\% interval\\
+\midrule
+P4$-$TD3&37.64&[20.46,54.27]&8/9&$-.310$&[$-.484,-.143$]\\
+P4$-$P3&10.83&[2.26,22.04]&6/9&$-.095$&[$-.206,.000$]\\
+\bottomrule
+\end{tabular}
+\label{tab:task_bootstrap}
+\end{table}
+
+\subsection{K=1 seed replication and K=4 Hopper check}
+The independent one-hop seed pair reproduces the aggregate cell landscape: seeds 0--1 have high-budget mean $25.97$, 35/63 cell collapses, and 68/126 seeded collapses; seeds 2--3 have $24.79$, 35/63, and 74/126. This checks the marginal one-hop landscape, not a requirement that different $K$ values share identical parameter initializations. Shared initialization across methods is a variance-reduction design, not a validity condition for comparing seed-averaged randomized procedures.
+
+For Hopper-medium at $K=4$, four-seed means (sample standard deviations) are $84.8\,(8.0)$, $100.4\,(1.1)$, $101.2\,(.4)$, $101.1\,(.7)$, $100.9\,(1.7)$, and $41.8\,(44.0)$ at $T=7,10,12,14,17,20$. The result confirms the $K=4$ window at $T=17$ and the variance transition at $T=20$; $K\le3$ remains two-seed in those comparisons.
+
+\section{Diagnostic Definitions and Re-Audit}
+\label{app:audit}
+
+\subsection{Movement quantities}
+On a fixed current-state validation batch,
+\begin{equation}
+\widehat D_{\rm first,current}=\frac1n\sum_i\frac{\|\mu_1(s_i)-a_i\|_2^2}{d},\qquad
+\widehat D_{\rm final,current}=\frac1n\sum_i\frac{\|\mu_K(s_i)-a_i\|_2^2}{d}.
+\end{equation}
+The direct target-action quantity retains bootstrapped transitions and uses a paired next dataset action:
+\begin{equation}
+\widehat D_{\rm target,next}=\frac1m\sum_i\frac{\|\mu_1^-(s_i')-a_{i+1}\|_2^2}{d}.
+\end{equation}
+The smoothed version averages 64 common clipped-noise draws. The next-state target quantity and current-state final proxy differ in input distribution, action anchor, and Polyak status; their counts and ratios are not a decomposition of one common distance.
+
+The audit reconstructs 270 rows (three methods, nine datasets, five budgets, two seeds) and checks exact state pairing, environment-specific normalization hashes, common noise, and finiteness. BAR-Prox $K=3$ versus TD3+BC has target displacement lower in 88/90 cells with median ratio $.6577$. Resampling 18 $(\text{dataset},\text{seed})$ clusters while keeping five $T$ values together yields a mean-difference interval $[-.279,-.111]$ and a lower-fraction interval $[.944,1.000]$. Against BAR-Prox $K=2$, the corresponding count is 84/90, median ratio $.9030$, and mean-difference interval $[-.0716,-.0061]$.
+
+For the current-state final proxy, $K=3$ is lower than TD3+BC in 36/90 cells and the median ratio is $1.0574$. Its median log-ratio interval contains zero, while the arithmetic mean difference is negative because a few large contractions dominate. The main text therefore reports heterogeneous final-policy movement rather than claiming a uniformly greater final reach.
+
+\subsection{Failure diagnostics}
+A final-checkpoint run is descriptively ``collapsed'' when its external D4RL score is below 20. On a fixed 512-state validation batch, the audit records absolute TD residual quantiles, critic magnitudes, critic loss, action displacement, and actor-chain value gains. TD p99 is the 99th percentile of the absolute TD residual. The common critic is a frozen final $K=1$, $T=1$ TD3+BC critic matched by dataset and seed; $T=1$ belongs to an expanded one-hop sweep outside the fourteen-point main grid.
+
+\begin{table}[h]
+\caption{Final-checkpoint diagnostic medians for the matched $K=2$ audit.}
+\centering
+\small
+\begin{tabular}{lrrrr}
+\toprule
+&Lin stable&Lin collapsed&Prox stable&Prox collapsed\\
+\midrule
+Runs&52&38&59&31\\
+TD p99&270&$9.6\times10^{23}$&160.8&$5.0\times10^{21}$\\
+$|Q|$&311&$8.5\times10^{11}$&346.7&$6.9\times10^{10}$\\
+Critic loss&34&$1.2\times10^{23}$&18.7&$8.8\times10^{20}$\\
+$\widehat D_{\rm first,current}$&.112&.538&.064&.446\\
+$\widehat D_{\rm final,current}$&.147&.626&.094&.578\\
+Common-$Q$ gain&2.11&$-1.42$&2.51&$-1.06$\\
+\bottomrule
+\end{tabular}
+\label{tab:diagnostic_medians}
+\end{table}
+
+The archived source NPZs do not retain per-state TD-residual arrays for 90 proximal rows. Those TD quantiles are checked against a prior run-level diagnostic dump rather than re-derived from transition-level residuals; TD maximum is unavailable for those rows. Other movement and common-critic quantities are re-aggregated from preserved arrays. No NaN or Inf is present.
+
+\subsection{Simulator calibration}
+For each of 60 screened checkpoints, the audit clones 12 simulator states and averages four common-random-number target-smoothing rollouts per state. Let $\rho_1$ denote the effective first-route continuation used in the simulator audit: actions follow the Polyak first actor with the clipped TD3 target-smoothing mechanism and action bounds. The primary signed error is
+\begin{equation}
+\widehat Q_1(s,a_K)-Q_{\rm MC}^{\rho_1}(s,a_K).
+\end{equation}
+The symmetric relative error is
+\begin{equation}
+\frac{|\widehat Q-Q_{\rm MC}|}{|\widehat Q|+|Q_{\rm MC}|+10^{-12}}.
+\end{equation}
+The median of checkpoint-level signed-error medians is $-41.37$ for 55 stable checkpoints and $1.697\times10^{12}$ for five collapsed checkpoints. Pooling states instead gives $-38.71$ and the same collapsed median. We report the checkpoint-level form in the revised main paper. Ranking is too sparse for a population estimate: with a one-return-unit dead zone, 69/720 states are eligible and 29 disagree in sign; eligibility drops to 22 at a two-unit dead zone and two at a five-unit dead zone.
+
+\subsection{Post-hoc route-only shadow critics}
+The route study selects four visible frontier environment--budget cells post hoc and uses two seeds. Two actor-detached shadow critics share initialization, minibatches, and target-smoothing draws; one uses the first actor target and one the final actor target. Neither affects the actor trajectory or return. Each run has 12 cloned states at 250k, 500k, 750k, and 1M updates. The primary aggregation is state median $\to$ checkpoint statistic $\to$ four-checkpoint run mean. The estimand is alignment with the common $Q_{\rm MC}^{\rho_1}$ first-route continuation, not each shadow's calibration to its own continuation.
+
+\begin{table}[h]
+\caption{Route sensitivity over eight training runs. Positive means larger final-route error.}
+\centering
+\small
+\begin{tabular}{lrr}
+\toprule
+Aggregation&Positive runs&Mean delta\\
+\midrule
+State median, four-checkpoint mean&8/8&.1235\\
+State mean, four-checkpoint mean&8/8&.1216\\
+10\% trimmed mean, four-checkpoint mean&8/8&.1218\\
+Final-checkpoint state median only&5/8&.1244\\
+\bottomrule
+\end{tabular}
+\label{tab:route_sensitivity}
+\end{table}
+
+For the primary aggregation, the median run delta is $.0133$, the exact two-sided sign statistic is $.0078125$, and a run bootstrap gives $[.0077,.3237]$. The mean is strongly influenced by one Walker2d-medium, $T=7$, seed-0 delta of $.8027$. Because cell selection was post hoc and final-checkpoint direction is 5/8, this analysis is descriptive targeted evidence.
+
+\subsection{Audit integrity and provenance}
+The compact audit was regenerated from 2,135 preserved inputs totaling approximately 3.18GB. It verifies 270 target rows, 180 failure rows, 60 simulator checkpoints with 720 states, eight route runs, and 32 exact route checkpoint-arm pairings. Primary keys are unique and numeric arrays are finite. Target comparisons use 100,000 cluster bootstrap samples with unit $(\text{dataset},\text{seed})$; route intervals resample eight training runs. The submitted compact bundle contains sanitized logical identifiers rather than local absolute paths. It does not claim that policy training or simulator rollouts were independently rerun.
+
+\section{Claim Ledger}
+\label{app:ledger}
+\begin{table}[h]
+\caption{Evidence level of the principal claims.}
+\centering
+\small
+\begin{tabular}{p{.32\textwidth}p{.18\textwidth}p{.42\textwidth}}
+\toprule
+Claim&Status&Qualification\\
+\midrule
+Fixed-budget refinement broadens the tested high-budget stable region&Complete grid&Two seeds; nine datasets from three dynamics families; descriptive threshold\\
+P4 broadly improves over one-step TD3+BC&Dataset-cluster supported&Mean and raw-risk intervals exclude zero on this suite\\
+P4 reduces collapse risk beyond P3&Suggestive&Point estimate is negative, but dataset-cluster interval reaches zero\\
+K3 contracts target-action displacement&Re-audited&Strong matched-cell/cluster result for sample-anchored next-state target actions\\
+BAR preserves or enlarges final-policy reach&Not uniform&Current-state final proxy is heterogeneous; median and mean summaries differ\\
+Collapsed screens exhibit critic miscalibration&Targeted descriptive&Extreme effect, but selected checkpoints and sparse simulator states\\
+First-route backup causes return rescue&Not established&Route shadows do not drive actors or return; selection is post hoc\\
+Proximal theory guarantees BAR training&Not established&Conditional ideal operator; one-Adam persistent chain premise is unverified\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

@@ -1,0 +1,53 @@
+\documentclass[letterpaper]{article}
+\usepackage[submission]{aaai2026}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[hyphens]{url}
+\usepackage{graphicx}
+\urlstyle{rm}
+\def\UrlFont{\rm}
+\usepackage{natbib}
+\usepackage{caption}
+\frenchspacing
+\setlength{\pdfpagewidth}{8.5in}
+\setlength{\pdfpageheight}{11in}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,decorations.pathreplacing}
+\pdfinfo{/TemplateVersion (2026.1)}
+\setcounter{secnumdepth}{0}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newcommand{\E}{\mathbb E}
+\newcommand{\D}{\mathcal D}
+\newcommand{\A}{\mathcal A}
+\newcommand{\sg}{\operatorname{sg}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\title{BAR: Budgeted Actor Refinement Broadens the Stability Envelope of Offline TD3+BC}
+\author{Anonymous Submission}
+\affiliations{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+TD3+BC uses one actor branch both to construct bootstrapped critic targets and to produce the deployed policy, coupling target-action movement to deployment reach. We study budgeted actor refinement (BAR), which splits a fixed \emph{nominal actor-loss coefficient budget} $T$ across $K$ persistent actors: a target copy of the first actor supplies TD actions, while the final actor is deployed. The budget is neither compute nor realized policy displacement. Squared action anchoring admits an ideal deterministic Wasserstein--2 proximal interpretation, but the implementation applies one Adam update per persistent actor and is not certified by that ideal operator. In a complete two-seed phase diagram over nine D4RL locomotion datasets and fourteen budgets, the $K=4$ proximal configuration raises the high-budget mean from $25.97$ to $63.61$ and reduces score-below-20 cells from $35/63$ to $9/63$. Dataset-cluster resampling gives a $K=4-K=1$ mean difference of $37.64$ with a 95\% percentile interval $[20.5,54.3]$. The $K=4-K=3$ mean difference is $10.83$ but its median is $.32$, indicating lower-tail rescue rather than a uniform shift. A linearized actor-chain control improves in the same direction. At audited checkpoints, $K=3$ lowers sample-anchored next-state target-action displacement in $88/90$ matched cells, whereas changes in a current-state final-policy proxy are heterogeneous. The evidence supports the stability of the implemented refinement bundle; it does not isolate routing, re-centering, or additional actor compute.
+\end{abstract}
+
+\input{sections/introduction}
+\input{sections/related}
+\input{sections/method}
+\input{sections/theory}
+\input{sections/experiments}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+\label{sec:technical_end}
+\input{sections/references}
+\clearpage
+\input{reproducibility_checklist}
+\end{document}

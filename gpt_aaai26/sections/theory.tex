@@ -1,0 +1,38 @@
+\section{Scope of the Proximal Analysis}
+\label{sec:theory}
+
+For deterministic state-conditioned policies, define
+\begin{equation}
+ d_{d,\rho}^2(\mu,\nu)=\E_{s\sim\rho}\frac{\|\mu(s)-\nu(s)\|_2^2}{d}.
+\end{equation}
+Because $W_2^2(\delta_{\mu(s)},\delta_{\nu(s)})=\|\mu(s)-\nu(s)\|_2^2$, this is an integrated Dirac-policy Wasserstein cost up to $d^{-1}$. For a fixed positive scale $C$ and reference $\nu$, the ideal operator
+\begin{equation}
+ \mathcal P_h^{\widehat Q}(\nu)\in\argmin_{\mu\in\mathcal M}
+ \left\{-\E_s\frac{\widehat Q(s,\mu(s))}{C}
+ +\frac{1}{2h}d_d^2(\mu,\nu)\right\}
+\label{eq:ideal_prox}
+\end{equation}
+recovers the normalized anchored objective after multiplying by $2h$. At the population level, squared dataset-action anchoring equals squared distance to the conditional-mean behavior map plus action variance independent of $\mu$.
+
+\begin{proposition}[Conditional learned-critic margin]
+If the preceding actor is feasible for the $k$th actor class and a computed $\mu_k$ satisfies
+\begin{equation*}
+ \mathcal L_k^{\rm P}(\mu_k\mid\mu_{k-1})
+ \leq \mathcal L_k^{\rm P}(\mu_{k-1}\mid\mu_{k-1})+\varepsilon_k,
+\end{equation*}
+then
+\begin{equation}
+ \frac{2h}{C_k}\E_s[\widehat Q(s,\mu_k)-\widehat Q(s,\mu_{k-1})]
+ -d_d^2(\mu_k,\mu_{k-1})\geq-\varepsilon_k.
+\label{eq:conditional_margin}
+\end{equation}
+\end{proposition}
+This is a comparator inequality for the learned critic, not a true-return guarantee. It applies literally to re-centered hops; a sampled dataset action is not generally a feasible deterministic-policy comparator for the first hop. Moreover, the live one-Adam-step update is not logged to verify the premise.
+
+For a noiseless TD target $y_\mu=r+\gamma\min_jQ_j^-(s',\mu(s'))$, if each target critic is $L(s')$-Lipschitz in action, then
+\begin{equation}
+ \|y_{\mu_1}-y_{\mu_0}\|_{L_2(\D)}
+ \leq\gamma\{\E[L(s')^2\|\mu_1(s')-\mu_0(s')\|_2^2]\}^{1/2}.
+\label{eq:target_bound}
+\end{equation}
+Later actors do not enter this one-step bound conditional on $\mu_1$. It bounds target-value perturbation, not learned-critic stability. The supplement gives proofs and a local explicit--implicit expansion under a locally Lipschitz Hessian. It also states the additional near-identity assumption required for fixed-$K$ composition. Persistent actors need not satisfy that assumption at zero nominal step, so the local analysis motivates but does not certify BAR training.

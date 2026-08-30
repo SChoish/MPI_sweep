@@ -1,0 +1,51 @@
+{
+  "schema_version": 2,
+  "scope": "Sanitized compact re-aggregation summary; no policy training or simulator rollout was rerun.",
+  "integrity": {
+    "target_exposure_rows": 270,
+    "failure_diagnostic_rows": 180,
+    "simulator_checkpoints": 60,
+    "simulator_states": 720,
+    "route_runs": 8,
+    "route_checkpoint_arm_pairings": 32,
+    "source_files_hashed": 2135,
+    "source_bytes": 3180555260,
+    "primary_key_duplicates": 0,
+    "numeric_nan": 0,
+    "numeric_inf": 0
+  },
+  "bootstrap": {
+    "samples": 100000,
+    "seed": 20260830,
+    "task_effect_unit": "D4RL dataset/task",
+    "target_unit": "(dataset, seed) cluster",
+    "route_unit": "training run"
+  },
+  "headline": {
+    "p3_vs_td3_target_lower": [88, 90],
+    "p3_vs_td3_target_median_ratio": 0.6576946519,
+    "p3_vs_p2_target_lower": [84, 90],
+    "p3_vs_p2_target_median_ratio": 0.9030389773,
+    "p3_vs_td3_final_current_lower": [36, 90],
+    "p3_vs_td3_final_current_median_ratio": 1.0574135362,
+    "proxy_target_pearson": 0.9999114535,
+    "proxy_smoothed_pearson": 0.9992799627,
+    "route_primary_positive": [8, 8],
+    "route_final_checkpoint_positive": [5, 8],
+    "route_primary_mean_delta": 0.1235147225,
+    "route_primary_median_delta": 0.0132679730,
+    "route_sign_statistic": 0.0078125,
+    "route_run_bootstrap_95": [0.0076532688, 0.3237001186],
+    "simulator_stable_checkpoint_median_of_medians": -41.3670038919,
+    "simulator_collapsed_checkpoint_median_of_medians": 1697181925378.9092,
+    "simulator_rank_eligible": [69, 720],
+    "simulator_rank_disagreement": [29, 69]
+  },
+  "known_limits": [
+    "K=2 source NPZ files do not retain per-state TD residual arrays; 90 TD-quantile rows use an archived run-level diagnostic dump.",
+    "Final-checkpoint-only route direction is 5/8 rather than 8/8.",
+    "Route cells were selected post hoc from visible frontier transitions.",
+    "Simulator values in the old manuscript used pooled-state medians; the revision reports median checkpoint medians.",
+    "The compact pack uses logical identifiers and excludes local absolute paths."
+  ]
+}

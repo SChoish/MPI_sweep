@@ -1,0 +1,55 @@
+\section{Experiments}
+\label{sec:experiments}
+
+\paragraph{Protocol.}
+We use the exact D4RL v2 identifiers \texttt{halfcheetah-medium-v2}, \texttt{halfcheetah-medium-replay-v2}, \texttt{halfcheetah-expert-v2}, and the corresponding Hopper and Walker2d identifiers. We sweep
+\[
+T\in\{.05,.1,.2,.4,.7,1.5,2.5,4,7,10,12,14,17,20\}
+\]
+for TD3+BC ($K=1$), BAR-Prox $K\in\{2,3,4\}$, and BAR-Lin $K\in\{2,3\}$. Every method has $9\times14\times2$ completed runs. Each reported cell is the final $10$-episode mean at $10^6$ critic updates; evaluations occur every $50{,}000$ updates. The supplement gives architecture, optimization, preprocessing, terminal handling, and diagnostic definitions.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/stability_envelope.pdf}
+\caption{Complete fixed-nominal-budget phase diagram. (a) Mean D4RL score. (b) Score-below-20 rates at $T\geq4$ for environment--budget cells and seeded runs. (c) Dataset-cluster percentile intervals for high-budget score and raw-run collapse-risk differences. Intervals resample the nine D4RL datasets and describe this benchmark; only three dynamics families are represented.}
+\label{fig:stability}
+\end{figure*}
+
+\subsection{Fixed-budget refinement broadens the tested stable region}
+
+Table~\ref{tab:aggregate} and Figure~\ref{fig:stability} show a progressive high-budget improvement across proximal refinement depths. BAR-Prox $K=4$ raises the mean from $25.97$ for one-step TD3+BC to $63.61$, and reduces two-seed-mean collapsed cells from $35/63$ to $9/63$. Thresholds from 10 to 40 preserve the ordering (supplement). The low-budget mean remains similar, so the effect is a wider tested operating region rather than a uniformly better score at every coefficient.
+
+\begin{table}[t]
+\caption{Complete fixed-budget sweep. High: $T\ge4$; tail: $T\ge10$. Collapse is seed-mean cells / seeded runs with score below 20.}
+\centering
+\small
+\setlength{\tabcolsep}{3.4pt}
+\begin{tabular}{lrrrr}
+\toprule
+Method & $T\le2.5$ & High & Tail & Collapse\\
+\midrule
+TD3+BC &68.35&25.97&20.46&35/68\\
+BAR-P2 &\textbf{71.62}&42.02&31.49&25/53\\
+BAR-P3 &70.56&52.78&43.55&17/41\\
+BAR-P4 &71.21&\textbf{63.61}&\textbf{56.26}&\textbf{9/29}\\
+BAR-L2 &69.02&36.68&27.44&29/58\\
+BAR-L3 &68.54&43.91&33.12&24/53\\
+\bottomrule
+\end{tabular}
+\label{tab:aggregate}
+\end{table}
+
+The dataset-cluster mean difference for $K=4-K=1$ is $37.64$ with a 95\% percentile interval $[20.5,54.3]$; eight of nine datasets have positive differences. The raw-run collapse-risk difference is $-.310$ with interval $[-.484,-.143]$. For $K=4-K=3$, the mean difference is $10.83$ with interval $[2.3,22.0]$ and six of nine datasets are positive, but the collapse-risk interval $[-.206,0]$ reaches zero. Hence the broad rescue relative to one-step TD3+BC is stronger than the incremental failure-rate evidence beyond $K=3$.
+
+Cellwise, the $K=4-K=3$ mean gain is $10.83$ whereas the median is only $.32$: eight $K=3$ collapsed cells cross the score-20 threshold under $K=4$, none cross adversely, and most remaining cells move little. These transitions are descriptive under the current two-seed cell means rather than independent Bernoulli trials. On Hopper-medium, two additional $K=4$ seeds reproduce the high score at $T=17$ ($100.9\pm1.7$ over four seeds), but variance rises sharply at $T=20$ ($41.8\pm44.0$). This is a within-$K=4$ robustness check, not a four-seed cross-$K$ comparison.
+
+\paragraph{Linearized control and one-hop replication.}
+BAR-Lin also improves from $K=2$ to $K=3$: the high-budget mean rises from $36.68$ to $43.91$ and collapsed cells fall from $29$ to $24$. Because the first-hop scale evaluation differs between BAR-Prox and BAR-Lin and both use neural target fitting, this shows that the direction is not unique to the proximal loss; it does not isolate a numerical integrator effect. Independently, TD3+BC seeds 2--3 reproduce the original high-budget mean and cell-collapse landscape: $24.79$ and $35/63$, versus $25.97$ and $35/63$ for seeds 0--1.
+
+\subsection{Re-audited movement and failure diagnostics}
+
+The compact audit rebuilds statistics from preserved per-state/NPZ inputs without rerunning training. It verifies exact pairing, no nonfinite values, 270 target-exposure checkpoints, 180 failure-diagnostic runs, 60 simulator checkpoints (720 states), and eight route runs. The target-facing result is strong: BAR-Prox $K=3$ has smaller deterministic next-state target-action displacement than TD3+BC in $88/90$ matched environment--budget--seed cells, with median ratio $.658$. The current-state online final-policy proxy is smaller in only $36/90$ cells and has median ratio $1.057$. These quantities differ in state/action anchors and target-network status: the former compares $\mu_1^-(s'_i)$ with the paired next dataset action $a_{i+1}$, while the latter compares $\mu_K(s_i)$ with $a_i$. We therefore interpret them as complementary movement diagnostics, not two directly commensurate distances.
+
+Collapsed BAR-Prox and BAR-Lin checkpoints have orders-of-magnitude larger TD-error tails and critic magnitudes; their actor-chain gains become negative under a frozen, environment--seed-matched TD3+BC $T=1$ critic. A simulator screen gives a median of checkpoint-level signed-error medians of $-41.4$ across 55 stable checkpoints and $1.70\times10^{12}$ across five collapsed checkpoints. This supports severe calibration failure in the screened collapsed cases, but the screen is post hoc and sparse.
+
+A route-only shadow-critic study uses four visible frontier cells selected post hoc. Averaging state-median errors across four checkpoints, final-hop routing is less aligned with the common first-route continuation estimand in all eight runs (mean delta $.124$, median $.013$). The direction persists with state means and trimmed means, but only five of eight final-checkpoint-only contrasts are positive, and neither shadow critic drives return. This is targeted architectural evidence, not a causal estimate that routing produces the sweep-wide score gain.

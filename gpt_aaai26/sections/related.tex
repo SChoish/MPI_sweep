@@ -1,0 +1,11 @@
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Offline actor--critic regularization.}
+Offline RL controls distribution shift through behavior constraints, conservative value learning, or restrictions on actions used in Bellman backups \citep{fujimoto2019offpolicy,kumar2019bear,kumar2020cql}. TD3+BC combines critic maximization with squared behavior cloning \citep{fujimoto2021minimalist}; ReBRAC revisits this family with stronger regularization and implementation choices \citep{tarasov2023revisiting}. One-step offline RL argues that repeated optimization against off-policy estimates can amplify estimation error \citep{brandfonbrener2021onestep}, while EMaQ restricts backup maximization to samples from a proposal distribution \citep{ghasemipour2021emaq}. BAR instead keeps the TD3+BC critic objective fixed and studies a persistent actor refinement chain whose first and final branches serve different roles.
+
+\paragraph{Policy extraction and role separation.}
+Recent work separates behavior modeling from value-based policy extraction, for example by reranking behavior-supported action proposals at inference time \citep{lin2026decoupling}. BAR is different: every actor branch is trained jointly with the critic, and the final branch is not post-hoc proposal selection. The separation is architectural and incomplete--the same learned critic drives all actors, while only the first target copy enters Bellman backups.
+
+\paragraph{Wasserstein policy geometry.}
+Metric gradient flows and minimizing movements provide a variational language for proximal updates \citep{ambrosio2005gradient,otto2001geometry}. Prior RL work casts policy optimization as Wasserstein gradient flow or an optimal-transport trust region \citep{zhang2018policy,moskovitz2021efficient,terpin2022trust,song2023metric}. Wasserstein Policy Optimization derives a general continuous-control update by projecting a Wasserstein policy flow into parameter space \citep{pfau2025wpo}. BAR makes a narrower offline-RL use of the geometry: for Dirac policies, squared action anchoring is exactly a fiberwise $W_2^2$ cost. Our empirical subject is nevertheless the nonlocal, moving-critic, one-Adam-step actor chain rather than a converged JKO solver or an online Wasserstein policy-gradient method.

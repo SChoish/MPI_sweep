@@ -1,0 +1,5 @@
+aggregation,positive_runs,total_runs,mean_delta,median_delta,selection
+state_median_then_four_checkpoint_mean,8,8,0.1235147225,0.0132679730,post_hoc_frontier_cells
+state_mean_then_four_checkpoint_mean,8,8,0.1215573413,,post_hoc_frontier_cells
+state_10pct_trimmed_mean_then_four_checkpoint_mean,8,8,0.1217813215,,post_hoc_frontier_cells
+final_checkpoint_state_median_only,5,8,0.1243763267,,post_hoc_frontier_cells

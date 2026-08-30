@@ -1,0 +1,7 @@
+comparison,metric,pairs,left_lower,median_ratio,mean_difference_ci_low,mean_difference_ci_high,fraction_left_lower_ci_low,fraction_left_lower_ci_high,median_log_ratio_ci_low,median_log_ratio_ci_high,bootstrap_unit,bootstrap_samples
+P3_vs_TD3,target_next_deterministic,90,88,0.657694652,-0.279169544,-0.110680443,0.944444444,1.0,-0.575452893,-0.344589639,"(dataset,seed) cluster",100000
+P3_vs_TD3,target_next_smoothed,90,88,,-0.242478952,-0.097878463,0.944444444,1.0,-0.409290858,-0.254712227,"(dataset,seed) cluster",100000
+P3_vs_TD3,final_current,90,36,1.057413536,-0.194052385,-0.025859252,0.255555556,0.544444444,-0.049764018,0.186818691,"(dataset,seed) cluster",100000
+P3_vs_P2,target_next_deterministic,90,84,0.903038977,-0.071608807,-0.006147733,0.866666667,0.988888889,-0.126605195,-0.083062852,"(dataset,seed) cluster",100000
+P3_vs_P2,target_next_smoothed,90,81,0.930232211,-0.062779326,-0.006371158,0.833333333,0.955555556,-0.080920516,-0.055496489,"(dataset,seed) cluster",100000
+P3_vs_P2,final_current,90,29,1.038560293,-0.061192532,0.014018591,0.188888889,0.466666667,0.008215024,0.065350244,"(dataset,seed) cluster",100000

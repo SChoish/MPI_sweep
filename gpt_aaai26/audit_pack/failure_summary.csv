@@ -1,0 +1,5 @@
+method,group,runs,td_error_p99_median,q_abs_mean_median,critic_loss_median,d_first_current_median,d_final_current_median,common_critic_gain_median
+BAR-L2,stable,52,270.353952,311.430536,33.961409,0.111830,0.147188,2.110923
+BAR-L2,collapsed,38,9.596765e23,8.476488e11,1.232706e23,0.538422,0.625643,-1.422363
+BAR-P2,stable,59,160.772458,346.662048,18.660357,0.064403,0.094349,2.511067
+BAR-P2,collapsed,31,5.030493e21,6.906490e10,8.821056e20,0.445861,0.578036,-1.064690

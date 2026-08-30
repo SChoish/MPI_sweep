@@ -52,11 +52,10 @@ ensure_train_import_path()
 import jax  # noqa: E402
 import numpy as np  # noqa: E402
 
+from _ckpt_compat import normalize_checkpoint  # noqa: E402
+from d4rl_data import DATASET_FILES, dataset_path, download_dataset  # noqa: E402
 from train_td3bc import (  # noqa: E402
     Actor,
-    DATASET_FILES,
-    dataset_path,
-    download_dataset,
     load_checkpoint,
 )
 
@@ -65,6 +64,7 @@ METHODS = {
     "td3": ("results_qnorm", ""),
     "mpi2": ("results_mpi2", "mpi2"),
     "mpi3": ("results_mpi3", "mpi3"),
+    "mpi4": ("results/mpi4_norm", "mpi4"),
     "expl2": ("results_expl2_matched", "expl2"),
     "expl3": ("results_expl3_matched", "expl3"),
 }
@@ -558,7 +558,7 @@ def main() -> None:
                             raise FileNotFoundError(checkpoint)
                         continue
                     print(f"[target-exposure] {tag}", flush=True)
-                    payload = load_checkpoint(checkpoint)
+                    payload = normalize_checkpoint(load_checkpoint(checkpoint))
                     raw, cell_summary = audit_checkpoint_cell(
                         payload=payload,
                         transitions=selected,

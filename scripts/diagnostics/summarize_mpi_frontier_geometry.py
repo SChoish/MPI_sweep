@@ -111,18 +111,18 @@ def main() -> None:
             final[(method, env_name, tau, int(row["seed"]), "own")]
             for row in group
         ]
-        canonical = [
-            final[
-                (
-                    method,
-                    env_name,
-                    tau,
-                    int(row["seed"]),
-                    "canonical_td3_tau1",
-                )
-            ]
+        canonical_keys = [
+            (
+                method,
+                env_name,
+                tau,
+                int(row["seed"]),
+                "canonical_td3_tau1",
+            )
             for row in group
         ]
+        has_canonical = all(key in final for key in canonical_keys)
+        canonical = [final[key] for key in canonical_keys] if has_canonical else []
         seed_mean_rows.append(
             {
                 "env": env_name,
@@ -142,8 +142,8 @@ def main() -> None:
                 "decoupling_displacement_ratio_mean": _mean(
                     group, "decoupling_displacement_ratio"
                 ),
-                "canonical_q1_gain_total_mean": _mean(
-                    canonical, "q1_gain_total_mean"
+                "canonical_q1_gain_total_mean": (
+                    _mean(canonical, "q1_gain_total_mean") if has_canonical else ""
                 ),
                 "own_q1_gain_total_mean": _mean(own, "q1_gain_total_mean"),
                 "own_secant_q_final_mean": _mean(own, "secant_q_mean"),

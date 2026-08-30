@@ -34,6 +34,7 @@ import jax  # noqa: E402
 import jax.numpy as jnp  # noqa: E402
 import numpy as np  # noqa: E402
 
+from _ckpt_compat import normalize_checkpoint  # noqa: E402
 from train_td3bc import (  # noqa: E402
     Actor,
     TwinCritic,
@@ -53,6 +54,7 @@ METHODS = {
     "td3": ("results_qnorm", "", 1, "d4rl_score"),
     "mpi2": ("results_mpi2", "mpi2", 2, "d4rl_pi2"),
     "mpi3": ("results_mpi3", "mpi3", 3, "d4rl_pi3"),
+    "mpi4": ("results/mpi4_norm", "mpi4", 4, "d4rl_pi4"),
     "expl2": ("results_expl2_matched", "expl2", 2, "d4rl_pi2"),
     "expl3": ("results_expl3_matched", "expl3", 3, "d4rl_pi3"),
 }
@@ -121,10 +123,12 @@ def _actor_path(
     dataset_actions: np.ndarray,
 ) -> list[np.ndarray]:
     keys = ["actor_params"]
-    if method in ("mpi2", "mpi3", "expl2", "expl3"):
+    if method in ("mpi2", "mpi3", "mpi4", "expl2", "expl3"):
         keys.append("actor2_params")
-    if method in ("mpi3", "expl3"):
+    if method in ("mpi3", "mpi4", "expl3"):
         keys.append("actor3_params")
+    if method == "mpi4":
+        keys.append("actor4_params")
     apply_actor = jax.jit(actor.apply)
     actions = [np.asarray(dataset_actions, dtype=np.float32)]
     for key in keys:
@@ -414,9 +418,13 @@ def main() -> None:
                 / canonical_tag
                 / "params_1000000.pkl"
             )
-            if not canonical_path.is_file():
-                raise FileNotFoundError(canonical_path)
-            canonical_cache[(env_name, seed)] = load_checkpoint(canonical_path)
+            if canonical_path.is_file():
+                canonical_cache[(env_name, seed)] = normalize_checkpoint(
+                    load_checkpoint(canonical_path)
+                )
+            else:
+                print(f"[warn] no canonical td3 critic: {canonical_path}", flush=True)
+                canonical_cache[(env_name, seed)] = None
 
         for tau in args.taus:
             for seed in args.seeds:
@@ -431,7 +439,7 @@ def main() -> None:
                         print(f"[missing] {checkpoint}", flush=True)
                         continue
                     print(f"[geometry] {tag}", flush=True)
-                    payload = load_checkpoint(checkpoint)
+                    payload = normalize_checkpoint(load_checkpoint(checkpoint))
                     max_action = float(payload.get("max_action", 1.0))
                     actor = Actor(
                         action_dim=int(dataset_actions.shape[-1]),
@@ -499,9 +507,14 @@ def main() -> None:
                     run_rows.append(run_row)
 
                     own_params = _tree_params(payload, "critic_params")
-                    canonical_params = _tree_params(
-                        canonical_payload, "critic_params"
-                    )
+                    scopes: list[tuple[str, Any]] = [("own", own_params)]
+                    if canonical_payload is not None:
+                        scopes.append(
+                            (
+                                "canonical_td3_tau1",
+                                _tree_params(canonical_payload, "critic_params"),
+                            )
+                        )
                     raw_payload: dict[str, np.ndarray] = {
                         "indices": indices.astype(np.int64),
                         "states": states,
@@ -509,10 +522,7 @@ def main() -> None:
                     }
                     for hop, action in enumerate(actions):
                         raw_payload[f"action_hop{hop}"] = action
-                    for critic_scope, critic_params in (
-                        ("own", own_params),
-                        ("canonical_td3_tau1", canonical_params),
-                    ):
+                    for critic_scope, critic_params in scopes:
                         q1s, q2s, grads = _critic_path(
                             critic, critic_params, states, actions
                         )

@@ -1,0 +1,46 @@
+{
+  "methods": [
+    "mpi4"
+  ],
+  "envs": [
+    "hopper-medium-v2",
+    "hopper-medium-replay-v2",
+    "walker2d-medium-v2",
+    "walker2d-expert-v2"
+  ],
+  "taus": [
+    4.0,
+    7.0,
+    10.0
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "n_states": 4096,
+  "sample_seed": 20260824,
+  "canonical_critic": "TD3+BC checkpoint from the same env/seed at tau=1",
+  "critic_activation": "relu",
+  "curvature": "finite path secants, not pointwise Hessians",
+  "reference_action": "matched dataset transition action",
+  "prox_margin_val": "post-hoc fixed-batch margin under each selected critic; not the unrecoverable original train-minibatch margin",
+  "effective_action_step": "d * (tau / K) / q_scale for raw-Q gradients",
+  "missing_checkpoints": [
+    "/home/offrl/MPI_sweep/results/mpi4_norm/walker2d-medium-v2_tau4_mpi4_seed2/params_1000000.pkl",
+    "/home/offrl/MPI_sweep/results/mpi4_norm/walker2d-medium-v2_tau4_mpi4_seed3/params_1000000.pkl",
+    "/home/offrl/MPI_sweep/results/mpi4_norm/walker2d-medium-v2_tau7_mpi4_seed2/params_1000000.pkl",
+    "/home/offrl/MPI_sweep/results/mpi4_norm/walker2d-medium-v2_tau7_mpi4_seed3/params_1000000.pkl",
+    "/home/offrl/MPI_sweep/results/mpi4_norm/walker2d-medium-v2_tau10_mpi4_seed2/params_1000000.pkl",
+    "/home/offrl/MPI_sweep/results/mpi4_norm/walker2d-medium-v2_tau10_mpi4_seed3/params_1000000.pkl",
+    "/home/offrl/MPI_sweep/results/mpi4_norm/walker2d-expert-v2_tau4_mpi4_seed2/params_1000000.pkl",
+    "/home/offrl/MPI_sweep/results/mpi4_norm/walker2d-expert-v2_tau4_mpi4_seed3/params_1000000.pkl",
+    "/home/offrl/MPI_sweep/results/mpi4_norm/walker2d-expert-v2_tau7_mpi4_seed2/params_1000000.pkl",
+    "/home/offrl/MPI_sweep/results/mpi4_norm/walker2d-expert-v2_tau7_mpi4_seed3/params_1000000.pkl",
+    "/home/offrl/MPI_sweep/results/mpi4_norm/walker2d-expert-v2_tau10_mpi4_seed2/params_1000000.pkl",
+    "/home/offrl/MPI_sweep/results/mpi4_norm/walker2d-expert-v2_tau10_mpi4_seed3/params_1000000.pkl"
+  ],
+  "hop_rows": 144,
+  "run_rows": 36
+}

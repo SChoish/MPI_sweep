@@ -1,0 +1,32 @@
+{
+  "run_rows": 36,
+  "hop_rows": 144,
+  "curvature_rows": 0,
+  "small_t_max": 0.4,
+  "small_t_rows": 0,
+  "collapse_threshold": 20.0,
+  "win_margin": 1.0,
+  "method_cell_summary": [
+    {
+      "method": "mpi4",
+      "cells": 6,
+      "score_mean": 94.50774017995256,
+      "collapse_cells": 0,
+      "critic_displacement_median": 0.029416968036542812,
+      "final_displacement_median": 0.04245280082245095
+    }
+  ],
+  "paired_td3_mpi3": {
+    "cells": 0,
+    "mpi3_wins_by_margin": 0,
+    "td3_wins_by_margin": 0,
+    "td3_collapsed_mpi3_stable": 0,
+    "mpi3_collapsed_td3_stable": 0,
+    "collapse_discordant_cells": 0,
+    "stable_has_smaller_dcrit_in_discordant": 0
+  },
+  "qhat_sign_match_fraction_small_t": null,
+  "qhat_relative_disagreement_median_small_t": null,
+  "qhat_relative_disagreement_lt_0p25_fraction_small_t": null,
+  "all_numeric_outputs_finite": true
+}

@@ -1,0 +1,647 @@
+\documentclass[letterpaper]{article}
+\usepackage[submission]{aaai2026}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[hyphens]{url}
+\usepackage{graphicx}
+\urlstyle{rm}
+\def\UrlFont{\rm}
+\usepackage{natbib}
+\usepackage{caption}
+\frenchspacing
+\setlength{\pdfpagewidth}{8.5in}
+\setlength{\pdfpageheight}{11in}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,decorations.pathreplacing}
+\pdfinfo{
+/TemplateVersion (2026.1)
+}
+\setcounter{secnumdepth}{0}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+\newcommand{\E}{\mathbb E}
+\newcommand{\R}{\mathbb R}
+\newcommand{\M}{\mathcal M}
+\newcommand{\D}{\mathcal D}
+\newcommand{\A}{\mathcal A}
+\newcommand{\sg}{\operatorname{sg}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\title{Target--Deployment Routed Refinement: Broadening the Stability Envelope of Offline TD3+BC}
+\author{Anonymous Submission}
+\affiliations{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+TD3+BC ordinarily uses one actor branch both to construct bootstrapped critic targets and to produce the deployed policy, tying target-policy displacement to the total reach of policy improvement. We introduce target--deployment routed refinement (TDRR), a staged TD3+BC actor chain whose first-hop target copy supplies TD actions and whose final hop is deployed. The squared action-anchored objective has a deterministic Wasserstein--2 proximal interpretation. We derive an inexact finite-step margin relative to the learned critic, an explicit critic-error term, a first-hop target-perturbation bound, and a fixed-$K$ local expansion. Across nine D4RL locomotion tasks and fourteen fixed budgets, three proximal hops reduce high-budget low-return cells from $35/63$ to $17/63$; a scale-matched linearized realization reduces them to $24/63$. Three-hop TDRR lowers sample-anchored next-state target-policy displacement in $88/90$ paired runs while lowering the current-state final-policy displacement proxy in only $36/90$. These results support an empirical stability-envelope gain for the implemented refinement bundle without attributing it to routing alone.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+Offline reinforcement learning (RL) seeks a policy from a fixed dataset without additional environment interaction. Its central difficulty is not merely to select a high-value action, but to determine how far policy improvement can proceed before the learned critic becomes unreliable. TD3+BC regularizes a deterministic actor toward dataset actions while using a Polyak copy of that actor in bootstrapped critic targets \citep{fujimoto2021minimalist}. The same policy branch therefore determines both the action shift entering critic training and the reach of the evaluated policy. Aggressive improvement can move target actions into regions where critic error is amplified, whereas conservative improvement can leave useful policy improvement unrealized.
+
+We study this coupling through \emph{target--deployment routed refinement} (TDRR), a re-centered actor architecture for TD3+BC. TDRR represents a nominal improvement budget with $K$ sequential actor updates. The first actor is anchored to dataset actions, and each later actor is anchored to the stop-gradient output of its predecessor. A target copy of the first refined actor supplies the next actions in TD targets, while the final actor is used for evaluation. The architecture thus assigns critic-target construction and deployment to distinct policy branches without changing the critic update rule.
+
+Let $D_{\mathrm{critic}}$ denote the squared displacement of the critic-coupled first-hop branch and let $D_{\mathrm{final}}$ denote that of the evaluated final policy. A one-hop actor identifies these quantities; TDRR assigns them to $\mu_1$ and $\mu_K$, respectively. This separation can increase final-policy reach at comparable first-hop movement or contract both movements near an unstable training outcome. It also introduces a countervailing mismatch because the critic target follows the $\mu_1$ branch while evaluation follows $\mu_K$. The method therefore exposes a design axis between target-policy displacement and deployment reach rather than guaranteeing that either quantity is independently optimal.
+
+For deterministic actors, the squared action anchor in TD3+BC is a Wasserstein--2 movement cost in the Dirac-policy limit. Under a fixed critic, inactive action projection, accurate subproblem solutions, and small \emph{realized} steps, explicit and implicit updates are first-order discretizations of the same Wasserstein gradient flow. At finite steps, a proximal comparison yields an improvement margin only relative to the learned critic. At large nominal budgets, projection, neural actor fitting, critic drift, saturation, and the seeded optimization trajectory determine the observed end-to-end outcome. We keep these local, finite-step, and coupled regimes distinct throughout the analysis.
+
+We evaluate this formulation with a complete fixed-budget sweep over nine D4RL locomotion tasks, fourteen budgets, and two paired seeds. Three proximal hops reduce large-budget low-return cells from $35/63$ for TD3+BC to $17/63$ and primarily improve the lower tail rather than uniformly shifting scores. Three scale-matched projected linearized hops reduce failures to $24/63$, so the stability effect is not unique to the proximal loss. Direct next-state diagnostics show that three-hop TDRR lowers deterministic target-policy displacement in $88/90$ paired comparisons with TD3+BC, while its current-state final-policy displacement proxy is lower in only $36/90$. Low-return runs additionally exhibit orders-of-magnitude increases in TD-error tails, larger realized movements, and critic gains that reverse sign under a controlled common critic. Targeted route and compute controls probe components of the architecture but do not identify the source of the sweep-wide gain.
+
+Our contributions are as follows.
+\begin{itemize}
+    \item We formulate TDRR for TD3+BC as a re-centered actor composition that assigns target-policy displacement and final-policy reach to distinct branches.
+    \item We give a Wasserstein proximal interpretation, derive an inexact finite-step margin with an explicit critic-error term, bound first-hop TD-target perturbation, and separate these statements from the fixed-critic small-step flow limit.
+    \item Through complete proximal and scale-matched linearized sweeps, direct target-policy measurements, critic-failure diagnostics, and targeted controls, we show that the tested three-hop refinement bundles broaden the empirical large-budget stability envelope and that low-return outcomes are consistent with critic miscalibration in the nonlocal regime.
+\end{itemize}
+
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Behavior-regularized offline actor--critic learning.}
+Offline actor--critic methods must control value extrapolation when a learned
+policy selects actions outside the fixed dataset. Prior work studies this
+failure through constrained policy improvement, conservative value learning,
+and restrictions on actions used in Bellman backups
+\citep{fujimoto2019offpolicy,kumar2019bear}. TD3+BC provides a particularly
+minimal control: a deterministic actor maximizes a normalized critic while a
+squared cloning term anchors its actions to the dataset
+\citep{fujimoto2021minimalist}. We keep this critic update and actor family
+fixed and study which refined actor branch supplies the TD target.
+
+\paragraph{Policy geometry and proximal refinement.}
+Trust-region policy optimization is commonly derived from information geometry
+\citep{amari2000methods,schulman2015trust}. Optimal-transport geometry gives a
+different notion of movement: policy optimization can be expressed as a
+Wasserstein gradient flow, with related natural-gradient and trust-region
+constructions for continuous control
+\citep{zhang2018policy,moskovitz2020efficient,terpin2022trust,song2023metric}.
+For deterministic policies, the statewise Wasserstein--2 cost reduces to
+squared action displacement. We use that identity to interpret the TD3+BC
+anchor as a proximal movement cost, while separating the finite-step
+variational statement from its small-step flow limit.
+
+\paragraph{Target networks and actor--critic coupling.}
+Bootstrapping error can feed critic extrapolation back into actor updates
+\citep{fujimoto2019offpolicy,kumar2019bear}. Polyak averaging delays this
+feedback but ordinarily copies the same actor branch that will be deployed.
+Target--deployment routed refinement makes a narrower architectural change:
+the target copy follows the first local refinement, whereas evaluation uses
+the final refinement. Our target-perturbation bound and direct displacement
+audit therefore concern branch assignment inside TD3+BC rather than a new
+critic objective or a general claim about offline policy extraction.
+
+\section{Preliminaries}
+\label{sec:background}
+
+We consider a discounted Markov decision process
+$\langle\mathcal S,\mathcal A,P,r,\gamma\rangle$ with continuous actions and
+a fixed offline dataset $\mathcal D=\{(s_i,a_i,r_i,s_i')\}_{i=1}^N$. A clipped
+double critic is trained from targets
+\begin{equation}
+y_{\rho}=r+\gamma\min_j Q_j^-(s',\rho(s')),
+\label{eq:td_target_background}
+\end{equation}
+where $\rho$ is a target policy. When $\rho(s')$ leaves dataset support,
+critic error enters the regression target and can be amplified by later actor
+updates \citep{fujimoto2019offpolicy,kumar2019bear}.
+
+For a deterministic actor $\mu_\theta$, normalized TD3+BC minimizes
+\begin{equation}
+\mathcal L_{\rm actor}(\theta)
+=-\alpha\,\mathbb E_s\bar Q(s,\mu_\theta(s))
++\mathbb E_{(s,a)\sim\mathcal D}\frac{\|\mu_\theta(s)-a\|_2^2}{d},
+\label{eq:td3bc_background}
+\end{equation}
+where $\bar Q=\widehat Q/C$ and $C>0$ is a stop-gradient critic scale
+\citep{fujimoto2021minimalist}. Ordinarily, a Polyak copy of this actor enters
+Eq.~\eqref{eq:td_target_background}, while the online actor is deployed.
+Target-policy movement and deployment reach therefore follow the same branch.
+
+A metric proximal update with step $h>0$ takes the form
+\begin{equation}
+\pi^+\in\argmin_\pi\left\{\widehat{\mathcal E}(\pi)
++\frac{1}{2h}d_{\mathcal M}^2(\pi,\pi^{\rm ref})\right\}.
+\label{eq:generic_prox}
+\end{equation}
+This minimizing-movement construction is associated with metric gradient
+flows \citep{ambrosio2005gradient,otto2001geometry}. For deterministic
+state-conditioned policies,
+\begin{equation}
+W_2^2(\delta_{\mu(s)},\delta_{\nu(s)})=\|\mu(s)-\nu(s)\|_2^2.
+\label{eq:dirac_w2_background}
+\end{equation}
+Thus the TD3+BC anchor is a Wasserstein--2 movement cost up to fixed scaling.
+We distinguish its finite-step variational meaning from the small-step,
+fixed-critic gradient-flow limit and from large-budget coupled training.
+
+\section{Target--Deployment Routed Refinement}
+\label{sec:method}
+
+At each delayed actor update, TDRR maintains $K$ independently initialized,
+persistent deterministic actors with separate optimizer states. The first
+actor takes one TD3+BC update toward the sampled dataset actions; each later
+actor takes one update toward the stop-gradient output of its predecessor on
+the same minibatch. The online critic is fixed within this chain; we denote its first Q-function by
+$\widehat Q$. A Polyak copy of the first actor supplies TD-target
+actions, and the final actor is evaluated. We first derive the proximal
+operator underlying these updates and then formalize their composition.
+\subsection{Offline actor updates as proximal improvement}
+
+Let $\rho_{\mathcal D}$ be the empirical state distribution and consider a
+deterministic actor $\mu:\mathcal S\rightarrow\mathcal A\subset\mathbb R^d$.
+At one training iteration, the critic parameters are held fixed while the actor
+chain is updated. We write the current critic as $\widehat Q$ and normalize its
+global scale by
+\begin{equation}
+\begin{aligned}
+ \bar Q_k(s,a)&=\frac{\widehat Q(s,a)}{C_k},\\
+ C_k&=\operatorname{sg}\!\left(
+ \mathbb E_s|\widehat Q(s,\widetilde\mu_k(s))|+\epsilon\right).
+\end{aligned}
+\label{eq:qnorm}
+\end{equation}
+where $\widetilde\mu_k$ is the actor before hop $k$ and
+$\operatorname{sg}$ denotes stop-gradient. A fixed positive $C$ only rescales
+gradient-flow time; recomputing $C_k$ changes the finite-step schedule. Our
+finite-step statements condition on the realized scales.
+
+For deterministic policies and a state distribution $\rho$, define the
+action-averaged Wasserstein metric
+\begin{equation}
+ \mathsf d_{d,\rho}^2(\mu,\nu)
+ :=\mathbb E_{s\sim\rho}
+ \left[\frac{1}{d}\|\mu(s)-\nu(s)\|_2^2\right].
+ \label{eq:mean_metric}
+\end{equation}
+It is $d^{-1}$ times the state-averaged squared $W_2$ distance between
+state-conditioned Dirac policies. We abbreviate
+$\mathsf d_d=\mathsf d_{d,\rho_{\mathcal D}}$ on the actor-training state
+distribution.
+The population counterpart of squared behavior cloning also admits a
+deterministic reference. Let $P_{\!B}$ be the data-generating behavior
+distribution, let $\rho_B$ be its state marginal, and define
+$b(s)=\mathbb E_{P_{\!B}}[a\mid s]$. Then
+\begin{equation}
+ \mathbb E_{(s,a)\sim P_{\!B}}\frac{1}{d}\|\mu(s)-a\|_2^2
+ =\mathsf d_{d,\rho_B}^2(\mu,b)+\mathrm{const},
+ \label{eq:bc_decomposition}
+\end{equation}
+where the constant is the conditional action variance and does not depend on
+$\mu$. The empirical actor loss is a Monte Carlo estimate of the left-hand
+side, so samplewise squared anchoring targets the conditional-mean behavior map
+at the population level.
+
+Given a reference policy $\nu$ and step $h>0$, define the proximal refinement
+operator by
+\begin{equation}
+\mathcal P_{h}^{\widehat Q}(\nu)
+\in\argmin_{\mu\in\mathcal M}
+\left\{-\mathbb E_s\bar Q_k(s,\mu(s))
++\frac{1}{2h}\mathsf d_d^2(\mu,\nu)\right\}.
+\label{eq:prox_operator}
+\end{equation}
+Multiplying by $2h$ gives the practical actor objective
+\begin{equation}
+\mathcal L_{h,k}(\mu\mid\nu)
+=-2h\,\mathbb E_s\bar Q_k(s,\mu(s))
++\mathsf d_d^2(\mu,\nu).
+\label{eq:actorloss}
+\end{equation}
+
+\begin{proposition}[Behavior anchoring is Wasserstein proximal improvement]
+\label{prop:prox_equiv}
+For deterministic policies, the normalized anchored objective
+\begin{equation*}
+ -\alpha\,\mathbb E_s\bar Q(s,\mu(s))
+ +\mathsf d_d^2(\mu,\nu)
+\end{equation*}
+is Eq.~\eqref{eq:prox_operator}, up to multiplication by a positive constant, with
+$h=\alpha/2$. Equivalently, the raw-critic objective
+$-\lambda\mathbb E_s\widehat Q(s,\mu(s))+\mathsf d_d^2(\mu,\nu)$ has
+$h=\lambda C/2$ when $C$ is fixed. The population counterpart of squared
+dataset anchoring uses $\nu=b$ by Eq.~\eqref{eq:bc_decomposition}.
+\end{proposition}
+
+The proposition identifies an update operator relative to the \emph{estimated}
+critic; true-return improvement lies outside the scope of this certificate.
+
+\subsection{Re-centered composition and actor--critic dataflow}
+
+For population analysis, let $\mu_0:=b$ denote the conditional-mean behavior
+map and let $h_{1:K}$ be positive step sizes. The idealized TDRR chain is
+\begin{equation}
+ \mu_k\in\mathcal P_{h_k}^{\widehat Q}
+ (\operatorname{sg}\mu_{k-1}),
+ \qquad k=1,\ldots,K.
+ \label{eq:tdrr}
+\end{equation}
+The implementation approximates each subproblem with one optimizer update.
+Its first actor $\mu_1$ uses sampled dataset actions as its reference; later actors $\mu_2,\ldots,\mu_K$ use the preceding online actor
+under the same current critic. Only the Polyak copy of $\mu_1$ enters the TD
+target, while $\mu_K$ supplies the evaluated action.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,>=stealth, every node/.style={font=\small}]
+  \node[draw,rounded corners,minimum width=1.05cm,minimum height=.52cm] (p0) at (0,0) {$\mu_0$};
+  \node[draw,rounded corners,minimum width=1.05cm,minimum height=.52cm] (p1) at (1.65,0) {$\mu_1$};
+  \node[draw,rounded corners,minimum width=1.05cm,minimum height=.52cm] (p2) at (3.30,0) {$\mu_2$};
+  \node at (4.35,0) {$\cdots$};
+  \node[draw,rounded corners,minimum width=1.05cm,minimum height=.52cm] (pk) at (5.45,0) {$\mu_K$};
+  \draw[->] (p0)--node[above] {$h_1$}(p1);
+  \draw[->] (p1)--node[above] {$h_2$}(p2);
+  \draw[->] (p2)--(4.05,0);
+  \draw[->] (4.65,0)--node[above] {$h_K$}(pk);
+  \node[draw,rounded corners,minimum width=1.55cm,minimum height=.52cm] (critic) at (1.65,-1.08) {TD target};
+  \draw[->,thick] (p1)--node[right,font=\small] {target copy}(critic);
+  \node[below=0.05cm of p1,font=\small] {$D_{\rm critic}$};
+  \node[below=0.05cm of pk,font=\small] {$D_{\rm final}$};
+  \draw[decorate,decoration={brace,mirror,amplitude=4pt},yshift=-0.48cm]
+  (p0.south west)--node[below=5pt,font=\small] {final-policy reach}(pk.south east);
+\end{tikzpicture}
+\caption{TDRR re-centers each actor update. A Polyak copy of $\mu_1$ supplies
+TD-target actions, while later actors increase or reshape final-policy reach
+without entering the target policy.}
+\label{fig:architecture}
+\end{figure}
+
+Our fixed-budget schedule sets $h_k=T/K$ and holds the total nominal budget
+$T$ fixed. Increasing $K$ jointly changes local step size, re-centering
+frequency, actor compute, and the target/deployment dataflow; the experiment
+therefore estimates the effect of this implemented refinement bundle.
+
+On the next-state distribution $\rho_{\mathcal D}'$ used by the TD target,
+define the action-averaged population displacements
+\begin{equation}
+\begin{aligned}
+D_{\rm critic}&:=\mathsf d_{d,\rho_{\mathcal D}'}^2(\mu_1,\mu_0),\\
+D_{\rm final}&:=\mathsf d_{d,\rho_{\mathcal D}'}^2(\mu_K,\mu_0).
+\end{aligned}
+\label{eq:displacements}
+\end{equation}
+A one-step actor has $D_{\rm critic}=D_{\rm final}$; TDRR assigns the two
+population quantities to distinct policy branches. On fixed validation batches, we measure the sample-anchored online branches
+and the deterministic next-state Polyak target branch:
+\begin{equation}
+\begin{aligned}
+\widehat D_{\rm critic}&=\mathbb E_i\|\mu_1(s_i)-a_i\|_2^2/d,\\
+\widehat D_{\rm final}&=\mathbb E_i\|\mu_K(s_i)-a_i\|_2^2/d,\\
+\widehat D_{\rm target}&=\mathbb E_i\|\mu_1^-(s_i')-a_{i+1}\|_2^2/d.
+\end{aligned}
+\label{eq:direct_target_displacement}
+\end{equation}
+The direct audit retains only bootstrapped transition pairs; a smoothed version
+uses common TD3 target-noise draws. Sample anchoring adds a common
+conditional-action-variance floor in population differences. These are
+movement measurements, not critic-reliability estimates.
+
+\subsection{Finite-step statements}
+
+The following statements do not require a small-step Taylor expansion.
+
+\begin{proposition}[Inexact estimated-energy margin]
+\label{prop:margin}
+Suppose $\mu_{k-1}$ is feasible for the $k$th actor class and the computed
+actor satisfies
+\begin{equation*}
+\mathcal L_{h_k,k}(\mu_k\mid\mu_{k-1})
+\leq
+\mathcal L_{h_k,k}(\mu_{k-1}\mid\mu_{k-1})+\varepsilon_k.
+\end{equation*}
+Then
+\begin{equation}
+\begin{split}
+ m_k^{\widehat Q}:={}&
+ \frac{2h_k}{C_k}\mathbb E_s
+ [\widehat Q(s,\mu_k(s))-\widehat Q(s,\mu_{k-1}(s))]\\
+ &-\mathsf d_d^2(\mu_k,\mu_{k-1})
+ \geq-\varepsilon_k.
+\end{split}
+\label{eq:margin}
+\end{equation}
+\end{proposition}
+
+For the first sample-anchored hop, a statewise dataset action is not generally
+a feasible deterministic-policy comparator; the population reference in
+Eq.~\eqref{eq:bc_decomposition} or a behavior actor is required for a literal
+certificate. For re-centered hops, the preceding actor is feasible by
+construction.
+
+The margin is relative to $\widehat Q$. Let a trusted objective be
+$Q^\dagger$ and write $\widehat Q=Q^\dagger+e$. Then
+\begin{equation}
+\begin{split}
+ m_k^{Q^\dagger}=m_k^{\widehat Q}
+ -\frac{2h_k}{C_k}\mathbb E_s[&e(s,\mu_k(s))\\
+ &-e(s,\mu_{k-1}(s))].
+\end{split}
+\label{eq:critic_error_margin}
+\end{equation}
+Thus estimated-energy descent transfers to $Q^\dagger$ only when critic error
+is controlled along the realized path. Equation~\eqref{eq:margin} certifies
+the learned objective rather than monotone true return.
+
+\begin{proposition}[First-hop TD-target perturbation bound]
+\label{prop:exposure}
+For clarity, consider a noiseless TD target using $\mu_1$,
+$y_{\mu_1}=r+\gamma\min_jQ_j^-(s',\mu_1(s'))$, and suppose each target critic
+$Q_j^-(s',\cdot)$ is $L(s')$-Lipschitz. For any reference $\mu_0$,
+\begin{equation}
+\begin{split}
+\|y_{\mu_1}-y_{\mu_0}\|_{L_2(\mathcal D)}
+\leq\gamma\Big(&\mathbb E_{s'}L(s')^2\\
+&\cdot\|\mu_1(s')-\mu_0(s')\|_2^2\Big)^{1/2}.
+\end{split}
+\label{eq:exposure_bound}
+\end{equation}
+If $L(s')\leq\bar L$, the right-hand side is at most
+$\gamma\bar L\sqrt{dD_{\rm critic}}$. Conditional on $\mu_1$, later actors do
+not enter this one-step target perturbation.
+\end{proposition}
+
+Proposition~\ref{prop:exposure} bounds a one-step value-target difference, not
+the stability of the learned critic. Its architectural content is that later
+refinement can alter $D_{\rm final}$ without directly entering this bound.
+With a Polyak target network, $\mu_1$ is replaced by its target copy. A
+same-noise comparison under TD3 target smoothing obeys the same bound because
+action clipping is nonexpansive. The current-state
+$\widehat D_{\rm critic}$ omits Polyak lag and target noise, whereas
+$\widehat D_{\rm target}$ measures the Polyak actor directly and has a
+smoothed counterpart. Neither displacement measures the action Lipschitz
+factor or the resulting change in critic value.
+
+The separation introduces a complementary evaluation-policy mismatch: critic
+targets follow the $\mu_1$ branch, whereas evaluation follows $\mu_K$.
+Increasing $D_{\rm final}$ at fixed $D_{\rm critic}$ can therefore make the
+critic less representative of the evaluated policy. We interpret TDRR as
+exposing a measurable target/deployment trade-off; its empirical return
+captures the net effect of target movement, evaluation mismatch, actor compute,
+and the coupled optimization trajectory.
+
+\subsection{Local Wasserstein-flow limit}
+\label{sec:local_limit}
+
+The gradient-flow interpretation is a local organizing principle. Fix a critic
+and an interior action $a_0$. Let $g=\nabla_a\widehat Q(a_0)$,
+$H=\nabla_a^2\widehat Q(a_0)$, and $\beta=dh/C$. Before projection, the
+scale-matched linearized and exact statewise proximal updates satisfy
+\begin{equation}
+\Delta a_{\rm lin}=\beta g,
+\qquad
+\Delta a_{\rm prox}=\beta\nabla_a\widehat Q(a_0+\Delta a_{\rm prox}).
+\label{eq:local_steps}
+\end{equation}
+When $\beta\|H\|\ll1$, the latter yields
+\begin{equation}
+\Delta a_{\rm prox}=(I-\beta H)^{-1}\beta g
+=\beta g+\beta^2Hg+O(\beta^3),
+\label{eq:resolvent}
+\end{equation}
+and both updates are first-order discretizations of
+$\dot a=d\nabla_a\bar Q(a)$. With fixed $C$ this is a constant
+time-rescaling of raw-critic gradient ascent; with a positive policy-dependent
+global $C$ it follows the same direction under an adaptive time
+parameterization. This expansion additionally requires small realized
+displacement, inactive projection, and a sufficiently accurate actor solve.
+At large budgets, our experiments diagnose the resulting nonlocal
+actor--critic regime instead of extrapolating Eq.~\eqref{eq:resolvent}. The
+end-to-end return sweep, even at small nominal $T$, is not a frozen-critic
+action-level consistency test of this limit.
+
+\begin{proposition}[Local fixed-budget composition]
+\label{prop:local_composition}
+Let a smooth one-step update in local coordinates satisfy
+$\Psi_h(x)=x+h f(x)+h^2p(x)+O(h^3)$. For fixed $K$ and $T\rightarrow0$,
+\begin{equation}
+\begin{aligned}
+\Psi_{T/K}^{K}(x_0)
+={}&x_0+Tf_0\\
+&+T^2\!\left[\frac{K-1}{2K}J_0f_0+\frac{1}{K}p_0\right]
++O(T^3).
+\end{aligned}
+\label{eq:k_comp}
+\end{equation}
+where $f_0=f(x_0)$ and $J_0=Df(x_0)$. Coordinate explicit Euler has
+$p_0=0$, whereas exact backward Euler has $p_0=J_0f_0$. Hence both are
+first-order methods; for each fixed $K$, the $T\to0$ expansion has a leading
+flow-bias coefficient proportional to $1/K$.
+\end{proposition}
+
+Proposition~\ref{prop:local_composition} explains a possible fixed-critic
+small-step benefit of substepping. It neither predicts the sign of true-return
+change nor applies to the projected, saturated, moving-critic branches studied
+at large $T$. The expansion is not a uniform $K\to\infty$ result.
+
+\section{Experiments}
+\label{sec:experiments}
+
+We evaluate TDRR on the nine D4RL locomotion tasks formed by HalfCheetah,
+Hopper, and Walker2d with medium, medium-replay, and expert datasets
+\citep{fu2020d4rl}. These tasks directly exercise deterministic continuous
+control and provide distinct behavior-data regimes for a target-routing stress
+test. Base implementations follow CORL configurations
+\citep{tarasov2022corl}; scores are D4RL normalized returns. Additional
+per-task results and diagnostic definitions are in
+the Supplementary Material.
+
+\paragraph{Fixed-budget protocol and estimand.}
+We hold a total nominal budget $T$ fixed, split it across $K$ actor hops as
+$h=T/K$, and sweep
+\begin{equation*}
+\begin{split}
+T\in\{&0.05,0.1,0.2,0.4,0.7,1.5,2.5,\\
+      &4,7,10,12,14,17,20\}.
+\end{split}
+\end{equation*}
+over all nine tasks with two paired seeds. The sweep is complete over this
+specified grid and contains $9\times14\times2$ runs per method. It is designed
+as a high-resolution stability phase diagram rather than a final benchmark
+alone. For $K=1$, Proposition~\ref{prop:prox_equiv} maps $T$ to the normalized
+TD3+BC coefficient $\alpha=2T$.
+
+We compare TD3+BC ($K=1$), proximal TDRR with $K\in\{2,3\}$ (TDRR-Prox), and a
+scale-matched projected linearized target with $K\in\{2,3\}$ (TDRR-Lin):
+\begin{equation}
+ a_{k+1}^{\rm tar}=\Pi_{\mathcal A}\!\left[
+ a_k+d\frac{T}{K}\frac{\nabla_a\widehat Q(s,a_k)}{C_k}\right].
+ \label{eq:linearized_target}
+\end{equation}
+Here $a_0$ is the sampled dataset action. At each hop, TDRR-Lin detaches the
+current reference, recomputes the $\widehat Q$ gradient and $C_k$, clips the
+target to the action box, and takes one mean-squared-error optimizer step with
+the corresponding persistent actor. It uses the same first-hop target and
+final-hop evaluation routing as TDRR-Prox. The factor $d$ matches the local
+action-space coefficient induced by the action-averaged metric in
+Eq.~\eqref{eq:mean_metric}. All conditions match datasets, critic updates, and
+the horizon of $10^6$ critic updates; checkpoint diagnostics use the final
+checkpoint. A $K$-hop condition performs $K$ actor optimizer steps at each
+delayed policy update, and $C_k$ is recomputed at each reference. The primary
+estimand is the end-to-end effect of the fixed-budget refinement bundle, which
+jointly changes local step size, re-centering frequency, actor compute, and
+target/deployment dataflow.
+
+The analyses test whether this bundle reduces large-budget low-return
+outcomes, whether the effect persists under the linearized realization, how
+first-hop target-policy displacement differs from final-policy reach, and which
+critic-validity diagnostics characterize failed training trajectories.
+
+\subsection{Three-hop refinement broadens the stability envelope}
+
+Figure~\ref{fig:stability} and Table~\ref{tab:stability} summarize the fixed-budget sweep. We descriptively call a high-budget cell collapsed when its two-seed mean score is below $20$; this is a locomotion failure indicator, not a theoretical threshold. TDRR-Prox with $K=3$ has the strongest high-budget average and reduces the seed-mean collapse count from $35/63$ to $17/63$. TDRR-Lin with $K=3$ reduces the same count to $24/63$, compared with $29/63$ for two linearized hops, and raises the high-budget average from $36.68$ to $43.91$. The raw-seed counts confirm the lower failure rate of both three-hop realizations. The proximal $K=2$ to $K=3$ mean improvement for $T\ge4$ is $+10.76$, whereas the median is only $+0.50$; the corresponding linearized differences are $+7.23$ and $+0.86$. Thus additional hops primarily rescue low-return outcomes rather than uniformly shifting settings. The Supplementary Material reports sensitivity to thresholds $0,10,20,30,$ and $40$.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/stability_envelope.pdf}
+\caption{Fixed-budget sweep over nine locomotion tasks. (a) Mean score over
+tasks. (b) Collapse rates for $T\ge4$, reported both by environment--budget
+cell and by seeded run. The tested refinement bundles broaden the stable
+high-budget region for both proximal and scale-matched linearized realizations.}
+\label{fig:stability}
+\end{figure*}
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Method & $T\le2.5$ & High & Tail & Collapse\\
+\midrule
+TD3+BC & 68.35 & 25.97 & 20.46 & 35 / 68\\
+TDRR-P2 & \textbf{71.62} & 42.02 & 31.49 & 25 / 53\\
+TDRR-P3 & 70.56 & \textbf{52.78} & \textbf{43.55} & \textbf{17 / 41}\\
+TDRR-L2 & 69.02 & 36.68 & 27.44 & 29 / 58\\
+TDRR-L3 & 68.54 & 43.91 & 33.12 & 24 / 53\\
+\bottomrule
+\end{tabular}
+\caption{Aggregate fixed-budget results. High denotes $T\ge4$ and tail denotes
+$T\ge10$. Collapse entries are seed-mean cells / raw seeded runs; P and L denote proximal and linearized.}
+\label{tab:stability}
+\end{table}
+
+\paragraph{Task-dependent response and a fourth hop.}
+The budget response is smooth on HalfCheetah-medium, plateau-like on
+Hopper-medium-replay, sharply nonmonotone on Hopper-medium and
+Walker2d-medium, and asymmetric on expert datasets. Within-task transitions
+are often organized more clearly by realized first-hop movement than by
+nominal $T$, but comparable movement can yield very different returns across
+tasks. There is therefore no universal critic-valid radius. In a separate
+four-seed Hopper-medium study, TDRR-Prox with $K=4$ scores $100.9\pm1.7$ at
+$T=17$, where $K=3$ scores $0.7$, but becomes highly variable at $T=20$
+($41.8\pm44.0$). The fourth hop relocates a nonmonotone high-return window; it
+does not establish a linear frontier law or identify a local-step mechanism.
+
+The linearized sweep shows that the gain is not unique to the proximal loss.
+At high budgets, TDRR-Lin with $K=3$ gains $7.23$ points over $K=2$ and reduces
+collapse cells from $29$ to $24$. TDRR-Prox remains stronger overall, so these
+are comparisons of complete training procedures rather than isolated
+integrator effects.
+
+\subsection{Large-budget behavior is nonlocal and critic dependent}
+
+
+At $T=20$, the raw linearized target reaches the action box in
+$94$--$95\%$ of states, and the effective action-step coefficient
+$h_{\rm eff}$ is only $14\%$ and $9\%$ of the nominal $dT/K$ coefficient in
+the two hops. These are medians over 18 environment--seed runs per hop. The
+practical operation is projected target generation followed by amortized neural
+regression under a moving critic. The sweep measures the resulting end-to-end
+stability envelope; local truncation error lies outside this estimand.
+
+Figure~\ref{fig:failure} shows the common failure signature. Environment
+return supplies the external label: collapsed runs score below $20$. These
+runs have orders-of-magnitude larger TD-error tails, larger critic magnitudes,
+and larger realized movements. The controlled common critic is the frozen
+final TD3+BC $T=1$ critic matched by environment and seed. A run-total gain
+sums the mean $Q$ change across actor hops on the shared state batch. For
+collapsed TDRR-Lin runs, its median under the jointly trained critic is
+$3.33\times10^{11}$; under the common critic it is $-1.42$, compared with
+$+2.11$ for stable runs. For TDRR-Prox, the common-critic gain changes from
+$+2.51$ in stable runs to $-1.06$ in collapsed runs. This sign reversal
+diagnoses cross-critic disagreement consistent with
+Eq.~\eqref{eq:critic_error_margin}; environment return remains the criterion
+for policy failure.
+
+A simulator-reference CPU audit provides targeted evidence of critic miscalibration in the screened checkpoints: the
+median signed error $\widehat Q_1(s,a_K)-Q_{\rm MC}^{\rho_1}(s,a_K)$ is
+$+1.70\times10^{12}$ in five collapsed checkpoints and $-38.7$ in 55 stable
+ones. Its action-ranking subset is sparse, so we use it only as targeted
+checkpoint-level evidence.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/failure_signature.pdf}
+\caption{Median diagnostics over the matched
+$T\in\{4,7,10,14,20\}$ audit. Proximal and linearized realizations share a
+diagnostic pattern consistent with critic miscalibration: critic errors and
+realized movements increase sharply, and run-total gains under a common critic become
+negative. Environment return labels failure; the common critic diagnoses
+cross-critic disagreement.}
+\label{fig:failure}
+\end{figure*}
+
+\subsection{Target-policy displacement and final-policy reach}
+
+At the same nominal budget, TDRR-Prox realizes a smaller current-state first-hop
+displacement proxy than TDRR-Lin once $T\ge7$ (the Supplementary Material). At
+$T=20$, their median $\widehat D_{\rm critic}$ values are $0.195$ and $0.323$.
+Across 90 paired seeded comparisons at $T\in\{4,7,10,14,20\}$, exactly one
+realization collapses in 11 cases. In all 11, the stable realization has both
+smaller $\widehat D_{\rm critic}$ and smaller $\widehat D_{\rm final}$.
+These paired outcomes associate smaller realized movement with the stable
+optimization trajectory. Because the proxy is measured on current validation
+states rather than the Polyak target policy on next states, this result
+organizes the observed failure transition without identifying a causal route
+through the TD target.
+
+We directly measure Eq.~\eqref{eq:direct_target_displacement} on all 270
+audited cells. The current-state proxy closely tracks deterministic
+target-policy displacement ($r=.9999$). TDRR-Prox $K=3$ has lower target-policy
+displacement than TD3+BC in 88 of 90 paired runs (median ratio $.658$), while
+the current-state $\widehat D_{\rm final}$ proxy is lower in only 36 of 90
+(median ratio $1.057$). Thus the three-hop refinement can reduce movement in
+the target-policy branch without merely shrinking its measured final-policy
+reach. Against $K=2$, $K=3$ lowers target-policy
+displacement in 84 of 90 runs but loses by more than one score point in 17 of
+those 84, showing that target-policy displacement alone does not determine
+performance (the Supplementary Material).
+
+A targeted $K=3$ study on Hopper-medium reveals two modes of decoupling
+(the Supplementary Material). For $T=4$--$10$, $K=2$ and $K=3$ have nearly
+identical $\widehat D_{\rm critic}$, whereas $K=3$ increases
+$\widehat D_{\rm final}$ and score;
+at $T=10$, the scores are $58.12$ and $85.35$. In the observed transition
+region from stable to collapsed scores ($T=12,14$), $K=3$ instead contracts
+both displacements and avoids the low-return outcome.
+At $T=20$, both enter severe projection and saturation and collapse. The third
+hop changes target-policy movement, re-centering frequency, and the
+optimization trajectory rather than the formal order of the local update.
+
+\subsection{Targeted component controls}
+
+We next hold the actor trajectory fixed and change only the backup route. Two actor-detached shadow critics start from the same parameters and receive identical minibatches and target-smoothing noise; one bootstraps through the first-hop target actor and the other through the final-hop target actor. The study covers Hopper-medium at $T\in\{10,20\}$ and Walker2d-medium at $T\in\{4,7\}$, with two seeds and four checkpoints. Relative to a common simulator return under the effective first-route backup continuation, the final-route shadow has greater state-median symmetric relative error in all eight run-level averages. The final-minus-first route delta has mean $.124$, median $.013$, a run-bootstrap mean 95\% interval $[.008,.323]$, and an exact two-sided sign-flip $p=.0078$. Because the final-route critic targets a different continuation, this contrast measures route-induced alignment with the primary first-route value estimand, not each shadow critic's calibration to its own continuation. Neither shadow critic drives the actors, so the intervention does not estimate a routing effect on return.
+
+Two additional eight-run controls probe simpler explanations (the Supplementary Material). With three actor optimizer calls in every condition, sequential $K=3$, a fixed-reference chain, and a direct-final control have means $71.4,70.0,$ and $59.4$ and collapse counts $2/8,2/8,$ and $3/8$. Fixed-reference refinement therefore matches sequential re-centering in this targeted sample, so the experiment does not establish re-centering alone as the source of the sweep-wide gain. Slowing only the $K=1$ actor-target Polyak rate by a factor of three changes the matched collapse count from $6/8$ to $7/8$ and does not reproduce the $K=3$ rescue; actual displacement under this lag intervention was not audited. The route-only comparison characterizes alignment with the first-route estimand; together with the compute and lag controls, it refines the architectural diagnosis but does not identify routing as the cause of the sweep-wide gain.
+
+\subsection{Discussion and limitations}
+
+Both three-hop realizations reduce large-budget failures, although TDRR-Prox remains stronger overall. Direct measurements show that lower first-hop target movement need not shrink final-policy reach, and fixed-trajectory final-route shadows are less aligned with the common first-route value estimand in all eight targeted runs. Fixed-reference refinement matches sequential re-centering, while slower target averaging does not rescue the selected one-hop cells. Thus the primary estimate remains the implemented bundle: $K$ changes local step, re-centering, compute, normalization, and routing together. The fourth-hop study likewise relocates rather than uniformly improves the high-return window.
+
+The complete grid covers TD3+BC on nine locomotion datasets with two paired seeds per cell. The separate-machine four-seed $K=4$ study is represented by transferred score CSVs but lacks matched checkpoints and configuration manifests. Collapse is descriptive, and the common-critic, simulator, and eight-run controls are targeted rather than exhaustive. We do not provide an offline rule for selecting $T$ or $K$. The finite-step margin concerns the learned critic; the Wasserstein-flow account assumes small realized steps under a fixed critic.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+TDRR separates critic-target and deployment roles across a re-centered TD3+BC actor chain, with a deterministic Wasserstein proximal interpretation in the fixed-critic local regime. In the complete sweep, three proximal and linearized hops reduce large-budget low-return cells from $35/63$ to $17/63$ and $24/63$, respectively. Three-hop TDRR lowers sample-anchored next-state target-policy displacement in $88/90$ pairs without generally shrinking the current-state final-policy proxy. These results support the end-to-end claim that the tested three-hop refinement bundle broadens empirical stability while separating target exposure from deployment reach; they do not attribute the sweep-wide gain to routing, re-centering, or compute alone.
+
+\bibliography{references}
+\input{reproducibility_checklist}
+\end{document}

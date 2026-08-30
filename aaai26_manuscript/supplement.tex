@@ -1,9 +1,50 @@
+\documentclass[letterpaper]{article}
+\usepackage[submission]{aaai2026}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[hyphens]{url}
+\usepackage{graphicx}
+\urlstyle{rm}
+\def\UrlFont{\rm}
+\usepackage{natbib}
+\usepackage{caption}
+\frenchspacing
+\setlength{\pdfpagewidth}{8.5in}
+\setlength{\pdfpageheight}{11in}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tikz}
+\usepackage{xr}
+\usetikzlibrary{arrows.meta,positioning,decorations.pathreplacing}
+\pdfinfo{
+/TemplateVersion (2026.1)
+}
+\setcounter{secnumdepth}{0}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+\newcommand{\E}{\mathbb E}
+\newcommand{\R}{\mathbb R}
+\newcommand{\M}{\mathcal M}
+\newcommand{\D}{\mathcal D}
+\newcommand{\A}{\mathcal A}
+\newcommand{\sg}{\operatorname{sg}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\title{Supplementary Material for ``Target--Deployment Routed Refinement''}
+\author{Anonymous Submission}
+\affiliations{}
+\externaldocument{paper}
+\begin{document}
+\maketitle
 \appendix
 
 \section{Proofs and Additional Analysis}
 \label{app:proofs}
 
-\subsection{Behavior-anchor decomposition and Proposition~\ref{prop:spi_equiv}}
+\subsection{Behavior-anchor decomposition and Proposition~\ref{prop:prox_equiv}}
 For any square-integrable random action $a$ conditioned on $s$, let
 $b(s)=\mathbb E[a\mid s]$. The bias--variance identity gives
 \begin{equation}
@@ -30,7 +71,7 @@ Wasserstein distance. The normalized anchored objective is
 +\mathsf d_d^2(\mu,\nu).
 \end{equation}
 Multiplication by the positive constant $1/\alpha$ identifies it with
-Eq.~\eqref{eq:spi} when $1/(2h)=1/\alpha$, or $h=\alpha/2$. If the value term
+Eq.~\eqref{eq:prox_operator} when $1/(2h)=1/\alpha$, or $h=\alpha/2$. If the value term
 is instead $-\lambda\mathbb E_s\widehat Q$, then
 $\lambda\widehat Q=\lambda C\bar Q$ and $h=\lambda C/2$.
 
@@ -143,15 +184,9 @@ $+T^2J_0f_0/(2K)$. Both remain first-order methods.
 \label{app:experiments}
 
 \subsection{Algorithms and schedules}
-The extension table reports the original CORL-based MPI evaluation of IQL,
-ReBRAC, and TD3+BC with one or two equal-step refinements. Per-algorithm launch
-grids, configurations, and model-selection metadata are not present in the
-current artifact. We therefore treat the table as retrospective evidence of
-refinement capacity, not as a selection-free benchmark comparison.
-
 For the fixed-budget TD3+BC study, the total normalized budget is split as
-$h=T/K$. MPI-Prox uses Eq.~\eqref{eq:actorloss} with a moving reference;
-MPI-Lin constructs Eq.~\eqref{eq:linearized_target} and uses MSE regression.
+$h=T/K$. TDRR-Prox uses Eq.~\eqref{eq:actorloss} with a moving reference;
+TDRR-Lin constructs Eq.~\eqref{eq:linearized_target} and uses MSE regression.
 The $K$ actor networks share an architecture and learning rate but are
 independently initialized, persistent networks with separate Adam states.
 At every second critic update, the implementation performs one optimizer step
@@ -192,7 +227,7 @@ checkpoint. All target-exposure quantities remain squared displacement per
 action coordinate relative to the paired next dataset action. Thus absolute
 levels include conditional action variance, whereas paired differences use a
 common sampled anchor.
-For MPI-Lin, projection attenuation is the RMS norm ratio between the clipped
+For TDRR-Lin, projection attenuation is the RMS norm ratio between the clipped
 and raw target displacements. If $\widetilde g$ is the normalized critic action
 gradient and $\Delta a$ is the learned actor displacement, define
 \[
@@ -215,7 +250,7 @@ checkpoint. It uses a 1000-step horizon, $\gamma=.99$, four common-random-number
 target-smoothing rollouts, and a one-return-unit ranking dead zone. It is a
 post-hoc screening study, not a causal routing intervention.
 
-The route-only intervention trains two actor-detached shadow critics from identical initial parameters on the same minibatches and target-smoothing draws while the primary first-hop critic continues to drive the shared actor trajectory. One shadow uses the first-hop target actor and the other the final-hop target actor. The simulator audit evaluates 12 cloned states at four checkpoints in each of eight runs; inference aggregates checkpoint-level state medians to the training-run level.
+The route-only intervention trains two actor-detached shadow critics from identical initial parameters on the same minibatches and target-smoothing draws while the primary first-hop critic continues to drive the shared actor trajectory. The four environment--budget cells were selected post hoc from visible stability-frontier transitions, so inference is descriptive of this targeted sample. One shadow uses the first-hop target actor and the other the final-hop target actor. The simulator audit evaluates 12 cloned states at four checkpoints in each of eight runs; inference aggregates checkpoint-level state medians to the training-run level.
 
 The compute-matched study uses the same eight final cells. Sequential $K=3$ performs actor updates anchored at $\mu_0,\mu_1,$ and $\mu_2$; the fixed-reference control anchors both later actors at $\mu_1$; the direct-final control applies two optimizer calls to one $2T/3$ objective anchored at $\mu_1$. Every condition performs three actor optimizer calls per delayed update. The target-lag control instead keeps $K=1$ and changes only the actor-target Polyak rate from $.005$ to $.005/3$, leaving the critic-target rate unchanged.
 
@@ -226,36 +261,8 @@ The frozen-critic small-step audit uses the final TD3+BC $T=1$ critic for all ni
 
 \begin{table*}[t]
 \centering
-\caption{Five-seed extension results from the original MPI evaluation. Values are mean $\pm$ standard deviation.}
-\label{tab:full_extension}
-\scriptsize
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{l|ccc|ccc|ccc}
-\toprule
-&\multicolumn{3}{c|}{IQL}&\multicolumn{3}{c|}{ReBRAC}&\multicolumn{3}{c}{TD3+BC}\\
-Environment&Base&$+1$&$+2$&Base&$+1$&$+2$&Base&$+1$&$+2$\\
-\midrule
-HalfCheetah-M &48.42$\pm$.19&53.78$\pm$.24&55.94$\pm$.67&64.90$\pm$.82&65.92$\pm$1.51&66.00$\pm$1.58&48.40$\pm$.38&54.46$\pm$.36&57.66$\pm$.51\\
-HalfCheetah-MR&43.84$\pm$.88&49.80$\pm$.50&52.30$\pm$.87&50.62$\pm$2.26&50.73$\pm$.95&49.98$\pm$.49&44.70$\pm$.68&49.76$\pm$.83&51.98$\pm$1.06\\
-HalfCheetah-ME&90.44$\pm$4.06&91.02$\pm$3.72&88.58$\pm$5.86&103.00$\pm$4.76&97.12$\pm$4.34&97.08$\pm$2.04&90.62$\pm$6.51&89.88$\pm$3.72&74.42$\pm$8.52\\
-Hopper-M&60.44$\pm$6.17&90.54$\pm$9.40&101.40$\pm$3.51&98.35$\pm$5.09&101.05$\pm$1.49&101.22$\pm$2.29&59.18$\pm$3.56&91.44$\pm$7.43&100.60$\pm$1.54\\
-Hopper-MR&86.72$\pm$7.58&100.50$\pm$3.36&103.04$\pm$.42&90.28$\pm$20.12&100.70$\pm$.29&99.53$\pm$1.54&71.02$\pm$23.88&99.32$\pm$1.49&99.12$\pm$1.64\\
-Hopper-ME&102.20$\pm$21.41&106.14$\pm$10.82&107.38$\pm$10.84&111.65$\pm$.45&109.65$\pm$2.73&107.22$\pm$7.96&94.62$\pm$9.48&96.82$\pm$12.32&105.48$\pm$8.26\\
-Walker2d-M&80.54$\pm$3.57&74.94$\pm$15.15&85.26$\pm$3.34&85.75$\pm$.64&85.55$\pm$1.05&86.97$\pm$.97&83.78$\pm$2.77&84.30$\pm$6.49&89.44$\pm$2.10\\
-Walker2d-MR&78.06$\pm$8.59&81.82$\pm$3.39&84.46$\pm$5.58&79.55$\pm$5.40&86.33$\pm$5.04&88.35$\pm$3.73&79.30$\pm$6.07&85.66$\pm$2.55&89.42$\pm$1.89\\
-Walker2d-ME&111.86$\pm$1.06&112.62$\pm$.77&113.78$\pm$1.22&111.83$\pm$.28&112.08$\pm$.79&113.38$\pm$.24&110.24$\pm$.18&112.20$\pm$.64&113.62$\pm$1.50\\
-\midrule
-Average&78.06&84.57&88.02&88.44&89.90&89.97&75.76&84.87&86.86\\
-\bottomrule
-\end{tabular}%
-}
-\end{table*}
-
-\begin{table*}[t]
-\centering
-\caption{Mean score over nine tasks at each total budget in the fixed-budget sweep.}
-\label{tab:tau_means}
-\scriptsize
+\small
+\setlength{\tabcolsep}{4.5pt}
 \begin{tabular}{r|rrrrrrrrrrrrrr}
 \toprule
 $T$&.05&.1&.2&.4&.7&1.5&2.5&4&7&10&12&14&17&20\\
@@ -267,13 +274,13 @@ Lin-2&60.98&63.12&66.20&72.07&67.98&72.70&80.10&73.95&45.63&39.98&27.09&25.10&24
 Lin-3&58.32&59.97&63.69&70.52&73.23&77.14&76.94&75.31&66.47&45.78&30.65&39.54&25.74&23.88\\
 \bottomrule
 \end{tabular}
+\caption{Mean score over nine tasks at each total budget in the fixed-budget sweep.}
+\label{tab:tau_means}
 \end{table*}
 
 \begin{table}[t]
 \centering
-\caption{Collapse-count sensitivity for $T\ge4$. Entries are seed-mean cells (out of 63) / raw seeded runs (out of 126). Prox-3 has the fewest failures for thresholds 10--40; Lin-3 improves on Lin-2 throughout this range. Threshold 0 isolates negative scores.}
-\label{tab:collapse_sensitivity}
-\scriptsize
+\small
 \begin{tabular}{r|rrrrr}
 \toprule
 Threshold & TD3 & Prox-2 & Prox-3 & Lin-2 & Lin-3\\
@@ -285,36 +292,39 @@ Threshold & TD3 & Prox-2 & Prox-3 & Lin-2 & Lin-3\\
 40 & 39/83 & 26/60 & 20/48 & 32/64&24/57\\
 \bottomrule
 \end{tabular}
+\caption{Collapse-count sensitivity for $T\ge4$. Entries are seed-mean cells (out of 63) / raw seeded runs (out of 126). Prox-3 has the fewest failures for thresholds 10--40; Lin-3 improves on Lin-2 throughout this range. Threshold 0 isolates negative scores.}
+\label{tab:collapse_sensitivity}
 \end{table}
 
 \begin{table}[t]
 \centering
-\caption{Per-environment high-budget ($T\ge4$) means.}
-\label{tab:env_high}
-\scriptsize
+\small
+\setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{lrrrrr}
 \toprule
 Environment&TD3&Prox-2&Prox-3&Lin-2&Lin-3\\
 \midrule
 Hopper-M&16.0&35.2&\textbf{69.4}&25.5&46.3\\
 Hopper-MR&41.4&90.6&\textbf{99.7}&90.5&99.4\\
-Hopper-ME&3.4&17.5&\textbf{30.7}&16.6&27.7\\
+Hopper-E&3.4&17.5&\textbf{30.7}&16.6&27.7\\
 HalfCheetah-M&59.0&59.1&\textbf{59.2}&53.4&55.8\\
 HalfCheetah-MR&51.7&\textbf{52.6}&51.6&46.5&49.2\\
-HalfCheetah-ME&18.4&24.5&\textbf{28.5}&18.8&22.4\\
+HalfCheetah-E&18.4&24.5&\textbf{28.5}&18.8&22.4\\
 Walker2d-M&10.3&24.3&\textbf{34.3}&9.3&26.5\\
 Walker2d-MR&31.3&49.0&\textbf{76.6}&51.2&43.5\\
-Walker2d-ME&2.2&\textbf{25.4}&25.0&18.5&24.4\\
+Walker2d-E&2.2&\textbf{25.4}&25.0&18.5&24.4\\
 \bottomrule
 \end{tabular}
+\caption{Per-environment high-budget ($T\ge4$) means.}
+\label{tab:env_high}
 \end{table}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=.94\textwidth]{figures/environment_sensitivity.pdf}
 \caption{Environment-wise return versus the current-state
-$\widehat D_{\rm critic}$ proxy for MPI-Prox $K=2$. Points are two-seed means
-for the common-batch audit at $T\in\{4,7,10,14,20\}$; color denotes $T$.
+$\widehat D_{\rm critic}$ proxy for TDRR-Prox $K=2$. Points are two-seed means
+for the common-batch audit at $T\in\{4,7,10,14,20\}$; shade denotes $T$.
 Lines connect increasing $T$, exposing reversals rather than imposing a
 monotone response. Shared axes show that realized movement organizes several
 within-task transitions but does not define a universal cross-task failure
@@ -325,10 +335,8 @@ movement.}
 
 \begin{table}[t]
 \centering
-\caption{Matched $K=2$ diagnostic medians over $T\in\{4,7,10,14,20\}$.}
-\label{tab:diagnostic_medians}
-\scriptsize
-\resizebox{\columnwidth}{!}{%
+\small
+\setlength{\tabcolsep}{2pt}
 \begin{tabular}{lrrrr}
 \toprule
 &Lin st.&Lin col.&Prox st.&Prox col.\\
@@ -339,10 +347,11 @@ $|Q|$&311&$8.5\!\times\!10^{11}$&346.7&$6.9\!\times\!10^{10}$\\
 Critic loss&34&$1.2\!\times\!10^{23}$&18.7&$8.8\!\times\!10^{20}$\\
 $\widehat D_{\rm critic}$&.112&.538&.064&.446\\
 $\widehat D_{\rm final}$&.147&.626&.094&.578\\
-Total common-critic gain&$+2.11$&$-1.42$&$+2.51$&$-1.06$\\
+Common-$Q$ gain&$+2.11$&$-1.42$&$+2.51$&$-1.06$\\
 \bottomrule
 \end{tabular}
-}
+\caption{Matched $K=2$ diagnostic medians over $T\in\{4,7,10,14,20\}$.}
+\label{tab:diagnostic_medians}
 \end{table}
 
 \begin{figure*}[t]
@@ -359,15 +368,7 @@ noise. Labels indicate $T$ and marker size is proportional to score.}
 
 \begin{table*}[t]
 \centering
-\caption{Targeted Hopper-medium comparison of scale-matched linearized $K=2$
-and $K=3$. The displacement columns are medians over two seeds;
-$R_{\rm rms}$ is the median of the per-seed RMS ratio
-$\sqrt{\widehat D_f/\widehat D_c}$. Because both sample-anchored proxies
-contain an additive behavior-action variance floor, $R_{\rm rms}$ is
-descriptive and is not a population ratio of final to critic-coupled
-mean-policy displacement.}
-\label{tab:hopper_k3}
-\scriptsize
+\small
 \begin{tabular}{r|rr|rrr|rrr}
 \toprule
 &\multicolumn{2}{c|}{Score}&\multicolumn{3}{c|}{$K=2$}&\multicolumn{3}{c}{$K=3$}\\
@@ -382,13 +383,19 @@ $T$&Lin-2&Lin-3&$\widehat D_c$&$\widehat D_f$&$R_{\rm rms}$&$\widehat D_c$&$\wid
 20&1.28&0.66&.854&.952&1.055&.746&1.007&1.162\\
 \bottomrule
 \end{tabular}
+\caption{Targeted Hopper-medium comparison of scale-matched linearized $K=2$
+and $K=3$. The displacement columns are medians over two seeds;
+$R_{\rm rms}$ is the median of the per-seed RMS ratio
+$\sqrt{\widehat D_f/\widehat D_c}$. Because both sample-anchored proxies
+contain an additive behavior-action variance floor, $R_{\rm rms}$ is
+descriptive and is not a population ratio of final to critic-coupled
+mean-policy displacement.}
+\label{tab:hopper_k3}
 \end{table*}
 
-\begin{table}[H]
+\begin{table}[t]
 \centering
-\caption{Targeted Hopper-medium scores. The $K\le3$ entries are two-seed means from the complete sweep; Prox-4 reports four-seed mean $\pm$ sample standard deviation from a separate-machine run and is used only for the stability-window comparison.}
-\label{tab:hopper_k4}
-\scriptsize
+\small
 \begin{tabular}{rrrrr}
 \toprule
 $T$ & TD3+BC & Prox-2 & Prox-3 & Prox-4\\
@@ -401,25 +408,27 @@ $T$ & TD3+BC & Prox-2 & Prox-3 & Prox-4\\
 20 &0.7&0.7&51.5&41.8$\pm$44.0\\
 \bottomrule
 \end{tabular}
+\caption{Targeted Hopper-medium scores. The $K\le3$ entries are two-seed means from the complete sweep; Prox-4 reports four-seed mean $\pm$ sample standard deviation from a separate-machine run and is used only for the stability-window comparison.}
+\label{tab:hopper_k4}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[t]
 \centering
-\caption{Targeted final-return controls on the same eight environment--budget--seed cells. The three $K=3$ rows are compute matched to three actor optimizer calls; the $K=1$ rows differ only in actor-target Polyak rate.}
-\label{tab:targeted_controls}
-\scriptsize
+\small
 \begin{tabular}{lrrr}
 \toprule
 Condition & Mean & Median & Score $<20$\\
 \midrule
 Sequential $K=3$ &71.4&88.9&2/8\\
-Fixed-reference $K=3$ &70.0&87.9&2/8\\
-Direct-final $K=3$ &59.4&89.6&3/8\\
+Fixed-ref. $K=3$ &70.0&87.9&2/8\\
+Direct $K=3$ &59.4&89.6&3/8\\
 \midrule
-Canonical $K=1$ &13.6&0.8&6/8\\
-$3\times$ actor-target lag, $K=1$ &12.0&1.5&7/8\\
+Standard $K=1$ &13.6&0.8&6/8\\
+$3\times$ target lag, $K=1$ &12.0&1.5&7/8\\
 \bottomrule
 \end{tabular}
+\caption{Targeted final-return controls on the same eight environment--budget--seed cells. The three $K=3$ rows are compute matched to three actor optimizer calls; the $K=1$ rows differ only in actor-target Polyak rate.}
+\label{tab:targeted_controls}
 \end{table}
 
 The paired route-only study uses the same eight runs but aggregates four checkpoints per run. For symmetric relative error against the common first-route simulator estimand, all eight run-level final-route minus first-route differences are positive. Their mean is $.124$, median is $.013$, exact two-sided sign-flip $p=.0078$, and run-bootstrap mean 95\% interval is $[.008,.323]$. Because the routes imply different continuation policies, this estimates their relative alignment with the primary first-route value estimand rather than calibrating each shadow to its own continuation; it is not a return-effect estimate.
@@ -434,22 +443,22 @@ separates critic-target exposure from final-policy reach. The ratios are
 descriptive ratios of sample-anchored squared displacements and are not ratios
 of conditional-mean policy distances.
 
-\begin{table}[H]
+\begin{table}[t]
 \centering
+\small
+\begin{tabular}{@{}llrr@{}}
+\toprule
+Comparison & Quantity & Lower & Ratio\\
+\midrule
+P3 / TD3 & Target disp. & 88/90 & .658\\
+P3 / TD3 & Final disp. & 36/90 & 1.057\\
+P3 / P2 & Target disp. & 84/90 & .903\\
+\bottomrule
+\end{tabular}
 \caption{Paired CPU audit of deterministic next-state Polyak-target exposure
 and current-state final-policy displacement. The Lower column counts runs in
 which the left method has the smaller quantity.}
 \label{tab:direct_exposure}
-\scriptsize
-\begin{tabular}{@{}llrr@{}}
-\toprule
-Comparison & Quantity & Lower & Median ratio\\
-\midrule
-Prox-3 / TD3 & Target exposure & 88/90 & .658\\
-Prox-3 / TD3 & Final displacement & 36/90 & 1.057\\
-Prox-3 / Prox-2 & Target exposure & 84/90 & .903\\
-\bottomrule
-\end{tabular}
 \end{table}
 
 The current-state proxy and deterministic target exposure have Pearson
@@ -466,19 +475,7 @@ In the simulator-reference screening, 55 stable cells contribute 660 states
 and five collapsed cells contribute 60. At $a_K$, the median signed online
 critic error relative to $Q_{\rm MC}^{\rho_1}$ is $-38.7$ in stable cells and
 $+1.70\times10^{12}$ in collapsed cells. This independently corroborates
-the overestimation signature in Figure~\ref{fig:failure}. It does not yet
-provide a reliable action-ranking rate: only 69 of 720 states have both
+the overestimation signature in Figure~\ref{fig:failure}. We do not treat the sparse subset as a population action-ranking estimate: only 69 of 720 states have both
 action differences outside the dead zone, with 29 sign disagreements, and
-within-checkpoint states are correlated. Submission-level use requires
-checkpoint-level uncertainty and a larger pre-specified state sample.
-
-\section{Reproducibility Checklist}
-\label{app:checklist}
-
-\begin{enumerate}
-\item \textbf{Models and algorithms.} The mathematical setting, normalized actor objective, re-centered update, scale-matched control, and critic coupling are specified in Sections~\ref{sec:method}--\ref{sec:experiments}. Base configurations follow the cited CORL implementations. Exact launchers and configurations are included for the TD3+BC fixed-budget study; original extension launch grids, configurations, and selection metadata are not archived.
-\item \textbf{Theoretical claims.} Assumptions and proofs for the operator identification, finite-step margin, critic-error transfer, bootstrap-exposure bound, and local limit are provided in the main text and Appendix~\ref{app:proofs}. No true-return monotonicity is claimed.
-\item \textbf{Empirical results.} The number of tasks, budgets, seeds, collapse definition, threshold sensitivity, and aggregation rules are reported. Retrospective extension results use five seeds; the complete proximal and linearized grids use two paired seeds and report raw-seed as well as seed-mean failure counts. The targeted Prox-4 comparison uses four transferred per-seed scores from a separate machine and is excluded from the complete-grid aggregate. Route, compute, lag, and frozen-critic studies report their targeted inference units and limitations.
-\item \textbf{Code and assets.} Experiments use public D4RL datasets and CORL baseline implementations. The accompanying anonymized package covers the reported TD3+BC fixed-budget sweeps, controls, and diagnostic scripts. The external Prox-4 score matrices are available, but their raw evaluation files, configurations, and checkpoints have not been transferred; complete reproduction and selection auditing of the original extension analysis is also unavailable.
-\item \textbf{Human subjects and sensitive data.} Not applicable.
-\end{enumerate}
+within-checkpoint states are correlated.
+\end{document}

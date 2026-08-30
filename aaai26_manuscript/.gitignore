@@ -8,3 +8,8 @@ __pycache__/
 *.fdb_latexmk
 *.synctex.gz
 *.orig
+*.bbl
+*.blg
+paper.pdf
+supplement.pdf
+reproducibility_checklist.pdf

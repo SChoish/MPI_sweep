@@ -1,4 +1,0 @@
-\section{Conclusion}
-\label{sec:conclusion}
-
-MPI separates critic-target and deployment roles across a re-centered TD3+BC actor chain, with a deterministic Wasserstein proximal interpretation in the fixed-critic local regime. In the complete sweep, three proximal and linearized hops reduce large-budget low-return cells from $35/63$ to $17/63$ and $24/63$, respectively. Three-hop MPI lowers target-policy displacement in $88/90$ pairs without generally shrinking the final-policy proxy, and the first-route shadow is closer to the common first-route simulator estimand in all eight targeted runs. These results support the end-to-end architectural claim that fixed-budget substepping broadens empirical stability while separating target exposure from deployment reach; they do not attribute the sweep-wide gain to routing, re-centering, or compute alone.

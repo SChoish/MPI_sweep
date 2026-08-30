@@ -4,16 +4,25 @@ This directory contains the compact, auditable outputs used by the MPI
 manuscript. Complete sweep score tables remain under `K=*/`; diagnostics are
 separate so they cannot enter complete-grid aggregates accidentally.
 
-**Per-host post-hoc dumps:** see [`scripts/DIAGNOSTICS_RUNBOOK.md`](../../scripts/DIAGNOSTICS_RUNBOOK.md)
-and `bash scripts/run_host_diagnostics.sh --help`. Write CSVs under
-`hosts/<hostname>/` on the machine that owns the checkpoints, then push only
-those compact outputs.
+**Per-host post-hoc dumps:** package under
+[`scripts/diagnostics/`](../../scripts/diagnostics/)
+([README](../../scripts/diagnostics/README.md),
+[HOST_RUNBOOK](../../scripts/diagnostics/HOST_RUNBOOK.md),
+[ARTIFACT_MAP](../../scripts/diagnostics/ARTIFACT_MAP.md)).
+
+```bash
+bash scripts/diagnostics/run_host.sh --host "$(hostname -s)" --seeds 0 1 --job ckpt
+```
+
+Write CSVs under `hosts/<hostname>/` on the machine that owns the checkpoints,
+then push only those compact outputs. This does **not** rebuild the archived
+folders below in place — see ARTIFACT_MAP.
 
 ## Contents
 
 | Path | Scope |
 | --- | --- |
-| `matched_geometry/` | Proximal/linearized movement, effective-step, critic-error, and common-critic summaries |
+| `matched_geometry/` | Proximal/linearized movement, effective-step, critic-error, common-critic, and data-derived figure inputs |
 | `target_policy_exposure/` | Next-state Polyak-target displacement for 270 audited runs |
 | `simulator_calibration/` | Exploratory 60-checkpoint simulator-reference screening |
 | `route_shadow/` | Paired first-hop versus final-hop shadow-critic error against a common first-route value estimand on eight targeted runs |
@@ -56,9 +65,13 @@ in the LaTeX source.
 ## Provenance and exclusions
 
 Files were copied or derived from local audits completed on 2026-08-29 and
-2026-08-30. Large checkpoints, cloned states, dataset-index arrays, and
-per-state rollouts are excluded. Manifests retain original paths as provenance
-records and are not portable run commands.
+2026-08-30. `matched_geometry/lin2_run_movement.csv` and
+`matched_geometry/hopper_lin_frontier.csv` are compact action-displacement
+summaries derived from the original per-state NPZ audits; their formulas and
+source directories are recorded in `figure_inputs_MANIFEST.json`. Large
+checkpoints, cloned states, dataset-index arrays, and per-state rollouts are
+excluded. Manifests retain original paths as provenance records and are not
+portable run commands.
 
 The `K=4/Imp/seed*.csv` files came from a separate machine. They are outside
 this local diagnostic bundle and the two-seed complete-grid aggregate.

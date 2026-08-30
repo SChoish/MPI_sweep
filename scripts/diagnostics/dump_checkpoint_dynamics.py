@@ -28,9 +28,9 @@ from typing import Any
 os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
 os.environ.setdefault("JAX_PLATFORMS", "cpu")
 
-_ROOT = Path(__file__).resolve().parents[1]
-if str(_ROOT) not in sys.path:
-    sys.path.insert(0, str(_ROOT))
+from _lab_import import REPO_ROOT as _ROOT, ensure_train_import_path  # noqa: E402
+
+ensure_train_import_path()
 
 import numpy as np  # noqa: E402
 

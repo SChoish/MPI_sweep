@@ -15,9 +15,9 @@ from typing import Any
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+from _lab_import import REPO_ROOT as ROOT, ensure_train_import_path  # noqa: E402
+
+ensure_train_import_path()
 
 from launch_route_shadow import DEFAULT_CELLS, parse_cells  # noqa: E402
 

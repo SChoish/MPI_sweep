@@ -17,9 +17,9 @@ import re
 import sys
 from pathlib import Path
 
-_ROOT = Path(__file__).resolve().parents[1]
-if str(_ROOT) not in sys.path:
-    sys.path.insert(0, str(_ROOT))
+from _lab_import import REPO_ROOT as _ROOT, ensure_train_import_path  # noqa: E402
+
+ensure_train_import_path()
 
 from train_td3bc import Actor, TwinCritic, load_checkpoint, load_transition
 

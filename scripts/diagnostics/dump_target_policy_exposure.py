@@ -45,9 +45,9 @@ os.environ.setdefault(
     "--xla_cpu_multi_thread_eigen=false intra_op_parallelism_threads=4",
 )
 
-_ROOT = Path(__file__).resolve().parents[1]
-if str(_ROOT) not in sys.path:
-    sys.path.insert(0, str(_ROOT))
+from _lab_import import REPO_ROOT as _ROOT, ensure_train_import_path  # noqa: E402
+
+ensure_train_import_path()
 
 import jax  # noqa: E402
 import numpy as np  # noqa: E402

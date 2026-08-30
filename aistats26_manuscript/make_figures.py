@@ -67,10 +67,11 @@ def load_sweep(hops, integrator):
 
 method_specs = [
     ('TD3+BC', 'K=1', 'Imp', 'o'),
-    ('TDRR-Prox (K=2)', 'K=2', 'Imp', 's'),
-    ('TDRR-Prox (K=3)', 'K=3', 'Imp', '^'),
-    ('TDRR-Lin (K=2)', 'K=2', 'Exp', 'D'),
-    ('TDRR-Lin (K=3)', 'K=3', 'Exp', 'v'),
+    ('BAR-Prox (K=2)', 'K=2', 'Imp', 's'),
+    ('BAR-Prox (K=3)', 'K=3', 'Imp', '^'),
+    ('BAR-Prox (K=4)', 'K=4', 'Imp', 'P'),
+    ('BAR-Lin (K=2)', 'K=2', 'Exp', 'D'),
+    ('BAR-Lin (K=3)', 'K=3', 'Exp', 'v'),
 ]
 sweep = []
 common_taus = None
@@ -106,7 +107,7 @@ ax.set_title('(a) Stability envelope')
 ax.grid(True, alpha=0.25, linewidth=0.5)
 ax.legend(frameon=False, fontsize=7, ncol=2, loc='best')
 
-methods = [label.replace('TDRR-', '').replace(' (K=', '-').replace(')', '') for _, label, _ in curves]
+methods = [label.replace('BAR-', '').replace(' (K=', '-').replace(')', '') for _, label, _ in curves]
 high_taus = [total_budget for total_budget in tau if total_budget >= 4]
 n_cells = len(high_taus) * len(reference_envs)
 n_runs = n_cells * 2
@@ -259,8 +260,8 @@ df_k3 = frontier_series(3, 'final_displacement_sq_mean_metric_mean')
 score_k3 = frontier_series(3, 'd4rl_score')
 
 fig, axs = plt.subplots(1, 2, figsize=(7.1, 2.6), constrained_layout=True)
-axs[0].plot(tau_geom, dcrit_exp2, marker='D', linewidth=1.3, label='TDRR-Lin (K=2)')
-axs[0].plot(tau_geom, dcrit_imp2, marker='s', linewidth=1.3, label='TDRR-Prox (K=2)')
+axs[0].plot(tau_geom, dcrit_exp2, marker='D', linewidth=1.3, label='BAR-Lin (K=2)')
+axs[0].plot(tau_geom, dcrit_imp2, marker='s', linewidth=1.3, label='BAR-Prox (K=2)')
 axs[0].set_xlabel('total nominal budget $T$')
 axs[0].set_ylabel(r'$\widehat D_{\mathrm{critic}}$ (median)')
 axs[0].set_title('(a) Critic-coupled displacement proxy')

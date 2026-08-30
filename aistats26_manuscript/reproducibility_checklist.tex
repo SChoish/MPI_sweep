@@ -1,0 +1,61 @@
+\section*{Checklist}
+
+\begin{enumerate}
+
+  \item For all models and algorithms presented, check if you include:
+  \begin{enumerate}
+    \item A clear description of the mathematical setting, assumptions, algorithm, and/or model. [Yes/No/Not Applicable]\\
+    \textbf{Yes.} Sections~\ref{sec:background}--\ref{sec:method} define the setting, actor chain, losses, and assumptions.
+    \item An analysis of the properties and complexity (time, space, sample size) of any algorithm. [Yes/No/Not Applicable]\\
+    \textbf{Yes.} Section~\ref{sec:method} states that BAR uses $K$ persistent actors and $K$ actor optimizer calls per delayed update; the theoretical properties are stated in Propositions~\ref{prop:margin}--\ref{prop:local_composition}.
+    \item (Optional) Anonymized source code, with specification of all dependencies, including external libraries. [Yes/No/Not Applicable]\\
+    \textbf{Yes.} The supplementary material specifies the implementation and dependencies; the anonymized release contains launch, evaluation, diagnostic, and verification scripts.
+  \end{enumerate}
+
+  \item For any theoretical claim, check if you include:
+  \begin{enumerate}
+    \item Statements of the full set of assumptions of all theoretical results. [Yes/No/Not Applicable]\\
+    \textbf{Yes.} Each proposition states its assumptions, and the local-flow assumptions are separated from the coupled large-budget regime.
+    \item Complete proofs of all theoretical results. [Yes/No/Not Applicable]\\
+    \textbf{Yes.} Complete proofs are provided in the supplementary material.
+    \item Clear explanations of any assumptions. [Yes/No/Not Applicable]\\
+    \textbf{Yes.} Sections~\ref{sec:method} and~\ref{sec:experiments} explain the learned-critic, fixed-$K$, small-step, and implementation restrictions.
+  \end{enumerate}
+
+  \item For all figures and tables that present empirical results, check if you include:
+  \begin{enumerate}
+    \item The code, data, and instructions needed to reproduce the main experimental results (either in the supplemental material or as a URL). [Yes/No/Not Applicable]\\
+    \textbf{Yes.} Released CSVs, figure-generation code, a numerical claim verifier, and build instructions reproduce every main figure and aggregate table.
+    \item All the training details (e.g., data splits, hyperparameters, how they were chosen). [Yes/No/Not Applicable]\\
+    \textbf{Yes.} The fixed budget grid, datasets, seeds, update counts, actor schedule, evaluation protocol, and targeted-control protocols are specified in Section~\ref{sec:experiments} and the supplementary material.
+    \item A clear definition of the specific measure or statistics and error bars (e.g., with respect to the random seed after running experiments multiple times). [Yes/No/Not Applicable]\\
+    \textbf{Yes.} Captions and text define seed-mean cells, raw seeded runs, collapse thresholds, paired ratios, and the targeted four-seed mean and sample standard deviation. The main grid is explicitly identified as a two-seed descriptive phase diagram.
+    \item A description of the computing infrastructure used. (e.g., type of GPUs, internal cluster, or cloud provider). [Yes/No/Not Applicable]\\
+    \textbf{No.} The released artifact records software and execution protocols but does not contain a complete, independently verified inventory of all external-machine hardware.
+  \end{enumerate}
+
+  \item If you are using existing assets (e.g., code, data, models) or curating/releasing new assets, check if you include:
+  \begin{enumerate}
+    \item Citations of the creator If your work uses existing assets. [Yes/No/Not Applicable]\\
+    \textbf{Yes.} D4RL, TD3+BC, and the CORL implementation basis are cited.
+    \item The license information of the assets, if applicable. [Yes/No/Not Applicable]\\
+    \textbf{Yes.} The code release identifies its license; upstream dependencies retain their own licenses.
+    \item New assets either in the supplemental material or as a URL, if applicable. [Yes/No/Not Applicable]\\
+    \textbf{Yes.} An anonymized code and compact-results artifact accompanies the submission.
+    \item Information about consent from data providers/curators. [Yes/No/Not Applicable]\\
+    \textbf{Not Applicable.} We use public simulated-control benchmark datasets and collect no human data.
+    \item Discussion of sensible content if applicable, e.g., personally identifiable information or offensive content. [Yes/No/Not Applicable]\\
+    \textbf{Not Applicable.} The assets contain simulated locomotion trajectories and no personal or sensitive content.
+  \end{enumerate}
+
+  \item If you used crowdsourcing or conducted research with human subjects, check if you include:
+  \begin{enumerate}
+    \item The full text of instructions given to participants and screenshots. [Yes/No/Not Applicable]\\
+    \textbf{Not Applicable.}
+    \item Descriptions of potential participant risks, with links to Institutional Review Board (IRB) approvals if applicable. [Yes/No/Not Applicable]\\
+    \textbf{Not Applicable.}
+    \item The estimated hourly wage paid to participants and the total amount spent on participant compensation. [Yes/No/Not Applicable]\\
+    \textbf{Not Applicable.}
+  \end{enumerate}
+
+\end{enumerate}

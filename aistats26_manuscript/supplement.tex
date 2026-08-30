@@ -1,27 +1,17 @@
-\documentclass[letterpaper]{article}
-\usepackage[submission]{aaai2026}
-\usepackage{times}
-\usepackage{helvet}
-\usepackage{courier}
+\documentclass[twoside]{article}
+\usepackage{aistats2026}
+\usepackage[round]{natbib}
 \usepackage[hyphens]{url}
 \usepackage{graphicx}
-\urlstyle{rm}
-\def\UrlFont{\rm}
-\usepackage{natbib}
-\usepackage{caption}
-\frenchspacing
-\setlength{\pdfpagewidth}{8.5in}
-\setlength{\pdfpageheight}{11in}
 \usepackage{amsmath,amssymb,amsthm,mathtools,bm}
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{tikz}
 \usepackage{xr}
 \usetikzlibrary{arrows.meta,positioning,decorations.pathreplacing}
-\pdfinfo{
-/TemplateVersion (2026.1)
-}
-\setcounter{secnumdepth}{0}
+\special{papersize = 8.5in, 11in}
+\setlength{\pdfpageheight}{11in}
+\setlength{\pdfpagewidth}{8.5in}
 \newtheorem{proposition}{Proposition}
 \newtheorem{lemma}{Lemma}
 \newtheorem{remark}{Remark}
@@ -32,16 +22,14 @@
 \newcommand{\A}{\mathcal A}
 \newcommand{\sg}{\operatorname{sg}}
 \DeclareMathOperator*{\argmin}{arg\,min}
-
-\title{Supplementary Material for ``Target--Deployment Routed Refinement''}
-\author{Anonymous Submission}
-\affiliations{}
 \externaldocument{paper}
+
 \begin{document}
-\maketitle
+\onecolumn
+\aistatstitle{Supplementary Material for ``BAR: Budgeted Actor Refinement''}
 \appendix
 
-\section{Proofs and Additional Analysis}
+\section{PROOFS AND ADDITIONAL ANALYSIS}
 \label{app:proofs}
 
 \subsection{Behavior-anchor decomposition and Proposition~\ref{prop:prox_equiv}}
@@ -180,13 +168,13 @@ $x(T)=x_0+Tf_0+\tfrac12T^2J_0f_0+O(T^3)$. Thus explicit Euler has leading
 error $-T^2J_0f_0/(2K)$, while backward Euler has
 $+T^2J_0f_0/(2K)$. Both remain first-order methods.
 
-\section{Experimental Details}
+\section{EXPERIMENTAL DETAILS}
 \label{app:experiments}
 
 \subsection{Algorithms and schedules}
 For the fixed-budget TD3+BC study, the total normalized budget is split as
-$h=T/K$. TDRR-Prox uses Eq.~\eqref{eq:actorloss} with a moving reference;
-TDRR-Lin constructs Eq.~\eqref{eq:linearized_target} and uses MSE regression.
+$h=T/K$. BAR-Prox uses Eq.~\eqref{eq:actorloss} with a moving reference;
+BAR-Lin constructs Eq.~\eqref{eq:linearized_target} and uses MSE regression.
 The $K$ actor networks share an architecture and learning rate but are
 independently initialized, persistent networks with separate Adam states.
 At every second critic update, the implementation performs one optimizer step
@@ -198,7 +186,7 @@ therefore match data, critic architecture, and $10^6$ critic updates, but a
 $K$-hop run performs $K$ actor optimizer steps and is not compute matched.
 We use batch size $256$, learning rate $3\times10^{-4}$, discount $0.99$, and
 ten evaluation episodes every $5000$ updates. The 14-value grid spans $0.05$ to
-$20$; the complete sweep uses two paired seeds and reports both cell-level and raw-seed failure counts.
+$20$; the complete sweep uses two seeds and reports both cell-level and raw-seed failure counts.
 
 \subsection{Diagnostic quantities}
 On a fixed current-state validation batch with paired dataset actions, we
@@ -227,7 +215,7 @@ checkpoint. All target-exposure quantities remain squared displacement per
 action coordinate relative to the paired next dataset action. Thus absolute
 levels include conditional action variance, whereas paired differences use a
 common sampled anchor.
-For TDRR-Lin, projection attenuation is the RMS norm ratio between the clipped
+For BAR-Lin, projection attenuation is the RMS norm ratio between the clipped
 and raw target displacements. If $\widetilde g$ is the normalized critic action
 gradient and $\Delta a$ is the learned actor displacement, define
 \[
@@ -244,7 +232,7 @@ episode clock, and reset the TimeLimit for a continuing-task critic-calibration
 estimand. At each state we compare $a_1=\mu_1(s)$ and
 $a_K=\mu_K(s)$ under continuations $\rho_1$, $\mu_1$, and $\mu_K$; the
 primary calibration target here is the discounted return under the effective
-backup continuation $\rho_1$. The CPU screening covers three environments,
+backup continuation $\rho_1$. The screening covers three environments,
 $T\in\{4,7,10,14,20\}$, $K\in\{2,3\}$, two seeds, and 12 states per
 checkpoint. It uses a 1000-step horizon, $\gamma=.99$, four common-random-number
 target-smoothing rollouts, and a one-return-unit ranking dead zone. It is a
@@ -256,10 +244,11 @@ The compute-matched study uses the same eight final cells. Sequential $K=3$ perf
 
 The frozen-critic small-step audit uses the final TD3+BC $T=1$ critic for all nine environments and two seeds. At 512 interior dataset actions per run it compares the projected explicit step with a projected fixed-point solution of the implicit action equation for $h\in\{.001,.003,.01,.03,.1\}$. This is an action-level local-consistency test, not a return or coupled-training experiment.
 
-\section{Additional Results}
+\section{ADDITIONAL RESULTS}
 \label{app:results}
 
 \begin{table*}[t]
+\caption{Mean score over nine tasks at each total budget in the fixed-budget sweep.}
 \centering
 \small
 \setlength{\tabcolsep}{4.5pt}
@@ -270,52 +259,60 @@ $T$&.05&.1&.2&.4&.7&1.5&2.5&4&7&10&12&14&17&20\\
 TD3+BC&65.19&62.81&64.85&64.22&69.14&75.43&76.80&49.16&30.35&27.14&22.08&18.51&15.35&19.21\\
 Prox-2&61.11&66.50&68.87&70.11&74.69&78.52&81.57&72.13&64.57&44.67&30.43&30.73&24.01&27.61\\
 Prox-3&58.31&60.69&68.61&71.32&75.25&78.21&81.55&80.91&70.84&53.91&52.60&41.47&29.23&40.51\\
+Prox-4&58.97&66.70&70.44&72.16&72.97&76.03&81.21&82.32&81.63&72.12&68.57&48.99&52.27&39.37\\
 Lin-2&60.98&63.12&66.20&72.07&67.98&72.70&80.10&73.95&45.63&39.98&27.09&25.10&24.41&20.63\\
 Lin-3&58.32&59.97&63.69&70.52&73.23&77.14&76.94&75.31&66.47&45.78&30.65&39.54&25.74&23.88\\
 \bottomrule
 \end{tabular}
-\caption{Mean score over nine tasks at each total budget in the fixed-budget sweep.}
 \label{tab:tau_means}
 \end{table*}
 
 \begin{table}[t]
+\caption{Collapse-count sensitivity for $T\ge4$. Entries are seed-mean cells (out of 63) / raw seeded runs (out of 126). Prox-4 has the fewest failures for thresholds 10--40; Lin-3 improves on Lin-2 throughout this range. Threshold 0 isolates negative scores.}
 \centering
 \small
-\begin{tabular}{r|rrrrr}
+\begin{tabular}{r|rrrrrr}
 \toprule
-Threshold & TD3 & Prox-2 & Prox-3 & Lin-2 & Lin-3\\
+Threshold & TD3 & Prox-2 & Prox-3 & Prox-4 & Lin-2 & Lin-3\\
 \midrule
-0  & 2/12  & 2/6  & 1/6  & 0/6  & 2/12\\
-10 & 29/66 & 20/51 & 15/39 & 28/54&21/46\\
-20 & 35/68 & 25/53 & 17/41 & 29/58&24/53\\
-30 & 36/74 & 26/56 & 19/44 & 29/63&24/55\\
-40 & 39/83 & 26/60 & 20/48 & 32/64&24/57\\
+0  & 2/12  & 2/6  & 1/6  & 0/2  & 0/6  & 2/12\\
+10 & 29/66 & 20/51 & 15/39 & 9/26 & 28/54&21/46\\
+20 & 35/68 & 25/53 & 17/41 & 9/29 & 29/58&24/53\\
+30 & 36/74 & 26/56 & 19/44 & 11/29 & 29/63&24/55\\
+40 & 39/83 & 26/60 & 20/48 & 12/30 & 32/64&24/57\\
 \bottomrule
 \end{tabular}
-\caption{Collapse-count sensitivity for $T\ge4$. Entries are seed-mean cells (out of 63) / raw seeded runs (out of 126). Prox-3 has the fewest failures for thresholds 10--40; Lin-3 improves on Lin-2 throughout this range. Threshold 0 isolates negative scores.}
 \label{tab:collapse_sensitivity}
 \end{table}
 
+
+At the score-20 threshold, proximal $K=2\!\to\!3$ rescues eight high-budget
+cells and harms none; the rescued cells span Hopper-medium, Hopper-expert,
+HalfCheetah-expert, Walker2d-medium, and Walker2d-medium-replay. Linearized
+$K=2\!\to\!3$ rescues seven cells and harms two, with both adverse transitions
+on Walker2d-medium-replay. Proximal $K=3\!\to\!4$ likewise rescues eight cells
+and harms none. These cell transitions are descriptive summaries from two random seeds per cell.
+
 \begin{table}[t]
+\caption{Per-environment high-budget ($T\ge4$) means.}
 \centering
 \small
 \setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{lrrrrr}
+\begin{tabular}{lrrrrrr}
 \toprule
-Environment&TD3&Prox-2&Prox-3&Lin-2&Lin-3\\
+Environment&TD3&Prox-2&Prox-3&Prox-4&Lin-2&Lin-3\\
 \midrule
-Hopper-M&16.0&35.2&\textbf{69.4}&25.5&46.3\\
-Hopper-MR&41.4&90.6&\textbf{99.7}&90.5&99.4\\
-Hopper-E&3.4&17.5&\textbf{30.7}&16.6&27.7\\
-HalfCheetah-M&59.0&59.1&\textbf{59.2}&53.4&55.8\\
-HalfCheetah-MR&51.7&\textbf{52.6}&51.6&46.5&49.2\\
-HalfCheetah-E&18.4&24.5&\textbf{28.5}&18.8&22.4\\
-Walker2d-M&10.3&24.3&\textbf{34.3}&9.3&26.5\\
-Walker2d-MR&31.3&49.0&\textbf{76.6}&51.2&43.5\\
-Walker2d-E&2.2&\textbf{25.4}&25.0&18.5&24.4\\
+Hopper-M&16.0&35.2&69.4&\textbf{88.3}&25.5&46.3\\
+Hopper-MR&41.4&90.6&99.7&\textbf{99.7}&90.5&99.4\\
+Hopper-E&3.4&17.5&30.7&\textbf{45.3}&16.6&27.7\\
+HalfCheetah-M&59.0&59.1&\textbf{59.2}&57.9&53.4&55.8\\
+HalfCheetah-MR&51.7&\textbf{52.6}&51.6&52.5&46.5&49.2\\
+HalfCheetah-E&18.4&24.5&28.5&\textbf{34.6}&18.8&22.4\\
+Walker2d-M&10.3&24.3&34.3&\textbf{47.6}&9.3&26.5\\
+Walker2d-MR&31.3&49.0&\textbf{76.6}&72.7&51.2&43.5\\
+Walker2d-E&2.2&25.4&25.0&\textbf{73.8}&18.5&24.4\\
 \bottomrule
 \end{tabular}
-\caption{Per-environment high-budget ($T\ge4$) means.}
 \label{tab:env_high}
 \end{table}
 
@@ -323,7 +320,7 @@ Walker2d-E&2.2&\textbf{25.4}&25.0&18.5&24.4\\
 \centering
 \includegraphics[width=.94\textwidth]{figures/environment_sensitivity.pdf}
 \caption{Environment-wise return versus the current-state
-$\widehat D_{\rm critic}$ proxy for TDRR-Prox $K=2$. Points are two-seed means
+$\widehat D_{\rm critic}$ proxy for BAR-Prox $K=2$. Points are two-seed means
 for the common-batch audit at $T\in\{4,7,10,14,20\}$; shade denotes $T$.
 Lines connect increasing $T$, exposing reversals rather than imposing a
 monotone response. Shared axes show that realized movement organizes several
@@ -334,6 +331,7 @@ movement.}
 \end{figure*}
 
 \begin{table}[t]
+\caption{Matched $K=2$ diagnostic medians over $T\in\{4,7,10,14,20\}$.}
 \centering
 \small
 \setlength{\tabcolsep}{2pt}
@@ -350,7 +348,6 @@ $\widehat D_{\rm final}$&.147&.626&.094&.578\\
 Common-$Q$ gain&$+2.11$&$-1.42$&$+2.51$&$-1.06$\\
 \bottomrule
 \end{tabular}
-\caption{Matched $K=2$ diagnostic medians over $T\in\{4,7,10,14,20\}$.}
 \label{tab:diagnostic_medians}
 \end{table}
 
@@ -367,6 +364,13 @@ noise. Labels indicate $T$ and marker size is proportional to score.}
 \end{figure*}
 
 \begin{table*}[t]
+\caption{Targeted Hopper-medium comparison of scale-matched linearized $K=2$
+and $K=3$. The displacement columns are medians over two seeds;
+$R_{\rm rms}$ is the median of the per-seed RMS ratio
+$\sqrt{\widehat D_f/\widehat D_c}$. Because both sample-anchored proxies
+contain an additive behavior-action variance floor, $R_{\rm rms}$ is
+descriptive and is not a population ratio of final to critic-coupled
+mean-policy displacement.}
 \centering
 \small
 \begin{tabular}{r|rr|rrr|rrr}
@@ -383,17 +387,11 @@ $T$&Lin-2&Lin-3&$\widehat D_c$&$\widehat D_f$&$R_{\rm rms}$&$\widehat D_c$&$\wid
 20&1.28&0.66&.854&.952&1.055&.746&1.007&1.162\\
 \bottomrule
 \end{tabular}
-\caption{Targeted Hopper-medium comparison of scale-matched linearized $K=2$
-and $K=3$. The displacement columns are medians over two seeds;
-$R_{\rm rms}$ is the median of the per-seed RMS ratio
-$\sqrt{\widehat D_f/\widehat D_c}$. Because both sample-anchored proxies
-contain an additive behavior-action variance floor, $R_{\rm rms}$ is
-descriptive and is not a population ratio of final to critic-coupled
-mean-policy displacement.}
 \label{tab:hopper_k3}
 \end{table*}
 
 \begin{table}[t]
+\caption{Targeted Hopper-medium scores. The $K\le3$ entries are two-seed means from the complete sweep; Prox-4 reports the released four-seed mean $\pm$ sample standard deviation and is used only for the stability-window comparison.}
 \centering
 \small
 \begin{tabular}{rrrrr}
@@ -408,11 +406,28 @@ $T$ & TD3+BC & Prox-2 & Prox-3 & Prox-4\\
 20 &0.7&0.7&51.5&41.8$\pm$44.0\\
 \bottomrule
 \end{tabular}
-\caption{Targeted Hopper-medium scores. The $K\le3$ entries are two-seed means from the complete sweep; Prox-4 reports four-seed mean $\pm$ sample standard deviation from a separate-machine run and is used only for the stability-window comparison.}
 \label{tab:hopper_k4}
 \end{table}
 
+
 \begin{table}[t]
+\caption{Independent one-hop phase-diagram replication. High denotes $T\ge4$ and collapse denotes score below 20.}
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+Seed pair & High mean & Cell collapse & Raw collapse\\
+\midrule
+0--1 &25.97&35/63&68/126\\
+2--3 &24.79&35/63&74/126\\
+\bottomrule
+\end{tabular}
+\label{tab:k1_replication}
+\end{table}
+
+The one-hop replication preserves the aggregate failure landscape under a second seed pair.
+\begin{table}[t]
+\caption{Targeted final-return controls on the same eight environment--budget--seed cells. The three $K=3$ rows are compute matched to three actor optimizer calls; the $K=1$ rows differ only in actor-target Polyak rate.}
 \centering
 \small
 \begin{tabular}{lrrr}
@@ -427,7 +442,6 @@ Standard $K=1$ &13.6&0.8&6/8\\
 $3\times$ target lag, $K=1$ &12.0&1.5&7/8\\
 \bottomrule
 \end{tabular}
-\caption{Targeted final-return controls on the same eight environment--budget--seed cells. The three $K=3$ rows are compute matched to three actor optimizer calls; the $K=1$ rows differ only in actor-target Polyak rate.}
 \label{tab:targeted_controls}
 \end{table}
 
@@ -444,6 +458,9 @@ descriptive ratios of sample-anchored squared displacements and are not ratios
 of conditional-mean policy distances.
 
 \begin{table}[t]
+\caption{Matched-cell audit of deterministic next-state Polyak-target exposure
+and current-state final-policy displacement. The Lower column counts runs in
+which the left method has the smaller quantity.}
 \centering
 \small
 \begin{tabular}{@{}llrr@{}}
@@ -455,9 +472,6 @@ P3 / TD3 & Final disp. & 36/90 & 1.057\\
 P3 / P2 & Target disp. & 84/90 & .903\\
 \bottomrule
 \end{tabular}
-\caption{Paired CPU audit of deterministic next-state Polyak-target exposure
-and current-state final-policy displacement. The Lower column counts runs in
-which the left method has the smaller quantity.}
 \label{tab:direct_exposure}
 \end{table}
 

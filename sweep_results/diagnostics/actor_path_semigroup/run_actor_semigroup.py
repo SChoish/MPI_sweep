@@ -91,7 +91,15 @@ def parse_args() -> argparse.Namespace:
         "--methods",
         nargs="+",
         default=["mpi1", "mpi2", "mpi3"],
-        help="mpiK tags under results/<tag>_s23",
+        help="mpiK tags. Default layout is results/<tag>_s23 unless --method-dir is set.",
+    )
+    parser.add_argument(
+        "--method-dir",
+        action="append",
+        default=[],
+        metavar="METHOD=PATH",
+        help="Override checkpoint root for one method (repeatable). "
+        "Example: --method-dir mpi4=/path/results/mpi4_norm",
     )
     parser.add_argument(
         "--integrators",
@@ -155,15 +163,42 @@ def relative(defect: float, scale: float) -> float:
     return defect / max(scale, EPS)
 
 
-def method_dir(results_root: Path, method: str) -> Path:
+def parse_method_dirs(
+    results_root: Path, overrides: list[str]
+) -> dict[str, Path]:
+    mapping: dict[str, Path] = {}
+    for item in overrides:
+        if "=" not in item:
+            raise ValueError(f"--method-dir must be METHOD=PATH, got {item!r}")
+        method, raw = item.split("=", 1)
+        method = method.strip()
+        path = Path(raw).expanduser()
+        if not path.is_absolute():
+            path = (results_root / path).resolve()
+        else:
+            path = path.resolve()
+        mapping[method] = path
+    return mapping
+
+
+def method_dir(
+    results_root: Path, method: str, overrides: dict[str, Path] | None = None
+) -> Path:
+    if overrides and method in overrides:
+        return overrides[method]
     return results_root / f"{method}_s23"
 
 
 def checkpoint_path(
-    results_root: Path, env_name: str, tau: float, method: str, seed: int
+    results_root: Path,
+    env_name: str,
+    tau: float,
+    method: str,
+    seed: int,
+    overrides: dict[str, Path] | None = None,
 ) -> Path:
     return (
-        method_dir(results_root, method)
+        method_dir(results_root, method, overrides)
         / f"{env_name}_tau{tau_token(tau)}_{method}_seed{seed}"
         / "params_1000000.pkl"
     )
@@ -367,6 +402,7 @@ def main() -> None:
     data_dir = Path(args.data_dir).resolve()
     out_dir = Path(args.out_dir).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
+    method_dirs = parse_method_dirs(results_root, args.method_dir)
     operators = make_operator(
         args.max_iterations, args.tolerance, args.implicit_damping
     )
@@ -397,8 +433,6 @@ def main() -> None:
         states = observations[selected]
         a_d = dataset_actions[selected]  # π_0
 
-        needed_taus = sorted({value for split in splits for value in split})
-
         for seed in args.seeds:
             cache: dict[tuple[str, float], dict[str, Any]] = {}
 
@@ -406,9 +440,10 @@ def main() -> None:
                 key = (method, float(tau))
                 if key in cache:
                     return cache[key]
-                path = checkpoint_path(results_root, env_name, tau, method, seed)
+                path = checkpoint_path(
+                    results_root, env_name, tau, method, seed, method_dirs
+                )
                 if not path.is_file():
-                    missing.append(str(path))
                     return None
                 run = load_run(path, states, action_dim)
                 if not np.allclose(run["mean"], mean):
@@ -418,167 +453,162 @@ def main() -> None:
                 cache[key] = run
                 return run
 
-            # --- 1+2: for mpi1 family, π_{s+t} vs π_s→π_t and frozen from a_D
-            for s, t, total in splits:
-                run_s = get_run("mpi1", s)
-                run_t = get_run("mpi1", t)
-                run_u = get_run("mpi1", total)
-                if run_s is None or run_t is None or run_u is None:
-                    continue
-                pi_s = run_s["final_actions"]
-                pi_t = run_t["final_actions"]
-                pi_u = run_u["final_actions"]
+            composed = 0
+            for method in args.methods:
+                for s, t, total in splits:
+                    run_s = get_run(method, s)
+                    run_t = get_run(method, t)
+                    run_u = get_run(method, total)
+                    if run_s is None or run_t is None or run_u is None:
+                        continue
+                    pi_s = run_s["final_actions"]
+                    pi_t = run_t["final_actions"]
+                    pi_u = run_u["final_actions"]
+                    composed += 1
 
-                for integrator in args.integrators:
-                    op = operators[integrator]
-
-                    # π_s → Φ_t ≈ π_{s+t}
-                    cont_st, mask_st, _, it_st, res_st, proj_st = apply_map(
-                        op,
-                        run_s["critic_params"],
-                        states,
-                        pi_s,
-                        t,
-                        run_s["max_action"],
-                    )
-                    cont_ts, mask_ts, _, it_ts, res_ts, proj_ts = apply_map(
-                        op,
-                        run_t["critic_params"],
-                        states,
-                        pi_t,
-                        s,
-                        run_t["max_action"],
-                    )
-                    mask = np.logical_and(mask_st, mask_ts)
-                    frac = float(np.mean(mask))
-                    gap_direct = masked_rms(pi_u - a_d, mask)
-                    defect_st = masked_rms(cont_st - pi_u, mask)
-                    defect_ts = masked_rms(cont_ts - pi_u, mask)
-                    order = masked_rms(cont_st - cont_ts, mask)
-                    actor_s_to_u = masked_rms(pi_u - pi_s, mask)
-                    scale = max(gap_direct, actor_s_to_u, EPS)
-
-                    # π_τ vs Φ_τ(a_D) under that run's critic
-                    phi_s, mask_phi_s, *_ = apply_map(
-                        op, run_s["critic_params"], states, a_d, s, run_s["max_action"]
-                    )
-                    phi_u, mask_phi_u, *_ = apply_map(
-                        op, run_u["critic_params"], states, a_d, total, run_u["max_action"]
-                    )
-                    # two frozen hops from a_D under π_u critic: Φ_s then Φ_t
-                    phi_s_u, mask1, *_ = apply_map(
-                        op, run_u["critic_params"], states, a_d, s, run_u["max_action"]
-                    )
-                    phi_st_u, mask2, *_ = apply_map(
-                        op,
-                        run_u["critic_params"],
-                        states,
-                        phi_s_u,
-                        t,
-                        run_u["max_action"],
-                    )
-                    mask_data = np.logical_and.reduce(
-                        [mask, mask_phi_s, mask_phi_u, mask1, mask2]
-                    )
-                    frac_data = float(np.mean(mask_data))
-                    actor_vs_phi_s = masked_rms(pi_s - phi_s, mask_data)
-                    actor_vs_phi_u = masked_rms(pi_u - phi_u, mask_data)
-                    frozen_semigroup = masked_rms(phi_st_u - phi_u, mask_data)
-                    actor_vs_frozen_compose = masked_rms(pi_u - phi_st_u, mask_data)
-                    data_scale = max(
-                        masked_rms(phi_u - a_d, mask_data),
-                        masked_rms(pi_u - a_d, mask_data),
-                        EPS,
-                    )
-
-                    finite = all(
-                        math.isfinite(v)
-                        for v in (
-                            defect_st,
-                            defect_ts,
-                            actor_vs_phi_u,
-                            frozen_semigroup,
-                            actor_vs_frozen_compose,
+                    for integrator in args.integrators:
+                        op = operators[integrator]
+                        cont_st, mask_st, _, it_st, res_st, proj_st = apply_map(
+                            op,
+                            run_s["critic_params"],
+                            states,
+                            pi_s,
+                            t,
+                            run_s["max_action"],
                         )
-                    )
-                    composition_rows.append(
-                        {
-                            "environment": env_name,
-                            "seed": seed,
-                            "integrator": integrator,
-                            "s": float(s),
-                            "t": float(t),
-                            "total": float(total),
-                            "pi_u_vs_continue_pi_s_rms": defect_st,
-                            "pi_u_vs_continue_pi_t_rms": defect_ts,
-                            "relative_pi_u_vs_continue_mean": relative(
-                                0.5 * (defect_st + defect_ts), scale
-                            ),
-                            "order_defect_rms": order,
-                            "relative_order_defect": relative(order, scale),
-                            "actor_gap_pi_s_to_pi_u_rms": actor_s_to_u,
-                            "actor_gap_aD_to_pi_u_rms": gap_direct,
-                            "pi_s_vs_Phi_s_aD_rms": actor_vs_phi_s,
-                            "pi_u_vs_Phi_u_aD_rms": actor_vs_phi_u,
-                            "relative_pi_u_vs_Phi_u_aD": relative(
-                                actor_vs_phi_u, data_scale
-                            ),
-                            "pi_u_vs_Phi_t_Phi_s_aD_rms": actor_vs_frozen_compose,
-                            "relative_pi_u_vs_Phi_t_Phi_s_aD": relative(
-                                actor_vs_frozen_compose, data_scale
-                            ),
-                            "Phi_u_vs_Phi_t_Phi_s_aD_rms": frozen_semigroup,
-                            "relative_frozen_semigroup_from_aD": relative(
-                                frozen_semigroup, data_scale
-                            ),
-                            "solver_converged_sample_fraction": min(frac, frac_data),
-                            "all_solver_calls_converged": min(frac, frac_data) == 1.0,
-                            "max_solver_iterations": max(it_st, it_ts),
-                            "max_fixed_point_residual": max(res_st, res_ts),
-                            "max_projection_fraction": max(proj_st, proj_ts),
-                            "all_numeric_outputs_finite": finite,
-                            "n_states": args.n_states,
-                        }
-                    )
-                    frozen_from_data_rows.append(
-                        {
-                            "environment": env_name,
-                            "seed": seed,
-                            "integrator": integrator,
-                            "s": float(s),
-                            "t": float(t),
-                            "total": float(total),
-                            "Phi_u_vs_Phi_t_Phi_s_aD_rms": frozen_semigroup,
-                            "relative_frozen_semigroup_from_aD": relative(
-                                frozen_semigroup, data_scale
-                            ),
-                            "pi_u_vs_Phi_u_aD_rms": actor_vs_phi_u,
-                            "pi_u_vs_Phi_t_Phi_s_aD_rms": actor_vs_frozen_compose,
-                            "solver_converged_sample_fraction": frac_data,
-                            "all_numeric_outputs_finite": finite,
-                        }
-                    )
+                        cont_ts, mask_ts, _, it_ts, res_ts, proj_ts = apply_map(
+                            op,
+                            run_t["critic_params"],
+                            states,
+                            pi_t,
+                            s,
+                            run_t["max_action"],
+                        )
+                        mask = np.logical_and(mask_st, mask_ts)
+                        frac = float(np.mean(mask))
+                        gap_direct = masked_rms(pi_u - a_d, mask)
+                        defect_st = masked_rms(cont_st - pi_u, mask)
+                        defect_ts = masked_rms(cont_ts - pi_u, mask)
+                        order = masked_rms(cont_st - cont_ts, mask)
+                        actor_s_to_u = masked_rms(pi_u - pi_s, mask)
+                        scale = max(gap_direct, actor_s_to_u, EPS)
+                        phi_s, mask_phi_s, *_ = apply_map(
+                            op, run_s["critic_params"], states, a_d, s, run_s["max_action"]
+                        )
+                        phi_u, mask_phi_u, *_ = apply_map(
+                            op, run_u["critic_params"], states, a_d, total, run_u["max_action"]
+                        )
+                        phi_s_u, mask1, *_ = apply_map(
+                            op, run_u["critic_params"], states, a_d, s, run_u["max_action"]
+                        )
+                        phi_st_u, mask2, *_ = apply_map(
+                            op,
+                            run_u["critic_params"],
+                            states,
+                            phi_s_u,
+                            t,
+                            run_u["max_action"],
+                        )
+                        mask_data = np.logical_and.reduce(
+                            [mask, mask_phi_s, mask_phi_u, mask1, mask2]
+                        )
+                        frac_data = float(np.mean(mask_data))
+                        actor_vs_phi_s = masked_rms(pi_s - phi_s, mask_data)
+                        actor_vs_phi_u = masked_rms(pi_u - phi_u, mask_data)
+                        frozen_semigroup = masked_rms(phi_st_u - phi_u, mask_data)
+                        actor_vs_frozen_compose = masked_rms(pi_u - phi_st_u, mask_data)
+                        data_scale = max(
+                            masked_rms(phi_u - a_d, mask_data),
+                            masked_rms(pi_u - a_d, mask_data),
+                            EPS,
+                        )
+                        finite = all(
+                            math.isfinite(v)
+                            for v in (
+                                defect_st,
+                                defect_ts,
+                                actor_vs_phi_u,
+                                frozen_semigroup,
+                                actor_vs_frozen_compose,
+                            )
+                        )
+                        composition_rows.append(
+                            {
+                                "environment": env_name,
+                                "seed": seed,
+                                "method": method,
+                                "integrator": integrator,
+                                "s": float(s),
+                                "t": float(t),
+                                "total": float(total),
+                                "pi_u_vs_continue_pi_s_rms": defect_st,
+                                "pi_u_vs_continue_pi_t_rms": defect_ts,
+                                "relative_pi_u_vs_continue_mean": relative(
+                                    0.5 * (defect_st + defect_ts), scale
+                                ),
+                                "order_defect_rms": order,
+                                "relative_order_defect": relative(order, scale),
+                                "actor_gap_pi_s_to_pi_u_rms": actor_s_to_u,
+                                "actor_gap_aD_to_pi_u_rms": gap_direct,
+                                "pi_s_vs_Phi_s_aD_rms": actor_vs_phi_s,
+                                "pi_u_vs_Phi_u_aD_rms": actor_vs_phi_u,
+                                "relative_pi_u_vs_Phi_u_aD": relative(
+                                    actor_vs_phi_u, data_scale
+                                ),
+                                "pi_u_vs_Phi_t_Phi_s_aD_rms": actor_vs_frozen_compose,
+                                "relative_pi_u_vs_Phi_t_Phi_s_aD": relative(
+                                    actor_vs_frozen_compose, data_scale
+                                ),
+                                "Phi_u_vs_Phi_t_Phi_s_aD_rms": frozen_semigroup,
+                                "relative_frozen_semigroup_from_aD": relative(
+                                    frozen_semigroup, data_scale
+                                ),
+                                "solver_converged_sample_fraction": min(frac, frac_data),
+                                "all_solver_calls_converged": min(frac, frac_data) == 1.0,
+                                "max_solver_iterations": max(it_st, it_ts),
+                                "max_fixed_point_residual": max(res_st, res_ts),
+                                "max_projection_fraction": max(proj_st, proj_ts),
+                                "all_numeric_outputs_finite": finite,
+                                "n_states": args.n_states,
+                            }
+                        )
+                        frozen_from_data_rows.append(
+                            {
+                                "environment": env_name,
+                                "seed": seed,
+                                "method": method,
+                                "integrator": integrator,
+                                "s": float(s),
+                                "t": float(t),
+                                "total": float(total),
+                                "Phi_u_vs_Phi_t_Phi_s_aD_rms": frozen_semigroup,
+                                "relative_frozen_semigroup_from_aD": relative(
+                                    frozen_semigroup, data_scale
+                                ),
+                                "pi_u_vs_Phi_u_aD_rms": actor_vs_phi_u,
+                                "pi_u_vs_Phi_t_Phi_s_aD_rms": actor_vs_frozen_compose,
+                                "solver_converged_sample_fraction": frac_data,
+                                "all_numeric_outputs_finite": finite,
+                            }
+                        )
 
             print(
-                f"[compose] {env_name} seed={seed} splits={len(splits)} "
+                f"[compose] {env_name} seed={seed} ready_splits={composed} "
                 f"integrators={args.integrators}",
                 flush=True,
             )
 
-            # --- 3: cross-K + within-run hop paths at each needed τ
-            for tau in needed_taus:
-                runs = {}
-                ok = True
-                for method in args.methods:
-                    run = get_run(method, tau)
-                    if run is None:
-                        ok = False
-                        break
-                    runs[method] = run
-                if not ok:
+            # --- 3: cross-K + hop paths on the full requested τ grid
+            # (not only s+t split endpoints), loading whichever methods exist.
+            for tau in taus:
+                runs = {
+                    method: run
+                    for method in args.methods
+                    if (run := get_run(method, tau)) is not None
+                }
+                if not runs:
                     continue
-
-                methods = list(args.methods)
+                methods = sorted(runs)
                 for i, method_a in enumerate(methods):
                     for method_b in methods[i + 1 :]:
                         gap = rms(
@@ -609,35 +639,40 @@ def main() -> None:
                             }
                         )
 
-                # hop path: each μ_k(obs) vs mpi1 final, and consecutive hops
-                if "mpi1" in runs:
-                    pi1 = runs["mpi1"]["final_actions"]
-                    scale1 = max(rms(pi1 - a_d), EPS)
-                    for method, run in runs.items():
-                        prev = a_d
-                        for hop_idx, actions in enumerate(run["hop_actions"], start=1):
-                            hop_path_rows.append(
-                                {
-                                    "environment": env_name,
-                                    "seed": seed,
-                                    "tau": float(tau),
-                                    "method": method,
-                                    "hop": hop_idx,
-                                    "n_hops": run["n_hops"],
-                                    "hop_vs_mpi1_final_rms": rms(actions - pi1),
-                                    "relative_hop_vs_mpi1_final": relative(
-                                        rms(actions - pi1), scale1
-                                    ),
-                                    "hop_vs_prev_rms": rms(actions - prev),
-                                    "hop_vs_aD_rms": rms(actions - a_d),
-                                    "is_final_hop": hop_idx == run["n_hops"],
-                                    "n_states": args.n_states,
-                                }
-                            )
-                            prev = actions
+                ref_method = "mpi1" if "mpi1" in runs else None
+                pi_ref = runs[ref_method]["final_actions"] if ref_method else None
+                scale_ref = max(rms(pi_ref - a_d), EPS) if pi_ref is not None else None
+                for method, run in runs.items():
+                    prev = a_d
+                    for hop_idx, actions in enumerate(run["hop_actions"], start=1):
+                        hop_vs_ref = (
+                            rms(actions - pi_ref) if pi_ref is not None else float("nan")
+                        )
+                        hop_path_rows.append(
+                            {
+                                "environment": env_name,
+                                "seed": seed,
+                                "tau": float(tau),
+                                "method": method,
+                                "hop": hop_idx,
+                                "n_hops": run["n_hops"],
+                                "ref_method": ref_method or "",
+                                "hop_vs_mpi1_final_rms": hop_vs_ref,
+                                "relative_hop_vs_mpi1_final": (
+                                    relative(hop_vs_ref, scale_ref)
+                                    if scale_ref is not None
+                                    else float("nan")
+                                ),
+                                "hop_vs_prev_rms": rms(actions - prev),
+                                "hop_vs_aD_rms": rms(actions - a_d),
+                                "is_final_hop": hop_idx == run["n_hops"],
+                                "n_states": args.n_states,
+                            }
+                        )
+                        prev = actions
 
             print(
-                f"[cross-k] {env_name} seed={seed} taus={len(needed_taus)}",
+                f"[cross-k] {env_name} seed={seed} taus={len(taus)} methods={args.methods}",
                 flush=True,
             )
 
@@ -652,22 +687,22 @@ def main() -> None:
         "n_hop_path_rows": len(hop_path_rows),
         "composition_by_integrator": summarize_by(
             composition_rows,
-            ("integrator",),
+            ("method", "integrator"),
             "relative_pi_u_vs_continue_mean",
         ),
         "composition_by_split": summarize_by(
             composition_rows,
-            ("integrator", "s", "t", "total"),
+            ("method", "integrator", "s", "t", "total"),
             "relative_pi_u_vs_continue_mean",
         ),
         "actor_vs_frozen_from_aD_by_integrator": summarize_by(
             composition_rows,
-            ("integrator",),
+            ("method", "integrator"),
             "relative_pi_u_vs_Phi_u_aD",
         ),
         "frozen_semigroup_from_aD_by_split": summarize_by(
             composition_rows,
-            ("integrator", "s", "t", "total"),
+            ("method", "integrator", "s", "t", "total"),
             "relative_frozen_semigroup_from_aD",
         ),
         "cross_k_by_pair": summarize_by(
@@ -711,6 +746,7 @@ def main() -> None:
         "taus": taus,
         "splits": [{"s": s, "t": t, "total": u} for s, t, u in splits],
         "methods": args.methods,
+        "method_dirs": {k: str(v) for k, v in method_dirs.items()},
         "integrators": args.integrators,
         "n_states": args.n_states,
         "interior_margin": args.interior_margin,
@@ -735,11 +771,15 @@ def main() -> None:
     # compact stdout
     compact = {
         "composition": {
-            row["integrator"]: row["relative_pi_u_vs_continue_mean"]
+            f"{row.get('method', '')}/{row['integrator']}": row[
+                "relative_pi_u_vs_continue_mean"
+            ]
             for row in summary["composition_by_integrator"]
         },
         "actor_vs_Phi_from_aD": {
-            row["integrator"]: row["relative_pi_u_vs_Phi_u_aD"]
+            f"{row.get('method', '')}/{row['integrator']}": row[
+                "relative_pi_u_vs_Phi_u_aD"
+            ]
             for row in summary["actor_vs_frozen_from_aD_by_integrator"]
         },
         "cross_k": {

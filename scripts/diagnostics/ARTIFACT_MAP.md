@@ -25,7 +25,7 @@ selection of runs.
 | `matched_geometry/prox2_*`, `lin2_*`, `td3_prox3_*` | archive | **no (different schema)** | Older matched-geometry pipeline / renamed outputs; host dumps use `hop_geometry.csv` |
 | `route_shadow/` (top-level archive) | archive | partial | Use `run_route_shadow_mc.py` on `results_route_shadow` |
 | `frozen_critic_small_step/` (top-level archive) | archive | partial | Use `run_frozen_critic_small_step.py` |
-| `actor_path_semigroup/` (top-level archive) | archive | **yes** | `run_actor_semigroup.py`; archived seeds 2/3 result includes non-paper seed 3 |
+| `actor_path_semigroup/` (top-level archive) | archive | **yes** | `run_actor_semigroup.py`; full local `mpi1/2/3/exp3` seeds 2/3 grid (incl. \(\tau\in\{0.7,12\}\`); seed 3 non-paper |
 | `simulator_calibration/` | archive | **no in this package** | Exploratory screening; not wired here |
 | `control_final_scores.csv`, `control_summary.csv` | retrain | **no** | From compute-matched / target-lag **training** (`launch_causal_controls.py` in lab) |
 | `compute_matched_MANIFEST.json`, `target_lag_MANIFEST.json` | retrain | **no** | Launch manifests for those controls |

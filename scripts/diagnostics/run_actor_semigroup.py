@@ -433,8 +433,6 @@ def main() -> None:
         states = observations[selected]
         a_d = dataset_actions[selected]  # π_0
 
-        needed_taus = sorted({value for split in splits for value in split})
-
         for seed in args.seeds:
             cache: dict[tuple[str, float], dict[str, Any]] = {}
 
@@ -600,7 +598,9 @@ def main() -> None:
                 flush=True,
             )
 
-            for tau in needed_taus:
+            # --- 3: cross-K + hop paths on the full requested τ grid
+            # (not only s+t split endpoints), loading whichever methods exist.
+            for tau in taus:
                 runs = {
                     method: run
                     for method in args.methods
@@ -672,7 +672,7 @@ def main() -> None:
                         prev = actions
 
             print(
-                f"[cross-k] {env_name} seed={seed} taus={len(needed_taus)}",
+                f"[cross-k] {env_name} seed={seed} taus={len(taus)} methods={args.methods}",
                 flush=True,
             )
 

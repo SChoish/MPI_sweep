@@ -48,10 +48,12 @@ folders below in place — see ARTIFACT_MAP.
   and `12.0090`, with collapse counts `6/8` and `7/8`.
 - Fifteen of 18 frozen-critic runs have an eligible converged, projection-free
   local point; their maximum run-level local discrepancy is below `0.027`.
-- The archived actor-path audit finds weak learned-endpoint composition
-  (relative median `0.5623` explicit and `0.4745` implicit), while frozen-map
-  defects are much smaller at short total steps. This run uses seeds 2 and 3;
-  seed 3 is non-paper evidence under the current `{0,1,2}` paper protocol.
+- The archived actor-path audit covers all 820 finished local 1M checkpoints
+  under `mpi1/mpi2/mpi3/exp3` seeds 2–3 (full \(\tau\) grid, including `0.7`
+  and `12`). Learned-endpoint composition remains weak (relative median
+  `0.5623` explicit and `0.4745` implicit), while frozen-map defects are much
+  smaller at short total steps. Seed 3 is non-paper evidence under the current
+  `{0,1,2}` paper protocol.
 
 Here, collapse means final normalized return below 20. It is descriptive, not
 a theoretical threshold.

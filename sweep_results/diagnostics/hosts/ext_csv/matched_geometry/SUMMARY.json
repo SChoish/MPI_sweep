@@ -1,6 +1,6 @@
 {
-  "run_rows": 40,
-  "hop_rows": 80,
+  "run_rows": 48,
+  "hop_rows": 96,
   "curvature_rows": 0,
   "small_t_max": 0.4,
   "small_t_rows": 0,
@@ -9,8 +9,8 @@
   "method_cell_summary": [
     {
       "method": "expl2",
-      "cells": 20,
-      "score_mean": 67.31879143251685,
+      "cells": 24,
+      "score_mean": 64.33213439974094,
       "collapse_cells": 5,
       "critic_displacement_median": 0.04865909189949283,
       "final_displacement_median": 0.05097438953764669

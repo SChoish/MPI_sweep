@@ -1,0 +1,6 @@
+contrast,estimate,ci_low,ci_high,positive_tasks,total_tasks,unit,note
+BAR-Prox K=4 minus TD3+BC,38.59,21.39,54.63,8,9,task,four-seed task-bootstrap percentile interval
+BAR-Prox K=4 minus BAR-Prox K=3,12.06,3.84,21.11,7,9,task,four-seed task-bootstrap percentile interval
+collapse-risk BAR-Prox K=4 minus TD3+BC,-0.3492,-0.5238,-0.1746,,9,task-cluster,four-seed raw-run risk interval
+collapse-risk BAR-Prox K=4 minus BAR-Prox K=3,-0.119,-0.2183,-0.0238,,9,task-cluster,four-seed raw-run risk interval
+disjoint seeds 2-3 BAR-Prox K=4 minus TD3+BC,39.54,21.54,56.11,8,9,task,disjoint host-separated full-grid endpoint replication

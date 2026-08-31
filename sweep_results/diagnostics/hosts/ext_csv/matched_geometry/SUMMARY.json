@@ -1,6 +1,6 @@
 {
-  "run_rows": 32,
-  "hop_rows": 64,
+  "run_rows": 40,
+  "hop_rows": 80,
   "curvature_rows": 0,
   "small_t_max": 0.4,
   "small_t_rows": 0,
@@ -9,11 +9,11 @@
   "method_cell_summary": [
     {
       "method": "expl2",
-      "cells": 16,
-      "score_mean": 77.54767825799254,
-      "collapse_cells": 2,
-      "critic_displacement_median": 0.046972871308453526,
-      "final_displacement_median": 0.050830300104224554
+      "cells": 20,
+      "score_mean": 67.31879143251685,
+      "collapse_cells": 5,
+      "critic_displacement_median": 0.04865909189949283,
+      "final_displacement_median": 0.05097438953764669
     }
   ],
   "paired_td3_mpi3": {

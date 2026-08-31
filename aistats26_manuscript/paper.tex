@@ -563,7 +563,11 @@ BAR-L3 & 2 & 68.54 & 43.91 & 33.12 & 24 / 53\\
 The budget response is smooth on HalfCheetah-medium, plateau-like on
 Hopper-medium-replay, sharply nonmonotone on Hopper-medium and
 Walker2d-medium, and asymmetric on expert datasets. There is no universal
-critic-valid radius. P4 minus P3 is positive after averaging within each
+critic-valid radius. In a within-environment rank audit over the five diagnostic
+budgets, nominal $T$ is the strongest absolute rank predictor of return in
+eight of nine environments, versus one for $\widehat D_{\rm critic}$ and none
+for $\widehat D_{\rm final}$; realized movement is therefore a mechanism
+readout, not a substitute for the randomized budget intervention. P4 minus P3 is positive after averaging within each
 dynamics family: $+.79$ for HalfCheetah, $+13.04$ for Hopper, and $+22.33$ for
 Walker2d. At Hopper-medium, $K=4$ scores $100.9\pm1.7$ at $T=17$ but becomes
 highly variable at $T=20$ ($41.8\pm44.0$), relocating rather than linearly
@@ -583,7 +587,7 @@ integrator effects.
 \subsection{Large-budget behavior is nonlocal and critic dependent}
 
 
-At $T=20$, the raw BAR-Lin $K=2$ target reaches the action box in
+At $T=20$, the projected BAR-Lin $K=2$ target is clipped at an action bound in
 $94$--$95\%$ of states, and the effective action-step coefficient
 $h_{\rm eff}$ is only $14\%$ and $9\%$ of the nominal $dT/K$ coefficient in
 the two hops. These are medians over 18 environment--seed runs per hop. The
@@ -608,8 +612,10 @@ for policy failure.
 A simulator-reference audit provides targeted evidence of critic miscalibration in the screened checkpoints: the
 median signed error $\widehat Q_1(s,a_K)-Q_{\rm MC}^{\rho_1}(s,a_K)$ is
 $+1.70\times10^{12}$ in five collapsed checkpoints and $-41.4$ in 55 stable
-ones, using the median of checkpoint-level state medians. Its action-ranking subset is sparse, so we use it only as targeted
-checkpoint-level evidence.
+ones, using the median of checkpoint-level state medians. Episode-cluster
+intervals exclude zero for critic error at 58 of 60 checkpoints, and restoring
+the sampled episode clock preserves the error sign at all 60. Its action-ranking
+subset is sparse, so we use it only as targeted checkpoint-level evidence.
 
 \begin{figure*}[t]
 \centering
@@ -629,7 +635,7 @@ At the same nominal budget, BAR-Prox realizes a smaller current-state first-hop
 displacement proxy than BAR-Lin once $T\ge7$ (the Supplementary Material). At
 $T=20$, their median $\widehat D_{\rm critic}$ values are $0.195$ and $0.323$.
 Across 90 matched environment--budget--seed cells at $T\in\{4,7,10,14,20\}$, exactly one
-realization collapses in 11 cases. In all 11, the stable realization has both
+of BAR-Prox and BAR-Lin collapses in 11 cases. In all 11, the stable realization has both
 smaller $\widehat D_{\rm critic}$ and smaller $\widehat D_{\rm final}$.
 These matched-cell outcomes associate smaller realized movement with the stable
 optimization trajectory. Because the proxy is measured on current validation
@@ -657,10 +663,13 @@ the low-return outcome. At $T=20$, both depths saturate and fail (Supplement).
 
 \subsection{Targeted component controls}
 
-In eight post-hoc route-shadow runs, final-route error is larger in all
-four-checkpoint aggregates but only five of eight final checkpoints. The
-shadows never drive the actors, so this is an alignment result rather than a
-return intervention. Compute-matched sequential, fixed-reference, and
+In eight post-hoc route-shadow runs, final-route calibration error is larger in
+all four-checkpoint aggregates when each shadow is evaluated under its native
+continuation (mean difference $.124$, sign-flip $p=.0078$). Under a common
+first-route continuation, the difference remains positive in six of eight runs
+but is inconclusive by the pre-specified rule (mean $.116$, $p=.164$). The
+shadows never drive the actors, so these are calibration diagnostics rather
+than return interventions. Compute-matched sequential, fixed-reference, and
 direct-final controls score $71.4,70.0,$ and $59.4$; slower $K=1$ target
 averaging does not rescue selected cells. These controls favor routed
 multi-actor refinement over added optimizer calls or target lag alone without
@@ -674,7 +683,10 @@ audited $K=3$ chain realizes the intended asymmetry: lower target-action
 displacement coexists with slightly greater typical-cell final-policy reach.
 The performance estimate is for the implemented depth intervention, in which
 $K$ jointly changes local step, re-centering, compute, normalization, routing,
-and optimization trajectory.
+and optimization trajectory. A saved-checkpoint actor-path audit reinforces
+this finite-step interpretation: frozen small-step maps compose locally, while
+the learned persistent endpoints remain far from frozen continuations and from
+one another across depths.
 
 The proximal cross-$K$ grid uses four seeds executed as two host-separated
 pairs; the linearized grid and mechanism audits use two. Exact per-run manifests

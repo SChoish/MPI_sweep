@@ -95,7 +95,7 @@ ax.legend(frameon=False, ncol=2, loc="lower left", handlelength=2.4, columnspaci
 ax = axes[1]
 methods = [r["method"].replace("BAR-", "").replace(" K=", "-") for r in summary_rows]
 cell = np.asarray([int(r["collapsed_cells_lt20_of63"]) / 63 for r in summary_rows])
-run = np.asarray([int(r["collapsed_runs_lt20_of126"]) / 126 for r in summary_rows])
+run = np.asarray([int(r["collapsed_runs_lt20"]) / int(r["total_high_budget_runs"]) for r in summary_rows])
 x = np.arange(len(methods))
 w = 0.36
 ax.bar(x-w/2, cell, width=w, facecolor="white", edgecolor="black", linewidth=0.7, hatch="///", label="cell")

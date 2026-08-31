@@ -18,7 +18,9 @@ done
 cp paper.pdf gpt_aaai26_manuscript.pdf
 cp supplement.pdf gpt_aaai26_supplement.pdf
 
+"$PYTHON_BIN" package_bundle.py
 "$PYTHON_BIN" verify_bundle.py --results-dir "$RESULTS_DIR" --postbuild
 
 echo "built: $ROOT/gpt_aaai26_manuscript.pdf"
 echo "built: $ROOT/gpt_aaai26_supplement.pdf"
+echo "built: $ROOT/gpt_aaai26_bundle.zip"

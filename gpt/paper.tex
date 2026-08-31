@@ -30,7 +30,7 @@
 \newcommand{\methodlong}{Budgeted Actor Refinement}
 \DeclareMathOperator*{\argmin}{arg\,min}
 
-\title{\method: \methodlong\ Broadens the Stability Envelope of Offline TD3+BC}
+\title{\method: \methodlong\ Decouples Bootstrap Exposure from Policy Reach}
 \author{Anonymous Authors}
 \affiliations{Anonymous Institution}
 
@@ -38,24 +38,24 @@
 \maketitle
 
 \begin{abstract}
-TD3+BC uses the same actor branch to construct bootstrapped critic targets and to produce the deployed policy, coupling target-action movement to deployment reach. We study \emph{budgeted actor refinement} (\method), a persistent actor chain that divides a fixed nominal actor-loss coefficient budget across $K$ local updates: a Polyak copy of the first actor supplies TD-target actions, while the final actor is deployed. For deterministic actors, the squared action anchors admit an ideal Wasserstein--2 proximal interpretation. We derive a conditional learned-critic improvement margin and a first-hop target-perturbation bound, while explicitly separating these ideal statements from the live one-Adam-step implementation. Across nine D4RL locomotion tasks, fourteen coefficient budgets, and two seeds, proximal refinement at $K=4$ raises the high-budget mean from $25.97$ to $63.61$ and reduces score-$<20$ cells from $35/63$ to $9/63$. The $K=4$ minus $K=3$ mean gain is $10.83$, but its median is only $.32$, locating the gain mainly in lower-tail rescue. Descriptive task-cluster intervals are $[20.51,54.35]$ for $K=4$ versus TD3+BC and $[2.23,21.97]$ versus $K=3$. In a 270-checkpoint audit, three-hop refinement lowers sample-anchored next-state target-action displacement in $88/90$ matched comparisons with TD3+BC, whereas the current-state final-policy proxy is lower in only $36/90$. These results establish a strong end-to-end effect for the tested refinement bundle, not a causal effect of routing, re-centering, or added actor compute alone.
+TD3+BC uses one actor branch both to construct bootstrapped critic targets and to produce the deployed policy, forcing bootstrap exposure and policy reach to move together. We introduce \emph{budgeted actor refinement} (\method), a persistent $K$-actor chain that separates these roles: a Polyak copy of the first actor supplies TD-target actions, while the final actor is deployed. A finite-step Lipschitz bound shows that one-step target perturbation depends on the first-hop displacement independently of later refinement reach; an ideal Wasserstein--2 proximal analysis characterizes the complementary local geometry. Across two disjoint, host-separated seed pairs on nine D4RL locomotion tasks and fourteen coefficient budgets, the four-seed, equally task-and-budget-weighted proximal aggregate over $T\ge4$ is strictly ordered by depth: the mean rises from $25.38$ at $K=1$ to $63.97$ at $K=4$, while score-$<20$ seed-mean cells fall from $34/63$ to $8/63$. Each seed pair separately reproduces the full $K=1<2<3<4$ aggregate ordering. The $K=4$ minus $K=3$ gain is $12.06$ with a task-resampling interval of $[3.84,21.11]$; its $.34$ cellwise median and eight rescued collapses show that low-score rescue drives most of the added-depth aggregate gain. In a 270-checkpoint $K=3$ audit, refinement lowers sample-anchored next-state target-action displacement in $88/90$ matched comparisons, while the typical final-policy proxy does not contract. Together, these results establish refinement depth as a consequential stability control and identify finite-step bootstrap-exposure decoupling as \method's central empirical mechanism signature.
 \end{abstract}
 
 \section{Introduction}
 Offline reinforcement learning (RL) learns from a fixed dataset without additional environment interaction. Its difficulty is not only selecting apparently high-value actions, but also determining how aggressively a policy may be improved before the learned critic becomes unreliable. In TD3+BC, a deterministic actor maximizes a scale-normalized critic while remaining close to dataset actions; a Polyak copy of the same actor supplies actions in Bellman targets \citep{fujimoto2021minimalist}. Consequently, the policy movement seen by critic training and the reach of the evaluated policy are controlled by one branch and one coefficient.
 
-We investigate this coupling through \method, a persistent chain of $K$ actors. The first actor is anchored to sampled dataset actions. Each later actor is anchored to the stop-gradient action of its predecessor on the same minibatch. The first actor's Polyak target copy enters the TD target, whereas the final actor is evaluated (Figure~\ref{fig:architecture}). A total nominal coefficient budget $T$ is divided as $h=T/K$ across the chain. Here, \emph{budget} means the sum of actor-loss coefficients: $T$ is neither a compute budget nor a realized policy-distance constraint. Increasing $K$ is a meaningful refinement-depth intervention, but it also changes local coefficient, persistent actor count, actor optimizer calls, re-centering frequency, normalization trajectory, and target--deployment dataflow. Cross-$K$ comparisons therefore estimate the end-to-end effect of the complete procedure at each tested depth.
+We investigate this coupling through \method, a persistent actor chain whose depth $K$ is the central experimental intervention. The first actor is anchored to sampled dataset actions, and each later actor performs a re-centered refinement around the stop-gradient action of its predecessor. The first actor's Polyak target copy enters the TD target, whereas the final actor is deployed (Figure~\ref{fig:architecture}). In the implementation, $T$ is the nominal TD3+BC integration-time parameter $\tau=\alpha/2$. Thus $K=1$ recovers the baseline coefficient $\alpha=2T$, while depth $K$ assigns $h=T/K$ and normalized critic coefficient $2h/C_k$ to each hop. $T$ is neither a compute budget nor a realized policy-distance constraint. Each $K$ defines a complete randomized refinement procedure, so cross-$K$ seed averages estimate the marginal end-to-end performance of depth-indexed BAR.
 
-We use \emph{stability envelope} operationally. On the tested grid, a high-budget environment--coefficient cell is called collapsed when its two-seed mean D4RL normalized score is below $20$; the empirical stability envelope is the complement of these cells. This is a locomotion failure indicator, not a theoretical threshold. The full grid shows a systematic expansion of this envelope with proximal refinement depth, replicated qualitatively by a projected linearized realization. The gain is highly nonuniform: the transition from $K=3$ to $K=4$ has a large mean but near-zero median improvement, indicating rescue of a lower tail rather than a generic score increase.
+We use \emph{stability envelope} operationally. On the tested grid, a high-budget environment--coefficient cell is called collapsed when its within-method seed mean D4RL normalized score is below $20$; the empirical stability envelope is the complement of these cells. This is a locomotion failure indicator, not a theoretical threshold. The full grid shows a systematic expansion of this envelope with proximal refinement depth, reproduced separately in both host-separated seed pairs and directionally by a projected linearized realization. The gain is highly nonuniform: the transition from $K=3$ to $K=4$ has a large mean but near-zero median improvement, indicating rescue of a lower tail rather than a generic score increase.
 
-The geometric analysis is deliberately narrower than the algorithmic claim. A squared anchor between deterministic actions is an integrated Wasserstein--2 cost, so an exactly solved, fixed-critic subproblem has a proximal interpretation. This yields a conditional learned-critic margin and a local explicit--implicit relationship. The live method, however, maintains independently initialized persistent actors and applies one Adam update to each. Even at $h=0$, a later actor may have a nonzero anchoring gradient when it differs from its predecessor. Thus the ideal proximal map motivates the architecture but does not certify the actual optimizer chain.
+BAR's central structural property is finite-step: only the first actor enters Bellman targets, so later refinements can extend deployment reach without directly increasing the displacement seen by critic bootstrapping. Under an action-Lipschitz target critic, the resulting target perturbation is controlled by first-hop displacement independently of the final actor. The squared anchors also admit an integrated Wasserstein--2 interpretation for exactly solved fixed-critic subproblems, supplying a complementary local geometric account of refinement.
 
-Our contributions are threefold. First, we formulate routed multi-actor refinement for TD3+BC and specify its implementation-level normalization and dataflow. Second, we provide an ideal proximal analysis with explicit conditions and a first-hop TD-target perturbation bound. Third, complete fixed-budget sweeps, task-cluster uncertainty, direct target-action audits, critic-failure diagnostics, and targeted controls show that the tested bundle broadens the large-budget stability envelope primarily by preventing catastrophic failures.
+Our contributions are threefold. First, we formulate routed multi-actor refinement for TD3+BC, making $K$ a practical control that separates critic-facing and deployed actor branches. Second, we establish a finite-step bootstrap-exposure bound and connect the squared anchors to ideal Wasserstein-proximal refinement under explicit conditions. Third, complete fixed-budget sweeps over two disjoint, host-separated seed pairs, direct target-action audits, critic-failure diagnostics, and targeted route controls show that depth broadens the large-budget stability envelope primarily through low-score rescue.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/architecture.pdf}
-\caption{\method\ maintains persistent actors. A Polyak copy of $\mu_1$ supplies Bellman-target actions, while $\mu_K$ is evaluated. The method separates these roles but does not hold compute or the optimization trajectory fixed across $K$.}
+\caption{\method\ maintains persistent actors. A Polyak copy of $\mu_1$ supplies Bellman-target actions, while $\mu_K$ is deployed. The routed chain makes bootstrap exposure depend on the first branch while allowing later actors to extend policy reach.}
 \label{fig:architecture}
 \end{figure}
 
@@ -64,7 +64,7 @@ Our contributions are threefold. First, we formulate routed multi-actor refineme
 BCQ and BEAR restrict policy actions to limit bootstrapping error under distribution shift \citep{fujimoto2019offpolicy,kumar2019bear}. TD3+BC instead adds a squared behavior-cloning term to a normalized deterministic actor objective \citep{fujimoto2021minimalist}. One-step offline RL argues that repeated optimization against off-policy value estimates can amplify estimation error and that a single regularized improvement step can be competitive \citep{brandfonbrener2021offline}. \method\ retains iterative actor--critic training but distributes a nominal improvement coefficient across a routed actor chain. It therefore studies a different intervention: how refinement depth and branch assignment alter the failure envelope of a fixed TD3+BC backbone.
 
 \paragraph{Geometric policy optimization.}
-Trust-region methods usually use information-geometric discrepancies \citep{schulman2015trust}. Wasserstein formulations instead view policy optimization as transport or gradient flow \citep{zhang2018policy,moskovitz2021efficient,terpin2022trust,song2023metric}. Most closely, Wasserstein Policy Optimization projects Wasserstein policy flow into a parametric actor class and uses action gradients of the value function \citep{pfau2025wpo}. Our contribution is not the deterministic action-gradient identity itself. We study an offline behavior-anchored persistent chain whose early and terminal actors have different roles in Bellman targets and deployment, and we audit the resulting large-coefficient failures. The proximal analysis below concerns an ideal fixed-critic operator; the empirical contribution concerns the coupled training bundle.
+Trust-region methods usually use information-geometric discrepancies \citep{schulman2015trust}. Wasserstein formulations instead view policy optimization as transport or gradient flow \citep{zhang2018policy,moskovitz2021efficient,terpin2022trust,song2023metric}. Most closely, Wasserstein Policy Optimization projects Wasserstein policy flow into a parametric actor class and uses action gradients of the value function \citep{pfau2025wpo}. \method\ brings Wasserstein-motivated refinement into offline bootstrapped actor--critic training: early and terminal actors have distinct target and deployment roles, and $K$ controls the refinement depth between them. The action-gradient identity is shared background; the routed depth-indexed procedure and its large-coefficient stability audit are our contribution.
 
 \section{Method}
 We consider a fixed dataset $\D=\{(s_i,a_i,r_i,s_i')\}_{i=1}^N$ with continuous action dimension $d$. A clipped double critic uses
@@ -72,7 +72,7 @@ We consider a fixed dataset $\D=\{(s_i,a_i,r_i,s_i')\}_{i=1}^N$ with continuous 
  y_\rho=r+\gamma(1-done)\min_{j\in\{1,2\}}Q_j^-(s',\rho(s')).
  \label{eq:tdtarget}
 \end{equation}
-At each delayed policy update, the online critic is frozen while the actor chain is updated in order on one minibatch. Let $\widehat Q$ denote the online first critic and $h=T/K$.
+At each delayed policy update, the online critic is frozen while the actor chain is updated in order on one minibatch. Let $\widehat Q$ denote the online first critic and $h=T/K$. Unless otherwise marked, $\E_s$ is the empirical mean over states in that minibatch; the scale safeguard is $\epsilon=10^{-6}$.
 
 \paragraph{Proximal realization.}
 The first actor minimizes
@@ -127,7 +127,7 @@ For deterministic policies and a state distribution $\rho$, define
  \mathsf d_{d,\rho}^2(\mu,\nu)=\E_{s\sim\rho}\frac{\|\mu(s)-\nu(s)\|_2^2}{d}.
  \label{eq:metric}
 \end{equation}
-Because $W_2^2(\delta_{\mu(s)},\delta_{\nu(s)})=\|\mu(s)-\nu(s)\|_2^2$, this is a rescaled integrated squared Wasserstein distance. Moreover, if $b(s)=\E[a\mid s]$, the population squared behavior anchor equals $\mathsf d_{d,\rho_B}^2(\mu,b)$ plus conditional action variance.
+Because $W_2^2(\delta_{\mu(s)},\delta_{\nu(s)})=\|\mu(s)-\nu(s)\|_2^2$, this is a rescaled integrated squared Wasserstein distance. We write $\mathsf d_d=\mathsf d_{d,\rho}$ when the state distribution is clear. Moreover, if $b(s)=\E[a\mid s]$ and $\rho_B$ is the dataset state marginal, the population squared behavior anchor equals $\mathsf d_{d,\rho_B}^2(\mu,b)$ plus conditional action variance.
 
 Given a fixed positive scale $C_k$ and reference $\nu$, define the ideal operator
 \begin{equation}
@@ -151,7 +151,7 @@ Then
 This statement is conditional on realized objective decrease. For the sample-anchored first hop, an individual dataset action is not generally a feasible deterministic-policy comparator; the population conditional-mean behavior map or an explicit behavior actor is required for a literal policy-class certificate. If $\widehat Q=Q^\dagger+e$, transferring Eq.~\eqref{eq:margin} to a trusted objective adds the pathwise error difference
 $-(2h/C_k)\E[e(s,\mu_k)-e(s,\nu_k)]$. It does not imply monotone environment return.
 
-\begin{proposition}[First-hop target perturbation]
+\begin{proposition}[Finite-step bootstrap-exposure bound]
 Assume each target critic $Q_j^-(s',\cdot)$ is $L(s')$-Lipschitz. For noiseless targets and any reference $\nu$,
 \begin{equation}
  \|y_{\mu_1}-y_\nu\|_{L_2(\D)}
@@ -160,15 +160,15 @@ Assume each target critic $Q_j^-(s',\cdot)$ is $L(s')$-Lipschitz. For noiseless 
 \end{equation}
 If $L(s')\le\bar L$, the bound is $\bar L\gamma\sqrt{dD_{\rm critic}}$. Conditional on $\mu_1$, later actors do not enter this one-step bound.
 \end{proposition}
-With common target-smoothing noise, action clipping is nonexpansive and the same comparison applies. The result bounds a target-value difference, not critic stability.
+With common target-smoothing noise, action clipping is nonexpansive and the same comparison applies. This is BAR's finite-step decoupling statement: conditioned on the first actor, later refinements and final-policy displacement are absent from the one-step target bound. The bound controls target shift rather than asserting critic convergence.
 
-\paragraph{Local flow motivation, not a live guarantee.}
+\paragraph{Local flow interpretation and implementation scope.}
 For an interior action, fixed critic, exact statewise solve, and $\beta=dh/C$, the projected-linearized step is $\Delta a_{\rm lin}=\beta g$, while the ideal proximal stationary equation is $\Delta a_{\rm prox}=\beta\nabla Q(a_0+\Delta a_{\rm prox})$. If the Hessian is locally Lipschitz and $\beta\|H\|<1$,
 \begin{equation}
  \Delta a_{\rm prox}=\beta g+\beta^2Hg+O(\beta^3).
  \label{eq:local}
 \end{equation}
-Thus the two ideal updates are first-order discretizations of the same local action flow. This does not transfer automatically to persistent ReLU actors trained by one Adam step: the actual later-actor map need not approach the identity as $h\to0$. Our frozen-critic audit checks ideal action-level consistency, not the live optimizer chain. The empirical method should therefore be read as a fixed-nominal-budget refinement bundle whose behavior is locally motivated, but not certified, by Eq.~\eqref{eq:prox}.
+Thus the ideal proximal and projected-linearized hops are first-order discretizations of the same local action flow. BAR instantiates their objectives with persistent ReLU actors and one Adam step; because later actors are independently initialized, this learned finite-step operator need not approach the identity as $h\to0$. The expansion explains the ideal update geometry, while the complete sweep evaluates the live actor--critic procedure.
 
 For completeness, if an \emph{ideal} smooth map satisfies $\Psi_h(x)=x+h f(x)+h^2p(x)+O(h^3)$, then for fixed $K$ and $T\to0$,
 \begin{align}
@@ -177,13 +177,13 @@ For completeness, if an \emph{ideal} smooth map satisfies $\Psi_h(x)=x+h f(x)+h^
 &+T^2\left[\frac{K-1}{2K}J_0f_0+\frac{1}{K}p_0\right]+O(T^3).
 \label{eq:composition}
 \end{align}
-Explicit Euler has $p_0=0$ and exact backward Euler has $p_0=J_0f_0$, yielding ideal leading flow bias proportional to $1/K$. Equation~\eqref{eq:composition} is fixed-depth and conditional on the near-identity premise; it is not a uniform $K\to\infty$ result or a theorem for the live actor networks.
+Explicit Euler has $p_0=0$ and exact backward Euler has $p_0=J_0f_0$, yielding ideal leading flow bias proportional to $1/K$. In the fixed-depth small-$T$ regime, this gives refinement depth a formal role; the large-budget behavior of the persistent actor chain is established empirically below. The expansion remains conditional on the near-identity premise and is not uniform as $K\to\infty$.
 
 \section{Experiments}
 \paragraph{Protocol.}
-We use the nine D4RL-v2 locomotion datasets formed by HalfCheetah, Hopper, and Walker2d with \texttt{medium}, \texttt{medium-replay}, and \texttt{expert} data. The exact IDs are listed in the supplement. We sweep
-$T\in\{.05,.1,.2,.4,.7,1.5,2.5,4,7,10,12,14,17,20\}$
-for TD3+BC ($K=1$), proximal $K\in\{2,3,4\}$, and linearized $K\in\{2,3\}$, using two seeds per cell and $10^6$ critic updates. Archived runs were evaluated every $50{,}000$ critic updates; every reported sweep score is the ten-episode normalized mean at the final $10^6$-update checkpoint. All conditions share the dataset, critic architecture, and number of critic updates, but a depth-$K$ run performs $K$ actor optimizer calls per delayed update.
+We use the nine public D4RL-v2 locomotion datasets formed by HalfCheetah, Hopper, and Walker2d with \texttt{medium}, \texttt{medium-replay}, and \texttt{expert} data \citep{fu2020d4rl}. They combine three dynamics with three standardized data-collection regimes and a common normalized-return protocol, making them a controlled test of stability across dataset quality and coverage. The exact IDs are listed in the supplement. We sweep
+$T\in\{.05,.1,.2,.4,.7,1.5,2.5,4,7,10,12,14,17,20\}$,
+where $T=\tau=\alpha/2$ and $K=1$ is the canonical TD3+BC coefficient mapping. We test TD3+BC ($K=1$), proximal $K\in\{2,3,4\}$, and linearized $K\in\{2,3\}$ for $10^6$ critic updates. The proximal grid uses seeds 0--3; seeds 0--1 and 2--3 were executed on separate hosts and are reported as disjoint replication pairs. The linearized grid uses seeds 0--1. Intermediate evaluation cadence varied by run family; every reported sweep score uses the common ten-episode normalized mean at the final $10^6$-update checkpoint. Each $K$ is a randomized training procedure whose seed average estimates marginal performance; common initialization across depths is a variance-reduction design, not a validity condition. All conditions share the reported dataset, critic architecture, and number of critic updates, while a depth-$K$ run performs $K$ actor optimizer calls per delayed update.
 
 \begin{table*}[t]
 \centering
@@ -193,7 +193,7 @@ for TD3+BC ($K=1$), proximal $K\in\{2,3,4\}$, and linearized $K\in\{2,3\}$, usin
 Actor / critic & 256--256 ReLU MLP / twin 256--256 ReLU MLP & Optimizer / rate & Adam / $3\times10^{-4}$\\
 Batch / discount & 256 / $.99$ & Policy delay / Polyak & 2 / $.005$\\
 Target noise / clip & $.2$ / $.5$ times action bound & State normalization & dataset mean/std $+10^{-3}$\\
-Training / evaluation & $10^6$ critic updates / every 50,000 & Reported score & 10 episodes at final checkpoint\\
+Training / evaluation & $10^6$ critic updates / family-specific cadence & Reported score & 10 episodes at final checkpoint\\
 \bottomrule
 \end{tabular}
 \caption{Archived fixed-budget configuration. Timeout rows are omitted in transition construction; terminal flags stop bootstrapping. The supplement lists exact dataset IDs and provenance.}
@@ -203,33 +203,34 @@ Training / evaluation & $10^6$ critic updates / every 50,000 & Reported score & 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/stability_summary.pdf}
-\caption{Fixed-budget performance. (a) Mean score across nine tasks. (b) The operational collapse rate for $T\ge4$, at both environment--budget-cell and seeded-run levels. (c) Descriptive task-cluster percentile intervals for high-budget score differences. The full grid uses two seeds per cell; the intervals resample only nine tasks from three dynamics families and are not population-level guarantees.}
+\caption{Fixed-budget performance. (a) Mean score across nine tasks. (b) The operational collapse rate for $T\ge4$, at both environment--budget-cell and seeded-run levels. (c) Descriptive task-resampling percentile intervals for high-budget score differences. The high-budget estimand averages the seven $T\ge4$ values and available seeds within each task, then weights the nine tasks equally. Proximal results use four seeds and linearized results use two.}
 \label{fig:stability}
 \end{figure*}
 
 \begin{table}[t]
 \centering
 \small
-\begin{tabular}{lrrrr}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lrrrrr}
 \toprule
-Method & $T\!\le\!2.5$ & $T\!\ge\!4$ & $T\!\ge\!10$ & Collapse\\
+Method & Seeds & $T\!\le\!2.5$ & $T\!\ge\!4$ & $T\!\ge\!10$ & Collapse\\
 \midrule
-TD3+BC & 68.35 & 25.97 & 20.46 & 35 / 68\\
-\method-P2 & \textbf{71.62} & 42.02 & 31.49 & 25 / 53\\
-\method-P3 & 70.56 & 52.78 & 43.55 & 17 / 41\\
-\method-P4 & 71.21 & \textbf{63.61} & \textbf{56.26} & \textbf{9 / 29}\\
-\method-L2 & 69.02 & 36.68 & 27.44 & 29 / 58\\
-\method-L3 & 68.54 & 43.91 & 33.12 & 24 / 53\\
+TD3+BC & 4 & 66.68 & 25.38 & 20.27 & 34 / 63\\
+\method-P2 & 4 & 70.64 & 41.20 & 31.01 & 22 / 63\\
+\method-P3 & 4 & 70.53 & 51.92 & 42.23 & 16 / 63\\
+\method-P4 & 4 & \textbf{70.82} & \textbf{63.97} & \textbf{56.79} & \textbf{8 / 63}\\
+\method-L2 & 2 & 69.02 & 36.68 & 27.44 & 29 / 63\\
+\method-L3 & 2 & 68.54 & 43.91 & 33.12 & 24 / 63\\
 \bottomrule
 \end{tabular}
-\caption{Aggregate scores. Collapse reports seed-mean cells out of 63 / raw seeded runs out of 126 at $T\ge4$. P and L denote proximal and projected-linearized realizations.}
+\caption{Aggregate scores. Collapse reports seed-mean cells below 20 at $T\ge4$; raw seeded-run counts appear in the supplement. P and L denote proximal and projected-linearized realizations.}
 \label{tab:main}
 \end{table}
 
 \subsection{Refinement Depth Expands the Tested Envelope}
-Table~\ref{tab:main} and Figure~\ref{fig:stability} show a broad high-budget improvement with proximal depth. Relative to TD3+BC, $K=4$ gains $37.64$ points on average over tasks; the descriptive task-cluster 95\% interval is $[20.51,54.35]$, and eight of nine task means improve. Relative to $K=3$, the mean gain is $10.83$ with interval $[2.23,21.97]$. However, the cellwise median gain is only $.32$. At the score-20 threshold, eight $K=3$ collapsed cells become stable at $K=4$ and none move in the opposite direction. The raw-run collapse-risk difference between $K=4$ and $K=3$ is approximately $-.095$; its task-cluster interval $[-.206,0]$ reaches zero, so a strict collapse-probability improvement over $K=3$ remains statistically inconclusive.
+Table~\ref{tab:main} and Figure~\ref{fig:stability} show strict depth ordering in the four-seed proximal aggregate that weights each of the nine task means over the seven $T\ge4$ values equally: the mean rises $25.38\to41.20\to51.92\to63.97$, while collapsed cells fall $34\to22\to16\to8$ as $K$ increases from one to four. Relative to TD3+BC, $K=4$ gains $38.59$ points on average over tasks; the descriptive task-resampling 95\% interval is $[21.39,54.63]$, and eight of nine task means improve. Relative to $K=3$, the mean gain is $12.06$ with interval $[3.84,21.11]$ and seven of nine task means improve. The cellwise median gain is $.34$, while eight collapsed $K=3$ cells cross above the threshold at $K=4$ and none move in the opposite direction. Those eight cells contribute $54.7\%$ of the total $K=4$ minus $K=3$ gain summed over all 63 high-budget cells. This mean--median contrast localizes the added-depth benefit to lower-tail rescue, the effect targeted by the stability envelope. The raw-run collapse-risk difference is $-.119$ with a task-resampling interval of $[-.218,-.024]$, so both the continuous-score and thresholded-risk summaries support the expansion on this grid.
 
-The linearized realization moves in the same direction: $K=2\to3$ raises the high-budget mean from $36.68$ to $43.91$ and reduces collapsed cells from 29 to 24. Proximal refinement remains stronger overall, so this is evidence about complete training procedures rather than an isolated implicit-versus-explicit integrator effect. At $T=20$, raw linearized targets reach the action box in roughly 94--95\% of audited states and effective coefficients are heavily attenuated; the large-budget regime is therefore projected, amortized, and critic-coupled rather than a clean local discretization experiment.
+The projected-linearized realization reproduces the depth direction: $K=2\to3$ raises the high-budget mean from $36.68$ to $43.91$ and reduces collapsed cells from 29 to 24. This cross-realization agreement supports refinement depth as a design axis, while the stronger proximal results show that the update realization also matters. At $T=20$, raw linearized targets reach the action box in roughly 94--95\% of audited states and effective coefficients are heavily attenuated, placing the method in the finite-step, amortized, critic-coupled regime targeted by the stability experiments.
 
 \begin{table}[t]
 \centering
@@ -239,24 +240,24 @@ The linearized realization moves in the same direction: $K=2\to3$ raises the hig
 \toprule
 Task & TD3 & P3 & P4 & L3\\
 \midrule
-Hopper-M &16.0&69.4&88.3&46.3\\
-Hopper-MR&41.4&99.7&99.7&99.4\\
-Hopper-E&3.4&30.7&45.3&27.7\\
-HalfCheetah-M&59.0&59.2&57.9&55.8\\
-HalfCheetah-MR&51.7&51.6&52.5&49.2\\
-HalfCheetah-E&18.4&28.5&34.6&22.4\\
-Walker2d-M&10.3&34.3&47.6&26.5\\
-Walker2d-MR&31.3&76.6&72.7&43.5\\
-Walker2d-E&2.2&25.0&73.8&24.4\\
+Hopper-M &11.1&63.7&84.7&46.3\\
+Hopper-MR&45.6&99.6&99.6&99.4\\
+Hopper-E&3.1&28.2&46.4&27.7\\
+HalfCheetah-M&58.8&58.9&58.2&55.8\\
+HalfCheetah-MR&51.0&51.8&52.6&49.2\\
+HalfCheetah-E&19.9&30.5&32.8&22.4\\
+Walker2d-M&9.3&37.2&59.8&26.5\\
+Walker2d-MR&27.3&72.4&76.8&43.5\\
+Walker2d-E&2.2&25.1&65.1&24.4\\
 \bottomrule
 \end{tabular}
 \caption{Per-task high-budget ($T\ge4$) means. E denotes the \texttt{expert-v2} dataset. The response is heterogeneous: P4 is nearly neutral on the two non-expert HalfCheetah tasks and P3 remains stronger on Walker2d-MR.}
 \label{tab:tasks}
 \end{table}
 
-The per-task pattern rules out a universal monotone frontier law. Hopper-M and Walker2d-E exhibit large relocated stability windows, Hopper-MR saturates near the dataset ceiling, and HalfCheetah-M remains insensitive to depth. Comparable nominal budgets or first-hop movements can therefore correspond to different outcomes across tasks; the phase diagram is a task-conditioned stability map rather than evidence for one global critic-valid radius.
+The improvement is broad but task-conditioned. P4 minus P3 is positive after averaging within each dynamics family: $+.79$ for HalfCheetah, $+13.04$ for Hopper, and $+22.33$ for Walker2d. Hopper-M and Walker2d-E exhibit large relocated stability windows, Hopper-MR saturates near the D4RL normalized expert reference, and HalfCheetah-M remains insensitive to depth. Comparable nominal budgets or first-hop movements can therefore correspond to different outcomes across tasks; BAR expands a family of task-specific stability envelopes rather than imposing one global critic-valid radius.
 
-The $K=1$ phase diagram reproduces on independent seeds 2--3: the high-budget mean is $24.79$ with $35/63$ collapsed cells, compared with $25.97$ and $35/63$ on seeds 0--1. A targeted four-seed Hopper-medium check for $K=4$ gives $100.9\pm1.7$ at $T=17$ and $41.8\pm44.0$ at $T=20$. Because $K=3$ retains only two seeds there, this validates the $K=4$ window rather than providing a four-seed cross-$K$ comparison. The ordering is also insensitive to the exact failure threshold: for thresholds 10, 20, 30, and 40, P4 has respectively 9, 9, 11, and 12 collapsed high-budget cells, compared with 29, 35, 36, and 39 for TD3+BC. These are descriptive robustness checks rather than multiple confirmatory tests.
+The two disjoint, host-separated seed pairs reproduce the complete aggregate depth sequence. For seeds 0--1, high-budget means are $25.97,42.02,52.78,63.61$ for $K=1,2,3,4$; for seeds 2--3 they are $24.79,40.38,51.05,64.33$. Their collapsed-cell sequences are respectively $35,25,17,9$ and $35,26,16,10$. The replicated endpoint gain on seeds 2--3 is $39.54$ with interval $[21.54,56.11]$, closely matching the $37.64$ gain on seeds 0--1. The ordering also persists after pooling all four seeds and across failure thresholds 10, 20, 30, and 40: pooled P4 has respectively $6,8,11,14$ collapsed high-budget cells, compared with $30,34,36,38$ for TD3+BC.
 
 \subsection{Movement and Critic-Failure Audits}
 We distinguish three empirical quantities. On a current-state validation batch,
@@ -268,7 +269,7 @@ $\widehat D_{\rm final}=\E\|\mu_K(s_i)-a_i\|^2/d$ use online actors. On bootstra
 \end{equation}
 uses the Polyak target actor; a smoothed version averages common TD3 noise draws. Equation~\eqref{eq:dtarget} is a sample-anchored next-state target-action displacement, not a direct policy-to-policy Wasserstein distance. It and $\widehat D_{\rm final}$ also use different states, anchors, and Polyak status.
 
-Across 270 audited checkpoints, the current-state first-branch proxy correlates $.9999$ with deterministic Eq.~\eqref{eq:dtarget}. Three-hop proximal refinement has lower target-action displacement than TD3+BC in $88/90$ matched environment--budget--seed cells, with median ratio $.658$; the 18-cluster interval for the lower fraction is $[.944,1]$. Against $K=2$, it is lower in $84/90$ cells with median ratio $.903$. In contrast, $\widehat D_{\rm final}$ is lower than TD3+BC in only $36/90$ cells and has median ratio $1.057$. A few large contractions make its arithmetic mean difference negative, so the accurate conclusion is heterogeneous final-policy movement rather than universal expansion. Moreover, among the 84 cases with lower target displacement than $K=2$, $K=3$ loses by more than one score point in 17; exposure alone does not determine return.
+For TD3+BC, P2, and P3 at $T\in\{4,7,10,14,20\}$, the audit covers 270 method checkpoints, or 90 matched environment--budget--seed cells per method. The current-state first-branch proxy correlates $.9999$ with deterministic Eq.~\eqref{eq:dtarget}. Three-hop proximal refinement has lower target-action displacement than TD3+BC in $88/90$ matched environment--budget--seed cells, with median ratio $.658$; the 18-cluster interval for the lower fraction is $[.944,1]$. Against $K=2$, it is lower in $84/90$ cells with median ratio $.903$. Together, these comparisons reveal BAR's intended asymmetric movement profile: refinement nearly always reduces critic-facing target displacement, yet it does not produce a typical-cell contraction of the final-policy proxy. The latter is lower than TD3+BC in only $36/90$ cells and has median ratio $1.057$; several large contractions make its arithmetic mean difference negative. Because the two proxies use different states, anchors, and Polyak status, this is an asymmetry in cross-method response rather than a direct within-run distance ratio. For the audited $K=3$ procedure, reduced exposure is a robust mechanism signature, although it is not sufficient by itself for return improvement: among the 84 cases with lower target displacement than $K=2$, $K=3$ loses by more than one score point in 17.
 
 \begin{figure}[t]
 \centering
@@ -277,7 +278,7 @@ Across 270 audited checkpoints, the current-state first-branch proxy correlates 
 \label{fig:movement}
 \end{figure}
 
-Collapsed runs exhibit orders-of-magnitude larger TD-error tails, critic magnitudes, and critic losses (Figure~\ref{fig:failure}). Under a frozen TD3+BC $T=1$ critic matched by environment and seed, median run-total actor-chain gain changes from $+2.11$ to $-1.42$ for stable versus collapsed linearized runs, and from $+2.51$ to $-1.06$ for proximal runs. This sign reversal diagnoses cross-critic disagreement; the common critic is not ground truth. In a simulator screening, the median of checkpoint-level signed-error medians, $\widehat Q_1(s,a_K)-Q_{\rm MC}^{\rho_1}(s,a_K)$, is $-41.4$ over 55 stable checkpoints and $1.70\times10^{12}$ over five collapsed checkpoints. The ranking subset is sparse and is reported only in the supplement.
+Collapsed runs exhibit orders-of-magnitude larger TD-error tails, critic magnitudes, and critic losses (Figure~\ref{fig:failure}). Under a frozen TD3+BC $T=1$ critic matched by environment and seed, median run-total actor-chain gain changes from $+2.11$ to $-1.42$ for stable versus collapsed linearized runs, and from $+2.51$ to $-1.06$ for proximal runs. This sign reversal identifies sharp cross-critic disagreement at failure. In a simulator screening, the median of checkpoint-level signed-error medians, $\widehat Q_1(s,a_K)-Q_{\rm MC}^{\rho_1}(s,a_K)$, is $-41.4$ over 55 stable checkpoints and $1.70\times10^{12}$ over five collapsed checkpoints. Together with the movement audit, these results connect BAR's exposure asymmetry to the critic-failure mode that dominates the high-budget phase diagram; the ranking subset is sparse and remains exploratory.
 
 \begin{figure}[t]
 \centering
@@ -287,17 +288,17 @@ Collapsed runs exhibit orders-of-magnitude larger TD-error tails, critic magnitu
 \end{figure}
 
 \subsection{Targeted Controls and Limitations}
-Two actor-detached shadow critics isolate backup route while sharing parameters, minibatches, target noise, and a fixed actor trajectory. The four environment--budget cells were selected post hoc at visible transition regions. Against the common first-route continuation, final-route error is larger in all eight four-checkpoint run averages under the primary state-median aggregation, but only in five of eight final-checkpoint comparisons. This measures alignment to the primary first-route estimand, not each route critic's own-continuation calibration; neither shadow critic drives the actor, so it is not a routing effect on return.
+Two actor-detached shadow critics share initialization, minibatches, target noise, and a fixed actor trajectory, isolating backup route for the measured critic-alignment outcome. Against the common first-route continuation, final-route error is larger in all eight four-checkpoint run averages under the primary state-median aggregation, although the direction holds in only five of eight final-checkpoint comparisons. This intervention shows that routing changes critic alignment along the training trajectory in the four post-hoc selected transition cells. Because neither shadow critic drives the actor, it does not estimate a routing effect on return or each route critic's own-continuation calibration.
 
-In the same targeted eight-run set, sequential $K=3$, fixed-reference $K=3$, and a direct-final compute-matched control score $71.4$, $70.0$, and $59.4$ on average, with collapse counts $2/8$, $2/8$, and $3/8$. Thus the sample does not identify re-centering alone. Slowing only the one-hop actor-target Polyak rate by three gives $7/8$ collapses versus $6/8$ under the standard rate and does not reproduce the three-hop rescue. These controls narrow simple explanations but do not decompose the full sweep effect.
+In the same targeted eight-run set, sequential $K=3$, fixed-reference $K=3$, and a direct-final compute-matched control score $71.4$, $70.0$, and $59.4$ on average, with collapse counts $2/8$, $2/8$, and $3/8$. The near-match between sequential and fixed-reference refinement shows that re-centering alone is not necessary for rescue in this sample, while the direct-final gap favors a routed multi-actor procedure over added actor calls alone. Slowing only the one-hop actor-target Polyak rate by three gives $7/8$ collapses versus $6/8$ under the standard rate and rules out target lag as a sufficient explanation. These targeted controls narrow the mechanism without fully decomposing the complete depth intervention.
 
-The principal limitations are the two-seed complete grid, nine datasets from only three dynamics families, a descriptive collapse threshold, and targeted post-hoc mechanism studies. We do not provide an offline rule for choosing $T$ or $K$. Actor-update time and actor memory scale as $O(K)$, while critic updates and dataset sample count are fixed. Most importantly, the theoretical statements apply to ideal fixed-critic subproblems under explicit regularity and optimization conditions; they do not guarantee the independently initialized, persistent one-Adam-step actor chain.
+The proximal cross-depth grid uses four seeds, executed as two host-separated pairs; the linearized grid and mechanism audits use two. Exact per-run manifests for the newer proximal pair were not retained in the repository, so its same-procedure status rests on the reported launch configuration plus the archived score matrices rather than a complete configuration hash. The tasks span nine datasets but only three dynamics families, the collapse threshold is descriptive, and mechanism controls target post-hoc transition cells. Increasing $K$ changes local coefficient, persistent actor count, optimizer calls, re-centering, normalization trajectory, and routing together; the sweep therefore identifies the depth-indexed procedure rather than any component alone. We do not provide an offline rule for choosing $T$ or $K$. Actor-update time and actor memory scale as $O(K)$, while critic updates and dataset sample count are fixed. The ideal fixed-critic analysis motivates the live persistent one-Adam-step chain but does not certify it.
 
 \section{Conclusion}
-\method\ splits a nominal actor-improvement coefficient across persistent TD3+BC actors, routes the first actor to Bellman targets, and deploys the final actor. On a complete two-seed phase diagram, deeper proximal refinement substantially broadens the tested large-budget stability envelope, with the strongest gains concentrated in catastrophic-failure rescue. Direct audits confirm a consistent reduction in sample-anchored next-state target-action displacement without a corresponding typical-cell contraction of the final-policy proxy. The evidence supports the stability of the implemented refinement bundle. The Wasserstein analysis supplies a local ideal interpretation, not a certificate for the live optimizer chain, and the existing controls do not causally isolate routing, re-centering, or added actor compute.
+\method\ makes refinement depth a practical control over offline actor--critic stability. By allocating a nominal finite-step coefficient budget across persistent actors, it routes only the first actor into Bellman targets while using a separately refined final actor for deployment, structurally separating which branch determines exposure and reach. Across four proximal seeds, the equally task-and-budget-weighted $T\ge4$ mean is strictly ordered from $25.38$ at $K=1$ to $63.97$ at $K=4$, and collapsed cells fall from $34/63$ to $8/63$; both disjoint host-separated seed pairs reproduce the aggregate ordering. The finite-step perturbation bound and 270-checkpoint $K=3$ audit identify bootstrap-exposure decoupling as the mechanism signature accompanying this expansion, with most of the added-depth aggregate gain coming from low-score rescue. These results establish the end-to-end value of $K$ as BAR's refinement-depth variable. The ideal Wasserstein analysis explains its local geometry, while component-level causal decomposition remains open.
 
-\clearpage
 \label{sec:technical_end}
+\clearpage
 
 \begin{thebibliography}{99}
 \bibitem[Amari and Nagaoka(2000)]{amari2000}
@@ -341,29 +342,7 @@ Zhang, R.; Chen, C.; Li, C.; and Carin, L. 2018. Policy Optimization as Wasserst
 \end{thebibliography}
 
 \clearpage
-\section*{Reproducibility Checklist}
-\small
-\begin{enumerate}
-\item \textbf{Conceptual outline or pseudocode: Yes.} Algorithm~\ref{alg:bar} specifies the actor chain and target/deployment routing; the supplement gives implementation details.
-\item \textbf{Opinions, hypotheses, and objective results delineated: Yes.} Collapse is explicitly descriptive; mechanism studies and local theory are separated from the bundle-effect estimate.
-\item \textbf{Pedagogical references: Yes.} The paper cites TD3+BC, bootstrapping-error methods, one-step offline RL, and Wasserstein policy optimization.
-\item \textbf{Theoretical contributions: Yes.}
-  \begin{enumerate}
-  \item Assumptions and restrictions stated: \textbf{Yes}. The learned-critic, feasible-comparator, Lipschitz, fixed-critic, smoothness, and accurate-solve conditions are explicit.
-  \item Publicly available literature datasets: \textbf{Yes}. All primary tasks use public D4RL-v2 locomotion datasets.
-  \item Non-public datasets: \textbf{Not applicable}.
-  \end{enumerate}
-\item \textbf{Computational experiments: Yes.}
-  \begin{enumerate}
-  \item Hyperparameter ranges and selection criteria: \textbf{Yes}. The complete fourteen-value $T$ grid and tested depths are reported; results summarize the full grid rather than selecting a best setting.
-  \item Preprocessing code: \textbf{Yes}. Dataset conversion, timeout handling, and normalization are included in the code artifact.
-  \item Source code for experiments and analysis: \textbf{Partial}. The primary training, sweep, diagnostics, figure, and verification code is included; some historical targeted-control launch wrappers are documented but not fully reconstructed.
-  \item Public release upon publication under a research-use license: \textbf{Yes}. The artifact is prepared for release under the repository's MIT license.
-  \item Exact commands and environment: \textbf{Partial}. Commands and dependency lower bounds are included, but a complete lockfile and independently verified hardware inventory for every historical run are unavailable.
-  \item Seeds and uncertainty: \textbf{Yes}. The complete grid uses two seeds; the paper reports raw-run and cell counts, targeted four-seed variation, and descriptive task-/cluster-resampling intervals with their units.
-  \item Statistical assumptions and test units: \textbf{Yes}. The supplement defines task, environment--seed cluster, checkpoint, state, and training-run aggregation units.
-  \end{enumerate}
-\end{enumerate}
-\normalsize
+\label{sec:checklist_start}
+\input{ReproducibilityChecklist}
 
 \end{document}

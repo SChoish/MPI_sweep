@@ -2,11 +2,11 @@
 
 ## 결론
 
-현재 결과는 **고정 nominal actor-loss coefficient를 여러 persistent actor update로 분할한 전체 절차가 TD3+BC의 large-budget lower-tail failure를 줄인다**는 서술적 주장에는 충분히 강합니다. 반면 proximal/JKO 분석이 실제 one-Adam-step persistent actor chain을 보증하거나, routing·re-centering·추가 actor compute 중 하나가 단독 원인이라는 주장은 현재 증거로 성립하지 않습니다.
+현재 증거의 중심은 local discretization accuracy가 아니라 **finite-step bootstrap-exposure decoupling**입니다. Proximal `K=1,2,3,4`의 전체 고정-budget grid는 두 disjoint host-separated seed 쌍에서 각각 동일가중 `T>=4` aggregate의 `K=1<2<3<4` 순서를 재현했고, pooled four-seed 결과에서도 mean score와 collapse risk가 함께 개선됩니다. 이는 `K`를 실제적인 안정성 제어변수로 확립합니다. Ideal proximal/JKO 분석은 이 구조의 국소 기하를 설명하지만, live one-Adam-step chain을 보증하거나 routing·re-centering·actor compute의 개별 인과효과를 대신 식별하지는 않습니다.
 
 이번 AAAI-26 원고는 이 경계를 명시적으로 반영했습니다. 핵심 정체성은 다음과 같습니다.
 
-> BAR is an empirical fixed-nominal-budget refinement bundle whose behavior is locally motivated, but not certified, by the proximal analysis.
+> BAR is a finite-step routed refinement procedure: depth separates critic-facing movement from deployment reach and reproducibly expands the tested high-budget stability envelope.
 
 ## 이전 GPT 비평의 정정
 
@@ -24,7 +24,11 @@
 
 ## P0 수정 사항
 
-### 1. 구현과 일치하는 `C_k`
+### 1. `T`의 코드상 의미
+
+Trainer에서 `T`는 canonical scale-normalized TD3+BC의 `tau=alpha/2`입니다. 따라서 `K=1`은 `alpha=2T`인 baseline mapping과 정확히 같고, depth `K`에서는 각 hop이 `h=T/K`, critic coefficient `2h/C_k`를 사용합니다. 원고는 `T`를 nominal finite-step coefficient budget으로 정의하며 compute budget이나 realized action distance로 해석하지 않습니다.
+
+### 2. 구현과 일치하는 `C_k`
 
 기존 단일 `C_k` 정의는 구현을 정확히 표현하지 못했습니다. 수정 원고는 다음 네 경우를 분리합니다.
 
@@ -55,17 +59,17 @@ C_{k,t}^{\mathrm L}=C_{k,t}^{\mathrm P},\quad k\ge2.
 
 따라서 linearized 경로는 action metric과 nominal coefficient는 맞지만 첫 hop의 Q-normalization point는 다릅니다. 원고는 이를 `action-metric-matched projected linearization`이라고 부르며, fully scale-matched control이라고 주장하지 않습니다.
 
-### 2. 평가 주기
+### 3. 평가 주기
 
-과거 sweep의 archived config와 evaluation CSV에 따라 평가 주기를 50,000 critic updates로 고쳤습니다. 모든 headline score는 `10^6` update checkpoint에서 10 episode를 평균한 D4RL normalized score라고 명시했습니다. 현행 trainer의 CLI default 5,000은 역사적 sweep의 증거로 사용하지 않습니다.
+모든 headline score는 `10^6` critic-update checkpoint에서 10 episode를 평균한 D4RL normalized score입니다. Intermediate evaluation cadence는 run family마다 달랐습니다: archived configs는 K1/P2/P3에서 50,000-update cadence, L2에서 mixed 50,000/final-only, L3에서 final-only를 기록하며 exact K4 config는 보존되지 않았습니다. 따라서 원고는 하나의 cadence를 전체 sweep에 일반화하지 않고 공통 final checkpoint만 score estimand로 사용합니다.
 
-### 3. Taylor remainder
+### 4. Taylor remainder
 
 `O(beta^3)`를 유지하는 곳에는 Hessian local Lipschitz를 가정했습니다. 단지 `C^2`만 가정하면 안전한 remainder가 `o(beta^2)`임을 본문과 부록에 명시했습니다. ReLU critic에 대해서는 activation boundary를 피한 piecewise-smooth local statement로 제한합니다.
 
-### 4. dataset 이름
+### 5. dataset 이름
 
-모든 표와 그림에서 `E`는 정확히 `expert-v2`를 뜻합니다. `ME`와 존재하지 않는 `medium-expert-v2` 표기는 제거했습니다. 부록에 아홉 개 dataset ID를 구성 규칙과 함께 명시했습니다.
+모든 표와 그림에서 `E`는 정확히 `expert-v2`를 뜻합니다. 이 실험에 쓰이지 않은 `ME`와 `medium-expert-v2` 표기는 제거했습니다. 부록에 아홉 개 dataset ID를 구성 규칙과 함께 명시했습니다.
 
 ## 가장 중요한 이론-구현 간극
 
@@ -89,18 +93,18 @@ C_{k,t}^{\mathrm L}=C_{k,t}^{\mathrm P},\quad k\ge2.
 
 ### Complete grid
 
-`T >= 4`에서 proximal depth별 결과는 다음과 같습니다.
+`T >= 4`인 상위 7개 budget을 각 task 안에서 seed와 함께 평균하고 9개 task를 동일가중한 four-seed proximal 결과는 다음과 같습니다. 이는 pointwise monotonicity 주장이 아니라 명시된 stress-region aggregate입니다.
 
 | `K` | High-budget mean | score<20 cells | score<20 raw runs |
 |---:|---:|---:|---:|
-| 1 | 25.97 | 35/63 | 68/126 |
-| 2 | 42.02 | 25/63 | 53/126 |
-| 3 | 52.78 | 17/63 | 41/126 |
-| 4 | 63.61 | 9/63 | 29/126 |
+| 1 | 25.38 | 34/63 | 142/252 |
+| 2 | 41.20 | 22/63 | 111/252 |
+| 3 | 51.92 | 16/63 | 84/252 |
+| 4 | 63.97 | 8/63 | 54/252 |
 
-`K=4-K=1`의 task-level high-budget mean difference는 `+37.64`, descriptive task-cluster percentile interval은 `[20.51,54.35]`, 9개 task 중 8개에서 양수입니다. `K=4-K=3` 평균은 `+10.83`, interval `[2.23,21.97]`이지만 cellwise median은 `+.32`입니다. 즉 K4의 추가 이득은 전반적 uniform shift보다 일부 catastrophic failure rescue에 집중됩니다.
+`K=4-K=1`의 task-level high-budget mean difference는 `+38.59`, descriptive task-resampling interval은 `[21.39,54.63]`, 9개 task 중 8개에서 양수입니다. `K=4-K=3` 평균은 `+12.06`, interval `[3.84,21.11]`, positive task count는 7/9입니다. Cellwise median은 `+.34`이지만 K3 collapse 8개가 K4에서 복구되고 reverse transition은 0개입니다. 이 8개 cell이 63개 high-budget cell 전체에 걸친 K4-K3 gain 합의 `54.7%`를 차지하므로, 추가 깊이의 aggregate 평균 이득 대부분이 low-score rescue에서 온다는 해석이 직접 뒷받침됩니다.
 
-반면 `K=4-K=3` raw-run collapse-risk interval은 `[-.206,0]`으로 0에 닿습니다. 따라서 “K4가 K3보다 collapse probability를 확실히 낮춘다”는 표현은 피하고, broad score rescue와 thresholded risk uncertainty를 분리했습니다.
+`K=4-K=3` raw-run collapse-risk difference는 `-.119`, task-resampling interval은 `[-.218,-.024]`입니다. 최신 four-seed grid에서는 연속 score와 thresholded collapse risk가 모두 K4 방향이며, 두 disjoint host-separated seed 쌍은 각각 `K=1<2<3<4` high-budget aggregate ordering을 재현합니다.
 
 ### Target-action audit
 
@@ -115,7 +119,7 @@ C_{k,t}^{\mathrm L}=C_{k,t}^{\mathrm P},\quad k\ge2.
 
 이며 paired next dataset action을 anchor로 사용합니다. 그래서 원고의 표현을 `sample-anchored next-state target-action displacement`로 고쳤습니다.
 
-Final proxy는 current states, current dataset actions, online final actor를 사용하므로 target metric과 domain 및 Polyak status가 다릅니다. P3가 TD3보다 final proxy가 작은 경우는 36/90이고 median ratio는 1.057이지만, 몇 개의 큰 contraction 때문에 arithmetic mean difference는 음수입니다. 원고는 이를 “typical-cell contraction은 없지만 heterogeneous하다”고 기술합니다.
+Final proxy는 current states, current dataset actions, online final actor를 사용하므로 target metric과 domain 및 Polyak status가 다릅니다. P3가 TD3보다 final proxy가 작은 경우는 36/90이고 median ratio는 1.057이지만, 몇 개의 큰 contraction 때문에 arithmetic mean difference는 음수입니다. 원고는 이를 “typical-cell contraction은 없지만 heterogeneous하다”고 기술합니다. 이 270-checkpoint mechanism audit은 TD3+BC/P2/P3만 직접 측정하므로 P3의 exposure signature를 지지하며, P4 movement를 측정한 것으로 확장하지 않습니다.
 
 ### Critic failure
 
@@ -137,16 +141,17 @@ Compact claim audit는 통과했습니다.
 - route intervention 8 runs, 32 arm/checkpoint pair checks;
 - primary-key duplicate, NaN, Inf, state-pair mismatch 없음.
 
-그러나 multi-GB raw NPZ/per-state material은 이 bundle에 복제하지 않았고, 일부 TD residual quantile은 보존된 run-level dump에서 재사용되며, historical control launcher와 exact lockfile도 불완전합니다. 그러므로 checklist는 source/analysis reproducibility와 full end-to-end retraining reproducibility를 구분하고 일부 항목을 `Partial`로 답합니다.
+그러나 multi-GB raw NPZ/per-state material은 이 bundle에 복제하지 않았고, 일부 TD residual quantile은 보존된 run-level dump에서 재사용되며, historical control launcher와 exact lockfile도 불완전합니다. 그러므로 공식 31문항 checklist는 source/analysis reproducibility와 full end-to-end retraining reproducibility를 구분하고, 구체적 누락에 따라 `Partial` 또는 `No`로 답합니다.
 
-## 제출 전 남은 판단
+## 남은 범위와 재현성 한계
 
-과학적으로 blocking인 P0는 이 AAAI-26 버전에 반영했습니다. 남은 가장 큰 연구적 한계는 다음입니다.
+핵심 empirical claim을 막는 P0는 이 AAAI-26 버전에 반영했습니다. 남은 범위는 다음과 같습니다.
 
-- complete grid의 seed가 두 개임;
+- proximal cross-depth grid는 four seeds이지만 linearized grid와 mechanism audits는 two seeds임;
+- newer proximal seed pair의 score matrices는 보존됐지만 exact per-run config manifest와 code hash는 저장소에 없음;
 - task가 9개지만 dynamics family는 3개임;
-- `K`가 여러 구현 요소를 동시에 바꾸므로 구성요소의 인과효과가 식별되지 않음;
-- `T`나 `K`를 offline하게 선택하는 규칙이 없음;
-- ideal proximal statement와 live one-step neural optimizer 사이의 empirical bridge가 없음.
+- `K`가 여러 구현 요소를 함께 바꾸므로 구성요소별 인과효과는 식별되지 않음;
+- `T`나 `K`를 offline하게 선택하는 규칙은 아직 없음;
+- ideal proximal statement와 live one-step neural optimizer 사이의 직접적 보증은 없음.
 
-따라서 이 원고는 “실제 알고리즘을 이론적으로 보증했다”가 아니라, **정의된 randomized procedure의 complete phase diagram과 lower-tail stability effect를 정직하게 제시하는 논문**으로 읽혀야 합니다.
+따라서 원고의 강한 결론은 **finite-step routing과 refinement depth가 명시된 동일가중 high-budget aggregate에서 tested stability envelope를 재현 가능하게 확장한다**는 것입니다. Ideal Wasserstein 분석은 그 결과를 대체하는 보증이 아니라, 관측된 구조에 대한 국소 기하 설명입니다.

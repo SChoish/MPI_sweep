@@ -9,3 +9,8 @@ supplement.pdf
 render_*/
 *_contact.png
 __pycache__/
+figures/*.pdf
+figures/*.png
+gpt_aaai26_manuscript.pdf
+gpt_aaai26_supplement.pdf
+gpt_aaai26_bundle.zip

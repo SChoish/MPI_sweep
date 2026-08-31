@@ -1,4 +1,43 @@
 {
+  "stability": {
+    "four_seed_proximal": {
+      "seeds": [0, 1, 2, 3],
+      "high_means": {"k1": 25.379536904761903, "k2": 41.2018873015873, "k3": 51.91607460317461, "k4": 63.971089285714285},
+      "cell_collapses": {"k1": [34, 63], "k2": [22, 63], "k3": [16, 63], "k4": [8, 63]},
+      "raw_collapses": {"k1": [142, 252], "k2": [111, 252], "k3": [84, 252], "k4": [54, 252]}
+    },
+    "p4_vs_td3": {
+      "mean_difference": 38.59155238095238,
+      "task_bootstrap95": [21.392935714285713, 54.62618588293648],
+      "positive_tasks": [8, 9],
+      "raw_collapse_risk_difference": -0.34920634920634924,
+      "raw_collapse_risk_cluster95": [-0.5238095238095238, -0.1746031746031746]
+    },
+    "p4_vs_p3": {
+      "mean_difference": 12.055014682539685,
+      "task_bootstrap95": [3.837716369047619, 21.111962301587305],
+      "positive_tasks": [7, 9],
+      "cell_median_difference": 0.342125,
+      "rescued_cells": 8,
+      "reverse_cells": 0,
+      "rescued_gain_share": 0.5474808497826944,
+      "raw_collapse_risk_difference": -0.11904761904761904,
+      "raw_collapse_risk_cluster95": [-0.21825396825396823, -0.023809523809523808],
+      "family_mean_differences": {"halfcheetah": 0.7859428571428589, "hopper": 13.044953571428572, "walker2d": 22.334147619047624}
+    },
+    "host_separated_seed_pairs": {
+      "seeds_0_1": {
+        "high_means": {"k1": 25.970757142857142, "k2": 42.021298412698414, "k3": 52.78328333333333, "k4": 63.61039920634921},
+        "cell_collapses": {"k1": 35, "k2": 25, "k3": 17, "k4": 9},
+        "raw_collapses": {"k1": 68, "k2": 53, "k3": 41, "k4": 29}
+      },
+      "seeds_2_3": {
+        "high_means": {"k1": 24.788316666666667, "k2": 40.38247619047619, "k3": 51.04886587301587, "k4": 64.33177936507936},
+        "cell_collapses": {"k1": 35, "k2": 26, "k3": 16, "k4": 10},
+        "raw_collapses": {"k1": 74, "k2": 58, "k3": 43, "k4": 25}
+      }
+    }
+  },
   "target_exposure": {
     "prox3_vs_td3": {
       "lower": [88, 90],

@@ -1,6 +1,6 @@
 {
-  "run_rows": 38,
-  "hop_rows": 152,
+  "run_rows": 80,
+  "hop_rows": 400,
   "curvature_rows": 0,
   "small_t_max": 0.4,
   "small_t_rows": 0,
@@ -9,11 +9,19 @@
   "method_cell_summary": [
     {
       "method": "mpi2",
-      "cells": 19,
-      "score_mean": 48.97241853928114,
-      "collapse_cells": 8,
-      "critic_displacement_median": 0.31115231098018015,
-      "final_displacement_median": 0.41212610655788495
+      "cells": 20,
+      "score_mean": 46.578639613402004,
+      "collapse_cells": 9,
+      "critic_displacement_median": 0.3489818454529754,
+      "final_displacement_median": 0.4243452544538755
+    },
+    {
+      "method": "mpi3",
+      "cells": 20,
+      "score_mean": 60.29742472863211,
+      "collapse_cells": 5,
+      "critic_displacement_median": 0.1316768237981249,
+      "final_displacement_median": 0.26920504572853377
     }
   ],
   "paired_td3_mpi3": {

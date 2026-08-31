@@ -1,6 +1,6 @@
 {
-  "run_rows": 24,
-  "hop_rows": 48,
+  "run_rows": 32,
+  "hop_rows": 64,
   "curvature_rows": 0,
   "small_t_max": 0.4,
   "small_t_rows": 0,
@@ -9,10 +9,10 @@
   "method_cell_summary": [
     {
       "method": "expl2",
-      "cells": 12,
-      "score_mean": 84.98978163850126,
-      "collapse_cells": 0,
-      "critic_displacement_median": 0.048809035238173495,
+      "cells": 16,
+      "score_mean": 77.54767825799254,
+      "collapse_cells": 2,
+      "critic_displacement_median": 0.046972871308453526,
       "final_displacement_median": 0.050830300104224554
     }
   ],

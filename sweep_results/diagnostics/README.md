@@ -27,6 +27,7 @@ folders below in place — see ARTIFACT_MAP.
 | `simulator_calibration/` | Exploratory 60-checkpoint simulator-reference screening |
 | `route_shadow/` | Paired first-hop versus final-hop shadow-critic alignment against the common \(Q_{\mathrm{MC}}^{\rho_1}\) first-route estimand on eight targeted runs |
 | `frozen_critic_small_step/` | Explicit/implicit local-consistency audit on 18 frozen critics |
+| `actor_path_semigroup/` | Actor endpoint composition, frozen-map semigroup, and MPI-1/2/3 cross-K action-path audit |
 | `environment_t_sensitivity.csv` | Return versus realized first-hop displacement by environment |
 | `control_final_scores.csv` | Run-level compute-matched and actor-target-lag scores |
 | `control_summary.csv` | Means, medians, and descriptive collapse counts |
@@ -47,6 +48,10 @@ folders below in place — see ARTIFACT_MAP.
   and `12.0090`, with collapse counts `6/8` and `7/8`.
 - Fifteen of 18 frozen-critic runs have an eligible converged, projection-free
   local point; their maximum run-level local discrepancy is below `0.027`.
+- The archived actor-path audit finds weak learned-endpoint composition
+  (relative median `0.5623` explicit and `0.4745` implicit), while frozen-map
+  defects are much smaller at short total steps. This run uses seeds 2 and 3;
+  seed 3 is non-paper evidence under the current `{0,1,2}` paper protocol.
 
 Here, collapse means final normalized return below 20. It is descriptive, not
 a theoretical threshold.
@@ -65,8 +70,8 @@ in the LaTeX source.
 
 ## Provenance and exclusions
 
-Files were copied or derived from local audits completed on 2026-08-29 and
-2026-08-30. `matched_geometry/lin2_run_movement.csv` and
+Files were copied or derived from local audits completed on 2026-08-29,
+2026-08-30, and 2026-08-31. `matched_geometry/lin2_run_movement.csv` and
 `matched_geometry/hopper_lin_frontier.csv` are compact action-displacement
 summaries derived from the original per-state NPZ audits; their formulas and
 source directories are recorded in `figure_inputs_MANIFEST.json`. Large

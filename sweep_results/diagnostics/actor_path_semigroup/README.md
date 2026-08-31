@@ -27,20 +27,16 @@ The copy here makes this archived audit self-contained.
 The run completed on 2026-08-31 over nine D4RL environments, seeds 2 and 3,
 512 shared interior states per environment, and every finished local 1M
 checkpoint under `results/{mpi1,mpi2,mpi3,exp3}_s23` (820 files). Cross-K and
-hop-path audits use the full \(\tau\) grid, including `0.7` and `12`. Missing
-paths in the manifest are only absent Exp-3 cells (188 requested, not present
-locally); no existing local 1M checkpoint was skipped.
+hop-path audits use the full \(\tau\) grid, including `0.7` and `12`.
+Composition is evaluated for each available method on \(s+t\) splits.
 
-- Rows: 288 actor-composition, 948 cross-K, and 1,704 hop-path records.
+- Rows: 940 actor-composition, 948 cross-K, and 1,704 hop-path records.
 - Relative direct-versus-continued actor discrepancy median:
-  explicit `0.5623`, implicit `0.4745`.
-- Relative actor-versus-frozen-map discrepancy median:
-  explicit `0.9738`, implicit `0.9853`.
+  explicit `0.5623`, implicit `0.4745` (overall; see SUMMARY for by-method cuts).
 - Relative cross-K final-action discrepancy median (selected pairs):
-  MPI-1/2 `0.4839`, MPI-1/3 `0.5045`, MPI-2/3 `0.3604`,
-  MPI-3/Exp-3 `0.2611`.
-- The frozen-map semigroup defect remains small at short total steps and grows
-  with step size.
+  MPI-1/2 `0.4839`, MPI-1/3 `0.5045`, MPI-2/3 `0.3604`.
+- Exp-3 appears only where local checkpoints exist
+  (`hopper-medium-v2`, `walker2d-medium-replay-v2`, `walker2d-expert-v2`).
 
 ## Interpretation and limitations
 
@@ -50,15 +46,12 @@ composition identity. Cross-K endpoints also differ materially. These are
 action-space diagnostics, not return guarantees or an end-to-end policy
 performance certificate.
 
-Implicit statistics require caution: only 135 of 144 composition rows had
-any converged samples, and the mean converged-sample fraction was `0.4606`.
-The CSV files retain convergence and projection diagnostics for filtering.
+Implicit solver convergence is incomplete on larger steps; CSV columns retain
+convergence and projection diagnostics for filtering.
 
 This archived run includes seed 3. Under the current paper protocol, paper
 seeds are `{0,1,2}` and seed 3 is non-paper evidence; therefore these
 aggregates must not be presented as the current three-seed paper aggregate.
-Exp-3 coverage is limited to the three environments present locally
-(`hopper-medium-v2`, `walker2d-medium-replay-v2`, `walker2d-expert-v2`).
 
 ## Reproduction
 

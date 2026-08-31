@@ -67,7 +67,7 @@
       "timeout_rows_excluded_by_loader": 677
     }
   },
-  "completed_cells": 24,
+  "completed_cells": 38,
   "cpu_environment": {
     "CUDA_VISIBLE_DEVICES": "",
     "JAX_PLATFORMS": "cpu",
@@ -76,13 +76,13 @@
     "XLA_FLAGS": "--xla_cpu_multi_thread_eigen=false intra_op_parallelism_threads=4"
   },
   "cpu_only": true,
-  "created_utc": "2026-08-30T09:38:46.214549+00:00",
+  "created_utc": "2026-08-30T09:51:14.666192+00:00",
   "data_dir": "/home/ext_csh/MPI_sweep/data",
   "envs": [
-    "hopper-medium-v2",
     "hopper-medium-replay-v2",
-    "walker2d-medium-v2",
-    "walker2d-expert-v2"
+    "hopper-medium-v2",
+    "walker2d-expert-v2",
+    "walker2d-medium-v2"
   ],
   "interpretation_limits": {
     "causality": "post-hoc associative diagnostic; it does not identify target policy displacement as the cause of critic or return changes",
@@ -93,6 +93,7 @@
     "TFRT_CPU_0"
   ],
   "max_episode_steps": 1000,
+  "merge": true,
   "methods": [
     "mpi2"
   ],
@@ -103,40 +104,34 @@
     "polyak_lag_sq_mean_metric",
     "current_sample_anchor_proxy_sq_mean_metric"
   ],
-  "missing_checkpoints": [],
+  "missing_checkpoints": [
+    "/home/ext_csh/MPI_sweep/logs/_diag_results_root/results_mpi2/walker2d-expert-v2_tau20_mpi2_seed2/params_1000000.pkl",
+    "/home/ext_csh/MPI_sweep/logs/_diag_results_root/results_mpi2/walker2d-expert-v2_tau20_mpi2_seed3/params_1000000.pkl"
+  ],
+  "new_cells": 14,
   "noise_seed_base": 20260830,
   "normalization_fingerprints": {
     "hopper-medium-replay-v2": {
-      "hopper-medium-replay-v2_tau10_mpi2_seed2": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
-      "hopper-medium-replay-v2_tau10_mpi2_seed3": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
-      "hopper-medium-replay-v2_tau4_mpi2_seed2": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
-      "hopper-medium-replay-v2_tau4_mpi2_seed3": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
-      "hopper-medium-replay-v2_tau7_mpi2_seed2": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
-      "hopper-medium-replay-v2_tau7_mpi2_seed3": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29"
+      "hopper-medium-replay-v2_tau14_mpi2_seed2": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
+      "hopper-medium-replay-v2_tau14_mpi2_seed3": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
+      "hopper-medium-replay-v2_tau20_mpi2_seed2": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29",
+      "hopper-medium-replay-v2_tau20_mpi2_seed3": "c2bbe9a5c2f3e316f7c3ee7f18e978dcc85c3f0d3d496710f01c3bf0fdc97a29"
     },
     "hopper-medium-v2": {
-      "hopper-medium-v2_tau10_mpi2_seed2": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
-      "hopper-medium-v2_tau10_mpi2_seed3": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
-      "hopper-medium-v2_tau4_mpi2_seed2": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
-      "hopper-medium-v2_tau4_mpi2_seed3": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
-      "hopper-medium-v2_tau7_mpi2_seed2": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
-      "hopper-medium-v2_tau7_mpi2_seed3": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6"
+      "hopper-medium-v2_tau14_mpi2_seed2": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
+      "hopper-medium-v2_tau14_mpi2_seed3": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
+      "hopper-medium-v2_tau20_mpi2_seed2": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6",
+      "hopper-medium-v2_tau20_mpi2_seed3": "5dd2900a34fac68a3e0075dee01c1ca7258b87128e4fdbbf60efd0b88856a7a6"
     },
     "walker2d-expert-v2": {
-      "walker2d-expert-v2_tau10_mpi2_seed2": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547",
-      "walker2d-expert-v2_tau10_mpi2_seed3": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547",
-      "walker2d-expert-v2_tau4_mpi2_seed2": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547",
-      "walker2d-expert-v2_tau4_mpi2_seed3": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547",
-      "walker2d-expert-v2_tau7_mpi2_seed2": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547",
-      "walker2d-expert-v2_tau7_mpi2_seed3": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547"
+      "walker2d-expert-v2_tau14_mpi2_seed2": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547",
+      "walker2d-expert-v2_tau14_mpi2_seed3": "213371658b997465211176f149d9825ff276af25584b02e2c7e127e9f975c547"
     },
     "walker2d-medium-v2": {
-      "walker2d-medium-v2_tau10_mpi2_seed2": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
-      "walker2d-medium-v2_tau10_mpi2_seed3": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
-      "walker2d-medium-v2_tau4_mpi2_seed2": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
-      "walker2d-medium-v2_tau4_mpi2_seed3": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
-      "walker2d-medium-v2_tau7_mpi2_seed2": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
-      "walker2d-medium-v2_tau7_mpi2_seed3": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106"
+      "walker2d-medium-v2_tau14_mpi2_seed2": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
+      "walker2d-medium-v2_tau14_mpi2_seed3": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
+      "walker2d-medium-v2_tau20_mpi2_seed2": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106",
+      "walker2d-medium-v2_tau20_mpi2_seed3": "3d0b487a2f3ca4d8c797b589d95bbef6d4bb98f455ed99c27116cd94fef59106"
     }
   },
   "out_dir": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure",
@@ -152,9 +147,8 @@
   "smoothing_samples": 64,
   "summary_csv": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/target_policy_exposure/target_policy_exposure_summary.csv",
   "taus": [
-    4.0,
-    7.0,
-    10.0
+    14.0,
+    20.0
   ],
   "transition_convention": {
     "next_dataset_action": "actions[hdf5_index + 1]",

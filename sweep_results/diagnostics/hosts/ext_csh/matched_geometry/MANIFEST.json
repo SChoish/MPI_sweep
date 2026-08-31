@@ -3,15 +3,14 @@
     "mpi2"
   ],
   "envs": [
-    "hopper-medium-v2",
     "hopper-medium-replay-v2",
-    "walker2d-medium-v2",
-    "walker2d-expert-v2"
+    "hopper-medium-v2",
+    "walker2d-expert-v2",
+    "walker2d-medium-v2"
   ],
   "taus": [
-    4.0,
-    7.0,
-    10.0
+    14.0,
+    20.0
   ],
   "seeds": [
     2,
@@ -19,13 +18,19 @@
   ],
   "n_states": 4096,
   "sample_seed": 20260824,
+  "merge": true,
+  "new_run_rows": 0,
+  "new_hop_rows": 0,
   "canonical_critic": "TD3+BC checkpoint from the same env/seed at tau=0.05",
   "critic_activation": "relu",
   "curvature": "finite path secants, not pointwise Hessians",
   "reference_action": "matched dataset transition action",
   "prox_margin_val": "post-hoc fixed-batch margin under each selected critic; not the unrecoverable original train-minibatch margin",
   "effective_action_step": "d * (tau / K) / q_scale for raw-Q gradients",
-  "missing_checkpoints": [],
-  "hop_rows": 96,
-  "run_rows": 24
+  "missing_checkpoints": [
+    "/home/ext_csh/MPI_sweep/logs/_diag_results_root/results_mpi2/walker2d-expert-v2_tau20_mpi2_seed2/params_1000000.pkl",
+    "/home/ext_csh/MPI_sweep/logs/_diag_results_root/results_mpi2/walker2d-expert-v2_tau20_mpi2_seed3/params_1000000.pkl"
+  ],
+  "hop_rows": 152,
+  "run_rows": 38
 }

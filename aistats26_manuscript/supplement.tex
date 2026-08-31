@@ -32,38 +32,24 @@
 \section{PROOFS AND ADDITIONAL ANALYSIS}
 \label{app:proofs}
 
-\subsection{Behavior-anchor decomposition and Proposition~\ref{prop:prox_equiv}}
-For any square-integrable random action $a$ conditioned on $s$, let
-$b(s)=\mathbb E[a\mid s]$. The bias--variance identity gives
-\begin{equation}
-\begin{split}
+\subsection{Behavior anchor and Proposition~\ref{prop:prox_equiv}}
+Let $b(s)=\mathbb E[a\mid s]$. The conditional bias--variance identity
+\[
 \mathbb E[\|\mu(s)-a\|_2^2\mid s]
-={}&\|\mu(s)-b(s)\|_2^2\\
-&+\mathbb E[\|a-b(s)\|_2^2\mid s].
-\end{split}
-\end{equation}
-Averaging over states and dividing by $d$ proves
-Eq.~\eqref{eq:bc_decomposition}; the second term is independent of $\mu$.
+=\|\mu(s)-b(s)\|_2^2+
+\mathbb E[\|a-b(s)\|_2^2\mid s]
+\]
+proves Eq.~\eqref{eq:bc_decomposition} after averaging over states and dividing
+by $d$; its second term is independent of $\mu$. For deterministic policies,
+$W_2^2(\delta_{\mu(s)},\delta_{\nu(s)})=\|\mu(s)-\nu(s)\|_2^2$, so
+$\mathsf d_d^2$ is a fixed rescaling of integrated squared Wasserstein
+distance. Dividing the normalized anchored objective
+$-\alpha\mathbb E_s\bar Q(s,\mu(s))+\mathsf d_d^2(\mu,\nu)$ by $\alpha$
+gives Eq.~\eqref{eq:prox_operator} with $h=\alpha/2$. More generally,
+$-\lambda\mathbb E_s\widehat Q$ gives $h=\lambda C/2$ because
+$\widehat Q=C\bar Q$.
 
-For state-conditioned deterministic policies
-$\pi_\mu(\cdot\mid s)=\delta_{\mu(s)}$ and
-$\pi_\nu(\cdot\mid s)=\delta_{\nu(s)}$,
-\begin{equation}
-W_2^2(\pi_\mu(\cdot\mid s),\pi_\nu(\cdot\mid s))
-=\|\mu(s)-\nu(s)\|_2^2.
-\end{equation}
-Consequently, $\mathsf d_d^2$ is a fixed rescaling of the integrated squared
-Wasserstein distance. The normalized anchored objective is
-\begin{equation}
--\alpha\mathbb E_s\bar Q(s,\mu(s))
-+\mathsf d_d^2(\mu,\nu).
-\end{equation}
-Multiplication by the positive constant $1/\alpha$ identifies it with
-Eq.~\eqref{eq:prox_operator} when $1/(2h)=1/\alpha$, or $h=\alpha/2$. If the value term
-is instead $-\lambda\mathbb E_s\widehat Q$, then
-$\lambda\widehat Q=\lambda C\bar Q$ and $h=\lambda C/2$.
-
-\subsection{Proof of Proposition~\ref{prop:margin}}
+\subsection{Proposition~\ref{prop:margin} and critic-error transfer}
 By $\varepsilon_k$-optimality relative to the feasible comparator
 $\mu_{k-1}$,
 \begin{equation}
@@ -75,10 +61,8 @@ $\mu_{k-1}$,
 +\varepsilon_k.
 \end{split}
 \end{equation}
-Rearranging yields Eq.~\eqref{eq:margin}.
-
-\subsection{Critic-error transfer}
-Let $\widehat Q=Q^\dagger+e$. Substitution into Eq.~\eqref{eq:margin} gives
+Rearranging yields Eq.~\eqref{eq:margin}. For $\widehat Q=Q^\dagger+e$,
+substitution further gives
 \begin{equation}
 \begin{split}
 m_k^{\widehat Q}
@@ -371,22 +355,10 @@ Walker2d-E&2.2&21.8&25.1&65.1&18.5&24.4\\
 \label{tab:env_high}
 \end{table}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=.94\textwidth]{figures/environment_sensitivity.pdf}
-\caption{Environment-wise return versus the current-state
-$\widehat D_{\rm critic}$ proxy for BAR-Prox $K=2$. Points are two-seed means
-for the common-batch audit at $T\in\{4,7,10,14,20\}$; shade denotes $T$.
-Lines connect increasing $T$, exposing reversals rather than imposing a
-monotone response. Shared axes show that realized movement organizes several
-within-task transitions but does not define a universal cross-task failure
-threshold. The proxy does not measure the next-state Polyak target-policy
-movement.}
-\label{fig:environment_sensitivity}
-\end{figure*}
-
 \begin{table}[t]
-\caption{Matched $K=2$ diagnostic medians over $T\in\{4,7,10,14,20\}$.}
+\caption{Core matched $K=2$ diagnostic medians over
+$T\in\{4,7,10,14,20\}$. Stable and collapsed groups are defined by external
+return, while the remaining rows diagnose the learned trajectory.}
 \centering
 \small
 \setlength{\tabcolsep}{2pt}
@@ -396,8 +368,6 @@ movement.}
 \midrule
 No. runs&52&38&59&31\\
 TD p99&270&$9.6\!\times\!10^{23}$&160.8&$5.0\!\times\!10^{21}$\\
-$|Q|$&311&$8.5\!\times\!10^{11}$&346.7&$6.9\!\times\!10^{10}$\\
-Critic loss&34&$1.2\!\times\!10^{23}$&18.7&$8.8\!\times\!10^{20}$\\
 $\widehat D_{\rm critic}$&.112&.538&.064&.446\\
 $\widehat D_{\rm final}$&.147&.626&.094&.578\\
 Common-$Q$ gain&$+2.11$&$-1.42$&$+2.51$&$-1.06$\\
@@ -417,33 +387,6 @@ displayed current-state quantities exclude Polyak target lag and smoothing
 noise. Labels indicate $T$ and marker size is proportional to score.}
 \label{fig:exposure}
 \end{figure*}
-
-\begin{table*}[t]
-\caption{Targeted Hopper-medium comparison of action-metric-matched linearized $K=2$
-and $K=3$. The displacement columns are medians over two seeds;
-$R_{\rm rms}$ is the median of the per-seed RMS ratio
-$\sqrt{\widehat D_f/\widehat D_c}$. Because both sample-anchored proxies
-contain an additive behavior-action variance floor, $R_{\rm rms}$ is
-descriptive and is not a population ratio of final to critic-coupled
-mean-policy displacement.}
-\centering
-\small
-\begin{tabular}{r|rr|rrr|rrr}
-\toprule
-&\multicolumn{2}{c|}{Score}&\multicolumn{3}{c|}{$K=2$}&\multicolumn{3}{c}{$K=3$}\\
-$T$&Lin-2&Lin-3&$\widehat D_c$&$\widehat D_f$&$R_{\rm rms}$&$\widehat D_c$&$\widehat D_f$&$R_{\rm rms}$\\
-\midrule
-4&53.45&64.66&.055&.059&1.040&.054&.062&1.063\\
-7&63.36&74.26&.056&.065&1.075&.055&.069&1.115\\
-10&58.12&85.35&.058&.072&1.113&.056&.077&1.168\\
-12&0.66&50.53&.770&.971&1.123&.352&.475&1.168\\
-14&0.66&41.20&.841&1.025&1.105&.125&.318&1.453\\
-17&0.69&7.73&.786&.935&1.091&.257&.557&1.496\\
-20&1.28&0.66&.854&.952&1.055&.746&1.007&1.162\\
-\bottomrule
-\end{tabular}
-\label{tab:hopper_k3}
-\end{table*}
 
 \begin{table}[t]
 \caption{Targeted Hopper-medium scores. The $K\le3$ entries use the audit-matched seed-0/1 pair; Prox-4 reports the four-seed mean $\pm$ sample standard deviation and supplies stability-window context rather than a matched movement comparison.}
@@ -527,7 +470,11 @@ different continuation policies, this estimates relative alignment with the
 primary first-route value estimand rather than own-continuation calibration; it
 is not a return-effect estimate.
 
-In the frozen-critic audit, 15 of 18 environment--seed runs have at least one converged, projection-free point eligible for the local comparison. Every eligible run has maximum local relative explicit--implicit discrepancy below $2.7\%$; the median run maximum is $.55\%$. Three runs have no eligible point, and a log--log slope is identifiable in only one run because a frozen ReLU critic can produce floating-point agreement inside one activation region. The audit supports local numerical agreement but does not estimate a universal $O(h^2)$ rate.
+In the frozen-critic audit, 15 of 18 environment--seed runs have an eligible
+converged, projection-free point. Every eligible run has maximum local relative
+explicit--implicit discrepancy below $2.7\%$, with median run maximum $.55\%$.
+The remaining three have no eligible point. This supports local numerical
+agreement, not a universal convergence rate.
 
 \subsection{Direct target exposure and simulator-reference screening}
 

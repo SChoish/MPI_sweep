@@ -43,10 +43,10 @@ def run_key(row):
     return row['env'], float(row['tau']), int(row['seed'])
 
 
-def load_sweep(hops, integrator):
+def load_sweep(hops, integrator, seeds):
     values = {}
     environments = None
-    for seed in (0, 1):
+    for seed in seeds:
         rows = read_rows(Path(hops) / integrator / f'seed{seed}.csv', ('tau',))
         current = [field for field in rows[0] if field != 'tau']
         if environments is None:
@@ -66,32 +66,32 @@ def load_sweep(hops, integrator):
 
 
 method_specs = [
-    ('TD3+BC', 'K=1', 'Imp', 'o'),
-    ('BAR-Prox (K=2)', 'K=2', 'Imp', 's'),
-    ('BAR-Prox (K=3)', 'K=3', 'Imp', '^'),
-    ('BAR-Prox (K=4)', 'K=4', 'Imp', 'P'),
-    ('BAR-Lin (K=2)', 'K=2', 'Exp', 'D'),
-    ('BAR-Lin (K=3)', 'K=3', 'Exp', 'v'),
+    ('TD3+BC', 'K=1', 'Imp', (0, 1, 2, 3), 'o'),
+    ('BAR-Prox (K=2)', 'K=2', 'Imp', (0, 1, 2, 3), 's'),
+    ('BAR-Prox (K=3)', 'K=3', 'Imp', (0, 1, 2, 3), '^'),
+    ('BAR-Prox (K=4)', 'K=4', 'Imp', (0, 1, 2, 3), 'P'),
+    ('BAR-Lin (K=2)', 'K=2', 'Exp', (0, 1), 'D'),
+    ('BAR-Lin (K=3)', 'K=3', 'Exp', (0, 1), 'v'),
 ]
 sweep = []
 common_taus = None
 reference_envs = None
-for label, hops, integrator, marker in method_specs:
-    envs, values = load_sweep(hops, integrator)
+for label, hops, integrator, seeds, marker in method_specs:
+    envs, values = load_sweep(hops, integrator, seeds)
     if reference_envs is None:
         reference_envs = envs
     elif envs != reference_envs:
         raise ValueError(f'{label}: environment columns differ from the other methods')
     method_taus = {key[0] for key in values}
     common_taus = method_taus if common_taus is None else common_taus & method_taus
-    sweep.append((label, marker, values))
+    sweep.append((label, marker, values, seeds))
 tau = np.array(sorted(common_taus), dtype=float)
 if not len(tau):
     raise ValueError('the released sweep files have no common budgets')
 curves = []
-for label, marker, values in sweep:
+for label, marker, values, seeds in sweep:
     curve = np.array([
-        statistics.mean(values[(total_budget, seed, env)] for seed in (0, 1) for env in reference_envs)
+        statistics.mean(values[(total_budget, seed, env)] for seed in seeds for env in reference_envs)
         for total_budget in tau
     ])
     curves.append((curve, label, marker))
@@ -110,24 +110,25 @@ ax.legend(frameon=False, fontsize=7, ncol=2, loc='best')
 methods = [label.replace('BAR-', '').replace(' (K=', '-').replace(')', '') for _, label, _ in curves]
 high_taus = [total_budget for total_budget in tau if total_budget >= 4]
 n_cells = len(high_taus) * len(reference_envs)
-n_runs = n_cells * 2
 seedmean = []
 raw = []
-for _, _, values in sweep:
+run_denominators = []
+for _, _, values, seeds in sweep:
     cell_scores = [
-        statistics.mean(values[(total_budget, seed, env)] for seed in (0, 1))
+        statistics.mean(values[(total_budget, seed, env)] for seed in seeds)
         for total_budget in high_taus for env in reference_envs
     ]
     run_scores = [
         values[(total_budget, seed, env)]
-        for total_budget in high_taus for seed in (0, 1) for env in reference_envs
+        for total_budget in high_taus for seed in seeds for env in reference_envs
     ]
     seedmean.append(sum(score < 20 for score in cell_scores))
     raw.append(sum(score < 20 for score in run_scores))
+    run_denominators.append(len(run_scores))
 seedmean = np.asarray(seedmean)
 raw = np.asarray(raw)
 seedmean_rate = seedmean / n_cells
-raw_rate = raw / n_runs
+raw_rate = raw / np.asarray(run_denominators)
 x = np.arange(len(methods))
 width = 0.36
 axs[1].bar(x-width/2, seedmean_rate, width, label='environment--budget cells')
@@ -138,14 +139,14 @@ axs[1].set_ylim(0,0.65)
 axs[1].set_title(r'(b) High-budget collapse ($T\geq4$)')
 axs[1].grid(True, axis='y', alpha=0.25, linewidth=0.5)
 axs[1].legend(frameon=False, fontsize=7, loc='upper right')
-for i,(a,b,ar,br) in enumerate(zip(seedmean,raw,seedmean_rate,raw_rate)):
+for i,(a,b,ar,br,n_runs) in enumerate(zip(seedmean,raw,seedmean_rate,raw_rate,run_denominators)):
     axs[1].text(i-width/2, ar+0.012, f'{a}/{n_cells}', ha='center', va='bottom', fontsize=6.3)
     axs[1].text(i+width/2, br+0.012, f'{b}/{n_runs}', ha='center', va='bottom', fontsize=6.3)
 fig.savefig(OUT/'stability_envelope.pdf', bbox_inches='tight')
 fig.savefig(OUT/'stability_envelope.png', dpi=240, bbox_inches='tight')
 plt.close(fig)
 
-# Environment-wise Prox-2 response from the released two-seed audit summary.
+# Environment-wise Prox-2 response from the released two-seed diagnostic summary.
 env_rows = read_rows(
     Path('diagnostics/environment_t_sensitivity.csv'),
     ('env', 'tau', 'd4rl_score_mean', 'dcrit_mean'),
@@ -153,13 +154,13 @@ env_rows = read_rows(
 env_labels = [
     ('halfcheetah-medium-v2', 'HalfCheetah-M'),
     ('halfcheetah-medium-replay-v2', 'HalfCheetah-MR'),
-    ('halfcheetah-expert-v2', 'HalfCheetah-ME'),
+    ('halfcheetah-expert-v2', 'HalfCheetah-E'),
     ('hopper-medium-v2', 'Hopper-M'),
     ('hopper-medium-replay-v2', 'Hopper-MR'),
-    ('hopper-expert-v2', 'Hopper-ME'),
+    ('hopper-expert-v2', 'Hopper-E'),
     ('walker2d-medium-v2', 'Walker2d-M'),
     ('walker2d-medium-replay-v2', 'Walker2d-MR'),
-    ('walker2d-expert-v2', 'Walker2d-ME'),
+    ('walker2d-expert-v2', 'Walker2d-E'),
 ]
 env_groups = defaultdict(list)
 for row in env_rows:

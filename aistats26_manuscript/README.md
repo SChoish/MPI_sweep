@@ -2,13 +2,15 @@
 
 This directory contains the anonymous submission package for:
 
-> **BAR: Budgeted Actor Refinement Broadens the Stability Envelope of Offline TD3+BC**
+> **BAR: Budgeted Actor Refinement Decouples Bootstrap Exposure from Policy Reach**
 
-Budgeted Actor Refinement (BAR) splits a fixed nominal actor-improvement budget
-across a persistent TD3+BC actor chain. The first branch supplies target-policy
-actions and the final branch is evaluated. The empirical claim remains at the
-implemented-bundle level: the results do not causally isolate budget splitting,
-routing, re-centering, or compute.
+Budgeted Actor Refinement (BAR) splits a nominal actor-improvement coefficient
+across a persistent TD3+BC actor chain. The first branch supplies Bellman-target
+actions and the final branch is deployed, structurally separating bootstrap
+exposure from policy reach. Across four proximal seeds, the equally weighted
+high-budget aggregate is strictly ordered by depth, and two disjoint
+host-separated seed pairs reproduce that ordering. Targeted controls narrow the
+mechanism without claiming a component-level causal decomposition.
 
 ## Files
 
@@ -43,10 +45,10 @@ checklist. The optional supplement uses the required single-column format.
 
 ## Empirical scope
 
-- Complete nine-task, fourteen-budget, two-seed TD3+BC phase diagram
-- Proximal BAR variants with `K={2,3,4}` and projected-linearized variants with `K={2,3}`
-- Independent `K=1` replication on seeds 2–3
-- Direct next-state Polyak-target exposure and final-policy displacement diagnostics
-- Route-only shadows, compute-matched refinement, actor-target lag, simulator-reference screening, and a frozen-critic small-step audit
-- Targeted four-seed Hopper-medium `K=4` score summary
+- Complete nine-task, fourteen-budget, four-seed proximal grid for `K={1,2,3,4}`
+- Complete two-seed action-metric-matched projected-linearized grid for `K={2,3}`
+- Full-depth replication across disjoint host-separated seed pairs `{0,1}` and `{2,3}`
+- A 270-checkpoint P3 target-action exposure audit, explicitly separate from P4
+- Route shadows, compute-matched refinement, actor-target lag, simulator screening, and a frozen-critic local audit
+- Task-resampling uncertainty, collapse-risk sensitivity, and rescued-cell gain attribution
 

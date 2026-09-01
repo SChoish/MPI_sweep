@@ -1,0 +1,94 @@
+{
+  "host": "offrl",
+  "hostname": "iisl-server01",
+  "created_utc": "2026-08-31T15:24:04.329817+00:00",
+  "results_root": "/home/offrl/MPI_sweep/results/mpi4_norm",
+  "logs_root": "/home/offrl/MPI_sweep/logs/mpi4_norm",
+  "tree_alive": true,
+  "n_run_dirs": 504,
+  "n_params_1000000": 504,
+  "n_expected": 504,
+  "missing_cells": [],
+  "extra_intermediate_pkls": 8,
+  "du_human": "2.9G",
+  "matrix": {
+    "envs": 9,
+    "taus": [
+      0.05,
+      0.1,
+      0.2,
+      0.4,
+      0.7,
+      1.5,
+      2.5,
+      4,
+      7,
+      10,
+      12,
+      14,
+      17,
+      20
+    ],
+    "seeds": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "method": "mpi4",
+    "integrator": "implicit",
+    "q_scale_norm": true,
+    "hops": 4
+  },
+  "launch": {
+    "script": "nohup_logs/run_norm_mpi4.sh",
+    "master_log": "nohup_logs/norm_mpi4.log",
+    "waves": [
+      "0 1",
+      "2 3"
+    ],
+    "started_kst": "2026-08-29 17:58:01",
+    "soft_restart_kst": "2026-08-29 18:24:44",
+    "completed_kst": "2026-08-31 10:33:42",
+    "slots_per_gpu": 2,
+    "gpus": [
+      0
+    ],
+    "eval_freq": 1000000,
+    "save_interval": 0,
+    "n_jitted_updates": 8,
+    "updates_per_dispatch": 64
+  },
+  "trainer_git": {
+    "note": "config.json does not store git SHA; recovered from git history timestamps around launch/completion",
+    "at_or_before_launch": "bdcc42afb081a38cb9c37c763d436e08b9f8926d",
+    "at_or_before_soft_restart": "bdcc42afb081a38cb9c37c763d436e08b9f8926d",
+    "at_or_before_completion": "34346d376787bd6ff0ac7c5c1c6fddff62ff537f",
+    "train_td3bc_blob_at_launch": "fdb5cd7f18e7fca49ca09836d71d848c69d28f9b",
+    "current_HEAD": "a610e86dfcf6c22d817a87f130634335c9f398ec"
+  },
+  "rsync": {
+    "local_paths_exist": {
+      "/raid/ext_csv": false,
+      "/home/ext_csv": false
+    },
+    "ssh_aliases": [],
+    "reachable_now": false,
+    "suggested_cmd_when_reachable": "rsync -aH --info=progress2 /home/offrl/MPI_sweep/results/mpi4_norm/ ext_csv:/raid/ext_csv/MPI_sweep/results/mpi4_norm/"
+  },
+  "artifacts_per_run": [
+    "config.json",
+    "eval.csv",
+    "params_1000000.pkl"
+  ],
+  "artifacts_global": [
+    "logs/mpi4_norm/<run>.log (504)",
+    "nohup_logs/run_norm_mpi4.sh",
+    "nohup_logs/norm_mpi4.log",
+    "sweep_results/K=4/Imp/seed{0,1,2,3}.csv"
+  ],
+  "checksums": {
+    "params_1000000_sha256": "params_1000000.sha256",
+    "manifest_csv": "MANIFEST.csv"
+  }
+}

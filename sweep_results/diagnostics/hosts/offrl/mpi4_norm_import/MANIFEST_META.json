@@ -1,0 +1,12 @@
+{
+  "created_utc": "2026-08-31T15:23:26.466867+00:00",
+  "host": "offrl",
+  "results_root": "/home/offrl/MPI_sweep/results/mpi4_norm",
+  "logs_root": "/home/offrl/MPI_sweep/logs/mpi4_norm",
+  "n_1m_ckpts": 504,
+  "tree_bytes_du": "see du -sb",
+  "sha256_file": "params_1000000.sha256",
+  "n_sha256_rows": 504,
+  "params_1000000_sha256_csv": "params_1000000_sha256.csv",
+  "params_1000000_sha256_file_digest": "74cb25072edeb4ccefee065c2de7ddda08abb057a39ca94d440731ef24a985a6"
+}

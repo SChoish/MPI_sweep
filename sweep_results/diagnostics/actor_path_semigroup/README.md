@@ -1,10 +1,10 @@
-# Actor-path semigroup audit
+# Archived actor-path continuation audit
 
-This bundle measures whether learned actor endpoints behave like a semigroup
-in action space. It compares the direct endpoint \(\pi_{s+t}\) with a frozen
-critic continuation from \(\pi_s\), a frozen map composed from dataset actions
-\(a_D\), and final actions from MPI-1/2/3 (and Exp-3 where present) at fixed
-total \(\tau\).
+This bundle preserves an exploratory comparison between learned actor endpoints,
+frozen-critic continuations, and cross-depth final actions. It is not used as a
+semigroup or discretization-error test in the manuscript. Learned comparisons
+change critics, Q scales, and optimization histories across budgets, while
+projection and convergence produce unequal eligible subsets.
 
 ## Contents
 
@@ -40,18 +40,15 @@ Composition is evaluated for each available method on \(s+t\) splits.
 
 ## Interpretation and limitations
 
-The frozen operator is locally close to semigroup composition at small
-steps, but the learned actor endpoints do not satisfy a comparable strong
-composition identity. Cross-K endpoints also differ materially. These are
-action-space diagnostics, not return guarantees or an end-to-end policy
-performance certificate.
+The reported distances show that independently trained endpoints and frozen
+continuations differ; they do not estimate numerical order. Exact semigroup
+equality is also not the null for a first-order Euler map. Implicit convergence
+is incomplete on larger steps, and the CSVs retain projection and convergence
+fields for auditing rather than post-hoc filtering.
 
-Implicit solver convergence is incomplete on larger steps; CSV columns retain
-convergence and projection diagnostics for filtering.
-
-This archived run includes seed 3. Under the current paper protocol, paper
-seeds are `{0,1,2}` and seed 3 is non-paper evidence; therefore these
-aggregates must not be presented as the current three-seed paper aggregate.
+This archive uses seeds 2--3, one paper seed pair, and is neither an independent
+implementation nor evidence for a cross-depth error trend. The controlled
+replacement is specified in [`../../../TODO.md`](../../../TODO.md).
 
 ## Reproduction
 

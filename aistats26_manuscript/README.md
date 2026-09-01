@@ -9,8 +9,10 @@ across a persistent TD3+BC actor chain. The first branch supplies Bellman-target
 actions and the final branch is deployed, structurally separating bootstrap
 exposure from policy reach. Across four proximal seeds, the equally weighted
 high-budget aggregate is strictly ordered by depth, and two disjoint
-host-separated seed pairs reproduce that ordering. Targeted controls narrow the
-mechanism without claiming a component-level causal decomposition.
+host-separated seed pairs reproduce that ordering. The four-seed
+projected-linearized grid also reproduces the `K=2` to `K=3` high-budget
+gain, raising the mean from 38.43 to 46.44. Targeted controls probe competing
+routing, optimizer-count, target-lag, and critic-calibration explanations.
 
 ## Files
 
@@ -21,6 +23,9 @@ mechanism without claiming a component-level causal decomposition.
 - `aistats2026.sty`, `fancyhdr.sty`: unmodified official paper-pack files
 - `make_figures.py`: regenerates empirical figures from released CSV files
 - `build_pdf.sh`: canonical build and validation entry point
+
+Experiment-inclusion decisions and the controlled operator-error rerun are
+tracked in [`../TODO.md`](../TODO.md).
 
 The build produces:
 
@@ -46,9 +51,15 @@ checklist. The optional supplement uses the required single-column format.
 ## Empirical scope
 
 - Complete nine-task, fourteen-budget, four-seed proximal grid for `K={1,2,3,4}`
-- Complete two-seed action-metric-matched projected-linearized grid for `K={2,3}`
-- Full-depth replication across disjoint host-separated seed pairs `{0,1}` and `{2,3}`
-- A 270-checkpoint P3 target-action exposure audit, explicitly separate from P4
-- Route shadows, compute-matched refinement, actor-target lag, simulator screening, and a frozen-critic local audit
-- Task-resampling uncertainty, collapse-risk sensitivity, and rescued-cell gain attribution
+- Complete nine-task, fourteen-budget, four-seed action-metric-matched projected-linearized grid for `K={2,3}`
+- Proximal full-depth replication across disjoint host-separated seed pairs `{0,1}` and `{2,3}`
+- Linearized `K=2` to `K=3` improvement reproduced in both disjoint seed pairs
+- A 270-checkpoint TD3/P2/P3 exposure audit plus a separate 180-checkpoint
+  four-seed P4 target-branch audit
+- A restricted four-environment seed-2/3 P3/P2 exposure sensitivity reproducing
+  the direction in 36/40 cells
+- A 24-cell P4 final-policy frontier panel, kept distinct from the full target-branch audit
+- Route shadows, compute-matched refinement, actor-target lag, simulator
+  screening, and a frozen-critic local-consistency audit
+- Task-resampling uncertainty, dynamics-family sensitivity, collapse-risk sensitivity, and rescued-cell gain attribution
 

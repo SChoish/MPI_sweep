@@ -1,7 +1,8 @@
-# MPI Sweep
+# Budgeted Actor Refinement Sweep
 
-Reproducible implicit and matched explicit multi-step policy improvement (MPI)
-sweeps for offline TD3+BC, implemented in JAX/Flax. The release supports the
+Reproducible Budgeted Actor Refinement (BAR) sweeps for offline
+TD3+BC, with proximal-loss and action-metric-matched projected-linearized realizations
+implemented in JAX/Flax. The release supports the
 nine D4RL MuJoCo locomotion datasets built from Hopper, HalfCheetah, and
 Walker2d with the `medium`, `medium-replay`, and `expert` splits.
 
@@ -22,13 +23,14 @@ action and later actors toward the previous actor with a stopped gradient:
 reference_1(s) = dataset action
 reference_k(s) = stop_gradient(actor_(k-1)(s))
 
-q_scale_1 = mean(abs(Q(s, actor_1(s))))
+q_scale_1 = mean(abs(Q(s, actor_1_pre(s))))
 q_scale_k = mean(abs(Q(s, reference_k(s))))  for k > 1
 lambda_k  = 2 (tau / K) / (q_scale_k + epsilon)
 loss_k   = -lambda_k mean(Q(s, actor_k(s)))
            + mean(square(actor_k(s) - reference_k(s)))
 ```
 
+Here `actor_1_pre` is the first actor before its current optimizer update.
 `--no-q-scale-norm` replaces `lambda_k` with `2 * tau / K`.
 
 The matched projected explicit integrator uses the same metric convention:
@@ -44,8 +46,8 @@ Select it with `--integrator explicit`. The factor `d` is required because the
 implicit transport cost is a mean over action coordinates. Omitting `d` gives
 an explicit target that is `d` times smaller and does not represent the same
 nominal flow time. Because the target is clipped and fitted by a neural actor,
-this method is a projected-and-regressed Euler approximation rather than an
-exact unconstrained Euler trajectory.
+this BAR-Lin variant is a projected-and-regressed Euler approximation rather
+than an exact unconstrained Euler trajectory.
 
 ### Wasserstein-2 gradient-flow interpretation
 
@@ -74,8 +76,12 @@ pi_next in argmin_pi E_Q(pi) + W_D^2(pi, pi_ref) / (2 h).
 
 This is an implicit-Euler step in `W_2` space: the energy term moves policy
 mass toward actions with larger `Q`, while the transport term penalizes moving
-too far in a single step. In this repository, `h = tau / K`, so composing `K`
-proximal steps approximates the flow up to total time `tau`.
+too far in one step. In the ideal frozen-critic construction, `K` accurately
+solved steps with `h = tau / K` approximate total flow time `tau` in the
+small-step limit. The live implementation instead keeps independently
+initialized persistent actors and applies one Adam update to each; the ideal
+flow motivates its local geometry but does not certify the learned finite-step
+chain.
 
 The deterministic-policy limit makes the transport term especially simple.
 If the conditional policies collapse to Dirac measures,
@@ -176,6 +182,9 @@ by this package.
 
 ## Quick start
 
+The installed command and flag names retain their original identifiers for
+backward compatibility; they are interfaces, not the paper's algorithm name.
+
 Inspect a small job matrix without downloading data or starting workers:
 
 ```bash
@@ -210,8 +219,8 @@ mpi-sweep \
   --log-dir ./logs/exp4
 ```
 
-`--hops K` accepts any positive integer; the implementation creates exactly
-`K` actors and uses `tau / K` at each hop. A custom grid can be passed with
+`--hops K` accepts any positive integer; BAR creates exactly `K` actors and
+uses `tau / K` at each hop. A custom grid can be passed with
 `--taus "0.1 0.4 1.5"`. Domains, dataset splits, and seeds accept either spaces
 or commas.
 
@@ -248,6 +257,33 @@ Each run writes to:
 - Add `--cpu-affinity --cpus-per-job N` to pin workers with Linux `taskset`.
 
 Use `mpi-sweep --help` and `mpi-train --help` for all options.
+
+## Released results
+
+The compact final-score tables are under [`sweep_results/`](sweep_results/).
+Directories `K=1` through `K=4` are organized by hop count and integrator.
+The proximal `K={1,2,3,4}` and projected-linearized `K={2,3}` CSVs for
+seeds 0--3 each complete the same nine-task, fourteen-budget grid. In the
+high-budget region, the four-seed projected-linearized mean rises from 38.43
+at `K=2` to 46.44 at `K=3`, with score-below-20 cells falling from 25/63
+to 21/63. Large training checkpoints are not committed. The host-specific
+diagnostic bundle includes compact outputs and post-hoc manifests derived from
+all 504 local
+K4 checkpoints, including a 180-cell four-seed target-exposure audit. Those
+audit manifests do not reconstruct the missing historical training
+configurations for proximal seeds 2--3.
+
+Audited movement, critic failure, target exposure, simulator calibration, and
+targeted controls are documented in
+[`sweep_results/diagnostics/README.md`](sweep_results/diagnostics/README.md).
+Per-state simulator rollouts and other large intermediates are excluded.
+
+## Paper
+
+The anonymous AISTATS 2026 sources, official style files, build instructions,
+and generated PDFs are in [aistats26_manuscript/](aistats26_manuscript/).
+Submission-facing experiment decisions, including the redesigned fixed-operator
+error audit, are tracked in [TODO.md](TODO.md).
 
 ## Development
 

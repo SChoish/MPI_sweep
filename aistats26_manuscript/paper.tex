@@ -35,7 +35,7 @@
 ]
 
 \begin{abstract}
-TD3+BC uses one actor branch both to construct bootstrapped critic targets and to produce the deployed policy, forcing bootstrap exposure and policy reach to move together. We introduce budgeted actor refinement (BAR), a persistent $K$-actor chain that separates these roles: a Polyak copy of the first actor supplies TD-target actions, while the final actor is deployed. A finite-step Lipschitz bound shows that one-step target perturbation depends on first-hop displacement independently of later refinement reach; an ideal Wasserstein--2 proximal analysis characterizes the complementary local geometry. Across two disjoint, host-separated seed pairs on nine D4RL locomotion tasks and fourteen coefficient budgets, the four-seed, equally task-and-budget-weighted proximal aggregate over $T\ge4$ is strictly ordered by depth: the mean rises from $25.38$ at $K=1$ to $63.97$ at $K=4$, while score-$<20$ seed-mean cells fall from $34/63$ to $8/63$. Each seed pair separately reproduces the full $K=1<2<3<4$ aggregate ordering. The $K=4$ minus $K=3$ gain is $12.06$ with a task-resampling interval of $[3.84,21.11]$; its $.34$ cellwise median and eight rescued cells show that low-score rescue drives most of the added-depth aggregate gain. In a 270-method-checkpoint TD3/P2/P3 audit, three-hop refinement lowers sample-anchored next-state target-action displacement in $88/90$ matched comparisons, while the typical final-policy proxy does not contract. These results establish refinement depth as a consequential stability control and identify finite-step bootstrap-exposure decoupling as BAR's central empirical mechanism signature.
+TD3+BC uses the same actor branch for bootstrapped critic targets and deployment, coupling bootstrap exposure to policy reach. We introduce budgeted actor refinement (BAR), a persistent $K$-actor chain whose first actor supplies TD-target actions and whose final actor is deployed. A finite-step bound makes target perturbation depend on first-hop displacement, while an ideal Wasserstein--2 proximal analysis describes the complementary local geometry. On nine D4RL locomotion tasks, fourteen budgets, and four proximal seeds, the equally weighted $T\ge4$ mean is strictly ordered by depth, rising from $25.38$ at $K=1$ to $63.97$ at $K=4$ as score-$<20$ cells fall from $34/63$ to $8/63$; both host-separated seed pairs reproduce the full ordering. A four-seed projected-linearized sweep also gains $8.01$ points from $K=2$ to $K=3$, with a 95\% task-resampling interval $[3.56,13.53]$. The proximal $K=4$--$K=3$ gain is $12.06$ with a 95\% interval $[3.84,21.11]$, but its $.34$ cellwise median and eight rescues show that lower-tail recovery drives the aggregate. A matched 270-checkpoint TD3/P2/P3 audit finds that BAR-Prox $K=3$ lowers next-state target displacement relative to TD3+BC in $88/90$ cells while typical final-policy displacement does not contract; a separate four-seed $K=4$ audit lowers target displacement in $89/90$ matched seed-0/1 comparisons with TD3+BC. Thus depth is a finite-step stability control: moderate refinement decouples exposure from reach, while added depth further suppresses first-hop exposure and rescues failures.
 \end{abstract}
 
 \section{INTRODUCTION}
@@ -47,15 +47,20 @@ We study this coupling through \emph{budgeted actor refinement} (BAR), a re-cent
 
 Let $D_{\mathrm{critic}}$ denote the squared displacement of the critic-coupled first-hop branch and let $D_{\mathrm{final}}$ denote that of the evaluated final policy. A one-hop actor identifies these quantities; BAR assigns them to $\mu_1$ and $\mu_K$, respectively. This separation can increase final-policy reach at comparable first-hop movement or contract both movements near an unstable training outcome. It also introduces a countervailing mismatch because the critic target follows the $\mu_1$ branch while evaluation follows $\mu_K$. The method therefore exposes a design axis between target-policy displacement and deployment reach rather than guaranteeing that either quantity is independently optimal.
 
-For deterministic actors, the squared action anchor in TD3+BC is a Wasserstein--2 movement cost in the Dirac-policy limit. Under a fixed critic, inactive action projection, accurate subproblem solutions, and small \emph{realized} steps, explicit and implicit updates are first-order discretizations of the same Wasserstein gradient flow. At finite steps, a proximal comparison yields an improvement margin only relative to the learned critic. At large nominal budgets, projection, neural actor fitting, critic drift, saturation, and the seeded optimization trajectory determine the observed end-to-end outcome. We keep these local, finite-step, and coupled regimes distinct throughout the analysis.
+For deterministic actors, the squared TD3+BC anchor is a Wasserstein--2
+movement cost in the Dirac-policy limit. With a fixed critic and small realized
+steps, ideal explicit and implicit updates discretize the same flow to first
+order. The large-budget tail instead probes the coupled finite-step regime,
+where projection, actor fitting, critic drift, saturation, and optimization
+history determine the end-to-end outcome.
 
-We evaluate this formulation with a complete fixed-budget phase diagram over nine D4RL locomotion tasks, fourteen budgets, and four proximal seeds. The equally task-and-budget-weighted high-budget mean is strictly ordered $25.38\to41.20\to51.92\to63.97$ for $K=1,2,3,4$, while low-return cells fall $34\to22\to16\to8$. Both disjoint host-separated seed pairs reproduce the full aggregate ordering. The $K=4$ minus $K=3$ gain is large but highly nonuniform: eight rescued cells account for $54.7\%$ of the total added-depth gain over the 63 high-budget cells. An action-metric-matched projected-linearized realization improves in the same direction. Direct next-state diagnostics show that three-hop BAR lowers sample-anchored target-action displacement in $88/90$ matched comparisons with TD3+BC, while its current-state final-policy displacement proxy is lower in only $36/90$. Low-return runs additionally exhibit orders-of-magnitude increases in TD-error tails, larger realized movements, and critic gains that reverse sign under a controlled common critic.
+The complete proximal phase diagram yields high-budget means $25.38\to41.20\to51.92\to63.97$ for $K=1,2,3,4$ and low-return counts $34\to22\to16\to8$. Both disjoint seed pairs reproduce the ordering; eight rescues account for $54.7\%$ of the $K=3\!\to\!4$ gain. A four-seed projected-linearized sweep reproduces the $K=2\!\to\!3$ direction. Direct diagnostics separate a moderate-depth regime, where target exposure contracts without typical final-policy contraction, from added-depth first-hop contraction. Failed runs also exhibit extreme TD-error tails, larger movement, and gain reversal under a common critic.
 
 Our contributions are as follows.
 \begin{itemize}
     \item We formulate BAR for TD3+BC as a re-centered actor composition that assigns target-policy displacement and final-policy reach to distinct branches.
     \item We give a Wasserstein proximal interpretation, derive an inexact finite-step margin with an explicit critic-error term, bound first-hop TD-target perturbation, and separate these statements from the fixed-critic small-step flow limit.
-    \item Through four-seed proximal sweeps up to $K=4$, a two-seed linearized $K=3$ sweep, direct target-action measurements, critic-failure diagnostics, and targeted controls, we show that refinement depth broadens the empirical large-budget stability envelope primarily by rescuing lower-tail failures.
+    \item Four-seed proximal sweeps through $K=4$, a four-seed linearized sweep through $K=3$, direct target-action measurements, and targeted controls show that depth broadens the large-budget stability envelope; the largest proximal gain is driven primarily by lower-tail rescue.
 \end{itemize}
 
 \section{RELATED WORK}
@@ -95,11 +100,13 @@ variational statement from its small-step flow limit.
 Bootstrapping error can feed critic extrapolation back into actor updates
 \citep{fujimoto2019offpolicy,kumar2019bear}. Polyak averaging delays this
 feedback but ordinarily copies the same actor branch that will be deployed.
-Target--deployment routed refinement makes a narrower architectural change:
-the target copy follows the first local refinement, whereas evaluation uses
-the final refinement. Our target-perturbation bound and direct displacement
-audit therefore concern branch assignment inside TD3+BC rather than a new
-critic objective or a general claim about offline policy extraction.
+MCEP instead pairs a conservative target policy for value learning with a
+mildly constrained evaluation policy excluded from Bellman backups
+\citep{xu2024mcep}. BAR shares this routing principle but uses a persistent,
+predecessor-recentered chain and varies depth under a fixed nominal budget;
+MCEP keeps both actors directly data-anchored with separately chosen strengths
+and is not a $K=2$ instance of BAR. Our contribution concerns this depth-indexed
+routing operator rather than a new critic objective.
 
 \section{PRELIMINARIES}
 \label{sec:background}
@@ -208,16 +215,17 @@ $\mu$. The empirical actor loss is a Monte Carlo estimate of the left-hand
 side, so samplewise squared anchoring targets the conditional-mean behavior map
 at the population level.
 
-Given a reference policy $\nu$ and step $h>0$, define the proximal refinement
-operator by
+Given a reference policy $\nu$, step $h>0$, and fixed normalized critic
+$\bar Q$, define the proximal refinement operator by
 \begin{equation}
-\mathcal P_{h}^{\widehat Q}(\nu)
+\mathcal P_{h}^{\bar Q}(\nu)
 \in\argmin_{\mu\in\mathcal M}
-\left\{-\mathbb E_s\bar Q_k(s,\mu(s))
+\left\{-\mathbb E_s\bar Q(s,\mu(s))
 +\frac{1}{2h}\mathsf d_d^2(\mu,\nu)\right\}.
 \label{eq:prox_operator}
 \end{equation}
-Multiplying by $2h$ gives the practical actor objective
+At hop $k$, setting $\bar Q=\bar Q_k$ and multiplying by $2h$ gives the
+practical actor objective
 \begin{equation}
 \mathcal L_{h,k}(\mu\mid\nu)
 =-2h\,\mathbb E_s\bar Q_k(s,\mu(s))
@@ -247,7 +255,7 @@ critic; true-return improvement lies outside the scope of this certificate.
 For population analysis, let $\mu_0:=b$ denote the conditional-mean behavior
 map and let $h_{1:K}$ be positive step sizes. The idealized BAR chain is
 \begin{equation}
- \mu_k\in\mathcal P_{h_k}^{\widehat Q}
+ \mu_k\in\mathcal P_{h_k}^{\bar Q_k}
  (\operatorname{sg}\mu_{k-1}),
  \qquad k=1,\ldots,K.
  \label{eq:bar}
@@ -479,8 +487,8 @@ T\in\{&0.05,0.1,0.2,0.4,0.7,1.5,2.5,\\
       &4,7,10,12,14,17,20\}.
 \end{split}
 \end{equation*}
-over all nine tasks. The proximal grid uses seeds 0--3, for
-$9\times14\times4=504$ runs per depth; the linearized grid uses seeds 0--1.
+over all nine tasks. Both grids use seeds 0--3, for
+$9\times14\times4=504$ runs per depth.
 Proximal seeds 0--1 and 2--3 were executed on separate hosts and form disjoint
 replication pairs. The grid is a high-resolution stability phase diagram rather
 than a final benchmark alone. For $K=1$, Proposition~\ref{prop:prox_equiv}
@@ -512,28 +520,26 @@ BAR-Prox; the comparison does not match the complete scale schedule. It uses the
 first-hop target and final-hop evaluation routing. All conditions match
 datasets, critic updates, and the $10^6$-update horizon; every headline score is
 the ten-episode D4RL normalized mean at the final checkpoint. Intermediate
-evaluation cadence varied by run family and does not enter this estimand. A
-$K$-hop condition performs $K$ actor optimizer steps at each delayed policy
-update. The primary estimand is the end-to-end effect of depth-indexed BAR,
-which jointly changes local coefficient, re-centering frequency, actor compute,
-normalization trajectory, routing, and optimization trajectory.
+evaluation cadence varies by run family and does not enter this estimand. A
+$K$-hop condition performs $K$ actor optimizer steps per delayed update, so
+depth comparisons are between complete training procedures. The end-to-end
+intervention changes local coefficient, re-centering frequency, actor compute,
+normalization trajectory, routing, and optimization history.
 
-The analyses test whether this bundle reduces large-budget low-return
-outcomes, whether the effect persists under the linearized realization, how
-first-hop target-policy displacement differs from final-policy reach, and which
-critic-validity diagnostics characterize failed training trajectories.
+We test whether this intervention reduces large-budget low-return outcomes,
+persists under the linearized realization, separates first-hop exposure from
+final-policy reach, and exposes critic-validity signatures of failure.
 
 \subsection{Additional actors broaden the stability envelope}
 
-Figure~\ref{fig:stability} and Table~\ref{tab:stability} summarize the fixed-budget sweep. The high-budget estimand averages seeds and the seven $T\ge4$ budgets within each task, then weights all nine tasks equally. We descriptively call a seed-mean environment--budget cell collapsed when its score is below $20$; this is a locomotion failure indicator, not a theoretical threshold. Across four-seed proximal $K=1,2,3,4$, the high-budget mean increases $25.38\to41.20\to51.92\to63.97$, while collapsed cells decrease $34\to22\to16\to8$ out of 63. Relative to TD3+BC, $K=4$ gains $38.59$ points with a task-resampling 95\% interval of $[21.39,54.63]$ and eight of nine positive task means. Relative to $K=3$, it gains $12.06$ points with interval $[3.84,21.11]$ and seven of nine positive task means. Its cellwise median gain is only $+.34$: eight collapsed cells are rescued, none reverse, and those cells contribute $54.7\%$ of the total added-depth gain. The stricter $T\ge10$ tail is also strictly ordered, $20.27\to31.01\to42.23\to56.79$, so the depth ordering is not created by the $T=4$ boundary. BAR-Lin with $K=3$ raises the two-seed high-budget mean from $36.68$ to $43.91$ and reduces collapsed cells from 29 to 24. Thus refinement depth primarily rescues low-return outcomes rather than uniformly shifting settings.
+Figure~\ref{fig:stability} and Table~\ref{tab:stability} summarize the sweep. The high-budget estimand averages seeds and the seven $T\ge4$ budgets within each task, then weights tasks equally. A seed-mean environment--budget cell is descriptively collapsed below score $20$. Across proximal $K=1,2,3,4$, the mean rises $25.38\to41.20\to51.92\to63.97$ while collapsed cells fall $34\to22\to16\to8$ of 63. $K=4$ gains $12.06$ over $K=3$ with task-resampling interval $[3.84,21.11]$ and seven of nine positive task means, yet its cellwise median is only $+.34$: eight rescues, no reversals, contribute $54.7\%$ of the gain. The $T\ge10$ tail remains strictly ordered, $20.27\to31.01\to42.23\to56.79$. BAR-Lin $K=3$ raises the four-seed high-budget mean from $38.43$ to $46.44$ and reduces collapsed cells from 25 to 21; its $+1.37$ cellwise median indicates a broader shift. The largest proximal gain therefore acts chiefly through lower-tail rescue rather than a uniform shift.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/stability_envelope.pdf}
 \caption{Fixed-budget sweep over nine locomotion tasks. (a) Mean score over
 tasks. (b) Collapse rates for $T\ge4$, reported both by environment--budget
-cell and by seeded run. Proximal curves and cell means use four seeds;
-projected-linearized curves use two. Both realizations broaden the stable
+cell and by seeded run. All curves and cell means use four seeds. Both realizations broaden the stable
 high-budget region with depth.}
 \label{fig:stability}
 \end{figure*}
@@ -552,35 +558,29 @@ TD3+BC & 4 & 66.68 & 25.38 & 20.27 & 34 / 142\\
 BAR-P2 & 4 & 70.64 & 41.20 & 31.01 & 22 / 111\\
 BAR-P3 & 4 & 70.53 & 51.92 & 42.23 & 16 / 84\\
 BAR-P4 & 4 & \textbf{70.82} & \textbf{63.97} & \textbf{56.79} & \textbf{8 / 54}\\
-BAR-L2 & 2 & 69.02 & 36.68 & 27.44 & 29 / 58\\
-BAR-L3 & 2 & 68.54 & 43.91 & 33.12 & 24 / 53\\
+BAR-L2 & 4 & 69.79 & 38.43 & 28.47 & 25 / 112\\
+BAR-L3 & 4 & 69.73 & 46.44 & 35.83 & 21 / 95\\
 \bottomrule
 \end{tabular}
 \label{tab:stability}
 \end{table}
 
 \paragraph{Task dependence and replication.}
-The budget response is smooth on HalfCheetah-medium, plateau-like on
-Hopper-medium-replay, sharply nonmonotone on Hopper-medium and
-Walker2d-medium, and asymmetric on expert datasets. There is no universal
-critic-valid radius. In a within-environment rank audit over the five diagnostic
-budgets, nominal $T$ is the strongest absolute rank predictor of return in
-eight of nine environments, versus one for $\widehat D_{\rm critic}$ and none
-for $\widehat D_{\rm final}$; realized movement is therefore a mechanism
-readout, not a substitute for the randomized budget intervention. P4 minus P3 is positive after averaging within each
-dynamics family: $+.79$ for HalfCheetah, $+13.04$ for Hopper, and $+22.33$ for
-Walker2d. At Hopper-medium, $K=4$ scores $100.9\pm1.7$ at $T=17$ but becomes
-highly variable at $T=20$ ($41.8\pm44.0$), relocating rather than linearly
-extending a stability window. More broadly, both host-separated seed pairs
-reproduce the full high-budget ordering: seeds 0--1 give
-$25.97,42.02,52.78,63.61$, and seeds 2--3 give
-$24.79,40.38,51.05,64.33$ for $K=1,2,3,4$. Their collapsed-cell sequences are
-$35,25,17,9$ and $35,26,16,10$. These are disjoint-seed replications of one
-method family, not independent implementations.
+Responses range from smooth to sharply nonmonotone, so there is no universal
+critic-valid radius. Nominal $T$ is the strongest absolute within-environment
+rank predictor of return in eight of nine environments; realized movement is
+a mechanism readout, not a substitute for the intervention. P4--P3 is positive
+within all three dynamics families ($+.79,+13.04,+22.33$), and every
+leave-one-family-out mean remains positive ($+6.92$ to $+17.69$). Both
+host-separated seed pairs reproduce the high-budget ordering:
+$25.97,42.02,52.78,63.61$ and $24.79,40.38,51.05,64.33$. These are disjoint-seed
+replications of one implementation.
 
 The linearized sweep shows that the gain is not unique to the proximal loss.
-At high budgets, BAR-Lin with $K=3$ gains $7.23$ points over $K=2$ and reduces
-collapse cells from $29$ to $24$. BAR-Prox remains stronger overall, so these
+At high budgets, BAR-Lin with $K=3$ gains $8.01$ points over $K=2$
+(95\% task-resampling interval $[3.56,13.53]$; eight of nine positive task means)
+and reduces collapse cells from $25$ to $21$. Both disjoint seed pairs reproduce
+the direction, with gains of $7.23$ and $8.80$. BAR-Prox remains stronger overall, so these
 are comparisons of complete training procedures rather than isolated
 integrator effects.
 
@@ -606,8 +606,10 @@ $3.33\times10^{11}$; under the common critic it is $-1.42$, compared with
 $+2.11$ for stable runs. For BAR-Prox, the common-critic gain changes from
 $+2.51$ in stable runs to $-1.06$ in collapsed runs. This sign reversal
 diagnoses cross-critic disagreement consistent with
-Eq.~\eqref{eq:critic_error_margin}; environment return remains the criterion
-for policy failure.
+Eq.~\eqref{eq:critic_error_margin}. A separate four-environment seed-2/3
+sensitivity audit,
+using a fixed TD3+BC $T=.05$ reference critic, preserves the split: all 45
+stable gains are positive and all 35 collapsed gains are negative (Supplement).
 
 A simulator-reference audit provides targeted evidence of critic miscalibration in the screened checkpoints: the
 median signed error $\widehat Q_1(s,a_K)-Q_{\rm MC}^{\rho_1}(s,a_K)$ is
@@ -637,11 +639,8 @@ $T=20$, their median $\widehat D_{\rm critic}$ values are $0.195$ and $0.323$.
 Across 90 matched environment--budget--seed cells at $T\in\{4,7,10,14,20\}$, exactly one
 of BAR-Prox and BAR-Lin collapses in 11 cases. In all 11, the stable realization has both
 smaller $\widehat D_{\rm critic}$ and smaller $\widehat D_{\rm final}$.
-These matched-cell outcomes associate smaller realized movement with the stable
-optimization trajectory. Because the proxy is measured on current validation
-states rather than the Polyak target policy on next states, this result
-organizes the observed failure transition without identifying a causal route
-through the TD target.
+These matched cells associate smaller current-state movement with stable
+trajectories; they do not isolate a causal TD-target route.
 
 We measure Eq.~\eqref{eq:direct_target_displacement} on all 270 audited
 method checkpoints. The current-state first-branch proxy closely tracks the
@@ -652,9 +651,15 @@ is lower in only 36 of 90 (median ratio $1.057$). A few large final-policy
 contractions make the arithmetic mean difference negative despite this
 typical-cell expansion. Thus audited three-hop BAR exhibits the intended
 asymmetric movement response rather than merely shrinking both branches.
-Against $K=2$, $K=3$ lowers target-action displacement in 84 of 90 runs but
-loses by more than one score point in 17 of those 84, showing that exposure
-alone does not determine performance (the Supplementary Material).
+A separate four-seed $K=4$ dump lowers target displacement in 89/90 matched
+seed-0/1 comparisons with TD3+BC (median ratio $.568$) and 85/90 with $K=3$
+($.950$). It measures first-hop exposure, not the final actor; the separate
+24-cell frontier panel supplies the only $K=4$ final-policy comparison.
+Added depth therefore continues to suppress bootstrap exposure without
+establishing universal final-policy contraction. The P3/P2 direction also holds
+in 36/40 cells of a four-environment seed-2/3 sensitivity (median ratio $.905$).
+Yet exposure alone does not determine return: P3 loses by more than one point in
+17 of the original 84 lower-exposure cells (Supplement).
 
 A targeted Hopper-medium audit exhibits both forms of decoupling. Over
 $T=4$--$10$, $K=3$ extends final-policy reach at nearly unchanged first-hop
@@ -677,43 +682,37 @@ isolating a single sweep-wide cause (Supplement).
 
 \subsection{Discussion and limitations}
 
-Both realizations reduce large-budget failures, with BAR-Prox stronger overall.
-The branch assignment separates exposure from reach by construction, and the
-audited $K=3$ chain realizes the intended asymmetry: lower target-action
-displacement coexists with slightly greater typical-cell final-policy reach.
-The performance estimate is for the implemented depth intervention, in which
-$K$ jointly changes local step, re-centering, compute, normalization, routing,
-and optimization trajectory. A saved-checkpoint actor-path audit reinforces
-this finite-step interpretation: frozen small-step maps compose locally, while
-the learned persistent endpoints remain far from frozen continuations and from
-one another across depths.
+Both realizations broaden the high-budget stability envelope, with BAR-Prox
+stronger. The $K=3$ audit exhibits exposure--reach asymmetry, while $K=4$ adds
+target-branch contraction and lower-tail rescue. A projection-free
+frozen-critic audit supports local explicit--implicit agreement; the live result
+belongs to a coupled finite-step procedure in which depth changes local step,
+re-centering, actor compute, normalization, routing, and optimization history.
 
-The proximal cross-$K$ grid uses four seeds executed as two host-separated
-pairs; the linearized grid and mechanism audits use two. Exact per-run manifests
-for proximal seeds 2--3 were not retained, so same-procedure provenance
-rests on the archived launch configuration and score matrices rather than a
-configuration hash. The nine tasks span only three dynamics families, collapse
-is descriptive, and mechanism controls target post-hoc cells. We do not provide
-an offline rule for selecting $T$ or $K$. Actor-update time and memory scale as
-$O(K)$ while critic updates and dataset sample source are fixed. The ideal
-fixed-critic analysis motivates, but does not certify, the live chain.
+Both headline score grids use four seeds, and the proximal grid forms two
+host-separated pairs. The full P3 movement and exposure audit uses seeds 0--1;
+a restricted four-environment seed-2/3 exposure audit supplies a sensitivity
+check, while the P4 target dump uses four seeds. For proximal seeds 2--3,
+provenance consists of the archived launch configuration and score matrices;
+exact per-run manifests were not retained, and post-hoc P4 manifests do not
+reconstruct them. Only a 24-cell panel measures matched P4 final displacement.
+The tasks span three dynamics families, collapse is descriptive, and controls
+are post hoc. We provide no offline rule for choosing $T$ or $K$. Actor time
+and memory scale as $O(K)$; the ideal fixed-critic analysis motivates but does
+not certify the live chain.
 
 \section{CONCLUSION}
 \label{sec:conclusion}
 
-BAR makes refinement depth a practical control over offline actor--critic
-stability. By allocating a nominal finite-step coefficient budget across
-persistent actors, it routes only the first actor into Bellman targets while
-using a separately refined final actor for deployment, structurally separating
-which branch determines exposure and reach. Across four proximal seeds, the
-equally task-and-budget-weighted $T\ge4$ mean is strictly ordered from $25.38$
-at $K=1$ to $63.97$ at $K=4$, and low-return cells fall from $34/63$ to $8/63$;
-both disjoint host-separated seed pairs reproduce the aggregate ordering. The
-finite-step perturbation bound and 270-method-checkpoint TD3/P2/P3 audit identify
-bootstrap-exposure decoupling as the mechanism signature accompanying this
-expansion, with most of the added-depth gain coming from low-score rescue.
-These results establish $K$ as BAR's effective refinement-depth control and
-bootstrap-exposure decoupling as its observed mechanism signature.
+BAR turns refinement depth into a practical stability control by routing the
+first actor into Bellman targets and deploying the final actor. Across four
+proximal seeds, the $T\ge4$ mean rises from $25.38$ at $K=1$ to $63.97$ at
+$K=4$ as low-return cells fall from $34/63$ to $8/63$; both disjoint seed pairs
+reproduce the ordering. Across the four-seed linearized grid, $K=3$ also gains
+$8.01$ points over $K=2$, and both disjoint seed pairs reproduce the direction. Direct audits identify moderate-depth exposure--reach
+decoupling and added-depth first-hop contraction, with lower-tail rescue driving
+most of the latter gain. $K$ therefore controls a coupled finite-step procedure shaping bootstrap
+exposure and deployment movement, not merely a discretization-accuracy knob.
 
 \bibliography{references}
 \input{reproducibility_checklist}

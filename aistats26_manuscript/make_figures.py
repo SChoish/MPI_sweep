@@ -70,8 +70,8 @@ method_specs = [
     ('BAR-Prox (K=2)', 'K=2', 'Imp', (0, 1, 2, 3), 's'),
     ('BAR-Prox (K=3)', 'K=3', 'Imp', (0, 1, 2, 3), '^'),
     ('BAR-Prox (K=4)', 'K=4', 'Imp', (0, 1, 2, 3), 'P'),
-    ('BAR-Lin (K=2)', 'K=2', 'Exp', (0, 1), 'D'),
-    ('BAR-Lin (K=3)', 'K=3', 'Exp', (0, 1), 'v'),
+    ('BAR-Lin (K=2)', 'K=2', 'Exp', (0, 1, 2, 3), 'D'),
+    ('BAR-Lin (K=3)', 'K=3', 'Exp', (0, 1, 2, 3), 'v'),
 ]
 sweep = []
 common_taus = None

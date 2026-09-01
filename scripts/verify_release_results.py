@@ -151,6 +151,14 @@ EXPECTED_CLAIMS = {
 }
 
 
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        while chunk := handle.read(1 << 20):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def close(actual: float, expected: float, tol: float = 5e-4) -> None:
     if not math.isclose(actual, expected, rel_tol=0.0, abs_tol=tol):
         raise AssertionError(f"{actual} != {expected} within {tol}")
@@ -833,6 +841,195 @@ def verify_mcep_control(diag: Path, source_root: Path | None = None) -> None:
     print(
         "PASS MCEP mechanism control: exact paired grid, recomputed statistics, "
         "recovery classes, and source manifest"
+    )
+
+
+def verify_fixed_operator_order(diag: Path) -> None:
+    order_dir = diag / "fixed_operator_order"
+    status = json.loads((order_dir / "STATUS.json").read_text())
+    harness = json.loads((order_dir / "HARNESS.json").read_text())
+    assert harness["pass"] is True
+    slopes = harness["quadratic_Q"]["slopes_K4_8_16"]
+    assert all(0.9 <= float(slopes[scheme]) <= 1.1 for scheme in ("explicit", "implicit"))
+
+    if not status["checkpoints_ready"]:
+        unresolved = json.loads(
+            (order_dir / "CHECKPOINTS_UNRESOLVED.json").read_text()
+        )
+        assert unresolved["n_expected"] == 18
+        assert unresolved["n_resolved"] == status["n_resolved"] < 18
+        assert len(unresolved["entries"]) == len(
+            {
+                (entry["environment"], int(entry["seed"]))
+                for entry in unresolved["entries"]
+            }
+        ) == 18
+        draft = json.loads((order_dir / "PROTOCOL_DRAFT.json").read_text())
+        assert draft["locked"] is False
+        assert draft["checkpoint_inventory_status"] == "unresolved"
+        assert draft["checkpoint_inventory_sha256"] == sha256_file(
+            order_dir / "CHECKPOINTS_UNRESOLVED.json"
+        )
+        assert draft["harness_sha256"] == sha256_file(order_dir / "HARNESS.json")
+        assert draft["code_sha256"] == sha256_file(
+            diag.parents[1]
+            / "scripts"
+            / "diagnostics"
+            / "run_fixed_operator_order.py"
+        )
+        assert not (order_dir / "FROZEN_PROTOCOL.json").exists()
+        for name in (
+            "endpoint_errors.csv",
+            "raw_state_diagnostics.npz",
+            "implicit_substeps.npz",
+            "euler_paths.npz",
+            "SUMMARY.json",
+            "RESULT_MANIFEST.json",
+        ):
+            assert not (order_dir / name).exists()
+        print(
+            "PASS fixed-operator preflight: harness/protocol draft valid; "
+            f"checkpoints unresolved {status['n_resolved']}/18"
+        )
+        return
+
+    checkpoint_path = order_dir / "CHECKPOINTS.json"
+    checkpoints = json.loads(checkpoint_path.read_text())
+    assert checkpoints["n_expected"] == checkpoints["n_resolved"] == 18
+    checkpoint_keys = {
+        (entry["environment"], int(entry["seed"]))
+        for entry in checkpoints["entries"]
+    }
+    assert len(checkpoint_keys) == len(checkpoints["entries"]) == 18
+    for entry in checkpoints["entries"]:
+        assert entry["resolved"] is True
+        for key in (
+            "weights_sha256",
+            "config_sha256",
+            "dataset_sha256",
+            "normalization_statistics_sha256",
+            "state_indices_sha256",
+        ):
+            assert re.fullmatch(r"[0-9a-f]{64}", entry[key])
+
+    protocol = json.loads((order_dir / "FROZEN_PROTOCOL.json").read_text())
+    assert protocol["locked"] is True
+    assert protocol["grid"]["T"] == [0.025, 0.05, 0.1, 0.2]
+    assert protocol["grid"]["K"] == [1, 2, 4, 8, 16]
+    assert set(protocol["grid"]["schemes"]) == {"explicit", "implicit"}
+    assert protocol["grid"]["n_states"] == 512
+    assert protocol["rk4"]["N_candidates"] == [256, 512, 1024, 2048, 4096]
+    assert protocol["rk4"]["maximum_accepted_microsteps"] == 8192
+    assert protocol["checkpoint_inventory_sha256"] == sha256_file(checkpoint_path)
+    assert protocol["expected_counts"] == {
+        "endpoint_cells": 720,
+        "raw_state_rows": 368640,
+        "implicit_substep_records": 1142784,
+    }
+
+    required_endpoint_fields = {
+        "environment",
+        "seed",
+        "T",
+        "K",
+        "scheme",
+        "E_abs",
+        "E_rel",
+        "M_ref",
+        "ratio_to_2K",
+        "slope_K4_8_16",
+        "slope_status",
+        "|I|",
+        "primary_cell",
+        "reference_stable",
+        "failure_reason",
+        "C_ref",
+    }
+    rows = csv_rows(order_dir / "endpoint_errors.csv", required_endpoint_fields)
+    endpoint_keys = {
+        (
+            row["environment"],
+            int(row["seed"]),
+            float(row["T"]),
+            int(row["K"]),
+            row["scheme"],
+        )
+        for row in rows
+    }
+    expected_keys = set(
+        product(
+            ENVIRONMENTS,
+            (0, 1),
+            (0.025, 0.05, 0.1, 0.2),
+            (1, 2, 4, 8, 16),
+            ("explicit", "implicit"),
+        )
+    )
+    assert len(rows) == len(endpoint_keys) == 720
+    assert endpoint_keys == expected_keys
+
+    grouped = {
+        (
+            row["environment"],
+            int(row["seed"]),
+            float(row["T"]),
+            row["scheme"],
+            int(row["K"]),
+        ): row
+        for row in rows
+    }
+    for key, row in grouped.items():
+        k = key[-1]
+        if k not in (1, 2, 4, 8):
+            continue
+        left = float(row["E_abs"])
+        right = float(grouped[(*key[:-1], 2 * k)]["E_abs"])
+        ratio = row["ratio_to_2K"]
+        if math.isfinite(left) and math.isfinite(right) and right > 0:
+            close(float(ratio), left / right, 1e-10)
+
+    raw = np.load(order_dir / "raw_state_diagnostics.npz")
+    implicit = np.load(order_dir / "implicit_substeps.npz")
+    paths = np.load(order_dir / "euler_paths.npz")
+    masks = np.load(order_dir / "masks.npz")
+    assert len(raw["cell_index"]) == 368640
+    assert len(implicit["run_index"]) == 1142784
+    assert len(paths["run_index"]) == 2285568
+    assert masks["common_mask"].shape == (72, 512)
+
+    summary_path = order_dir / "SUMMARY.json"
+    summary = json.loads(summary_path.read_text())
+    assert summary["n_runs"] == 18
+    assert summary["n_endpoint_rows"] == summary["n_unique_endpoint_keys"] == 720
+    assert summary["n_raw_state_rows"] == 368640
+    assert summary["n_implicit_substep_records"] == 1142784
+    assert summary["n_euler_path_records"] == 2285568
+    assert len(summary["runs"]) == len(
+        {(run["environment"], int(run["seed"])) for run in summary["runs"]}
+    ) == 18
+    for scheme in ("explicit", "implicit"):
+        gate = summary[scheme]
+        assert len(gate["two_seed_task_means"]) <= 9
+        expected_support = (
+            gate["aggregate_median_slope"] is not None
+            and 0.75 <= float(gate["aggregate_median_slope"]) <= 1.25
+            and int(gate["n_in_[0.5,1.5]"]) >= 14
+            and int(gate["n_complete_runs"]) >= 15
+        )
+        assert gate["pre_specified_support"] is expected_support
+
+    result_manifest = json.loads(
+        (order_dir / "RESULT_MANIFEST.json").read_text()
+    )
+    assert result_manifest["protocol_sha256"] == protocol["protocol_sha256"]
+    assert result_manifest["checkpoint_inventory_sha256"] == sha256_file(
+        checkpoint_path
+    )
+    for name, expected_hash in result_manifest["artifacts"].items():
+        assert sha256_file(order_dir / name) == expected_hash
+    print(
+        "PASS fixed-operator order: exact grids/counts/fingerprints, "
+        "ratios, masks, diagnostics, and gates agree"
     )
 
 
@@ -1532,6 +1729,7 @@ def main() -> None:
         args.results_dir / "diagnostics",
         args.mcep_source_root,
     )
+    verify_fixed_operator_order(args.results_dir / "diagnostics")
     verify_diagnostics(args.results_dir / "diagnostics", claims)
     verify_figure_inputs(args.results_dir / "diagnostics")
     verify_k4(args.results_dir)

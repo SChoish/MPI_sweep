@@ -7,7 +7,7 @@ Euler global error versus an independent RK4 reference as K increases.
 Phases:
   harness  — analytic d=2 validation (no checkpoints)
   resolve  — fingerprint datasets + locate the 18 T=1 critics
-  protocol — write FROZEN_PROTOCOL.json (no aggregate errors read yet)
+  protocol — write a draft, or freeze only after all fingerprints resolve
   audit    — full 18-run primary audit (requires resolved checkpoints)
   all      — harness → resolve → protocol → audit-if-ready
 """
@@ -20,6 +20,7 @@ import json
 import os
 import sys
 import time
+from collections.abc import Mapping
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -78,6 +79,7 @@ IMPLICIT_TOL = 1e-10
 IMPLICIT_MAX_ITERS = 1000
 RK4_ABS = 1e-10
 RK4_REL = 1e-6
+RK4_N_CANDIDATES = (256, 512, 1024, 2048, 4096)
 DEFAULT_OUT = ROOT / "sweep_results" / "diagnostics" / "fixed_operator_order"
 DEFAULT_CKPT_ROOTS = (
     "/home/ext_csv/mpi_sweep_lab/results_qnorm",
@@ -130,6 +132,22 @@ def sha256_json(obj: Any) -> str:
     return sha256_bytes(blob)
 
 
+def jsonable(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        return {str(key): jsonable(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [jsonable(item) for item in value]
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    if hasattr(value, "__dict__"):
+        return jsonable(vars(value))
+    return value
+
+
 def tree_params(payload: dict[str, Any], key: str) -> Any:
     value = payload[key]
     if isinstance(value, dict) and set(value) == {"params"}:
@@ -173,14 +191,27 @@ def analytic_quadratic_field(A: np.ndarray, b: np.ndarray) -> Callable[[np.ndarr
 
 def explicit_euler(
     f: Callable[[np.ndarray], np.ndarray], a0: np.ndarray, dt: float, k: int
-) -> tuple[np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, dict[str, np.ndarray]]:
     a = np.array(a0, dtype=np.float64, copy=True)
     oob = np.zeros(a.shape[:-1], dtype=bool)
+    actions = []
+    step_oob = []
+    nonfinite = []
     for _ in range(k):
         nxt = a + dt * f(a)
-        oob |= np.any(np.abs(nxt) > BOX, axis=-1)
+        current_oob = np.any(np.abs(nxt) > BOX, axis=-1)
+        current_nonfinite = ~np.all(np.isfinite(nxt), axis=-1)
+        oob |= current_oob
         a = nxt
-    return a, oob
+        actions.append(a.copy())
+        step_oob.append(current_oob)
+        nonfinite.append(current_nonfinite)
+    trace = {
+        "actions": np.stack(actions),
+        "oob": np.stack(step_oob),
+        "nonfinite": np.stack(nonfinite),
+    }
+    return a, oob, trace
 
 
 def backward_euler(
@@ -190,36 +221,80 @@ def backward_euler(
     k: int,
     tol: float = IMPLICIT_TOL,
     max_iters: int = IMPLICIT_MAX_ITERS,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    dict[str, np.ndarray],
+]:
     a = np.array(a0, dtype=np.float64, copy=True)
     oob = np.zeros(a.shape[:-1], dtype=bool)
     conv = np.ones(a.shape[:-1], dtype=bool)
     resid = np.zeros(a.shape[:-1], dtype=np.float64)
     iters = np.zeros(a.shape[:-1], dtype=np.int32)
+    path_actions = []
+    path_residual = []
+    path_delta = []
+    path_iterations = []
+    path_converged = []
+    path_oob = []
+    path_nonfinite = []
     for _ in range(k):
         prev = a
         cand = prev.copy()
-        ok = np.zeros(a.shape[:-1], dtype=bool)
+        active = np.ones(a.shape[:-1], dtype=bool)
+        ok = np.zeros_like(active)
         last_res = np.full(a.shape[:-1], np.inf, dtype=np.float64)
         last_delta = np.full(a.shape[:-1], np.inf, dtype=np.float64)
-        n_it = 0
+        state_iters = np.zeros(a.shape[:-1], dtype=np.int32)
+        failed_nonfinite = np.zeros(a.shape[:-1], dtype=bool)
         for n_it in range(1, max_iters + 1):
             # Fixed-point map: G(a)=a_prev + dt*f(a); converge a = G(a).
             proposal = prev + dt * f(cand)
             delta = np.max(np.abs(proposal - cand), axis=-1)
-            cand = proposal
-            res = np.max(np.abs(cand - (prev + dt * f(cand))), axis=-1)
-            last_res = res
-            last_delta = delta
-            ok = (res <= tol) & (delta <= tol)
-            if bool(np.all(ok)):
+            res = np.max(
+                np.abs(proposal - (prev + dt * f(proposal))), axis=-1
+            )
+            finite = (
+                np.all(np.isfinite(proposal), axis=-1)
+                & np.isfinite(delta)
+                & np.isfinite(res)
+            )
+            cand = np.where(active[..., None], proposal, cand)
+            last_res = np.where(active, res, last_res)
+            last_delta = np.where(active, delta, last_delta)
+            state_iters = np.where(active, n_it, state_iters)
+            newly_ok = active & finite & (res <= tol) & (delta <= tol)
+            ok |= newly_ok
+            failed_nonfinite |= active & ~finite
+            active &= finite & ~newly_ok
+            if not bool(np.any(active)):
                 break
         a = cand
-        oob |= np.any(np.abs(a) > BOX, axis=-1)
+        current_oob = np.any(np.abs(a) > BOX, axis=-1)
+        oob |= current_oob
         conv &= ok
         resid = np.maximum(resid, last_res)
-        iters = np.maximum(iters, np.int32(n_it))
-    return a, oob, conv, resid, iters
+        iters = np.maximum(iters, state_iters)
+        path_actions.append(a.copy())
+        path_residual.append(last_res.copy())
+        path_delta.append(last_delta.copy())
+        path_iterations.append(state_iters.copy())
+        path_converged.append(ok.copy())
+        path_oob.append(current_oob)
+        path_nonfinite.append(failed_nonfinite | ~np.all(np.isfinite(a), axis=-1))
+    trace = {
+        "actions": np.stack(path_actions),
+        "residual": np.stack(path_residual),
+        "delta": np.stack(path_delta),
+        "iterations": np.stack(path_iterations),
+        "converged": np.stack(path_converged),
+        "oob": np.stack(path_oob),
+        "nonfinite": np.stack(path_nonfinite),
+    }
+    return a, oob, conv, resid, iters, trace
 
 
 def rk4_step(f: Callable[[np.ndarray], np.ndarray], a: np.ndarray, dt: float) -> tuple[np.ndarray, np.ndarray]:
@@ -258,7 +333,7 @@ def accept_rk4_reference(
 ) -> dict[str, Any]:
     a_d = np.asarray(a0, dtype=np.float64)
     chosen = None
-    for n in (256, 512, 1024, 2048, 4096, 8192):
+    for n in RK4_N_CANDIDATES:
         a_n, oob_n = rk4_integrate(f, a_d, t, n)
         a_2n, oob_2n = rk4_integrate(f, a_d, t, 2 * n)
         r_n = float(np.sqrt(np.mean(np.square(a_n - a_2n))))
@@ -281,11 +356,11 @@ def accept_rk4_reference(
     if chosen is None or not chosen["accepted"]:
         return {
             "stable": False,
-            "n_micro": None,
+            "n_micro": int(2 * chosen["n"]) if chosen else None,
             "R_N": chosen["R_N"] if chosen else None,
             "M_2N": chosen["M_2N"] if chosen else None,
-            "endpoint": None,
-            "oob": None,
+            "endpoint": chosen["endpoint"] if chosen else None,
+            "oob": chosen["oob"] if chosen else None,
         }
     return {
         "stable": True,
@@ -298,8 +373,9 @@ def accept_rk4_reference(
 
 
 def rms_per_dim(err: np.ndarray) -> float:
-    d = err.shape[-1]
-    return float(np.sqrt(np.mean(np.square(err)) / d))
+    # mean(square) already averages over both states and action coordinates,
+    # which equals mean_i(||err_i||^2 / d).
+    return float(np.sqrt(np.mean(np.square(err))))
 
 
 def fit_log_slope(xs: list[float], ys: list[float]) -> float | None:
@@ -318,14 +394,11 @@ def run_harness(out_dir: Path) -> dict[str, Any]:
     f_lin = analytic_linear_field(b)
     exact_lin = a0 + 2.0 * t * b
     lin_rows = []
-    for scheme, solver in (
-        ("explicit", explicit_euler),
-        ("implicit", lambda f, a, dt, k: backward_euler(f, a, dt, k)[0:2]),
-    ):
+    for scheme in ("explicit", "implicit"):
         for k in (1, 2, 4, 8, 16):
             dt = t / k
             if scheme == "explicit":
-                end, oob = explicit_euler(f_lin, a0, dt, k)
+                end, oob, _trace = explicit_euler(f_lin, a0, dt, k)
             else:
                 end, oob, *_ = backward_euler(f_lin, a0, dt, k)
             err = float(np.max(np.abs(end - exact_lin)))
@@ -357,7 +430,7 @@ def run_harness(out_dir: Path) -> dict[str, Any]:
         for k in SUBSTEPS:
             dt = t / k
             if scheme == "explicit":
-                end, oob = explicit_euler(f_q, a0, dt, k)
+                end, oob, _trace = explicit_euler(f_q, a0, dt, k)
                 conv = True
             else:
                 end, oob, conv_arr, *_ = backward_euler(f_q, a0, dt, k)
@@ -422,10 +495,15 @@ def resolve_checkpoints(out_dir: Path, data_dir: Path, roots: list[str]) -> dict
         ds_hash = sha256_file(ds)
         mean_hash = sha256_bytes(np.asarray(mean, dtype=np.float64).tobytes())
         std_hash = sha256_bytes(np.asarray(std, dtype=np.float64).tobytes())
+        norm_hash = sha256_bytes(
+            np.asarray(mean, dtype=np.float64).tobytes()
+            + np.asarray(std, dtype=np.float64).tobytes()
+        )
         for seed in SEEDS:
             rng = np.random.default_rng(SAMPLE_BASE + 100 * j + seed)
             selected = rng.choice(candidates, size=N_STATES, replace=False)
-            selected = np.sort(selected.astype(np.int64))
+            # Preserve the exact RNG order used by the archived audit.
+            selected = selected.astype(np.int64)
             idx_hash = sha256_bytes(selected.tobytes())
             expected_name = f"{env_name}_tau1_seed{seed}"
             found = None
@@ -447,10 +525,12 @@ def resolve_checkpoints(out_dir: Path, data_dir: Path, roots: list[str]) -> dict
                 "seed": seed,
                 "update": 1_000_000,
                 "expected_run_dir": expected_name,
+                "dataset_identifier": env_name,
                 "dataset_path": str(ds.resolve()),
                 "dataset_sha256": ds_hash,
                 "state_mean_sha256": mean_hash,
                 "state_std_sha256": std_hash,
+                "normalization_statistics_sha256": norm_hash,
                 "state_indices_sha256": idx_hash,
                 "n_states": N_STATES,
                 "state_indices_path": str(
@@ -461,8 +541,10 @@ def resolve_checkpoints(out_dir: Path, data_dir: Path, roots: list[str]) -> dict
             np.save(out_dir / "state_indices" / f"{env_name}_seed{seed}.npy", selected)
             if found is None:
                 rec["resolved"] = False
+                rec["resolution_error"] = "checkpoint missing"
                 rec["checkpoint_path"] = None
                 rec["weights_sha256"] = None
+                rec["config_sha256"] = None
                 missing.append(expected_name)
             else:
                 payload = load_checkpoint(found)
@@ -470,43 +552,48 @@ def resolve_checkpoints(out_dir: Path, data_dir: Path, roots: list[str]) -> dict
                     raise ValueError(f"mean mismatch: {found}")
                 if not np.allclose(np.asarray(payload["std"]), std):
                     raise ValueError(f"std mismatch: {found}")
-                rec["resolved"] = True
                 rec["checkpoint_path"] = str(found)
                 rec["weights_sha256"] = sha256_file(found)
-                rec["config"] = {
-                    k: payload.get(k)
-                    for k in (
-                        "env",
-                        "tau",
-                        "seed",
-                        "mpi_steps",
-                        "integrator",
-                        "max_action",
-                        "q_scale_norm",
+                config = payload.get("config")
+                config_path = found.parent / "config.json"
+                if config is None and config_path.is_file():
+                    config = json.loads(config_path.read_text(encoding="utf-8"))
+                if config is None:
+                    rec["resolved"] = False
+                    rec["resolution_error"] = "config metadata missing"
+                    rec["config"] = None
+                    rec["config_sha256"] = None
+                    missing.append(expected_name)
+                else:
+                    config = jsonable(config)
+                    config_env = config.get("env")
+                    config_seed = config.get("seed")
+                    config_tau = config.get("tau")
+                    step = int(payload.get("step", 0))
+                    mismatches = []
+                    if config_env is not None and config_env != env_name:
+                        mismatches.append(f"env={config_env}")
+                    if config_seed is not None and int(config_seed) != seed:
+                        mismatches.append(f"seed={config_seed}")
+                    if config_tau is not None and float(config_tau) != 1.0:
+                        mismatches.append(f"tau={config_tau}")
+                    if step != 1_000_000:
+                        mismatches.append(f"step={step}")
+                    if mismatches:
+                        raise ValueError(
+                            f"checkpoint identity mismatch {found}: "
+                            + ", ".join(mismatches)
+                        )
+                    rec["resolved"] = True
+                    rec["resolution_error"] = None
+                    rec["config"] = config
+                    rec["config_sha256"] = sha256_json(config)
+                    rec["config_path"] = (
+                        str(config_path.resolve()) if config_path.is_file() else None
                     )
-                    if k in payload or True
-                }
-                # payload may not store all; keep available keys
-                rec["config"] = {
-                    key: (
-                        payload[key].tolist()
-                        if hasattr(payload.get(key, None), "tolist")
-                        else payload.get(key)
+                    rec["config_file_sha256"] = (
+                        sha256_file(config_path) if config_path.is_file() else None
                     )
-                    for key in payload
-                    if key
-                    in {
-                        "env",
-                        "tau",
-                        "seed",
-                        "mpi_steps",
-                        "integrator",
-                        "max_action",
-                        "normalize",
-                        "q_scale_norm",
-                        "step",
-                    }
-                }
             entries.append(rec)
         del data, observations, actions
 
@@ -524,6 +611,11 @@ def resolve_checkpoints(out_dir: Path, data_dir: Path, roots: list[str]) -> dict
     out_name = "CHECKPOINTS.json" if not missing else "CHECKPOINTS_UNRESOLVED.json"
     path = out_dir / out_name
     path.write_text(json.dumps(doc, indent=2) + "\n")
+    stale = out_dir / (
+        "CHECKPOINTS_UNRESOLVED.json" if not missing else "CHECKPOINTS.json"
+    )
+    if stale.is_file():
+        stale.unlink()
     # Always also write a pointer STATUS
     status = {
         "checkpoints_ready": not missing,
@@ -547,12 +639,29 @@ def resolve_checkpoints(out_dir: Path, data_dir: Path, roots: list[str]) -> dict
     return doc
 
 
-def write_protocol(out_dir: Path, harness: dict[str, Any] | None) -> dict[str, Any]:
+def protocol_document(
+    out_dir: Path,
+    harness: dict[str, Any] | None,
+    *,
+    frozen: bool,
+) -> dict[str, Any]:
+    checkpoint_manifest = out_dir / "CHECKPOINTS.json"
+    unresolved_manifest = out_dir / "CHECKPOINTS_UNRESOLVED.json"
+    inventory_path = (
+        checkpoint_manifest
+        if checkpoint_manifest.is_file()
+        else unresolved_manifest
+    )
+    code_path = ROOT / "scripts" / "diagnostics" / "run_fixed_operator_order.py"
     protocol = {
-        "name": "fixed_operator_order_v1",
+        "name": "fixed_operator_order_v2",
         "written_at": now_iso(),
-        "locked": True,
-        "note": "Do not edit after reading aggregate learned-critic errors.",
+        "locked": frozen,
+        "note": (
+            "Immutable after creation; do not edit after reading learned-critic errors."
+            if frozen
+            else "Draft only: checkpoints are unresolved, so this is not the frozen protocol."
+        ),
         "grid": {
             "T": list(TOTAL_TIMES),
             "K": list(SUBSTEPS),
@@ -576,7 +685,8 @@ def write_protocol(out_dir: Path, harness: dict[str, Any] | None) -> dict[str, A
         },
         "rk4": {
             "independent_code_path": True,
-            "N_candidates": [256, 512, 1024, 2048, 4096, 8192],
+            "N_candidates": list(RK4_N_CANDIDATES),
+            "maximum_accepted_microsteps": 8192,
             "accept": "R_N <= max(1e-10, 1e-6 * M_2N); use 2N endpoint",
         },
         "implicit_solver": {
@@ -602,20 +712,128 @@ def write_protocol(out_dir: Path, harness: dict[str, Any] | None) -> dict[str, A
             "raw_state_rows": 18 * 4 * 5 * 2 * 512,
             "implicit_substep_records": 18 * 4 * 512 * (1 + 2 + 4 + 8 + 16),
         },
+        "output_schema": {
+            "endpoint_errors.csv": [
+                "environment",
+                "seed",
+                "T",
+                "K",
+                "scheme",
+                "E_abs",
+                "E_rel",
+                "M_ref",
+                "ratio_to_2K",
+                "slope_K4_8_16",
+                "slope_status",
+                "|I|",
+                "primary_cell",
+                "reference_stable",
+                "failure_reason",
+                "C_ref",
+            ],
+            "raw_state_diagnostics.npz": {
+                "rows": "720*512",
+                "arrays": [
+                    "cell_index",
+                    "state_index",
+                    "error_sq_per_dim",
+                    "finite",
+                    "oob",
+                    "implicit_converged",
+                    "common_mask",
+                ],
+            },
+            "implicit_substeps.npz": {
+                "rows": "18*4*512*31",
+                "arrays": [
+                    "run_index",
+                    "T_index",
+                    "K",
+                    "substep",
+                    "state_index",
+                    "residual",
+                    "delta",
+                    "iterations",
+                    "converged",
+                    "oob",
+                    "nonfinite",
+                    "action",
+                ],
+            },
+            "euler_paths.npz": {
+                "rows": "2*18*4*512*31",
+                "description": "Unprojected action at every Euler substep.",
+            },
+            "masks.npz": {
+                "shape": [72, 512],
+                "description": "Realized common mask for every env-seed-T cell.",
+            },
+            "per_t_slopes.json": "Per env-seed-T-scheme slope or below-floor/failure status.",
+            "SUMMARY.json": "18 run summaries, nine two-seed task means, task-equal aggregate, gates.",
+            "RESULT_MANIFEST.json": "Counts, realized mask metadata, and artifact SHA-256 values.",
+        },
         "scientific_gates": {
             "aggregate_median_slope": [0.75, 1.25],
             "run_slopes_in_[0.5,1.5]": ">=14/18",
             "complete_runs": ">=15/18",
         },
         "harness_pass": None if harness is None else bool(harness.get("pass")),
-        "harness_sha256": None if harness is None else sha256_json(harness),
-        "code_path": str((ROOT / "scripts" / "diagnostics" / "run_fixed_operator_order.py").resolve()),
+        "harness_sha256": (
+            sha256_file(out_dir / "HARNESS.json")
+            if (out_dir / "HARNESS.json").is_file()
+            else None
+        ),
+        "checkpoint_inventory_sha256": (
+            sha256_file(inventory_path)
+            if inventory_path.is_file()
+            else None
+        ),
+        "checkpoint_inventory_status": (
+            "resolved" if checkpoint_manifest.is_file() else "unresolved"
+        ),
+        "code_path": str(code_path.resolve()),
+        "code_sha256": sha256_file(code_path),
     }
     protocol["protocol_sha256"] = sha256_json(
         {k: v for k, v in protocol.items() if k != "protocol_sha256"}
     )
-    (out_dir / "FROZEN_PROTOCOL.json").write_text(json.dumps(protocol, indent=2) + "\n")
-    print(f"[protocol] wrote FROZEN_PROTOCOL.json sha={protocol['protocol_sha256'][:12]}", flush=True)
+    return protocol
+
+
+def write_protocol(out_dir: Path, harness: dict[str, Any] | None) -> dict[str, Any]:
+    checkpoint_manifest = out_dir / "CHECKPOINTS.json"
+    if not checkpoint_manifest.is_file():
+        raise RuntimeError("cannot freeze protocol before all 18 checkpoints resolve")
+    if harness is None or not harness.get("pass"):
+        raise RuntimeError("cannot freeze protocol before the analytic harness passes")
+    protocol = protocol_document(out_dir, harness, frozen=True)
+    path = out_dir / "FROZEN_PROTOCOL.json"
+    if path.is_file():
+        existing = json.loads(path.read_text(encoding="utf-8"))
+        if existing != protocol:
+            raise RuntimeError(
+                "FROZEN_PROTOCOL.json already exists and differs; refusing overwrite"
+            )
+        return existing
+    path.write_text(json.dumps(protocol, indent=2) + "\n")
+    print(
+        f"[protocol] froze FROZEN_PROTOCOL.json "
+        f"sha={protocol['protocol_sha256'][:12]}",
+        flush=True,
+    )
+    return protocol
+
+
+def write_draft_protocol(
+    out_dir: Path, harness: dict[str, Any] | None
+) -> dict[str, Any]:
+    protocol = protocol_document(out_dir, harness, frozen=False)
+    path = out_dir / "PROTOCOL_DRAFT.json"
+    path.write_text(json.dumps(protocol, indent=2) + "\n")
+    print(
+        f"[protocol] wrote draft only sha={protocol['protocol_sha256'][:12]}",
+        flush=True,
+    )
     return protocol
 
 
@@ -667,12 +885,81 @@ def run_audit(out_dir: Path, data_dir: Path, max_runs: int) -> dict[str, Any]:
     entries = [e for e in doc["entries"] if e["resolved"]]
     if len(entries) != 18:
         raise RuntimeError(f"need 18 resolved critics, found {len(entries)}")
+    harness = json.loads((out_dir / "HARNESS.json").read_text(encoding="utf-8"))
+    if not harness.get("pass"):
+        raise RuntimeError("analytic harness did not pass")
+    protocol_path = out_dir / "FROZEN_PROTOCOL.json"
+    if not protocol_path.is_file():
+        raise FileNotFoundError("FROZEN_PROTOCOL.json must be frozen before audit")
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    code_path = ROOT / "scripts" / "diagnostics" / "run_fixed_operator_order.py"
+    if protocol["checkpoint_inventory_sha256"] != sha256_file(ckpt_path):
+        raise RuntimeError("checkpoint inventory changed after protocol freeze")
+    if protocol["code_sha256"] != sha256_file(code_path):
+        raise RuntimeError("audit code changed after protocol freeze")
+    max_action_dim = 6
+    for run_index, entry in enumerate(entries):
+        if sha256_file(Path(entry["checkpoint_path"])) != entry["weights_sha256"]:
+            raise RuntimeError(f"checkpoint hash mismatch: {entry['checkpoint_path']}")
+        idx_path = Path(entry["state_indices_path"])
+        indices = np.load(idx_path)
+        if sha256_bytes(np.asarray(indices, dtype=np.int64).tobytes()) != entry[
+            "state_indices_sha256"
+        ]:
+            raise RuntimeError(f"state-index hash mismatch: {idx_path}")
     if max_runs > 0:
         entries = entries[:max_runs]
 
     endpoint_rows: list[dict[str, Any]] = []
     run_summaries: list[dict[str, Any]] = []
     masks_meta: list[dict[str, Any]] = []
+    realized_masks: list[np.ndarray] = []
+    per_t_slopes: list[dict[str, Any]] = []
+    raw_parts: dict[str, list[np.ndarray]] = {
+        key: []
+        for key in (
+            "cell_index",
+            "state_index",
+            "error_sq_per_dim",
+            "finite",
+            "oob",
+            "implicit_converged",
+            "common_mask",
+        )
+    }
+    implicit_parts: dict[str, list[np.ndarray]] = {
+        key: []
+        for key in (
+            "run_index",
+            "T_index",
+            "K",
+            "substep",
+            "state_index",
+            "residual",
+            "delta",
+            "iterations",
+            "converged",
+            "oob",
+            "nonfinite",
+            "action_dim",
+            "action",
+        )
+    }
+    path_parts: dict[str, list[np.ndarray]] = {
+        key: []
+        for key in (
+            "run_index",
+            "T_index",
+            "scheme",
+            "K",
+            "substep",
+            "state_index",
+            "action_dim",
+            "action",
+            "oob",
+            "nonfinite",
+        )
+    }
 
     for entry in entries:
         env_name = entry["environment"]
@@ -690,36 +977,35 @@ def run_audit(out_dir: Path, data_dir: Path, max_runs: int) -> dict[str, Any]:
 
         complete_T = 0
         slopes_by_scheme: dict[str, list[float]] = {"explicit": [], "implicit": []}
-        for t in TOTAL_TIMES:
+        for t_index, t in enumerate(TOTAL_TIMES):
             ref = accept_rk4_reference(f, anchors, t)
-            if not ref["stable"] or ref["endpoint"] is None:
-                masks_meta.append(
-                    {
-                        "environment": env_name,
-                        "seed": seed,
-                        "T": t,
-                        "reference_unstable": True,
-                        "|I|": 0,
-                    }
-                )
-                continue
-            a_ref = ref["endpoint"]
+            reference_stable = bool(ref["stable"] and ref["endpoint"] is not None)
+            a_ref = (
+                np.asarray(ref["endpoint"], dtype=np.float64)
+                if ref["endpoint"] is not None
+                else np.full_like(anchors, np.nan)
+            )
             # eligibility buffers per (scheme,K)
-            finite_ok = np.ones(N_STATES, dtype=bool)
+            finite_ok = np.full(N_STATES, reference_stable, dtype=bool)
             finite_ok &= np.all(np.isfinite(a_ref), axis=-1)
-            finite_ok &= ~np.asarray(ref["oob"], dtype=bool)
+            reference_oob = (
+                np.asarray(ref["oob"], dtype=bool)
+                if ref["oob"] is not None
+                else np.ones(N_STATES, dtype=bool)
+            )
+            finite_ok &= ~reference_oob
 
             scheme_data: dict[tuple[str, int], dict[str, Any]] = {}
             for scheme in ("explicit", "implicit"):
                 for k in SUBSTEPS:
                     dt = t / k
                     if scheme == "explicit":
-                        end, oob = explicit_euler(f, anchors, dt, k)
+                        end, oob, trace = explicit_euler(f, anchors, dt, k)
                         conv = np.ones(N_STATES, dtype=bool)
                         resid = np.zeros(N_STATES)
                         iters = np.ones(N_STATES, dtype=np.int32)
                     else:
-                        end, oob, conv, resid, iters = backward_euler(
+                        end, oob, conv, resid, iters, trace = backward_euler(
                             f, anchors, dt, k
                         )
                     finite = np.all(np.isfinite(end), axis=-1)
@@ -730,52 +1016,192 @@ def run_audit(out_dir: Path, data_dir: Path, max_runs: int) -> dict[str, Any]:
                         "resid": resid,
                         "iters": iters,
                         "finite": finite,
+                        "trace": trace,
                     }
 
+                    n_trace = k * N_STATES
+                    padded = np.full(
+                        (n_trace, max_action_dim), np.nan, dtype=np.float64
+                    )
+                    padded[:, :d] = trace["actions"].reshape(n_trace, d)
+                    path_parts["run_index"].append(
+                        np.full(n_trace, run_index, dtype=np.int16)
+                    )
+                    path_parts["T_index"].append(
+                        np.full(n_trace, t_index, dtype=np.int8)
+                    )
+                    path_parts["scheme"].append(
+                        np.full(
+                            n_trace,
+                            0 if scheme == "explicit" else 1,
+                            dtype=np.int8,
+                        )
+                    )
+                    path_parts["K"].append(np.full(n_trace, k, dtype=np.int8))
+                    path_parts["substep"].append(
+                        np.repeat(np.arange(1, k + 1, dtype=np.int8), N_STATES)
+                    )
+                    path_parts["state_index"].append(np.tile(idx, k))
+                    path_parts["action_dim"].append(
+                        np.full(n_trace, d, dtype=np.int8)
+                    )
+                    path_parts["action"].append(padded)
+                    path_parts["oob"].append(trace["oob"].reshape(-1))
+                    path_parts["nonfinite"].append(
+                        trace["nonfinite"].reshape(-1)
+                    )
+
+                    if scheme == "implicit":
+                        for key, values in (
+                            ("run_index", np.full(n_trace, run_index, dtype=np.int16)),
+                            ("T_index", np.full(n_trace, t_index, dtype=np.int8)),
+                            ("K", np.full(n_trace, k, dtype=np.int8)),
+                            (
+                                "substep",
+                                np.repeat(
+                                    np.arange(1, k + 1, dtype=np.int8),
+                                    N_STATES,
+                                ),
+                            ),
+                            ("state_index", np.tile(idx, k)),
+                            ("residual", trace["residual"].reshape(-1)),
+                            ("delta", trace["delta"].reshape(-1)),
+                            ("iterations", trace["iterations"].reshape(-1)),
+                            ("converged", trace["converged"].reshape(-1)),
+                            ("oob", trace["oob"].reshape(-1)),
+                            ("nonfinite", trace["nonfinite"].reshape(-1)),
+                            ("action_dim", np.full(n_trace, d, dtype=np.int8)),
+                            ("action", padded),
+                        ):
+                            implicit_parts[key].append(values)
+
             mask = finite_ok.copy()
-            for (scheme, k), pack in scheme_data.items():
+            for pack in scheme_data.values():
                 mask &= pack["finite"]
                 mask &= pack["conv"]
                 mask &= ~pack["oob"]
             n_mask = int(np.sum(mask))
             mask_sha = sha256_bytes(np.packbits(mask).tobytes())
+            realized_masks.append(mask.copy())
+            explicit_nonfinite = np.logical_or.reduce(
+                [
+                    ~scheme_data[("explicit", k)]["finite"]
+                    for k in SUBSTEPS
+                ]
+            )
+            explicit_oob = np.logical_or.reduce(
+                [scheme_data[("explicit", k)]["oob"] for k in SUBSTEPS]
+            )
+            implicit_nonfinite = np.logical_or.reduce(
+                [
+                    ~scheme_data[("implicit", k)]["finite"]
+                    for k in SUBSTEPS
+                ]
+            )
+            implicit_oob = np.logical_or.reduce(
+                [scheme_data[("implicit", k)]["oob"] for k in SUBSTEPS]
+            )
+            implicit_failed = np.logical_or.reduce(
+                [~scheme_data[("implicit", k)]["conv"] for k in SUBSTEPS]
+            )
             masks_meta.append(
                 {
                     "environment": env_name,
                     "seed": seed,
                     "T": t,
-                    "reference_unstable": False,
+                    "reference_unstable": not reference_stable,
                     "|I|": n_mask,
                     "mask_sha256": mask_sha,
                     "rk4_n_micro": ref["n_micro"],
+                    "rk4_R_N": ref["R_N"],
+                    "rk4_M_2N": ref["M_2N"],
                     "C_ref": c_ref,
+                    "exclusion_counts": {
+                        "reference_nonfinite": int(
+                            np.sum(~np.all(np.isfinite(a_ref), axis=-1))
+                        ),
+                        "reference_oob": int(np.sum(reference_oob)),
+                        "explicit_nonfinite": int(np.sum(explicit_nonfinite)),
+                        "explicit_oob": int(np.sum(explicit_oob)),
+                        "implicit_nonfinite": int(np.sum(implicit_nonfinite)),
+                        "implicit_oob": int(np.sum(implicit_oob)),
+                        "implicit_not_converged": int(np.sum(implicit_failed)),
+                    },
                 }
             )
-            primary = n_mask >= MIN_MASK
+            primary = reference_stable and n_mask >= MIN_MASK
             if primary:
                 complete_T += 1
 
             m_ref = (
-                float(
-                    np.sqrt(
-                        np.mean(np.square(a_ref[mask] - anchors[mask])) / d
-                    )
-                )
+                float(np.sqrt(np.mean(np.square(a_ref[mask] - anchors[mask]))))
                 if n_mask
                 else float("nan")
             )
             for scheme in ("explicit", "implicit"):
-                e_by_k = {}
+                e_by_k: dict[int, float] = {}
+                state_error_by_k: dict[int, np.ndarray] = {}
                 for k in SUBSTEPS:
                     end = scheme_data[(scheme, k)]["end"]
                     if n_mask:
-                        e_abs = float(
-                            np.sqrt(np.mean(np.square(end[mask] - a_ref[mask])) / d)
-                        )
+                        e_abs = float(np.sqrt(np.mean(np.square(end[mask] - a_ref[mask]))))
                     else:
                         e_abs = float("nan")
                     e_by_k[k] = e_abs
+                    state_error_by_k[k] = np.mean(
+                        np.square(end - a_ref), axis=-1
+                    )
+
+                fitted = [e_by_k[k] for k in (4, 8, 16)]
+                if not reference_stable:
+                    slope = None
+                    slope_status = "reference_unstable"
+                elif not primary:
+                    slope = None
+                    slope_status = "mask_below_410"
+                elif any(np.isfinite(value) and value < 1e-12 for value in fitted):
+                    slope = None
+                    slope_status = "below_floor"
+                elif not all(np.isfinite(value) for value in fitted):
+                    slope = None
+                    slope_status = "nonfinite_error"
+                else:
+                    slope = fit_log_slope(
+                        [t / k for k in (4, 8, 16)], fitted
+                    )
+                    slope_status = "ok" if slope is not None else "fit_failed"
+                if slope_status == "ok" and slope is not None:
+                    slopes_by_scheme[scheme].append(slope)
+                per_t_slopes.append(
+                    {
+                        "environment": env_name,
+                        "seed": seed,
+                        "T": t,
+                        "scheme": scheme,
+                        "slope_K4_8_16": slope,
+                        "slope_status": slope_status,
+                    }
+                )
+
+                for k in SUBSTEPS:
+                    e_abs = e_by_k[k]
                     e_rel = e_abs / max(m_ref, 1e-8) if np.isfinite(e_abs) else float("nan")
+                    doubled = e_by_k.get(2 * k)
+                    ratio = (
+                        e_abs / doubled
+                        if k in (1, 2, 4, 8)
+                        and doubled is not None
+                        and np.isfinite(e_abs)
+                        and np.isfinite(doubled)
+                        and doubled > 0
+                        else None
+                    )
+                    failure_reasons = []
+                    if not reference_stable:
+                        failure_reasons.append("reference_unstable")
+                    if n_mask < MIN_MASK:
+                        failure_reasons.append("mask_below_410")
+                    cell_index = len(endpoint_rows)
                     endpoint_rows.append(
                         {
                             "environment": env_name,
@@ -786,20 +1212,30 @@ def run_audit(out_dir: Path, data_dir: Path, max_runs: int) -> dict[str, Any]:
                             "E_abs": e_abs,
                             "E_rel": e_rel,
                             "M_ref": m_ref,
+                            "ratio_to_2K": ratio,
+                            "slope_K4_8_16": slope,
+                            "slope_status": slope_status,
                             "|I|": n_mask,
                             "primary_cell": primary,
+                            "reference_stable": reference_stable,
+                            "failure_reason": ";".join(failure_reasons),
                             "C_ref": c_ref,
-                            "below_floor": bool(np.isfinite(e_abs) and e_abs < 1e-12),
                         }
                     )
-                if primary and all(
-                    np.isfinite(e_by_k[k]) and e_by_k[k] >= 1e-12 for k in (4, 8, 16)
-                ):
-                    slope = fit_log_slope(
-                        [t / k for k in (4, 8, 16)], [e_by_k[k] for k in (4, 8, 16)]
+                    pack = scheme_data[(scheme, k)]
+                    raw_parts["cell_index"].append(
+                        np.full(N_STATES, cell_index, dtype=np.int16)
                     )
-                    if slope is not None:
-                        slopes_by_scheme[scheme].append(slope)
+                    raw_parts["state_index"].append(idx.copy())
+                    raw_parts["error_sq_per_dim"].append(
+                        state_error_by_k[k]
+                    )
+                    raw_parts["finite"].append(pack["finite"].copy())
+                    raw_parts["oob"].append(pack["oob"].copy())
+                    raw_parts["implicit_converged"].append(
+                        pack["conv"].copy()
+                    )
+                    raw_parts["common_mask"].append(mask.copy())
 
         run_sum = {
             "environment": env_name,
@@ -822,8 +1258,52 @@ def run_audit(out_dir: Path, data_dir: Path, max_runs: int) -> dict[str, Any]:
         run_summaries.append(run_sum)
         del data
 
-    # write compact endpoint CSV
     import csv
+
+    expected_endpoint = len(entries) * len(TOTAL_TIMES) * len(SUBSTEPS) * 2
+    expected_raw = expected_endpoint * N_STATES
+    expected_implicit = (
+        len(entries) * len(TOTAL_TIMES) * N_STATES * sum(SUBSTEPS)
+    )
+    expected_paths = 2 * expected_implicit
+    endpoint_keys = {
+        (
+            row["environment"],
+            int(row["seed"]),
+            float(row["T"]),
+            int(row["K"]),
+            row["scheme"],
+        )
+        for row in endpoint_rows
+    }
+    if len(endpoint_rows) != expected_endpoint or len(endpoint_keys) != expected_endpoint:
+        raise AssertionError(
+            f"endpoint key/count failure: rows={len(endpoint_rows)} "
+            f"unique={len(endpoint_keys)} expected={expected_endpoint}"
+        )
+
+    def concatenate(parts: dict[str, list[np.ndarray]]) -> dict[str, np.ndarray]:
+        if any(not values for values in parts.values()):
+            missing_keys = [key for key, values in parts.items() if not values]
+            raise AssertionError(f"missing diagnostic arrays: {missing_keys}")
+        return {key: np.concatenate(values, axis=0) for key, values in parts.items()}
+
+    raw_arrays = concatenate(raw_parts)
+    implicit_arrays = concatenate(implicit_parts)
+    path_arrays = concatenate(path_parts)
+    if len(raw_arrays["cell_index"]) != expected_raw:
+        raise AssertionError(
+            f"raw-state rows={len(raw_arrays['cell_index'])}, expected={expected_raw}"
+        )
+    if len(implicit_arrays["run_index"]) != expected_implicit:
+        raise AssertionError(
+            f"implicit rows={len(implicit_arrays['run_index'])}, "
+            f"expected={expected_implicit}"
+        )
+    if len(path_arrays["run_index"]) != expected_paths:
+        raise AssertionError(
+            f"path rows={len(path_arrays['run_index'])}, expected={expected_paths}"
+        )
 
     csv_path = out_dir / "endpoint_errors.csv"
     with csv_path.open("w", newline="", encoding="utf-8") as f:
@@ -831,6 +1311,26 @@ def run_audit(out_dir: Path, data_dir: Path, max_runs: int) -> dict[str, Any]:
         writer.writeheader()
         writer.writerows(endpoint_rows)
     (out_dir / "masks.json").write_text(json.dumps(masks_meta, indent=2) + "\n")
+    masks_path = out_dir / "masks.npz"
+    np.savez_compressed(
+        masks_path,
+        common_mask=np.stack(realized_masks),
+        run_index=np.repeat(
+            np.arange(len(entries), dtype=np.int16), len(TOTAL_TIMES)
+        ),
+        T_index=np.tile(
+            np.arange(len(TOTAL_TIMES), dtype=np.int8), len(entries)
+        ),
+    )
+    (out_dir / "per_t_slopes.json").write_text(
+        json.dumps(per_t_slopes, indent=2) + "\n"
+    )
+    raw_path = out_dir / "raw_state_diagnostics.npz"
+    implicit_path = out_dir / "implicit_substeps.npz"
+    paths_path = out_dir / "euler_paths.npz"
+    np.savez_compressed(raw_path, **raw_arrays)
+    np.savez_compressed(implicit_path, **implicit_arrays)
+    np.savez_compressed(paths_path, **path_arrays)
 
     def scheme_gate(scheme: str) -> dict[str, Any]:
         slopes = [
@@ -847,25 +1347,80 @@ def run_audit(out_dir: Path, data_dir: Path, max_runs: int) -> dict[str, Any]:
             and in_band >= 14
             and complete >= 15
         )
+        task_means = {}
+        for env_name in ENVIRONMENTS:
+            values = [
+                row[f"median_slope_{scheme}"]
+                for row in run_summaries
+                if row["environment"] == env_name
+                and row[f"median_slope_{scheme}"] is not None
+            ]
+            if len(values) == 2:
+                task_means[env_name] = float(np.mean(values))
+        task_equal = (
+            float(np.mean(list(task_means.values())))
+            if len(task_means) == len(ENVIRONMENTS)
+            else None
+        )
         return {
             "aggregate_median_slope": agg,
             "n_slopes": len(slopes),
             "n_in_[0.5,1.5]": in_band,
             "n_complete_runs": complete,
+            "two_seed_task_means": task_means,
+            "task_equal_mean": task_equal,
             "pre_specified_support": support,
         }
 
     summary = {
         "n_runs": len(run_summaries),
         "n_endpoint_rows": len(endpoint_rows),
-        "expected_endpoint_rows": 18 * 4 * 5 * 2 if max_runs <= 0 else None,
+        "n_unique_endpoint_keys": len(endpoint_keys),
+        "expected_endpoint_rows": expected_endpoint,
+        "n_raw_state_rows": len(raw_arrays["cell_index"]),
+        "expected_raw_state_rows": expected_raw,
+        "n_implicit_substep_records": len(implicit_arrays["run_index"]),
+        "expected_implicit_substep_records": expected_implicit,
+        "n_euler_path_records": len(path_arrays["run_index"]),
+        "expected_euler_path_records": expected_paths,
         "explicit": scheme_gate("explicit"),
         "implicit": scheme_gate("implicit"),
         "runs": run_summaries,
         "csv": str(csv_path.resolve()),
+        "artifacts": {
+            "endpoint_errors.csv": sha256_file(csv_path),
+            "masks.json": sha256_file(out_dir / "masks.json"),
+            "masks.npz": sha256_file(masks_path),
+            "per_t_slopes.json": sha256_file(out_dir / "per_t_slopes.json"),
+            "raw_state_diagnostics.npz": sha256_file(raw_path),
+            "implicit_substeps.npz": sha256_file(implicit_path),
+            "euler_paths.npz": sha256_file(paths_path),
+        },
         "written_at": now_iso(),
     }
-    (out_dir / "SUMMARY.json").write_text(json.dumps(summary, indent=2) + "\n")
+    summary_path = out_dir / "SUMMARY.json"
+    summary_path.write_text(json.dumps(summary, indent=2) + "\n")
+    result_manifest = {
+        "experiment": "fixed_operator_order_v2",
+        "protocol_sha256": protocol["protocol_sha256"],
+        "checkpoint_inventory_sha256": sha256_file(ckpt_path),
+        "code_sha256": sha256_file(code_path),
+        "counts": {
+            "endpoint_rows": len(endpoint_rows),
+            "raw_state_rows": len(raw_arrays["cell_index"]),
+            "implicit_substep_records": len(implicit_arrays["run_index"]),
+            "euler_path_records": len(path_arrays["run_index"]),
+        },
+        "realized_masks": masks_meta,
+        "artifacts": {
+            **summary["artifacts"],
+            "SUMMARY.json": sha256_file(summary_path),
+        },
+        "written_at": now_iso(),
+    }
+    (out_dir / "RESULT_MANIFEST.json").write_text(
+        json.dumps(result_manifest, indent=2) + "\n"
+    )
     print(json.dumps({k: summary[k] for k in ("n_runs", "explicit", "implicit")}, indent=2))
     return summary
 
@@ -881,11 +1436,16 @@ evidence for discretization / semigroup-error claims. Spec: repo `TODO.md` P0-A.
 | File | Role |
 | --- | --- |
 | `HARNESS.json` | Analytic d=2 validation |
-| `FROZEN_PROTOCOL.json` | Preflight grid, formulas, gates; reconcile with TODO before audit |
+| `PROTOCOL_DRAFT.json` | Pre-checkpoint draft formulas, schemas, gates |
+| `FROZEN_PROTOCOL.json` | Written only after all 18 fingerprints resolve |
 | `CHECKPOINTS.json` / `CHECKPOINTS_UNRESOLVED.json` | 18 T=1 critic fingerprints |
 | `state_indices/*.npy` | Frozen 512-row index sets |
 | `endpoint_errors.csv` | Compact 720-cell endpoint table (after audit) |
+| `raw_state_diagnostics.npz` | 368,640 pre-mask state records |
+| `implicit_substeps.npz` | 1,142,784 implicit state/substep diagnostics |
+| `euler_paths.npz` | Unprojected explicit/implicit paths |
 | `SUMMARY.json` | Run slopes and scientific gates |
+| `RESULT_MANIFEST.json` | Realized mask and artifact hashes |
 | `STATUS.json` | Host readiness / blockers |
 
 ## Run
@@ -896,11 +1456,10 @@ python scripts/diagnostics/run_fixed_operator_order.py --phase all \\
   --checkpoint-roots /path/to/results_qnorm
 ```
 
-On ext_csh the 18 critics are unresolved (owned by ext_csv
-`results_qnorm`). The analytic harness and state indices are ready, but
-`FROZEN_PROTOCOL.json` remains a preflight scaffold until the mismatches
-listed in `TODO.md` P0-A are reconciled. Do not run or cite learned-critic
-order results before the exact 18-checkpoint inventory and verifier gates pass.
+On ext_csh the 18 critics are currently unresolved (owned by ext_csv
+`results_qnorm`). Harness + protocol draft + state indices can still be
+produced. The script refuses to freeze or run the learned audit until every
+checkpoint/config/weight fingerprint resolves.
 """
     (out_dir / "README.md").write_text(text)
 
@@ -922,7 +1481,10 @@ def main() -> int:
         resolve_checkpoints(out_dir, args.data_dir, args.checkpoint_roots)
 
     if phase in ("protocol", "all"):
-        write_protocol(out_dir, harness)
+        if (out_dir / "CHECKPOINTS.json").is_file():
+            write_protocol(out_dir, harness)
+        else:
+            write_draft_protocol(out_dir, harness)
 
     if phase == "audit" or (
         phase == "all" and (out_dir / "CHECKPOINTS.json").is_file()

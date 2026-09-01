@@ -39,15 +39,20 @@ SWEEPS = {
     "mpi1": (ROOT / "results" / "mpi1_s23", "mpi1", "d4rl_pi1"),
     "mpi2": (ROOT / "results" / "mpi2_s23", "mpi2", "d4rl_pi2"),
     "mpi3": (ROOT / "results" / "mpi3_s23", "mpi3", "d4rl_pi3"),
+    "mpi8": (ROOT / "results" / "mpi8_s23", "mpi8", "d4rl_pi8"),
     "exp1": (ROOT / "results" / "exp1_s23", "exp1", "d4rl_pi1"),
     "exp2": (ROOT / "results" / "exp2_s23", "exp2", "d4rl_pi2"),
     "exp3": (ROOT / "results" / "exp3_s23", "exp3", "d4rl_pi3"),
 }
+# Live mpi8 queue on ext_csh: halfcheetah + walker2d only.
+MPI8_ENVS = ENVS[3:]
+MPI8_TARGET = len(MPI8_ENVS) * len(TAUS) * len(SEEDS)  # 168
 CANVAS = Path(
     "/home/ext_csh/.cursor/projects/home-ext-csh/canvases/mpi-k123-s23.canvas.tsx"
 )
 KST = timezone(timedelta(hours=9))
 TARGET = len(ENVS) * len(TAUS) * len(SEEDS)  # 252
+TABLE_KEYS = ["mpi1", "mpi2", "mpi3", "mpi8", "exp3"]
 
 
 def tau_key(t: float) -> str:
@@ -62,7 +67,6 @@ def collect(root: Path, tag: str, score_key: str):
     pat = re.compile(rf"(.+)_tau(.+)_{re.escape(tag)}_seed(\d+)$")
     if root.is_dir():
         n_started = sum(1 for _ in root.glob("*/config.json"))
-        # 1M completion is authoritative via params even before score parse
         n_1m = sum(1 for _ in root.glob("*/params_1000000.pkl"))
     for path in root.glob("*/eval.csv") if root.is_dir() else []:
         rows = list(csv.DictReader(path.open(encoding="utf-8")))
@@ -72,7 +76,6 @@ def collect(root: Path, tag: str, score_key: str):
         match = pat.match(path.parent.name)
         if not match:
             continue
-        # K=1 writes only d4rl_score; K>1 also writes d4rl_pi{K}.
         raw = last.get(score_key) or last.get("d4rl_score")
         if not raw:
             continue
@@ -96,6 +99,20 @@ def collect(root: Path, tag: str, score_key: str):
     return matrix, n_eval, n_1m, n_started
 
 
+def env_1m_counts(root: Path, tag: str, envs: list[str]) -> list[int]:
+    counts = []
+    for env in envs:
+        if not root.is_dir():
+            counts.append(0)
+            continue
+        n = sum(
+            1
+            for _ in root.glob(f"{env}_tau*_{tag}_seed*/params_1000000.pkl")
+        )
+        counts.append(n)
+    return counts
+
+
 def interpolate_only(vals: list):
     known = [(i, v) for i, v in enumerate(vals) if v is not None]
     if len(known) < 2:
@@ -112,7 +129,6 @@ def interpolate_only(vals: list):
 
 
 def js_series(vals):
-    # LineChart `data` is number[] — unfinished cells are 0 (never None/null).
     return "[" + ", ".join(str(0 if v is None else v) for v in vals) + "]"
 
 
@@ -125,22 +141,21 @@ def peak(vals):
 
 
 def chart_block(title: str, series_map: dict[str, list]):
-    # order + tones
     specs = [
         ("mpi1", "MPI π1", "info"),
         ("mpi2", "MPI π2", "success"),
         ("mpi3", "MPI π3", "warning"),
-        ("exp1", "EXP π1", "neutral"),
-        ("exp2", "EXP π2", "neutral"),
+        ("mpi8", "MPI π8", "neutral"),
         ("exp3", "EXP π3", "danger"),
     ]
     prepared = []
     bits = []
     for key, name, tone in specs:
+        if key not in series_map:
+            continue
         vals = series_map[key]
         if not any(v is not None for v in vals):
             continue
-        # Interpolate only between known 1M points; unfinished → 0.
         filled = [0 if v is None else v for v in interpolate_only(vals)]
         prepared.append((name, filled, tone))
         pk = peak(vals)
@@ -167,6 +182,27 @@ def chart_block(title: str, series_map: dict[str, list]):
             valueSuffix=" D4RL"
             series={{[
               {joined}
+            ]}}
+          />
+        </CardBody>
+      </Card>'''
+
+
+def mpi8_progress_block(counts: list[int]) -> str:
+    cats = ", ".join(f'"{SHORT[e]}"' for e in MPI8_ENVS)
+    data = ", ".join(str(c) for c in counts)
+    total = sum(counts)
+    return f'''      <Card>
+        <CardHeader trailing="mpi8 queue">1M cells by env · {total} / {MPI8_TARGET} (hc+w × 14τ × seeds 2·3)</CardHeader>
+        <CardBody>
+          <BarChart
+            categories={{[{cats}]}}
+            yMin={{0}}
+            yMax={{28}}
+            height={{220}}
+            valueSuffix=" cells"
+            series={{[
+              {{ name: "1M complete", data: [{data}], tone: "info" }}
             ]}}
           />
         </CardBody>
@@ -211,13 +247,21 @@ def live_counts() -> tuple[int, int, str]:
             phase = f"{integ} K={hops}"
         if trains == 0 and "CHAIN_COMPLETE" in text:
             phase = "complete"
+    # Prefer live mpi8 chain log if present.
+    mpi8_logs = sorted(
+        chain_dir.glob("launch_mpi8*.log"),
+        key=lambda p: p.stat().st_mtime,
+    )
+    if trains == 0 and mpi8_logs:
+        text = mpi8_logs[-1].read_text(encoding="utf-8", errors="replace")
+        if "CHAIN_COMPLETE" in text:
+            phase = "complete"
     return trains, sweeps, phase
 
 
-def tbl_rows(matrices: dict[str, dict[str, list]]):
+def tbl_rows(matrices: dict[str, dict[str, list]], keys: list[str], envs: list[str]):
     rows = []
-    keys = ["mpi1", "mpi2", "mpi3", "exp1", "exp2", "exp3"]
-    for env in ENVS:
+    for env in envs:
         cells = [f'"{SHORT[env]}"']
         for i in range(len(TAUS)):
             cells.append(_cell(*(matrices[k][env][i] for k in keys)))
@@ -225,7 +269,16 @@ def tbl_rows(matrices: dict[str, dict[str, list]]):
     return ",\n          ".join(rows)
 
 
-def render(matrices, stats, stamp: str, now: str, trains: int, sweeps: int, phase: str) -> str:
+def render(
+    matrices,
+    stats,
+    stamp: str,
+    now: str,
+    trains: int,
+    sweeps: int,
+    phase: str,
+    mpi8_counts: list[int],
+) -> str:
     charts = []
     for group, envs in (
         ("Hopper", ENVS[:3]),
@@ -241,12 +294,15 @@ def render(matrices, stats, stamp: str, now: str, trains: int, sweeps: int, phas
             if block:
                 blocks.append(block)
         if blocks:
-            charts.append(f"      <H2>{group}</H2>\n      <Grid columns={{1}} gap={{16}}>\n" + "\n".join(blocks) + "\n      </Grid>")
+            charts.append(
+                f"      <H2>{group}</H2>\n      <Grid columns={{1}} gap={{16}}>\n"
+                + "\n".join(blocks)
+                + "\n      </Grid>"
+            )
 
     chart_section = "\n\n".join(charts) if charts else (
         '      <Callout tone="warning">\n'
-        "        아직 seed 2·3 양쪽 1M이 끝난 τ 셀이 없어 곡선이 비어 있습니다. "
-        "완료되면 자동으로 채워집니다.\n"
+        "        아직 seed 2·3 양쪽 1M이 끝난 τ 셀이 없어 곡선이 비어 있습니다.\n"
         "      </Callout>"
     )
 
@@ -255,12 +311,16 @@ def render(matrices, stats, stamp: str, now: str, trains: int, sweeps: int, phas
         k: sum(1 for env in ENVS for v in matrices[k][env] if v is not None)
         for k in matrices
     }
+    mpi8_done = stats["mpi8"][2]
+    progress = mpi8_progress_block(mpi8_counts)
 
-    chart_imports = (
-        "\n  Card,\n  CardBody,\n  CardHeader,\n  LineChart," if charts else ""
-    )
     return f'''import {{
-  Callout,{chart_imports}
+  Callout,
+  Card,
+  CardBody,
+  CardHeader,
+  BarChart,
+  LineChart,
   Grid,
   H1,
   H2,
@@ -271,44 +331,47 @@ def render(matrices, stats, stamp: str, now: str, trains: int, sweeps: int, phas
 }} from "cursor/canvas";
 
 /**
- * MPI / matched EXP K=1,2,3 — seed-mean of {{2,3}} on ext_csh.
+ * MPI π1–3 / π8 / EXP π3 — seed-mean of {{2,3}} on ext_csh.
  * Snapshot: {stamp}
  */
 
 export default function MpiK123S23() {{
   return (
     <Stack gap={{24}}>
-      <H1>MPI π1–3 / EXP π1–3 — seed 2·3 mean D4RL</H1>
+      <H1>MPI π1–3 / π8 + EXP π3 — seed 2·3 mean D4RL</H1>
       <Text>
-        ext_csh MPI_sweep · τ≤20 (14) · 9 envs · concurrency 8 · phase: {phase}.
+        ext_csh MPI_sweep · τ≤20 (14) · concurrency 8 · phase: {phase}.
+        Live queue: mpi8 halfcheetah+walker2d only ({MPI8_TARGET} cells).
         미완료 칸은 0. 알려진 1M 점 사이만 보간. 스냅샷 {now} KST.
       </Text>
       <Grid columns={{4}} gap={{16}}>
-        <Stat value="{stats['mpi1'][2]} / {TARGET}" label="mpi1 1M cells" tone="info" />
-        <Stat value="{stats['mpi2'][2]} / {TARGET}" label="mpi2 1M cells" tone="success" />
-        <Stat value="{stats['mpi3'][2]} / {TARGET}" label="mpi3 1M cells" tone="warning" />
+        <Stat value="{mpi8_done} / {MPI8_TARGET}" label="mpi8 1M (hc+w)" tone="info" />
         <Stat value="{trains} / {sweeps}" label="live trains / sweep masters" />
-      </Grid>
-      <Grid columns={{3}} gap={{16}}>
-        <Stat value="{stats['exp1'][2]} / {TARGET}" label="exp1 1M cells" />
-        <Stat value="{stats['exp2'][2]} / {TARGET}" label="exp2 1M cells" />
+        <Stat value="{stats['mpi3'][2]} / {TARGET}" label="mpi3 1M cells" tone="warning" />
         <Stat value="{stats['exp3'][2]} / {TARGET}" label="exp3 1M cells" tone="danger" />
       </Grid>
+      <Grid columns={{3}} gap={{16}}>
+        <Stat value="{stats['mpi1'][2]} / {TARGET}" label="mpi1 1M cells" />
+        <Stat value="{stats['mpi2'][2]} / {TARGET}" label="mpi2 1M cells" tone="success" />
+        <Stat value="{n_pairs['mpi8']}" label="mpi8 seed-mean τ pairs" />
+      </Grid>
       <Callout tone="info">
-        표 칸: mpi1 / mpi2 / mpi3 / exp1 / exp2 / exp3 (seed 2·3 평균).
-        seed-mean 쌍: π1={n_pairs['mpi1']} π2={n_pairs['mpi2']} π3={n_pairs['mpi3']} ·
-        exp1={n_pairs['exp1']} exp2={n_pairs['exp2']} exp3={n_pairs['exp3']}.
-        started dirs: mpi1={stats['mpi1'][3]} mpi2={stats['mpi2'][3]} mpi3={stats['mpi3'][3]}.
+        곡선: MPI π1/π2/π3/π8 + EXP π3. 표 칸: mpi1 / mpi2 / mpi3 / mpi8 / exp3.
+        seed-mean 쌍: π1={n_pairs['mpi1']} π2={n_pairs['mpi2']} π3={n_pairs['mpi3']}
+        π8={n_pairs['mpi8']} · exp3={n_pairs['exp3']}.
       </Callout>
+
+      <H2>MPI π8 progress</H2>
+{progress}
 
 {chart_section}
 
-      <H2>표 — mpi1 / mpi2 / mpi3 / exp1 / exp2 / exp3</H2>
+      <H2>표 — mpi1 / mpi2 / mpi3 / mpi8 / exp3</H2>
       <Text>칸 = seed-mean D4RL (없으면 0). Source: MPI_sweep/results/*_s23 · {stamp}</Text>
       <Table
         headers={{["env", {headers}]}}
         rows={{[
-          {tbl_rows(matrices)}
+          {tbl_rows(matrices, TABLE_KEYS, ENVS)}
         ]}}
       />
     </Stack>
@@ -323,8 +386,10 @@ def main() -> None:
     for key, (root, tag, score_key) in SWEEPS.items():
         matrix, n_eval, n_1m, n_started = collect(root, tag, score_key)
         matrices[key] = matrix
-        # render uses stats[k][2]=n_1m, stats[k][3]=n_started
         stats[key] = (n_eval, n_1m, n_1m, n_started)
+
+    mpi8_root, mpi8_tag, _ = SWEEPS["mpi8"]
+    mpi8_counts = env_1m_counts(mpi8_root, mpi8_tag, MPI8_ENVS)
 
     trains, sweeps, phase = live_counts()
     now = datetime.now(KST)
@@ -339,12 +404,15 @@ def main() -> None:
             trains,
             sweeps,
             phase,
+            mpi8_counts,
         ),
         encoding="utf-8",
     )
+    keys = ("mpi1", "mpi2", "mpi3", "mpi8", "exp1", "exp2", "exp3")
     print(
         f"[canvas] {stamp} phase={phase} trains={trains} "
-        + " ".join(f"{k}_1m={stats[k][2]}" for k in ("mpi1", "mpi2", "mpi3", "exp1", "exp2", "exp3")),
+        + " ".join(f"{k}_1m={stats[k][2]}" for k in keys)
+        + f" mpi8_scope={stats['mpi8'][2]}/{MPI8_TARGET}",
         flush=True,
     )
 

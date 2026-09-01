@@ -26,12 +26,14 @@ Current implementation status: the CPU harness and 18 deterministic
 state-index files are archived in
 `sweep_results/diagnostics/fixed_operator_order/`; the analytic linear and
 quadratic checks pass. The numerical protocol file is a preflight scaffold, not
-a cleared frozen protocol: it still needs the required code/config hashes, full
-output schema and substep diagnostics, error-ratio/task aggregation, and the
-RK4 cap reconciled with this specification. No learned-critic order result
-exists because the checkpoint inventory resolves 0/18 canonical `T=1`
-critics. Resolve and fingerprint those exact critics only after reconciling and
-regenerating the protocol; no learned aggregate has been read.
+a cleared frozen protocol. The local implementation now includes the required
+code/config hashes, output schemas, state/substep diagnostics, failure
+retention, error ratios, task aggregation, the 8192-microstep RK4 cap, and
+preflight/final verifier paths. These final-output paths are not marked
+complete until exercised on the canonical critics. No learned-critic order
+result exists because the checkpoint inventory resolves 0/18 canonical `T=1`
+critics. Resolve and fingerprint those exact critics before freezing the
+protocol; no learned aggregate has been read.
 
 ### A. Fixed-operator convergence order (CPU, primary)
 

@@ -1,8 +1,8 @@
 {
-  "name": "fixed_operator_order_v1",
-  "written_at": "2026-09-01T14:21:28+00:00",
-  "locked": true,
-  "note": "Do not edit after reading aggregate learned-critic errors.",
+  "name": "fixed_operator_order_v2",
+  "written_at": "2026-09-01T15:36:28+00:00",
+  "locked": false,
+  "note": "Draft only: checkpoints are unresolved, so this is not the frozen protocol.",
   "grid": {
     "T": [
       0.025,
@@ -61,9 +61,9 @@
       512,
       1024,
       2048,
-      4096,
-      8192
+      4096
     ],
+    "maximum_accepted_microsteps": 8192,
     "accept": "R_N <= max(1e-10, 1e-6 * M_2N); use 2N endpoint"
   },
   "implicit_solver": {
@@ -89,6 +89,69 @@
     "raw_state_rows": 368640,
     "implicit_substep_records": 1142784
   },
+  "output_schema": {
+    "endpoint_errors.csv": [
+      "environment",
+      "seed",
+      "T",
+      "K",
+      "scheme",
+      "E_abs",
+      "E_rel",
+      "M_ref",
+      "ratio_to_2K",
+      "slope_K4_8_16",
+      "slope_status",
+      "|I|",
+      "primary_cell",
+      "reference_stable",
+      "failure_reason",
+      "C_ref"
+    ],
+    "raw_state_diagnostics.npz": {
+      "rows": "720*512",
+      "arrays": [
+        "cell_index",
+        "state_index",
+        "error_sq_per_dim",
+        "finite",
+        "oob",
+        "implicit_converged",
+        "common_mask"
+      ]
+    },
+    "implicit_substeps.npz": {
+      "rows": "18*4*512*31",
+      "arrays": [
+        "run_index",
+        "T_index",
+        "K",
+        "substep",
+        "state_index",
+        "residual",
+        "delta",
+        "iterations",
+        "converged",
+        "oob",
+        "nonfinite",
+        "action"
+      ]
+    },
+    "euler_paths.npz": {
+      "rows": "2*18*4*512*31",
+      "description": "Unprojected action at every Euler substep."
+    },
+    "masks.npz": {
+      "shape": [
+        72,
+        512
+      ],
+      "description": "Realized common mask for every env-seed-T cell."
+    },
+    "per_t_slopes.json": "Per env-seed-T-scheme slope or below-floor/failure status.",
+    "SUMMARY.json": "18 run summaries, nine two-seed task means, task-equal aggregate, gates.",
+    "RESULT_MANIFEST.json": "Counts, realized mask metadata, and artifact SHA-256 values."
+  },
   "scientific_gates": {
     "aggregate_median_slope": [
       0.75,
@@ -98,7 +161,10 @@
     "complete_runs": ">=15/18"
   },
   "harness_pass": true,
-  "harness_sha256": "d0e109e0cae84b8c6643334c085d7c51b2441085b6dca454fecd86daadfa92e1",
+  "harness_sha256": "419aab3ad30b4f13f84d8006cf40f8e02594acaa3786cbd0cbc22670fe477393",
+  "checkpoint_inventory_sha256": "995256caeef1a3fd8224051573286cf382c720b257c3bc9190ec01df6241f785",
+  "checkpoint_inventory_status": "unresolved",
   "code_path": "/home/ext_csh/MPI_sweep/scripts/diagnostics/run_fixed_operator_order.py",
-  "protocol_sha256": "78ce3eaf2647e7c40972ee484506b7f4c223c2465a5228f680a44b2312264cde"
+  "code_sha256": "94195bb46018e697ac1d91298181b30c547e20b1189fa6114e3bbf72d040ee8c",
+  "protocol_sha256": "d85c9867da1c1123282e6eb386074f6fceb89575dcc53ec1f0b991cbe48b6f53"
 }

@@ -24,5 +24,5 @@
   ],
   "artifact": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/CHECKPOINTS_UNRESOLVED.json",
   "blocker": "The 18 canonical T=1 critics live under /home/ext_csv/mpi_sweep_lab/results_qnorm/ on ext_csv and are not present on this host. Sync or pass --checkpoint-roots.",
-  "written_at": "2026-09-01T14:21:28+00:00"
+  "written_at": "2026-09-01T15:36:28+00:00"
 }

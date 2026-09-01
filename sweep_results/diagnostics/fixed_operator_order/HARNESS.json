@@ -83,77 +83,77 @@
       {
         "scheme": "explicit",
         "K": 1,
-        "E_abs_vs_exact": 0.0037772543688874487,
+        "E_abs_vs_exact": 0.005341844357013656,
         "converged": true,
         "oob": false
       },
       {
         "scheme": "explicit",
         "K": 2,
-        "E_abs_vs_exact": 0.0017617256321844816,
+        "E_abs_vs_exact": 0.002491456282215609,
         "converged": true,
         "oob": false
       },
       {
         "scheme": "explicit",
         "K": 4,
-        "E_abs_vs_exact": 0.0008526846913839994,
+        "E_abs_vs_exact": 0.001205878254983169,
         "converged": true,
         "oob": false
       },
       {
         "scheme": "explicit",
         "K": 8,
-        "E_abs_vs_exact": 0.00041968009105258617,
+        "E_abs_vs_exact": 0.0005935172766245428,
         "converged": true,
         "oob": false
       },
       {
         "scheme": "explicit",
         "K": 16,
-        "E_abs_vs_exact": 0.00020821903105222472,
+        "E_abs_vs_exact": 0.00029446617765824083,
         "converged": true,
         "oob": false
       },
       {
         "scheme": "implicit",
         "K": 1,
-        "E_abs_vs_exact": 0.0029513278194745773,
+        "E_abs_vs_exact": 0.004173807829309961,
         "converged": true,
         "oob": false
       },
       {
         "scheme": "implicit",
         "K": 2,
-        "E_abs_vs_exact": 0.0015585974909065505,
+        "E_abs_vs_exact": 0.0022041897099207204,
         "converged": true,
         "oob": false
       },
       {
         "scheme": "implicit",
         "K": 4,
-        "E_abs_vs_exact": 0.0008021070223015672,
+        "E_abs_vs_exact": 0.001134350629413575,
         "converged": true,
         "oob": false
       },
       {
         "scheme": "implicit",
         "K": 8,
-        "E_abs_vs_exact": 0.00040704837495488276,
+        "E_abs_vs_exact": 0.0005756533324031241,
         "converged": true,
         "oob": false
       },
       {
         "scheme": "implicit",
         "K": 16,
-        "E_abs_vs_exact": 0.0002050618922823961,
+        "E_abs_vs_exact": 0.00029000130919165526,
         "converged": true,
         "oob": false
       }
     ],
     "slopes_K4_8_16": {
-      "explicit": 1.0169552098473886,
-      "implicit": 0.9838676650056826
+      "explicit": 1.0169552098473889,
+      "implicit": 0.9838676650056829
     },
     "rk4_vs_exact_stable": true,
     "rk4_n_micro": 512,
@@ -164,5 +164,5 @@
     "pass": true
   },
   "pass": true,
-  "written_at": "2026-09-01T14:21:00+00:00"
+  "written_at": "2026-09-01T15:35:58+00:00"
 }

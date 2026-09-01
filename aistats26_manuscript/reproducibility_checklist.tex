@@ -7,7 +7,7 @@
     \item A clear description of the mathematical setting, assumptions, algorithm, and/or model. [Yes/No/Not Applicable]\\
     \textbf{Yes.} Sections~\ref{sec:background}--\ref{sec:method} define the setting, actor chain, losses, and assumptions.
     \item An analysis of the properties and complexity (time, space, sample size) of any algorithm. [Yes/No/Not Applicable]\\
-    \textbf{Yes.} Section~\ref{sec:method} states that BAR uses $K$ persistent actors and $K$ actor optimizer calls per delayed update; the theoretical properties are stated in Propositions~\ref{prop:margin}--\ref{prop:local_composition}.
+    \textbf{Yes.} Section~\ref{sec:method} states that BAR uses $K$ persistent actors and $K$ actor optimizer calls per delayed update; Eq.~\eqref{eq:margin}, Proposition~\ref{prop:exposure}, and the local-idealization subsection state the theoretical properties and scope.
     \item (Optional) Anonymized source code, with specification of all dependencies, including external libraries. [Yes/No/Not Applicable]\\
     \textbf{Partial.} The anonymized release contains the BAR launch, evaluation, diagnostic, and verification code plus the compact policy-separation audit. The control-run configs identify local training-source files by SHA-256, but did not record a clean Git revision.
   \end{enumerate}

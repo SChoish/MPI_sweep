@@ -42,6 +42,45 @@ LINEAR_EXPECTED = {
     "lin2": (38.42734007936508, 25, 112),
     "lin3": (46.43985436507936, 21, 95),
 }
+PRACTICAL_EXPECTED = {
+    "fixed_1_5": {
+        "td3": 74.78503888888889,
+        "prox2": 78.04966944444445,
+        "prox3": 78.95350555555555,
+        "prox4": 77.7007361111111,
+        "lin2": 75.12858888888888,
+        "lin3": 77.73804166666667,
+    },
+    "grid_best": {
+        "td3": (74.78503888888889, 1.5),
+        "prox2": (80.65999722222222, 2.5),
+        "prox3": (81.40987222222222, 2.5),
+        "prox4": (82.06428055555556, 4.0),
+        "lin2": (78.42564444444444, 2.5),
+        "lin3": (78.20023611111111, 2.5),
+    },
+    "family_transfer": {
+        "selected_t": {
+            "hopper": {"td3": 1.5, "prox4": 2.5},
+            "halfcheetah": {"td3": 1.5, "prox4": 7.0},
+            "walker2d": {"td3": 1.5, "prox4": 4.0},
+        },
+        "fold_differences": {
+            "hopper": 17.076475000000002,
+            "halfcheetah": -8.938799999999993,
+            "walker2d": 2.826158333333325,
+        },
+        "td3_mean": 74.78503888888889,
+        "prox4_mean": 78.43965,
+        "mean_difference": 3.654611111111109,
+        "positive_tasks": 7,
+    },
+    "hierarchical95": {
+        "prox4_minus_prox3_high": (3.0449487003968296, 22.7271641170635),
+        "lin3_minus_lin2_high": (2.9018722023809533, 14.0653185515873),
+        "prox4_minus_td3_fixed_1_5": (-0.2018227083333348, 8.455759027777766),
+    },
+}
 PROXIMAL = (("k1", "td3"), ("k2", "prox2"), ("k3", "prox3"), ("k4", "prox4"))
 LINEARIZED = (("l2", "lin2"), ("l3", "lin3"))
 EXPECTED_CLAIMS = {
@@ -277,6 +316,128 @@ def verify_complete_grid(root: Path, claims: dict[str, object]) -> None:
             f"PASS complete-grid {method}: high={high_mean:.4f}, "
             f"collapse={cell_collapses}/{cell_denominator} and {raw_collapses}/{raw_denominator}"
         )
+
+
+def verify_practical_summaries(root: Path) -> None:
+    source: dict[str, dict[tuple[float, int, str], float]] = {}
+    for method, (hops, integrator, seeds) in METHODS.items():
+        envs, values = load_sweep(root, hops, integrator, seeds)
+        assert tuple(envs) == ENVIRONMENTS and seeds == (0, 1, 2, 3)
+        source[method] = values
+
+        fixed = statistics.mean(
+            values[(1.5, seed, env)] for seed in seeds for env in envs
+        )
+        close(fixed, PRACTICAL_EXPECTED["fixed_1_5"][method], 1e-12)
+        tau_means = {
+            tau: statistics.mean(
+                values[(tau, seed, env)] for seed in seeds for env in envs
+            )
+            for tau in GRID
+        }
+        best_tau = max(GRID, key=tau_means.__getitem__)
+        expected_best, expected_tau = PRACTICAL_EXPECTED["grid_best"][method]
+        close(tau_means[best_tau], expected_best, 1e-12)
+        close(best_tau, expected_tau, 1e-12)
+
+    families = {
+        "hopper": tuple(env for env in ENVIRONMENTS if env.startswith("hopper-")),
+        "halfcheetah": tuple(env for env in ENVIRONMENTS if env.startswith("halfcheetah-")),
+        "walker2d": tuple(env for env in ENVIRONMENTS if env.startswith("walker2d-")),
+    }
+    expected_transfer = PRACTICAL_EXPECTED["family_transfer"]
+    held_scores: dict[str, dict[str, float]] = {"td3": {}, "prox4": {}}
+    for family, test_envs in families.items():
+        train_envs = tuple(env for env in ENVIRONMENTS if env not in test_envs)
+        for method in ("td3", "prox4"):
+            values = source[method]
+            train_means = {
+                tau: statistics.mean(
+                    values[(tau, seed, env)]
+                    for seed in (0, 1, 2, 3)
+                    for env in train_envs
+                )
+                for tau in GRID
+            }
+            selected_tau = max(GRID, key=train_means.__getitem__)
+            close(
+                selected_tau,
+                expected_transfer["selected_t"][family][method],
+                1e-12,
+            )
+            for env in test_envs:
+                held_scores[method][env] = statistics.mean(
+                    values[(selected_tau, seed, env)] for seed in (0, 1, 2, 3)
+                )
+        fold_difference = statistics.mean(
+            held_scores["prox4"][env] - held_scores["td3"][env]
+            for env in test_envs
+        )
+        close(fold_difference, expected_transfer["fold_differences"][family], 1e-12)
+
+    td3_held = statistics.mean(held_scores["td3"].values())
+    prox4_held = statistics.mean(held_scores["prox4"].values())
+    close(td3_held, expected_transfer["td3_mean"], 1e-12)
+    close(prox4_held, expected_transfer["prox4_mean"], 1e-12)
+    close(prox4_held - td3_held, expected_transfer["mean_difference"], 1e-12)
+    assert sum(
+        held_scores["prox4"][env] > held_scores["td3"][env]
+        for env in ENVIRONMENTS
+    ) == expected_transfer["positive_tasks"]
+
+    def hierarchical_interval(
+        method_a: str,
+        method_b: str,
+        taus: tuple[float, ...],
+    ) -> tuple[float, float]:
+        aa = np.asarray(
+            [
+                [
+                    statistics.mean(source[method_a][(tau, seed, env)] for tau in taus)
+                    for seed in (0, 1, 2, 3)
+                ]
+                for env in ENVIRONMENTS
+            ],
+            dtype=float,
+        )
+        bb = np.asarray(
+            [
+                [
+                    statistics.mean(source[method_b][(tau, seed, env)] for tau in taus)
+                    for seed in (0, 1, 2, 3)
+                ]
+                for env in ENVIRONMENTS
+            ],
+            dtype=float,
+        )
+        rng = np.random.default_rng(20260902)
+        task_indices = rng.integers(0, len(ENVIRONMENTS), size=(200_000, len(ENVIRONMENTS)))
+        bootstrap = np.zeros(200_000, dtype=float)
+        for occurrence in range(len(ENVIRONMENTS)):
+            task = task_indices[:, occurrence]
+            seed_a = rng.integers(0, 4, size=(200_000, 4))
+            seed_b = rng.integers(0, 4, size=(200_000, 4))
+            mean_a = np.take_along_axis(aa[task], seed_a, axis=1).mean(axis=1)
+            mean_b = np.take_along_axis(bb[task], seed_b, axis=1).mean(axis=1)
+            bootstrap += mean_a - mean_b
+        bootstrap /= len(ENVIRONMENTS)
+        interval = np.percentile(bootstrap, (2.5, 97.5))
+        return float(interval[0]), float(interval[1])
+
+    hierarchical = {
+        "prox4_minus_prox3_high": hierarchical_interval("prox4", "prox3", HIGH),
+        "lin3_minus_lin2_high": hierarchical_interval("lin3", "lin2", HIGH),
+        "prox4_minus_td3_fixed_1_5": hierarchical_interval("prox4", "td3", (1.5,)),
+    }
+    for label, interval in hierarchical.items():
+        expected_interval = PRACTICAL_EXPECTED["hierarchical95"][label]
+        close(interval[0], expected_interval[0], 1e-10)
+        close(interval[1], expected_interval[1], 1e-10)
+
+    print(
+        "PASS practical summaries: fixed/grid-best scores, leave-one-family-out "
+        "budget transfer, and task-then-independent-seed intervals"
+    )
 
 
 def load_proximal_sweeps(
@@ -1619,8 +1780,13 @@ def verify_manuscript(path: Path) -> None:
         "rescued-cell gain share": "54.7%",
         "four-seed collapse-risk interval": "-.119([-.218,-.024])",
         "four-seed linearized interval": "[3.56,13.53]",
-        "four-seed linearized L2 row": "bar-l2&4&69.79&38.43&28.47&25/112",
-        "four-seed linearized L3 row": "bar-l3&4&69.73&46.44&35.83&21/95",
+        "four-seed linearized L2 row": "bar-l2&75.13&78.43(2.5)&38.43&25/112",
+        "four-seed linearized L3 row": "bar-l3&77.74&78.20(2.5)&46.44&21/95",
+        "fixed-budget practical contrast": "bar-p3andp4score78.95and77.70versus74.79",
+        "descriptive grid maxima": "bar-p4reaches82.06att=4",
+        "family-transfer summary": "p4averages78.44versus74.79fortd3+bc(+3.65;7/9",
+        "hierarchical P4-P3 sensitivity": "intervals[3.04,22.73]and[2.90,14.07]",
+        "hierarchical fixed-budget sensitivity": "interval[-.20,8.46]",
         "linearized cell support": "positivein45/63continuouscellcontrasts",
         "linearized cell transitions": "itsfiverescuesandonereversal",
         "linearized rescue share": "42.8%",
@@ -1632,6 +1798,34 @@ def verify_manuscript(path: Path) -> None:
         "seed-pair table K4": "4&63.61&64.33&9&10",
         "target displacement count": "88/90",
         "final proxy count": "36/90",
+        "exposure proxy definition": (
+            "bootstrapexposuredenotesthistarget-action-displacementproxy,"
+            "notdistancetodatasetsupport,criticerror,orbellman-targeterror"
+        ),
+        "metric quotient boundary": (
+            "pseudometriconpointwisepolicymapsandametricafteridentifying"
+            "mapsequalrho-almosteverywhere"
+        ),
+        "live algorithm order": (
+            "polyak-updatemu_1^-andthetargetcriticswithrate.005"
+        ),
+        "live local-limit boundary": (
+            "persistentlateractorsneednotapproachtheidentityashto0"
+        ),
+        "calibrated abstract mechanism": (
+            "resultssupporttarget/deploymentseparation"
+        ),
+        "evidence map": "evidencemap",
+        "evidence map P3 movement scope": (
+            "p3target/finaldisplacement&270checkpoints;90matchedcontrasts"
+        ),
+        "evidence map P3 control scope": (
+            "p3two-actorcontrol&90pairs;180finalscores"
+        ),
+        "P4 audit scope": (
+            "p4target-brancharchivecontains180checkpointsacrossseeds0--3."
+            "comparisonsusethe90seed-0/1cellsmatchedtotd3+bcandp3"
+        ),
         "restricted exposure sensitivity": "36/40cells",
         "restricted exposure median ratio": "medianratio.905",
         "compressed route qualification": (
@@ -1641,12 +1835,15 @@ def verify_manuscript(path: Path) -> None:
         "stable simulator median": "-41.4",
         "collapsed simulator median": "+1.70times10^12",
         "bootstrap protocol": "100,000drawsusinganalysisseed20260830",
-        "audit scope": "matched270-checkpointtd3/p2/p3audit",
+        "audit scope": "a270-checkpointauditfindslowerp3target-actiondisplacement",
         "manifest limitation": "exactper-runmanifestswerenotretained",
         "provenance qualification": (
             "provenanceconsistsofthearchivedlaunchconfigurationandscorematrices"
         ),
-        "MCEP control means": "itscores59.22versus57.67",
+        "MCEP control means": "scores59.22versus57.67foracontemporaneousp3rerun",
+        "MCEP main table BAR row": "bar-p3rerun&57.67&23/90&9/45",
+        "MCEP main table control row": "two-actorcontrol&59.22&21/90&9/45",
+        "missing P4 control boundary": "nocorrespondingp4controlhasyettested",
         "MCEP control contrast": (
             "controlminusbaris+1.56withtask-resamplinginterval[-1.52,5.44]"
         ),
@@ -1687,8 +1884,14 @@ def verify_manuscript(path: Path) -> None:
         "overclaimed final route shorthand": "8/8final-checkpoint",
         "invalid actor-path evidence": "actor-path",
         "invalid semigroup-defect evidence": "semigroupdefect",
+        "overstrong abstract mechanism": (
+            "resultsestablishtarget/deploymentseparation"
+        ),
         "MCEP equivalence overclaim": "statisticallyindistinguishable",
         "MCEP equivalence shorthand": "equivalentperformance",
+        "ambiguous four-seed P4 comparison": (
+            "four-seedk=4auditlowerstargetdisplacementin89/90matchedseed-0/1"
+        ),
     }
     stale = [label for label, token in stale_tokens.items() if token in text]
     if re.search(r"35/63.{0,80}9/63", text):
@@ -1722,6 +1925,7 @@ def main() -> None:
     args = parser.parse_args()
     claims = EXPECTED_CLAIMS
     verify_complete_grid(args.results_dir, claims)
+    verify_practical_summaries(args.results_dir)
     verify_host_separated_pairs(args.results_dir, claims)
     verify_stability_claims(args.results_dir, claims)
     verify_controls(args.results_dir / "diagnostics")

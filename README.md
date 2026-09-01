@@ -266,12 +266,16 @@ The proximal `K={1,2,3,4}` and projected-linearized `K={2,3}` CSVs for
 seeds 0--3 each complete the same nine-task, fourteen-budget grid. In the
 high-budget region, the four-seed projected-linearized mean rises from 38.43
 at `K=2` to 46.44 at `K=3`, with score-below-20 cells falling from 25/63
-to 21/63. Large training checkpoints are not committed. The host-specific
-diagnostic bundle includes compact outputs and post-hoc manifests derived from
-all 504 local
-K4 checkpoints, including a 180-cell four-seed target-exposure audit. Those
-audit manifests do not reconstruct the missing historical training
-configurations for proximal seeds 2--3.
+to 21/63. The practical summaries are not confined to that stress tail: at
+TD3+BC's grid-best shared budget `T=1.5`, BAR-P3 and P4 score 78.95 and 77.70
+versus 74.79, while BAR-P4's descriptive grid maximum is 82.06 at `T=4`.
+A leave-one-dynamics-family-out tuning-transfer sensitivity gives 78.44 for
+P4 versus 74.79 for TD3+BC; it is descriptive and does not provide an offline
+budget-selection rule. Large training checkpoints are not committed. The
+host-specific diagnostic bundle includes compact outputs and post-hoc manifests
+derived from all 504 local K4 checkpoints, including a 180-cell four-seed
+target-action-displacement audit. Those audit manifests do not reconstruct the
+missing historical training configurations for proximal seeds 2--3.
 
 Audited movement, critic failure, target exposure, simulator calibration, and
 targeted controls are documented in
@@ -295,7 +299,9 @@ collapse in 9/45 task--budget cells. Sequential re-centering is therefore not
 a prerequisite for the observed mean and seed-mean collapse outcomes on this
 grid. Because the control also changes actor work, anchoring, and the realized
 critic trajectory, it establishes neither superiority nor equivalence and does
-not isolate which element of the simpler procedure is responsible.
+not isolate which element of the simpler procedure is responsible. The next
+decisive experiment is the matched two-actor P4 control specified in
+[TODO.md](TODO.md); no seeds 4--7 expansion is planned.
 
 The compact [paired archive](sweep_results/diagnostics/bar_mcep_p3_paired/)
 contains all final scores, independently checked aggregates, recovery

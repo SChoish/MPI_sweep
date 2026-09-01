@@ -58,7 +58,7 @@ cp paper.pdf bar_aistats26_manuscript.pdf
 cp supplement.pdf bar_aistats26_supplement.pdf
 
 for log_file in paper.log supplement.log; do
-  blocking="$(grep -En 'Overfull \[hv]box|Undefined control sequence|Emergency stop|Fatal error' "$log_file" \
+  blocking="$(grep -En 'Overfull \[hv]box|Undefined control sequence|There were undefined references|Citation .* undefined|Emergency stop|Fatal error' "$log_file" \
     | grep -Ev 'Overfull \hbox \(5\.1225pt too wide\)' || true)"
   if [[ -n "$blocking" ]]; then
     echo "error: $log_file contains a blocking typesetting warning" >&2

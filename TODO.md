@@ -8,7 +8,134 @@ pre-specified integrity checks, and add evidence not already carried by a
 stronger result. Method names follow [README.md](README.md); P2, P3, and P4
 mean BAR-Prox with `K=2,3,4`.
 
-## P0: replace the actor semigroup test with an operator-error audit
+Priority follows the claim dependency: identify what the method adds, measure
+the proposed mechanism, validate the local numerical interpretation, then
+harden release provenance and cost reporting. A lower-priority completed run
+does not displace a higher-priority unresolved claim.
+
+## P0: identify what the sequential chain adds beyond policy separation
+
+The completed P3 two-actor control changes the paper's mechanism claim. Its
+conservative target actor uses `T/3`, its data-anchored deployment actor uses
+`T`, and only the target branch enters Bellman backups. Across 90 cells it
+reaches the same 9/45 seed-mean collapse count as contemporaneous BAR-P3 and
+has no resolved aggregate difference. Thus target/deployment separation is a
+sufficient candidate mechanism at P3; sequential re-centering is not a
+prerequisite for those aggregate outcomes.
+
+### A. Two-actor P4 versus contemporaneous BAR-P4 (GPU, decisive)
+
+- [ ] Generalize the existing control to a target coefficient `T/4` and a
+  directly data-anchored deployment coefficient `T`. Keep independent actors;
+  route only the target actor into Bellman backups. Call it a two-actor
+  policy-separation control, not a published-MCEP reproduction.
+- [ ] Run exactly nine paper tasks, `T={4,7,10,14,20}`, and seeds 0--1 to one
+  million critic updates with ten final evaluation episodes: 90 control runs.
+  Do not add seeds 4--7 and do not expand to a P2/P3/P4 factorial before this
+  comparison is read.
+- [ ] Rerun the same 90 BAR-P4 cells contemporaneously from the same clean code
+  snapshot and environment lock. Historical P4 scores may be a marginal
+  sensitivity, but cannot be spliced into cellwise pairing because individual
+  collapse trajectories are unstable across reruns.
+- [ ] Before launch, freeze a manifest with resolved configs, source revision
+  and file hashes, dependency lock, dataset and normalization hashes, hardware,
+  evaluation contract, output schema, and exact expected keys. Resume only
+  from a checkpoint whose config and weights hashes match the manifest.
+- [ ] Primary signed contrast is BAR-P4 minus two-actor-P4. Report the
+  task-equal mean over the fixed 90-cell grid, paired median, wins/ties,
+  nine task means, 100,000-draw task-resampling interval, and raw-run plus
+  seed-mean collapse transitions at thresholds 0, 10, 20, 30, and 40.
+- [ ] Before launch, freeze an author-chosen minimum worthwhile difference of
+  three normalized-return points. Classify the primary BAR-minus-control
+  contrast as chain-supporting only if its 95% task-resampling interval lies
+  above zero and its point estimate is at least +3; as control-supporting only
+  if the interval lies below zero and the estimate is at most -3; and as
+  practically comparable only if the full interval lies inside [-3,+3]. All
+  other outcomes are unresolved. Collapse transitions are secondary and
+  cannot override this label.
+- [ ] Treat the result as a full-procedure comparison. A chain-supporting
+  result supports incremental value for the four-actor chain bundle, not
+  re-centering alone. A control-supporting or practically comparable result
+  supports direct coefficient/routing separation as the simpler method.
+
+### B. Completed P3 control and optional exact causal isolation
+
+- [x] Complete BAR-P3 and the MCEP-inspired P3 control at 90/90 final
+  checkpoints and archive the exact matched intersection in
+  `sweep_results/diagnostics/bar_mcep_p3_paired/`.
+- [x] Verify control minus BAR as `+1.56`, task-resampling interval
+  `[-1.52,5.44]`, paired median `-.42`, 52/90 BAR wins, raw collapse 21/90
+  versus 23/90, and seed-mean collapse 9/45 for both. Keep this as an
+  exploratory final-score/config-level control, not an equivalence result.
+- [x] Preserve CPU recovery provenance: eight Walker2d-expert cells resumed
+  from matching logged emergency checkpoints and two `T=20` cells began on
+  CPU. The task-removal sensitivity is not a hardware-effect estimate.
+- [ ] Only if a re-centering-only causal claim is still required after P4,
+  implement one joint driver sharing the target actor, critic, target networks,
+  minibatches, and RNG, branching only the evaluation-policy construction.
+  The current separately trained controls also change actor work, anchoring,
+  and critic trajectory.
+
+## P1: measure target-value perturbation and matched final reach (CPU)
+
+The existing headline diagnostic directly measures target-action displacement,
+not critic error, dataset support, or TD-target value perturbation. The current
+`ext_csv` checkpoint inventory contains the 90 contemporaneous BAR-P3 and 90
+P3-control finals but no complete headline TD3/P4 inventory. Do not substitute
+those reruns for the released grid. Run this audit only after the exact matched
+headline checkpoints are resolved and fingerprinted.
+
+### A. Direct TD-target-value perturbation
+
+- [ ] Inventory matched TD3, P3, and P4 final checkpoints for all nine tasks,
+  `T={4,7,10,14,20}`, and seeds 0--1. Record weights, config, source, dataset,
+  normalization, and selected-transition hashes; stop on any missing cell.
+- [ ] On one frozen next-state batch and the existing valid-transition mask,
+  reuse identical clipped target-smoothing noise for the target actor and the
+  recorded next dataset action. For each checkpoint compute
+  `Delta_y_RMS = gamma * sqrt(mean((min_j Q_j^-(s',mu_1^-(s')+eps)
+  - min_j Q_j^-(s',a_next+eps))**2))`.
+- [ ] Use the checkpoint's frozen target critic for the operational within-run
+  measurement and a separately labeled common-critic sensitivity for
+  cross-procedure action effects. Do not interpret either as critic accuracy;
+  simulator return remains the external calibration signal.
+- [ ] Archive per-checkpoint RMS, target magnitude, action displacement,
+  clipping, finite-value flags, common batch/noise hashes, and exact row counts.
+  Report method contrasts with task-level aggregation and the same marginal
+  seed interpretation as the score grid.
+
+### B. Same-next-state exposure and reach geometry
+
+- [ ] On that identical `s'`, `a_next` batch compute both the deterministic
+  Polyak first-actor displacement and the online final-actor displacement.
+  This removes the current-state/next-state asymmetry in the P3 comparison.
+- [ ] Require full final-actor geometry for the 90 matched P4 cells. The current
+  180-checkpoint P4 target dump and 24-cell frontier panel are insufficient for
+  a full-grid exposure--reach claim.
+- [ ] Report target/final ratios jointly, their correlation with
+  `Delta_y_RMS`, stable/collapsed stratification defined only by external
+  return, and sensitivity to target smoothing. Movement and value perturbation
+  remain mechanism readouts, not causal return effects.
+
+### C. Realized feasible-comparator residual
+
+- [ ] For re-centered hops $k\ge2$, use a held-out batch with the same frozen
+  critic, realized $C_k$, and predecessor reference to record
+  `r_k = L_h,k(mu_k | mu_(k-1)) - L_h,k(mu_(k-1) | mu_(k-1))` before and after
+  the live one-Adam-step update. Store `max(0,r_k)` as the smallest observed
+  comparator slack satisfying the conditional margin.
+- [ ] Report hop-, budget-, task-, and stability-stratified residuals with
+  batch and checkpoint hashes. Do not call this a global optimality gap or a
+  bound on $\varepsilon_k$; it only tests the proposition's feasible-comparator
+  premise on sampled states. Exclude the sample-anchored first hop from the
+  literal deterministic-policy comparator claim.
+
+Inclusion gate: promote the direct value metric or comparator residual only if
+the checkpoint manifest, common batch/noise contract, exact grid, and verifier
+all pass. Null, reversed, or heterogeneous outcomes must be reported rather
+than filtered.
+
+## P2: validate the local theory with a fixed-operator error audit
 
 The archived actor-path analysis is no longer manuscript evidence for a
 semigroup or discretization-error claim. Its learned-endpoint comparisons use
@@ -176,46 +303,34 @@ The separate existing local-consistency result is the archive at
 `sweep_results/diagnostics/frozen_critic_small_step/`; it is not the retired
 actor-path bundle.
 
-## Result-inclusion gates
+## P3: release provenance and practical cost
 
-Here MCEP means the separately trained two-actor policy-separation control:
-its target branch uses coefficient `tau/3`, its data-anchored evaluation branch
-uses `tau`, and only the target branch enters Bellman backups. It is a mechanism
-control inspired by MCEP, not a reproduction of the published algorithm.
+- [x] Add fixed-budget, descriptive grid-best, leave-one-dynamics-family-out
+  budget-transfer, and task-then-independent-seed sensitivity summaries to the
+  manuscript and verifier. They demonstrate a practical regime but do not
+  create an offline `T,K` selection rule.
+- [ ] Release a clean runnable snapshot of the exact P3 control-mode training
+  changes. Existing configs omit the Git revision; file digests alone are not
+  runnable source. Preserve the BAR evaluation-column contract and strengthen
+  checkpoint config validation.
+- [ ] Record measured actor-update wall time and peak accelerator memory for
+  `K={1,2,3,4}` on one fixed hardware/software stack. Keep the analytical
+  `O(K)` actor work statement, but do not replace measurements with asymptotic
+  complexity.
+- [ ] For all new runs, retain resolved YAML/JSON, source revision, environment
+  lock, dataset and normalization hashes, host/accelerator inventory, and a
+  compact final-checkpoint manifest. Historical seeds 2--3 limitations remain
+  explicit rather than reconstructed from post-hoc P4 artifacts.
 
-- [x] Complete BAR-P3 and MCEP-inspired P3 at 90/90 final checkpoints and
-  final evaluations with an exact environment--budget--seed intersection.
-- [x] Archive paired scores, independently recomputed summary statistics, all
-  raw config/eval/final-checkpoint hashes, and recovery provenance in
-  `sweep_results/diagnostics/bar_mcep_p3_paired/`. Eight Walker2d-expert
-  cells resumed from matching logged emergency-checkpoint steps on the CPU
-  recovery path; the two `T=20` cells began there from zero.
-- [x] Add the result to the main paper and supplement as an exploratory
-  final-score/config-level mechanism control. Preserve the signed estimand:
-  control minus contemporaneous BAR is +1.56 with task-resampling interval
-  [-1.52, 5.44], paired median -0.42, and 52/90 BAR wins. Do not turn the
-  interval into an equivalence claim.
-- [ ] Release a clean runnable snapshot of the exact control-mode training
-  changes. The run configs did not record a Git revision; `SUMMARY.json` records
-  the two local source-file hashes, but hashes alone are not runnable code.
-  Preserve the existing BAR evaluation-column contract and strengthen
-  checkpoint config validation before shipping the implementation.
-- [ ] If a re-centering-only causal control becomes necessary, implement a
-  joint driver that shares the target actor, critic, target networks,
-  minibatches, and RNG in one process and branches only the evaluation policy.
-  The current separate-run control changes actor work, anchoring, and the
-  realized critic trajectory.
-
-- Recorded evidence: the restricted four-environment seed-2/3 target-exposure
-  extension is complete and is used only as a sensitivity check. P3 is lower
-  than P2 in 36/40 cells, with median ratio `.905`.
+- Recorded evidence: the restricted four-environment seed-2/3 target-action
+  extension is complete and remains a sensitivity check (P3 lower than P2 in
+  36/40 cells; median ratio `.905`).
 - Recorded exclusion: the eight-run K4 route-native simulator audit is complete
-  but misses its pre-specified two-sided paired sign-flip permutation rule
-  (5/8 positive, `p=.0625`). It remains outside the manuscript.
-- [x] Archive compact K4 route-native artifacts in `sweep_results/diagnostics/route_shadow_k4/`; keep them excluded from the manuscript under the pre-specified rule.
-- Decision lock: do not resume the stopped seeds 4--7 factorial plan unless a
-  later review identifies a claim that the existing four-seed grids and
-  targeted controls cannot answer.
+  but misses its pre-specified two-sided sign-flip rule (5/8 positive,
+  `p=.0625`). Keep it outside the manuscript.
+- Decision lock: do not resume seeds 4--7, restore archived actor-path defect
+  values or mixed-normalization K8 comparisons, or add a completed experiment
+  merely because it exists.
 
 ## Manuscript gate
 

@@ -44,12 +44,14 @@ folders below in place; see ARTIFACT_MAP.
 
 ## Manuscript-facing checks
 
-- BAR-Prox P3 lowers deterministic target exposure versus TD3+BC in 88/90
-  matched cells; its final-policy proxy is lower in 36/90.
-- The P4 target-branch dump lowers exposure in 89/90 matched comparisons with
-  TD3+BC and 85/90 with P3. It contains no P4 final-actor metric.
-- The restricted four-environment seed-2/3 extension lowers P3 exposure versus
-  P2 in 36/40 cells (median ratio `.905`); it is a sensitivity check.
+- BAR-Prox P3 lowers deterministic target-action displacement versus TD3+BC
+  in 88/90 matched cells; its final-policy proxy is lower in 36/90.
+- The 180-checkpoint P4 target-branch dump uses seeds 0--3. Its comparisons use
+  the 90 seed-0/1 cells matched to TD3+BC and P3: P4 is lower in 89/90 and
+  85/90. It contains no full-grid P4 final-actor metric.
+- The restricted four-environment seed-2/3 extension lowers P3 target-action
+  displacement versus P2 in 36/40 cells (median ratio `.905`); it is a
+  sensitivity check.
 - Route-native shadow evaluation yields larger final-route error in all eight
   run aggregates (mean `.124`, sign-flip `p=.0078`). Under the common
   first-route continuation the difference is positive in 6/8, but misses the
@@ -63,7 +65,9 @@ folders below in place; see ARTIFACT_MAP.
   [-1.5187, 5.4433]; its paired median is -0.4187, and BAR wins 52/90.
   Both procedures have 9/45 seed-mean collapses. This is a bundled
   policy-separation mechanism control, not an equivalence result,
-  published-MCEP reproduction, or re-centering-only ablation.
+  published-MCEP reproduction, or re-centering-only ablation. It supports
+  separation as a sufficient P3 candidate mechanism; the corresponding P4
+  control has not been run.
 - Ten Walker2d-expert control cells used the documented CPU recovery chain:
   eight resumed from matching logged emergency-checkpoint steps and two
   started there from zero. Removing that entire task gives +1.8278, which is

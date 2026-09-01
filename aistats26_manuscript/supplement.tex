@@ -49,7 +49,7 @@ gives Eq.~\eqref{eq:prox_operator} with $h=\alpha/2$. More generally,
 $-\lambda\mathbb E_s\widehat Q$ gives $h=\lambda C/2$ because
 $\widehat Q=C\bar Q$.
 
-\subsection{Proposition~\ref{prop:margin} and critic-error transfer}
+\subsection{Inexact estimated-energy margin and critic-error transfer}
 By $\varepsilon_k$-optimality relative to the feasible comparator
 $\mu_{k-1}$,
 \begin{equation}
@@ -132,7 +132,25 @@ adaptive time parameterization in the infinitesimal limit. This derivation is
 not applied to the large-budget regime with active projection, ReLU-region
 crossings, critic drift, or inaccurate actor solves.
 
-\subsection{Proof of Proposition~\ref{prop:local_composition}}
+\subsection{Fixed-budget composition for an ideal consistent map}
+\begin{proposition}[Local fixed-budget composition]
+\label{prop:local_composition}
+Let a smooth one-step update in local coordinates satisfy
+$\Psi_h(x)=x+h f(x)+h^2p(x)+O(h^3)$. For fixed $K$ and $T\to0$,
+\begin{equation}
+\begin{aligned}
+\Psi_{T/K}^{K}(x_0)
+={}&x_0+Tf_0\\
+&+T^2\!\left[\frac{K-1}{2K}J_0f_0+\frac{1}{K}p_0\right]+O(T^3),
+\end{aligned}
+\label{eq:k_comp}
+\end{equation}
+where $f_0=f(x_0)$ and $J_0=Df(x_0)$. Coordinate explicit Euler has
+$p_0=0$, whereas exact backward Euler has $p_0=J_0f_0$. Hence both are
+first-order methods with leading fixed-$K$ flow bias proportional to $1/K$.
+\end{proposition}
+
+\paragraph{Proof.}
 Write $x_j=x_0+jhf_0+O(h^2)$ for fixed $K$, which follows inductively from the
 one-step consistency assumption. Smoothness then gives
 \begin{equation}
@@ -201,6 +219,27 @@ The nine exact datasets are the Cartesian product of domains
 \texttt{medium-v2}, \texttt{medium-replay-v2}, and \texttt{expert-v2}.
 Timeout rows are omitted from transition construction; terminal flags stop
 bootstrapping.
+
+\begin{table*}[t]
+\caption{Evidence map. Roles distinguish the complete headline score grids
+from post-hoc diagnostics and exploratory controls.}
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Evidence & Unit / scope & Seeds & Role\\
+\midrule
+Proximal and linearized scores & $9$ tasks $\times14$ budgets & 0--3 & Headline grids\\
+P3 target/final displacement & 270 checkpoints; 90 matched contrasts & 0--1 & Post-hoc full audit\\
+P4 target branch & 180 checkpoints; 90 matched contrasts & 0--3 / 0--1 & Post-hoc audit; no full final actor\\
+P4 final branch & 24 frontier cells & 0--1 & Post-hoc targeted panel\\
+P3 two-actor control & 90 pairs; 180 final scores & 0--1 & Exploratory mechanism control\\
+Route and component controls & 8 selected runs & 0--1 & Post-hoc targeted controls\\
+\bottomrule
+\end{tabular}
+\label{tab:evidence_map}
+\end{table*}
 
 \subsection{Diagnostic quantities}
 On a fixed current-state validation batch with paired dataset actions, we
@@ -289,7 +328,12 @@ risk is first averaged within each task and then resampled by task using the
 same draw count and seed. These 95\% percentile intervals preserve the complete
 within-task budget and seed structure but do not remove dependence among the
 three datasets sharing one dynamics family. With only three families, family
-analyses are sensitivity checks rather than a three-cluster bootstrap.
+analyses are sensitivity checks rather than a three-cluster bootstrap. A
+secondary task-then-seed bootstrap uses 200,000 draws and seed 20260902: after
+averaging the fixed budget set within each seed, it resamples nine tasks and
+independently resamples four seeds with replacement for each procedure and each
+task occurrence. This targets marginal procedure means rather than treating
+seed labels as exact trajectory pairs.
 Cross-$K$ means estimate each randomized procedure's marginal performance.
 Identical critic initialization
 across depth is not required for validity; common random numbers would reduce
@@ -318,6 +362,25 @@ Lin-3&59.27&62.86&64.99&70.90&74.13&77.74&78.20&78.16&67.80&45.60&39.96&41.69&26
 \end{tabular}
 \label{tab:tau_means}
 \end{table*}
+
+\paragraph{Practical budget summaries.}
+At TD3+BC's best shared grid budget, $T=1.5$, P3 and P4 score $78.95$ and
+$77.70$ versus $74.79$; the descriptive method-wise grid maxima are $82.06$
+for P4 at $T=4$ and $74.79$ for TD3+BC at $T=1.5$. To reduce same-grid
+selection optimism, a post-hoc leave-one-dynamics-family-out sensitivity
+selects one $T$ per method on the other six tasks and evaluates it on the three
+held-out tasks. TD3+BC selects $T=1.5$ in all folds; P4 selects $T=2.5,7,4$
+when Hopper, HalfCheetah, and Walker2d are held out. The corresponding P4 minus
+TD3 family differences are $+17.08,-8.94,+2.83$, giving $78.44$ versus
+$74.79$ overall ($+3.65$; 7/9 task differences positive). This transfer
+sensitivity is not a pre-registered selection rule and exposes material family
+dependence.
+
+A task-then-independent-seed bootstrap sensitivity preserves the high-budget
+P4--P3 and L3--L2 conclusions, with intervals $[3.04,22.73]$ and
+$[2.90,14.07]$. At the common $T=1.5$, P4 minus TD3+BC is $+2.92$ with
+interval $[-.20,8.46]$, so that fixed-budget practical contrast remains
+unresolved at four seeds even though its point estimate is positive.
 
 \begin{table}[t]
 \caption{Collapse-count sensitivity for $T\ge4$. Entries are seed-mean cells / raw seeded runs, with denominators 63 / 252 for every method.}
@@ -448,25 +511,11 @@ $3\times$ target lag, $K=1$ &12.0&1.5&7/8\\
 \label{tab:targeted_controls}
 \end{table}
 
-\begin{table}[t]
-\caption{Two-seed high-budget policy-separation control. $\Delta$ is control
-minus contemporaneous BAR at matched task--budget--seed cells. Collapse uses
-the descriptive score-20 threshold.}
-\centering
-\small
-\begin{tabular}{lrrrr}
-\toprule
-Condition & Mean & Median $\Delta$ & Raw collapse & Seed-mean collapse\\
-\midrule
-BAR-P3 rerun &57.67&---&23/90&9/45\\
-Two-actor control &59.22&$-.42$&21/90&9/45\\
-\bottomrule
-\end{tabular}
-\label{tab:mcep_control}
-\end{table}
-
-The control-minus-BAR task-equal mean is $+1.56$, with a 95\%
-task-resampling interval $[-1.52,5.44]$; only 2/9 task means favor the control.
+Across the 90 matched task--budget--seed cells, the two-actor control scores
+$59.22$ versus $57.67$ for the contemporaneous BAR-P3 rerun; raw collapse
+counts are 21/90 and 23/90, and both have 9/45 seed-mean collapsed cells. The
+control-minus-BAR task-equal mean is $+1.56$, with a 95\% task-resampling
+interval $[-1.52,5.44]$; only 2/9 task means favor the control.
 At the run level the control wins 34 cells, BAR wins 52, and four tie. The
 positive mean but negative paired median reflects tail redistribution rather
 than a broad cellwise shift: the mean differences are $+5.53$ for seed 0 and
@@ -509,7 +558,7 @@ explicit--implicit discrepancy below $2.7\%$, with median run maximum $.55\%$.
 The remaining three have no eligible point. This supports local numerical
 agreement, not a universal convergence rate.
 
-\subsection{Direct target exposure and simulator-reference screening}
+\subsection{Direct target-action displacement and simulator-reference screening}
 
 The original direct audit covers 270 method checkpoints: TD3+BC, P2, and P3
 over nine environments, five budgets, and seeds 0--1. A second dump covers all
@@ -520,7 +569,7 @@ final-policy reach. Ratios are descriptive sample-anchored squared-displacement
 ratios, not conditional-mean policy distances.
 
 \begin{table}[t]
-\caption{Matched-cell audit of deterministic next-state Polyak-target exposure
+\caption{Matched-cell audit of deterministic next-state Polyak-target action
 and current-state final-policy displacement. The Lower column counts runs in
 which the left method has the smaller quantity.}
 \centering
@@ -540,8 +589,8 @@ P4 / P3 & Target disp. & 85/90 & .950\\
 \label{tab:direct_exposure}
 \end{table}
 
-A restricted four-environment seed-2/3 extension reproduces the P3/P2 target
-exposure direction in 36/40 cells (median ratio $.905$). It is a post-hoc
+A restricted four-environment seed-2/3 extension reproduces the P3/P2
+target-action-displacement direction in 36/40 cells (median ratio $.905$). It is a post-hoc
 sensitivity check, not a new full-grid estimand.
 
 The full P4 dump records the target actor and a current-state first-branch

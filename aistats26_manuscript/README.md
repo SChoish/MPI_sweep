@@ -6,17 +6,19 @@ This directory contains the anonymous submission package for:
 
 Budgeted Actor Refinement (BAR) splits a nominal actor-improvement coefficient
 across a persistent TD3+BC actor chain. The first branch supplies Bellman-target
-actions and the final branch is deployed, structurally separating bootstrap
-exposure from policy reach. Across four proximal seeds, the equally weighted
+actions and the final branch is deployed, structurally separating the measured
+target-action-displacement proxy from policy reach. Across four proximal seeds, the equally weighted
 high-budget aggregate is strictly ordered by depth, and two disjoint
 host-separated seed pairs reproduce that ordering. The four-seed
 projected-linearized grid also reproduces the `K=2` to `K=3` high-budget
-gain, raising the mean from 38.43 to 46.44. Targeted controls probe competing
+gain, raising the mean from 38.43 to 46.44. BAR-P4's descriptive grid maximum
+is 82.06 versus 74.79 for TD3+BC, and a leave-one-family-out budget-transfer
+sensitivity retains a +3.65 point P4 advantage. Targeted controls probe
 routing, optimizer-count, target-lag, and critic-calibration explanations. A
 90-pair MCEP-inspired two-actor control shows that sequential re-centering is
-not a prerequisite for the observed mean and seed-mean collapse outcomes on
-this grid. As a bundled procedure comparison, it does not isolate which
-simpler-procedure element is responsible.
+not a prerequisite for the observed P3 mean and seed-mean collapse outcomes.
+As a bundled procedure comparison, it does not isolate the chain's incremental
+value; a matched P4 two-actor control is the top pending experiment.
 
 ## Files
 
@@ -58,10 +60,10 @@ checklist. The optional supplement uses the required single-column format.
 - Complete nine-task, fourteen-budget, four-seed action-metric-matched projected-linearized grid for `K={2,3}`
 - Proximal full-depth replication across disjoint host-separated seed pairs `{0,1}` and `{2,3}`
 - Linearized `K=2` to `K=3` improvement reproduced in both disjoint seed pairs
-- A 270-checkpoint TD3/P2/P3 exposure audit plus a separate 180-checkpoint
-  four-seed P4 target-branch audit
-- A restricted four-environment seed-2/3 P3/P2 exposure sensitivity reproducing
-  the direction in 36/40 cells
+- A 270-checkpoint TD3/P2/P3 target-action-displacement audit plus a separate
+  180-checkpoint four-seed P4 target-branch audit
+- A restricted four-environment seed-2/3 P3/P2 target-action-displacement
+  sensitivity reproducing the direction in 36/40 cells
 - A 24-cell P4 final-policy frontier panel, kept distinct from the full target-branch audit
 - Route shadows, compute-matched refinement, actor-target lag, simulator
   screening, and a frozen-critic local-consistency audit

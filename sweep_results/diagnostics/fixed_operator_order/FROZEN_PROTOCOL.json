@@ -1,0 +1,104 @@
+{
+  "name": "fixed_operator_order_v1",
+  "written_at": "2026-09-01T14:21:28+00:00",
+  "locked": true,
+  "note": "Do not edit after reading aggregate learned-critic errors.",
+  "grid": {
+    "T": [
+      0.025,
+      0.05,
+      0.1,
+      0.2
+    ],
+    "K": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "schemes": [
+      "explicit",
+      "implicit"
+    ],
+    "n_states": 512,
+    "seeds": [
+      0,
+      1
+    ],
+    "environments": [
+      "halfcheetah-medium-v2",
+      "halfcheetah-medium-replay-v2",
+      "halfcheetah-expert-v2",
+      "hopper-medium-v2",
+      "hopper-medium-replay-v2",
+      "hopper-expert-v2",
+      "walker2d-medium-v2",
+      "walker2d-medium-replay-v2",
+      "walker2d-expert-v2"
+    ]
+  },
+  "operator": {
+    "f_s(a)": "d * grad_a Q_ref(s,a) / C_ref",
+    "C_ref": "mean_i(|Q_ref(s_i,a_D_i)|) + epsilon",
+    "epsilon": 1e-06,
+    "action_box": [
+      -1.0,
+      1.0
+    ],
+    "precision": "float64",
+    "projection_in_primary": false
+  },
+  "sampling": {
+    "rng": "numpy.random.default_rng(20260829 + 100*j + z)",
+    "eligibility": "max(abs(a_D)) <= 0.95",
+    "without_replacement": true
+  },
+  "rk4": {
+    "independent_code_path": true,
+    "N_candidates": [
+      256,
+      512,
+      1024,
+      2048,
+      4096,
+      8192
+    ],
+    "accept": "R_N <= max(1e-10, 1e-6 * M_2N); use 2N endpoint"
+  },
+  "implicit_solver": {
+    "equation": "a_next = a_prev + dt * f_s(a_next)",
+    "init": "a_prev only",
+    "tol_inf": 1e-10,
+    "max_iters": 1000
+  },
+  "mask": {
+    "I": "intersection over all K, both schemes, and RK4 reference",
+    "requires": "finite, implicit converged, no projection/OOB",
+    "min_|I|": 410,
+    "min_eligible_T_per_run": 3
+  },
+  "errors": {
+    "E_abs": "sqrt(mean_I ||a-a_ref||_2^2 / d)",
+    "M_ref": "sqrt(mean_I ||a_ref-a_D||_2^2 / d)",
+    "E_rel": "E_abs / max(M_ref, 1e-8)",
+    "slope_fit": "log(E_abs) ~ log(T/K) over K in {4,8,16}"
+  },
+  "expected_counts": {
+    "endpoint_cells": 720,
+    "raw_state_rows": 368640,
+    "implicit_substep_records": 1142784
+  },
+  "scientific_gates": {
+    "aggregate_median_slope": [
+      0.75,
+      1.25
+    ],
+    "run_slopes_in_[0.5,1.5]": ">=14/18",
+    "complete_runs": ">=15/18"
+  },
+  "harness_pass": true,
+  "harness_sha256": "d0e109e0cae84b8c6643334c085d7c51b2441085b6dca454fecd86daadfa92e1",
+  "code_path": "/home/ext_csh/MPI_sweep/scripts/diagnostics/run_fixed_operator_order.py",
+  "protocol_sha256": "78ce3eaf2647e7c40972ee484506b7f4c223c2465a5228f680a44b2312264cde"
+}

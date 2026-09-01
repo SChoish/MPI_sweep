@@ -1,0 +1,28 @@
+{
+  "checkpoints_ready": false,
+  "n_resolved": 0,
+  "n_expected": 18,
+  "missing_run_dirs": [
+    "halfcheetah-medium-v2_tau1_seed0",
+    "halfcheetah-medium-v2_tau1_seed1",
+    "halfcheetah-medium-replay-v2_tau1_seed0",
+    "halfcheetah-medium-replay-v2_tau1_seed1",
+    "halfcheetah-expert-v2_tau1_seed0",
+    "halfcheetah-expert-v2_tau1_seed1",
+    "hopper-medium-v2_tau1_seed0",
+    "hopper-medium-v2_tau1_seed1",
+    "hopper-medium-replay-v2_tau1_seed0",
+    "hopper-medium-replay-v2_tau1_seed1",
+    "hopper-expert-v2_tau1_seed0",
+    "hopper-expert-v2_tau1_seed1",
+    "walker2d-medium-v2_tau1_seed0",
+    "walker2d-medium-v2_tau1_seed1",
+    "walker2d-medium-replay-v2_tau1_seed0",
+    "walker2d-medium-replay-v2_tau1_seed1",
+    "walker2d-expert-v2_tau1_seed0",
+    "walker2d-expert-v2_tau1_seed1"
+  ],
+  "artifact": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/CHECKPOINTS_UNRESOLVED.json",
+  "blocker": "The 18 canonical T=1 critics live under /home/ext_csv/mpi_sweep_lab/results_qnorm/ on ext_csv and are not present on this host. Sync or pass --checkpoint-roots.",
+  "written_at": "2026-09-01T14:21:28+00:00"
+}

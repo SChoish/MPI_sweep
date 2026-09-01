@@ -288,7 +288,13 @@ def run(args: argparse.Namespace) -> int:
                 job = jobs[next_job]
                 next_job += 1
                 log_handle = (args.log_dir / f"{job.tag}.log").open(
-                    "w", encoding="utf-8"
+                    "a", encoding="utf-8"
+                )
+                print(
+                    f"\n[launcher] start_or_resume {job.tag} "
+                    f"at={time.strftime('%Y-%m-%d %H:%M:%S')}",
+                    file=log_handle,
+                    flush=True,
                 )
                 process = subprocess.Popen(
                     worker_command(args, job, slot_index),

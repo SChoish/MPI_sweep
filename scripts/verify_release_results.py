@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
 import re
@@ -556,6 +557,285 @@ def verify_controls(diag: Path) -> None:
     print("PASS targeted controls: exact groups, unique finite runs, and summaries agree")
 
 
+def verify_mcep_control(diag: Path, source_root: Path | None = None) -> None:
+    bundle = diag / "bar_mcep_p3_paired"
+    rows = csv_rows(
+        bundle / "paired_final_scores.csv",
+        {
+            "environment",
+            "tau",
+            "seed",
+            "bar_step",
+            "bar_score",
+            "mcep_step",
+            "mcep_score",
+            "delta_mcep_minus_bar",
+            "bar_collapsed_lt20",
+            "mcep_collapsed_lt20",
+            "transition",
+            "mcep_execution_class",
+            "mcep_resume_step",
+        },
+    )
+    expected_keys = set(product(ENVIRONMENTS, AUDIT_TAUS, (0, 1)))
+    keys = {
+        (row["environment"], finite(row["tau"], "MCEP tau"), int(row["seed"]))
+        for row in rows
+    }
+    if len(rows) != 90 or len(keys) != len(rows) or keys != expected_keys:
+        raise AssertionError("MCEP control must contain the exact 9 x 5 x 2 paired grid")
+
+    bar_values: list[float] = []
+    mcep_values: list[float] = []
+    deltas: list[float] = []
+    recovery_counts = {"gpu_designated": 0, "gpu_to_cpu_resume": 0, "cpu_only": 0}
+    transitions = {
+        "mcep_rescue": 0,
+        "mcep_reversal": 0,
+        "both_collapsed": 0,
+        "both_stable": 0,
+    }
+    resume_steps = {
+        (4.0, 0): 854528,
+        (4.0, 1): 853376,
+        (7.0, 0): 667392,
+        (7.0, 1): 573504,
+        (10.0, 0): 557632,
+        (10.0, 1): 545344,
+        (14.0, 0): 528000,
+        (14.0, 1): 512000,
+    }
+    by_key: dict[tuple[str, float, int], tuple[float, float, float]] = {}
+    for row in rows:
+        env = row["environment"]
+        tau = finite(row["tau"], "MCEP tau")
+        seed = int(row["seed"])
+        if int(row["bar_step"]) != 1_000_000 or int(row["mcep_step"]) != 1_000_000:
+            raise AssertionError("MCEP control scores must come from the 1M checkpoint")
+        bar = finite(row["bar_score"], "BAR-P3 score")
+        mcep = finite(row["mcep_score"], "MCEP-inspired score")
+        delta = finite(row["delta_mcep_minus_bar"], "MCEP minus BAR delta")
+        close(delta, mcep - bar, 1e-12)
+        bar_flag = row["bar_collapsed_lt20"] == "true"
+        mcep_flag = row["mcep_collapsed_lt20"] == "true"
+        if row["bar_collapsed_lt20"] not in {"true", "false"}:
+            raise AssertionError("invalid BAR collapse flag")
+        if row["mcep_collapsed_lt20"] not in {"true", "false"}:
+            raise AssertionError("invalid MCEP collapse flag")
+        assert bar_flag == (bar < 20)
+        assert mcep_flag == (mcep < 20)
+        expected_transition = (
+            "mcep_rescue"
+            if bar_flag and not mcep_flag
+            else "mcep_reversal"
+            if not bar_flag and mcep_flag
+            else "both_collapsed"
+            if bar_flag
+            else "both_stable"
+        )
+        if row["transition"] != expected_transition:
+            raise AssertionError(f"bad MCEP transition for {(env, tau, seed)}")
+        transitions[expected_transition] += 1
+
+        if env != "walker2d-expert-v2":
+            expected_execution, expected_resume = "gpu_designated", ""
+        elif tau == 20:
+            expected_execution, expected_resume = "cpu_only", "0"
+        else:
+            expected_execution = "gpu_to_cpu_resume"
+            expected_resume = str(resume_steps[(tau, seed)])
+        if (
+            row["mcep_execution_class"] != expected_execution
+            or row["mcep_resume_step"] != expected_resume
+        ):
+            raise AssertionError(f"bad MCEP recovery classification for {(env, tau, seed)}")
+        recovery_counts[expected_execution] += 1
+        bar_values.append(bar)
+        mcep_values.append(mcep)
+        deltas.append(delta)
+        by_key[(env, tau, seed)] = (bar, mcep, delta)
+
+    summary = json.loads((bundle / "SUMMARY.json").read_text())
+    primary = summary["primary"]
+    close(statistics.mean(bar_values), float(primary["bar_mean"]), 1e-12)
+    close(statistics.mean(mcep_values), float(primary["mcep_mean"]), 1e-12)
+    close(statistics.mean(deltas), float(primary["mean_delta_mcep_minus_bar"]), 1e-12)
+    close(statistics.median(deltas), float(primary["paired_median_delta_mcep_minus_bar"]), 1e-12)
+    assert sum(delta > 0 for delta in deltas) == int(primary["mcep_wins"]) == 34
+    assert sum(delta < 0 for delta in deltas) == int(primary["bar_wins"]) == 52
+    assert sum(delta == 0 for delta in deltas) == int(primary["exact_ties"]) == 4
+
+    task_means = [
+        statistics.mean(by_key[(env, tau, seed)][2] for tau in AUDIT_TAUS for seed in (0, 1))
+        for env in ENVIRONMENTS
+    ]
+    assert sum(value > 0 for value in task_means) == int(primary["positive_task_means"]) == 2
+    interval = task_bootstrap_interval(task_means, np.random.default_rng(20260830))
+    close(interval[0], float(primary["task_bootstrap_95"][0]), 1e-12)
+    close(interval[1], float(primary["task_bootstrap_95"][1]), 1e-12)
+    close(interval[0], -1.5186630416597202, 1e-12)
+    close(interval[1], 5.443334193810723, 1e-12)
+
+    _, released = load_sweep(diag.parent, "K=3", "Imp", (0, 1))
+    rerun_differences = [
+        by_key[(env, tau, seed)][0] - released[(tau, seed, env)]
+        for env in ENVIRONMENTS
+        for tau in AUDIT_TAUS
+        for seed in (0, 1)
+    ]
+    sensitivity = summary["contemporaneous_bar_sensitivity"]
+    released_values = [
+        released[(tau, seed, env)]
+        for env in ENVIRONMENTS
+        for tau in AUDIT_TAUS
+        for seed in (0, 1)
+    ]
+    close(statistics.mean(released_values), float(sensitivity["released_bar_p3_mean"]), 1e-12)
+    close(
+        statistics.mean(bar_values),
+        float(sensitivity["contemporaneous_bar_p3_mean"]),
+        1e-12,
+    )
+    close(
+        statistics.mean(rerun_differences),
+        float(sensitivity["mean_difference_contemporaneous_minus_released"]),
+        1e-12,
+    )
+    close(
+        math.sqrt(statistics.mean(value * value for value in rerun_differences)),
+        float(sensitivity["cellwise_rmse"]),
+        1e-12,
+    )
+    close(min(rerun_differences), float(sensitivity["cellwise_difference_min"]), 1e-12)
+    close(max(rerun_differences), float(sensitivity["cellwise_difference_max"]), 1e-12)
+
+    diagnostics = summary["diagnostics"]
+    assert sum(score < 20 for score in bar_values) == diagnostics["raw_collapse_lt20"]["bar"] == 23
+    assert sum(score < 20 for score in mcep_values) == diagnostics["raw_collapse_lt20"]["mcep"] == 21
+    assert transitions == {
+        "mcep_rescue": 5,
+        "mcep_reversal": 3,
+        "both_collapsed": 18,
+        "both_stable": 64,
+    }
+    recorded_transitions = diagnostics["raw_collapse_lt20"]
+    assert recorded_transitions["mcep_rescues"] == transitions["mcep_rescue"]
+    assert recorded_transitions["mcep_reversals"] == transitions["mcep_reversal"]
+    assert recorded_transitions["both_collapsed"] == transitions["both_collapsed"]
+    assert recorded_transitions["both_stable"] == transitions["both_stable"]
+
+    seed_mean_collapses = {}
+    for method_index, method in enumerate(("bar", "mcep")):
+        seed_mean_collapses[method] = sum(
+            statistics.mean(by_key[(env, tau, seed)][method_index] for seed in (0, 1)) < 20
+            for env in ENVIRONMENTS
+            for tau in AUDIT_TAUS
+        )
+    assert seed_mean_collapses == {"bar": 9, "mcep": 9}
+    assert diagnostics["seed_mean_collapse_lt20"] == {"bar": 9, "mcep": 9, "pairs": 45}
+
+    opposite = sum(
+        by_key[(env, tau, 0)][2] * by_key[(env, tau, 1)][2] < 0
+        for env in ENVIRONMENTS
+        for tau in AUDIT_TAUS
+    )
+    assert opposite == diagnostics["opposite_seed_signs"] == 30
+    ordered = sorted(deltas)
+    close(statistics.mean(ordered[9:-9]), float(diagnostics["trimmed_mean_delta_10_percent"]), 1e-12)
+    non_recovery = [
+        delta
+        for (env, _tau, _seed), (_bar, _mcep, delta) in by_key.items()
+        if env != "walker2d-expert-v2"
+    ]
+    close(
+        statistics.mean(non_recovery),
+        float(diagnostics["mean_delta_excluding_walker2d_expert"]),
+        1e-12,
+    )
+    assert recovery_counts == {
+        "gpu_designated": 80,
+        "gpu_to_cpu_resume": 8,
+        "cpu_only": 2,
+    }
+
+    manifest = csv_rows(
+        bundle / "SOURCE_MANIFEST.csv",
+        {
+            "method",
+            "environment",
+            "tau",
+            "seed",
+            "execution_class",
+            "resume_step",
+            "config_path",
+            "config_bytes",
+            "config_sha256",
+            "eval_path",
+            "eval_bytes",
+            "eval_sha256",
+            "checkpoint_path",
+            "checkpoint_bytes",
+            "checkpoint_sha256",
+            "primary_log_path",
+            "primary_log_bytes",
+            "primary_log_sha256",
+            "recovery_log_path",
+            "recovery_log_bytes",
+            "recovery_log_sha256",
+        },
+    )
+    manifest_keys = {
+        (row["method"], row["environment"], finite(row["tau"], "manifest tau"), int(row["seed"]))
+        for row in manifest
+    }
+    expected_manifest = set(product(("bar", "mcep"), ENVIRONMENTS, AUDIT_TAUS, (0, 1)))
+    if len(manifest) != 180 or manifest_keys != expected_manifest:
+        raise AssertionError("MCEP source manifest must contain the exact 180 method-cell rows")
+    sha_pattern = re.compile(r"[0-9a-f]{64}")
+    for row in manifest:
+        for prefix in ("config", "eval", "checkpoint"):
+            source_path = Path(row[f"{prefix}_path"])
+            if source_path.is_absolute() or ".." in source_path.parts:
+                raise AssertionError(f"non-relative source path: {source_path}")
+            if int(row[f"{prefix}_bytes"]) <= 0 or not sha_pattern.fullmatch(row[f"{prefix}_sha256"]):
+                raise AssertionError(f"invalid {prefix} provenance for {source_path}")
+        for prefix in ("primary_log", "recovery_log"):
+            value = row[f"{prefix}_path"]
+            if not value:
+                assert not row[f"{prefix}_bytes"] and not row[f"{prefix}_sha256"]
+                continue
+            source_path = Path(value)
+            if source_path.is_absolute() or ".." in source_path.parts:
+                raise AssertionError(f"non-relative log path: {source_path}")
+            if int(row[f"{prefix}_bytes"]) <= 0 or not sha_pattern.fullmatch(row[f"{prefix}_sha256"]):
+                raise AssertionError(f"invalid {prefix} provenance for {source_path}")
+
+    if source_root is not None:
+        def sha256(path: Path) -> str:
+            digest = hashlib.sha256()
+            with path.open("rb") as handle:
+                for block in iter(lambda: handle.read(1024 * 1024), b""):
+                    digest.update(block)
+            return digest.hexdigest()
+
+        for row in manifest:
+            for prefix in ("config", "eval", "checkpoint", "primary_log", "recovery_log"):
+                relative = row[f"{prefix}_path"]
+                if not relative:
+                    continue
+                raw = source_root / relative
+                if not raw.is_file():
+                    raise AssertionError(f"missing local MCEP source artifact: {raw}")
+                assert raw.stat().st_size == int(row[f"{prefix}_bytes"])
+                if sha256(raw) != row[f"{prefix}_sha256"]:
+                    raise AssertionError(f"MCEP source digest mismatch: {raw}")
+        print("PASS MCEP local sources: all 180 configs/evals/checkpoints and logs match")
+    print(
+        "PASS MCEP mechanism control: exact paired grid, recomputed statistics, "
+        "recovery classes, and source manifest"
+    )
+
+
 def verify_diagnostics(diag: Path, claims: dict[str, object]) -> None:
     target_dir = diag / "target_policy_exposure"
     target = json.loads((target_dir / "SUMMARY.json").read_text())
@@ -953,7 +1233,11 @@ def verify_diagnostics(diag: Path, claims: dict[str, object]) -> None:
     assert bar_mcep["pass"] is True
     assert bar_mcep["bar"]["n_ok"] == bar_mcep["mcep"]["n_ok"] == 90
     assert bar_mcep["paired_keys"] == 90
-    assert bar_mcep["manuscript_status"].startswith("mechanism-control")
+    assert bar_mcep["bar"]["root"] == "results/bar_p3"
+    assert bar_mcep["mcep"]["root"] == "results/mcep_p3"
+    assert bar_mcep["manuscript_status"].endswith(
+        "AUDIT.json is completeness/config only"
+    )
 
     route_k4_dir = diag / "route_shadow_k4"
     route_k4 = json.loads((route_k4_dir / "SUMMARY.json").read_text())
@@ -1165,6 +1449,16 @@ def verify_manuscript(path: Path) -> None:
         "provenance qualification": (
             "provenanceconsistsofthearchivedlaunchconfigurationandscorematrices"
         ),
+        "MCEP control means": "itscores59.22versus57.67",
+        "MCEP control contrast": (
+            "controlminusbaris+1.56withtask-resamplinginterval[-1.52,5.44]"
+        ),
+        "MCEP paired median and wins": "pairedmedianis-.42andbarwins52/90pairs",
+        "MCEP scope boundary": "notapublished-mcepreproduction",
+        "MCEP recovery": (
+            "eightwalker2d-expertcellsresumedfromthematchinglogged"
+            "emergency-checkpointsteps"
+        ),
     }
     missing = [label for label, token in required.items() if token not in text]
     if missing:
@@ -1196,6 +1490,8 @@ def verify_manuscript(path: Path) -> None:
         "overclaimed final route shorthand": "8/8final-checkpoint",
         "invalid actor-path evidence": "actor-path",
         "invalid semigroup-defect evidence": "semigroupdefect",
+        "MCEP equivalence overclaim": "statisticallyindistinguishable",
+        "MCEP equivalence shorthand": "equivalentperformance",
     }
     stale = [label for label, token in stale_tokens.items() if token in text]
     if re.search(r"35/63.{0,80}9/63", text):
@@ -1221,12 +1517,21 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--results-dir", type=Path, default=repo / "sweep_results")
     parser.add_argument("--manuscript-dir", type=Path, default=repo / "aistats26_manuscript")
+    parser.add_argument(
+        "--mcep-source-root",
+        type=Path,
+        help="Optional local repository root for checking uncommitted raw-run hashes",
+    )
     args = parser.parse_args()
     claims = EXPECTED_CLAIMS
     verify_complete_grid(args.results_dir, claims)
     verify_host_separated_pairs(args.results_dir, claims)
     verify_stability_claims(args.results_dir, claims)
     verify_controls(args.results_dir / "diagnostics")
+    verify_mcep_control(
+        args.results_dir / "diagnostics",
+        args.mcep_source_root,
+    )
     verify_diagnostics(args.results_dir / "diagnostics", claims)
     verify_figure_inputs(args.results_dir / "diagnostics")
     verify_k4(args.results_dir)

@@ -1,0 +1,150 @@
+{
+  "artifact": "MCEP-inspired two-actor policy-separation mechanism control at BAR-P3",
+  "status": "exploratory final-score/config-level control",
+  "estimand": {
+    "cell_delta": "MCEP-inspired control minus contemporaneous BAR-P3 at matched environment, tau, and seed",
+    "aggregate": "equal mean of nine task means; each task mean averages five budgets and two seeds",
+    "equivalence_margin": null
+  },
+  "protocol": {
+    "environments": [
+      "hopper-medium-v2",
+      "hopper-medium-replay-v2",
+      "hopper-expert-v2",
+      "halfcheetah-medium-v2",
+      "halfcheetah-medium-replay-v2",
+      "halfcheetah-expert-v2",
+      "walker2d-medium-v2",
+      "walker2d-medium-replay-v2",
+      "walker2d-expert-v2"
+    ],
+    "taus": [
+      4,
+      7,
+      10,
+      14,
+      20
+    ],
+    "seeds": [
+      0,
+      1
+    ],
+    "expected_pairs": 90,
+    "checkpoint": 1000000,
+    "evaluation_episodes": 10,
+    "deterministic_reset_seeds": "training seed + 100 + episode index",
+    "score": "D4RL normalized mean return",
+    "bar_score_column": "d4rl_pi3",
+    "mcep_score_column": "d4rl_eval",
+    "shared_config": {
+      "mpi_steps": 3,
+      "integrator": "implicit",
+      "q_scale_norm": true,
+      "normalize": true,
+      "max_timesteps": 1000000,
+      "eval_episodes": 10,
+      "eval_freq": 1000000,
+      "batch_size": 256,
+      "discount": 0.99,
+      "polyak": 0.005,
+      "policy_noise": 0.2,
+      "noise_clip": 0.5,
+      "policy_freq": 2,
+      "lr": 0.0003,
+      "n_jitted_updates": 8,
+      "updates_per_dispatch": 64
+    }
+  },
+  "methods": {
+    "bar_p3": "three persistent actors; tau/3 per actor; predecessor re-centering; first actor supplies TD targets; third actor is evaluated",
+    "mcep_inspired_p3": "two independently initialized dataset-anchored actors; target actor uses tau/3 and supplies TD targets; evaluation actor uses tau and is excluded from TD targets"
+  },
+  "primary": {
+    "n_pairs": 90,
+    "bar_mean": 57.668702132560945,
+    "mcep_mean": 59.22389767657117,
+    "mean_delta_mcep_minus_bar": 1.5551955440102407,
+    "paired_median_delta_mcep_minus_bar": -0.4186701777213777,
+    "mcep_wins": 34,
+    "bar_wins": 52,
+    "exact_ties": 4,
+    "positive_task_means": 2,
+    "task_count": 9,
+    "task_bootstrap_95": [
+      -1.5186630416597202,
+      5.443334193810723
+    ],
+    "bootstrap_seed": 20260830,
+    "bootstrap_draws": 100000
+  },
+  "diagnostics": {
+    "task_mean_deltas": {
+      "hopper-medium-v2": -3.756200742630514,
+      "hopper-medium-replay-v2": -0.8147156735910229,
+      "hopper-expert-v2": -0.10745252090239958,
+      "halfcheetah-medium-v2": -0.6690977784122346,
+      "halfcheetah-medium-replay-v2": -0.5907926455657645,
+      "halfcheetah-expert-v2": -2.216154846941463,
+      "walker2d-medium-v2": 13.51810096628592,
+      "walker2d-medium-replay-v2": 9.258575952246904,
+      "walker2d-expert-v2": -0.6255028143972565
+    },
+    "seed_mean_deltas": {
+      "0": 5.528731863320678,
+      "1": -2.4183407753001953
+    },
+    "family_mean_deltas": {
+      "hopper": -1.5594563123746457,
+      "halfcheetah": -1.1586817569731545,
+      "walker2d": 7.383724701378523
+    },
+    "opposite_seed_signs": 30,
+    "environment_tau_pairs": 45,
+    "raw_collapse_lt20": {
+      "bar": 23,
+      "mcep": 21,
+      "mcep_rescues": 5,
+      "mcep_reversals": 3,
+      "both_collapsed": 18,
+      "both_stable": 64
+    },
+    "seed_mean_collapse_lt20": {
+      "bar": 9,
+      "mcep": 9,
+      "pairs": 45
+    },
+    "trimmed_mean_delta_10_percent": -0.7753275535691393,
+    "mean_delta_excluding_walker2d_expert": 1.8277828388111783
+  },
+  "execution_provenance": {
+    "mcep_gpu_designated": 80,
+    "mcep_gpu_to_cpu_resume": 8,
+    "mcep_cpu_only": 2,
+    "qualification": "GPU-designated follows launch/log convention; individual logs do not print the JAX backend.",
+    "recovery_sensitivity": "Excluding all ten Walker2d-expert cells changes the mean delta to +1.83; this removes a task and is not a hardware-effect estimate."
+  },
+  "source_identity": {
+    "manifest_rows": 180,
+    "checkpoint_bytes_hashed": 847814102,
+    "training_file_sha256": {
+      "train_td3bc.py": "aea510db3fafb4829f92902a58c638d9d2f29939cc069315204c9655b942bc9c",
+      "launch_mpi_sweep.py": "0874903d8f4fe3608b8a8e7d07c64fecc7bae60768ec6c926b64f3ebaa8da5f2"
+    },
+    "qualification": "The run configs did not record a Git commit. File digests identify the local training sources but do not establish a clean repository snapshot or environment lock."
+  },
+  "interpretation": [
+    "Sequential re-centering is not a prerequisite for the observed mean and seed-mean collapse outcomes on this grid.",
+    "The interval crosses zero and no equivalence margin was specified, so neither superiority nor equivalence is established.",
+    "Actor count, optimizer work, anchoring, and realized critic trajectories differ; this is not a re-centering-only causal ablation or a reproduction of published MCEP.",
+    "The same seed labels common-random-number intent, not exact long-trajectory identity."
+  ],
+  "contemporaneous_bar_sensitivity": {
+    "released_bar_p3_mean": 57.53004666666666,
+    "contemporaneous_bar_p3_mean": 57.66870213256094,
+    "mean_difference_contemporaneous_minus_released": 0.13865546589426678,
+    "cellwise_rmse": 24.028307720845028,
+    "cellwise_difference_min": -99.50443508523121,
+    "cellwise_difference_max": 98.63275266307814,
+    "interpretation": "The aggregate replicates closely but individual failure locations do not. Pair the control only with the contemporaneous rerun."
+  }
+}

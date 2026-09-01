@@ -12,7 +12,11 @@ high-budget aggregate is strictly ordered by depth, and two disjoint
 host-separated seed pairs reproduce that ordering. The four-seed
 projected-linearized grid also reproduces the `K=2` to `K=3` high-budget
 gain, raising the mean from 38.43 to 46.44. Targeted controls probe competing
-routing, optimizer-count, target-lag, and critic-calibration explanations.
+routing, optimizer-count, target-lag, and critic-calibration explanations. A
+90-pair MCEP-inspired two-actor control shows that sequential re-centering is
+not a prerequisite for the observed mean and seed-mean collapse outcomes on
+this grid. As a bundled procedure comparison, it does not isolate which
+simpler-procedure element is responsible.
 
 ## Files
 
@@ -61,5 +65,7 @@ checklist. The optional supplement uses the required single-column format.
 - A 24-cell P4 final-policy frontier panel, kept distinct from the full target-branch audit
 - Route shadows, compute-matched refinement, actor-target lag, simulator
   screening, and a frozen-critic local-consistency audit
+- A 90-pair, two-seed MCEP-inspired policy-separation control with a
+  contemporaneous BAR-P3 rerun and documented CPU-recovery sensitivity
 - Task-resampling uncertainty, dynamics-family sensitivity, collapse-risk sensitivity, and rescued-cell gain attribution
 

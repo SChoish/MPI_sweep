@@ -2,14 +2,14 @@
   "protocol": "bar_mcep_p3_paired_five_budget",
   "n_expected_each": 90,
   "bar": {
-    "root": "/home/ext_csv/MPI_sweep/results/bar_p3",
+    "root": "results/bar_p3",
     "n_expected": 90,
     "n_ok": 90,
     "n_fail": 0,
     "failures": []
   },
   "mcep": {
-    "root": "/home/ext_csv/MPI_sweep/results/mcep_p3",
+    "root": "results/mcep_p3",
     "n_expected": 90,
     "n_ok": 90,
     "n_fail": 0,
@@ -37,8 +37,8 @@
     "updates_per_dispatch": 64
   },
   "pass": true,
-  "cpu_finish_note": "MCEP walker2d-expert 10 cells finished on CPU after a GPU orchestrator drop; they remain in the paired grid if configs and 1M evals match.",
-  "manuscript_status": "mechanism-control audit only; not a released score table",
+  "cpu_finish_note": "Eight MCEP walker2d-expert cells resumed on CPU from matching logged emergency-checkpoint steps; two tau=20 cells started and completed CPU-only.",
+  "manuscript_status": "paired score release is governed by paired_final_scores.csv and SUMMARY.json; AUDIT.json is completeness/config only",
   "bar_failures": [],
   "mcep_failures": []
 }

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Completeness, config, and paired-key audit for the BAR-P3 / MCEP-P3 grids.
 
-This does not promote scores into the manuscript. It only checks that both
+This does not compute manuscript-facing score estimates. It checks that both
 90-run grids exist, share the locked protocol keys, and can be paired by
-environment, tau, and seed.
+environment, tau, and seed; the compact paired release handles estimation.
 """
 from __future__ import annotations
 
@@ -44,6 +44,14 @@ SHARED = {
     "updates_per_dispatch": 64,
 }
 CPU_FINISH_PREFIX = "walker2d-expert-v2"
+
+
+def portable_path(path: Path) -> str:
+    repo = Path(__file__).resolve().parents[2]
+    try:
+        return str(path.resolve().relative_to(repo.resolve()))
+    except ValueError:
+        return str(path)
 
 
 def parse_args() -> argparse.Namespace:
@@ -140,7 +148,7 @@ def audit_grid(root: Path, method: str) -> dict:
                     continue
                 cells.append(cell)
     return {
-        "root": str(root),
+        "root": portable_path(root),
         "n_expected": 90,
         "n_ok": len(cells),
         "n_fail": len(failures),
@@ -178,11 +186,14 @@ def main() -> int:
             and not mcep["failures"]
         ),
         "cpu_finish_note": (
-            "MCEP walker2d-expert 10 cells finished on CPU after a GPU "
-            "orchestrator drop; they remain in the paired grid if configs and "
-            "1M evals match."
+            "Eight MCEP walker2d-expert cells resumed on CPU from matching "
+            "logged emergency-checkpoint steps; two tau=20 cells started and "
+            "completed CPU-only."
         ),
-        "manuscript_status": "mechanism-control audit only; not a released score table",
+        "manuscript_status": (
+            "paired score release is governed by paired_final_scores.csv and "
+            "SUMMARY.json; AUDIT.json is completeness/config only"
+        ),
     }
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)

@@ -668,17 +668,24 @@ the low-return outcome. At $T=20$, both depths saturate and fail (Supplement).
 
 \subsection{Targeted component controls}
 
-In eight post-hoc route-shadow runs, final-route calibration error is larger in
-all four-checkpoint aggregates when each shadow is evaluated under its native
-continuation (mean difference $.124$, sign-flip $p=.0078$). Under a common
-first-route continuation, the difference remains positive in six of eight runs
-but is inconclusive by the pre-specified rule (mean $.116$, $p=.164$). The
-shadows never drive the actors, so these are calibration diagnostics rather
-than return interventions. Compute-matched sequential, fixed-reference, and
-direct-final controls score $71.4,70.0,$ and $59.4$; slower $K=1$ target
-averaging does not rescue selected cells. These controls favor routed
-multi-actor refinement over added optimizer calls or target lag alone without
-isolating a single sweep-wide cause (Supplement).
+In eight post-hoc runs, actor-detached shadow critics use either first- or
+final-route target actions. Native-continuation calibration favors the first
+route, whereas the common-continuation comparison misses its pre-specified
+rule; neither estimates a return effect. On the same eight selected
+environment--budget--seed cells, compute-matched sequential, fixed-reference,
+and direct-final controls score $71.4,70.0,$ and $59.4$; slower $K=1$ target
+averaging does not rescue their low returns.
+
+A broader two-seed control removes sequential re-centering while retaining
+separate target and deployment actors. Across 90 matched high-budget cells, it
+scores $59.22$ versus $57.67$ for a contemporaneous BAR-P3 rerun and matches
+its seed-mean collapse count at 9/45. Control minus BAR is $+1.56$ with
+task-resampling interval $[-1.52,5.44]$, while its paired median is $-.42$ and
+BAR wins 52/90 pairs; only 2/9 task means favor the control. Sequential
+re-centering is therefore not a prerequisite for these observed aggregate
+outcomes on this grid. The control also changes actor work, anchoring, and the
+realized critic trajectory, so it does not isolate which element of the simpler
+procedure is responsible (Supplement).
 
 \subsection{Discussion and limitations}
 
@@ -697,7 +704,10 @@ provenance consists of the archived launch configuration and score matrices;
 exact per-run manifests were not retained, and post-hoc P4 manifests do not
 reconstruct them. Only a 24-cell panel measures matched P4 final displacement.
 The tasks span three dynamics families, collapse is descriptive, and controls
-are post hoc. We provide no offline rule for choosing $T$ or $K$. Actor time
+are post hoc. The 90-pair policy-separation control uses seeds 0--1, is not
+compute matched, and includes ten Walker2d-expert cells completed through a
+documented CPU recovery chain (eight resumed and two CPU-only). We provide no
+offline rule for choosing $T$ or $K$. Actor time
 and memory scale as $O(K)$; the ideal fixed-critic analysis motivates but does
 not certify the live chain.
 
@@ -713,6 +723,9 @@ $8.01$ points over $K=2$, and both disjoint seed pairs reproduce the direction. 
 decoupling and added-depth first-hop contraction, with lower-tail rescue driving
 most of the latter gain. $K$ therefore controls a coupled finite-step procedure shaping bootstrap
 exposure and deployment movement, not merely a discretization-accuracy knob.
+The two-actor control further shows that sequential re-centering is not a
+prerequisite for the observed P3 mean/collapse regime, while not isolating which
+element of the simpler target--deployment-separated procedure is responsible.
 
 \bibliography{references}
 \input{reproducibility_checklist}

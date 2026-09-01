@@ -33,13 +33,13 @@ folders below in place; see ARTIFACT_MAP.
 | `simulator_calibration/` | Exploratory 60-checkpoint simulator-reference screening |
 | `route_shadow/` | Eight-run K=3 shadow-critic audit (archived manuscript snapshot) |
 | `route_shadow_k4/` | Eight-run K=4 route-native simulator audit; 5/8, p=.0625, excluded |
-| `bar_mcep_p3_paired/` | Completeness/config/paired-key audit of the five-budget BAR vs MCEP grids |
 | `frozen_critic_small_step/` | Explicit/implicit local-consistency audit on 18 frozen critics |
-| `fixed_operator_order/` | In-progress fixed-operator Euler order audit (TODO P0-A); harness+protocol ready on ext_csh, 18 T=1 critics unresolved here |
+| `fixed_operator_order/` | In-progress fixed-operator audit: harness and state indices ready; protocol scaffold needs TODO reconciliation; 0/18 critics resolved |
 | `actor_path_semigroup/` | Archived endpoint-continuation diagnostic; excluded from manuscript error claims |
 | `hosts/offrl/actor_path_semigroup/` | Archived mixed-normalization host extension; excluded from depth inference |
 | `environment_t_sensitivity.csv` | Return versus realized first-hop displacement by environment |
 | `control_final_scores.csv`, `control_summary.csv` | Targeted compute-matched and actor-target-lag results |
+| `bar_mcep_p3_paired/` | 90-pair MCEP-inspired control: completeness audit, compact scores, summary, and raw-source hashes |
 | `*_MANIFEST.json` | Audit protocol and provenance; host manifests are not historical training launch files |
 
 ## Manuscript-facing checks
@@ -58,6 +58,16 @@ folders below in place; see ARTIFACT_MAP.
 - Compute-matched sequential, fixed-reference, and direct-final controls score
   `71.3852`, `69.9662`, and `59.4114`, with collapse counts `2/8`, `2/8`,
   and `3/8`; slower K1 target averaging does not rescue the selected cells.
+- The MCEP-inspired control and contemporaneous BAR-P3 rerun cover an exact
+  90-pair grid. Control minus BAR is +1.5552, with task-resampling interval
+  [-1.5187, 5.4433]; its paired median is -0.4187, and BAR wins 52/90.
+  Both procedures have 9/45 seed-mean collapses. This is a bundled
+  policy-separation mechanism control, not an equivalence result,
+  published-MCEP reproduction, or re-centering-only ablation.
+- Ten Walker2d-expert control cells used the documented CPU recovery chain:
+  eight resumed from matching logged emergency-checkpoint steps and two
+  started there from zero. Removing that entire task gives +1.8278, which is
+  not a hardware effect estimate.
 - Fifteen of 18 frozen-critic runs have an eligible converged, projection-free
   local point; every eligible run has maximum local discrepancy below `.027`.
 - The actor-path bundles are retained for provenance only. Their changing
@@ -81,9 +91,12 @@ python3 scripts/verify_release_results.py
 ```
 
 Pass `--manuscript-dir /path/to/aistats26_manuscript` to check the released
-score aggregates and archived manuscript claims. Host-specific dumps remain
-auditable from their CSVs and manifests but are not all covered by this
-verifier.
+score aggregates and archived manuscript claims. Pass `--mcep-source-root /path/to/MPI_sweep` on the source host to rehash
+all 180 MCEP-control configs, evaluations, final checkpoints, and available
+logs.
+Without that optional path, the verifier still recomputes every compact score
+claim and checks the source manifest. Host-specific dumps remain auditable from
+their CSVs and manifests but are not all covered by this verifier.
 
 ## Provenance and exclusions
 

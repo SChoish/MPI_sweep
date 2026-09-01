@@ -1,6 +1,6 @@
 # Submission TODO
 
-Last audited: 2026-09-01.
+Last audited: 2026-09-02.
 
 This file tracks work that can change a manuscript claim. A completed run is
 not included automatically; it must identify the intended quantity, pass its
@@ -22,11 +22,22 @@ discretization error scales with substep size rather than vanishing exactly.
 Keep the archived CSVs for provenance, but do not cite their numerical defects
 as an error rate or depth trend.
 
+Current implementation status: the CPU harness and 18 deterministic
+state-index files are archived in
+`sweep_results/diagnostics/fixed_operator_order/`; the analytic linear and
+quadratic checks pass. The numerical protocol file is a preflight scaffold, not
+a cleared frozen protocol: it still needs the required code/config hashes, full
+output schema and substep diagnostics, error-ratio/task aggregation, and the
+RK4 cap reconciled with this specification. No learned-critic order result
+exists because the checkpoint inventory resolves 0/18 canonical `T=1`
+critics. Resolve and fingerprint those exact critics only after reconciling and
+regenerating the protocol; no learned aggregate has been read.
+
 ### A. Fixed-operator convergence order (CPU, primary)
 
 #### Locked inputs and operator
 
-- [ ] Create `sweep_results/diagnostics/fixed_operator_order/`; do not
+- [x] Create `sweep_results/diagnostics/fixed_operator_order/`; do not
   overwrite the archived `actor_path_semigroup` or
   `frozen_critic_small_step` bundles.
 - [ ] Reuse the 18 final TD3+BC `T=1` critics identified by
@@ -38,11 +49,12 @@ as an error rate or depth trend.
   dataset identifier, dataset-file hash, and state-normalization-statistics
   hash. Stop if any of the 18 critics or fingerprints cannot be resolved; do
   not silently substitute another checkpoint.
-- [ ] For environment index `j` (the zero-based position in the existing
+- [x] For environment index `j` (the zero-based position in the existing
   manifest's `environments` list) and seed `z`, recreate the existing 512
   reference pairs with `numpy.random.default_rng(20260829 + 100*j + z)`,
   sampled without replacement from dataset rows satisfying
-  `max(abs(a_D)) <= .95`. Store selected row indices and their SHA-256.
+  `max(abs(a_D)) <= .95`. The 18 selected-index files and SHA-256 values are
+  archived; recheck their dataset fingerprints when the critics are resolved.
 - [ ] Use normalized dataset state `s`, dataset action
   `a(0)=a_D`, action dimension `d`, action box `[-1,1]^d`,
   `epsilon=1e-6`, and x64 arithmetic for the numerical audit. Record
@@ -65,7 +77,7 @@ as an error rate or depth trend.
   `2N` satisfying `R_N <= max(1e-10, 1e-6*M_2N)` and use that endpoint as the
   reference. If none passes through 8192 microsteps, mark the cell
   reference-unstable. This test must not use either Euler error.
-- [ ] Validate the harness before using learned critics, with `d=2`, `C=1`,
+- [x] Validate the harness before using learned critics, with `d=2`, `C=1`,
   `a(0)=(.2,-.3)`, and `T=.2`. For `Q(a)=b^T a`, `b=(.1,-.2)`, both schemes
   must match `a(0)+2Tb` within `1e-10`. For
   `Q(a)=a^T A a/2+b^T a`, `A=diag(-.25,-.5)`, `b=(.1,.05)`, compare with
@@ -165,32 +177,40 @@ actor-path bundle.
 ## Result-inclusion gates
 
 Here MCEP means the separately trained two-actor policy-separation control:
-its target branch uses coefficient `tau/K`, its data-anchored evaluation branch
+its target branch uses coefficient `tau/3`, its data-anchored evaluation branch
 uses `tau`, and only the target branch enters Bellman backups. It is a mechanism
 control inspired by MCEP, not a reproduction of the published algorithm.
 
-- Recorded completion: BAR-P3 and MCEP-P3 each have 90/90 final
-  checkpoints and final evaluations, with an exact 90/90 environment--budget--seed
-  key intersection. Ten MCEP Walker2d-expert cells used CPU recovery with
-  `save_interval=100000`; eight resumed from emergency checkpoints and the two
-  `T=20` cells restarted from zero.
-- [ ] Keep the comparison out of the paper until its paired final scores and
-  compact configuration audit are archived. Label it final-score/config-level
-  paired only and retain the recovery caveat: no per-run code, data, RNG,
-  environment, or trajectory manifests support exact trajectory equivalence.
-  Matching initialization and random streams does not guarantee identical
-  realized trajectories across separately compiled runs.
-- [ ] If an exact policy-separation control is needed, implement a joint driver
-  that shares the target actor, critic, target networks, minibatches, and RNG
-  in one process and branches only the evaluation policy. Label the current
-  separate-run version a mechanism control, not an MCEP benchmark.
+- [x] Complete BAR-P3 and MCEP-inspired P3 at 90/90 final checkpoints and
+  final evaluations with an exact environment--budget--seed intersection.
+- [x] Archive paired scores, independently recomputed summary statistics, all
+  raw config/eval/final-checkpoint hashes, and recovery provenance in
+  `sweep_results/diagnostics/bar_mcep_p3_paired/`. Eight Walker2d-expert
+  cells resumed from matching logged emergency-checkpoint steps on the CPU
+  recovery path; the two `T=20` cells began there from zero.
+- [x] Add the result to the main paper and supplement as an exploratory
+  final-score/config-level mechanism control. Preserve the signed estimand:
+  control minus contemporaneous BAR is +1.56 with task-resampling interval
+  [-1.52, 5.44], paired median -0.42, and 52/90 BAR wins. Do not turn the
+  interval into an equivalence claim.
+- [ ] Release a clean runnable snapshot of the exact control-mode training
+  changes. The run configs did not record a Git revision; `SUMMARY.json` records
+  the two local source-file hashes, but hashes alone are not runnable code.
+  Preserve the existing BAR evaluation-column contract and strengthen
+  checkpoint config validation before shipping the implementation.
+- [ ] If a re-centering-only causal control becomes necessary, implement a
+  joint driver that shares the target actor, critic, target networks,
+  minibatches, and RNG in one process and branches only the evaluation policy.
+  The current separate-run control changes actor work, anchoring, and the
+  realized critic trajectory.
+
 - Recorded evidence: the restricted four-environment seed-2/3 target-exposure
   extension is complete and is used only as a sensitivity check. P3 is lower
   than P2 in 36/40 cells, with median ratio `.905`.
 - Recorded exclusion: the eight-run K4 route-native simulator audit is complete
   but misses its pre-specified two-sided paired sign-flip permutation rule
   (5/8 positive, `p=.0625`). It remains outside the manuscript.
-- [ ] Archive compact K4 route-native artifacts before any future citation.
+- [x] Archive compact K4 route-native artifacts in `sweep_results/diagnostics/route_shadow_k4/`; keep them excluded from the manuscript under the pre-specified rule.
 - Decision lock: do not resume the stopped seeds 4--7 factorial plan unless a
   later review identifies a claim that the existing four-seed grids and
   targeted controls cannot answer.
@@ -202,6 +222,7 @@ control inspired by MCEP, not a reproduction of the published algorithm.
   `aistats26_manuscript/build_pdf.sh`. Until then, the paper should claim local
   explicit--implicit agreement from the existing frozen-critic audit and keep
   the live-chain boundary qualitative.
-- Decision lock: do not restore the archived actor-path defect values,
-  mixed-normalization K8 comparisons, provisional MCEP scores, or the
-  inconclusive K4 route result merely because those runs exist.
+- Decision lock: do not restore the archived actor-path defect values or
+  mixed-normalization K8 comparisons, promote the MCEP-inspired control to an
+  exact re-centering or equivalence result, or add the inconclusive K4 route
+  result merely because those runs exist.

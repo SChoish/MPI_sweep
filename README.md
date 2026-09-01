@@ -278,6 +278,33 @@ targeted controls are documented in
 [`sweep_results/diagnostics/README.md`](sweep_results/diagnostics/README.md).
 Per-state simulator rollouts and other large intermediates are excluded.
 
+### MCEP-inspired policy-separation control
+
+A completed two-seed control tests whether separate conservative target and
+full-budget deployment actors reproduce key BAR-P3 aggregate outcomes without
+sequential re-centering. It is inspired by
+[MCEP](https://openreview.net/forum?id=imAROs79Pb), but uses BAR's normalization
+and fixed tau/3 versus tau mapping; it is neither a reproduction of the
+published method nor a compute-matched re-centering ablation.
+
+Across 90 matched task--budget--seed cells, the control scores 59.22 versus
+57.67 for a contemporaneous BAR-P3 rerun. Control minus BAR is +1.56 with a
+95% task-resampling interval of [-1.52, 5.44], while the paired median is
+-0.42 and BAR wins 52/90 cells; after averaging the two seeds, both procedures
+collapse in 9/45 task--budget cells. Sequential re-centering is therefore not
+a prerequisite for the observed mean and seed-mean collapse outcomes on this
+grid. Because the control also changes actor work, anchoring, and the realized
+critic trajectory, it establishes neither superiority nor equivalence and does
+not isolate which element of the simpler procedure is responsible.
+
+The compact [paired archive](sweep_results/diagnostics/bar_mcep_p3_paired/)
+contains all final scores, independently checked aggregates, recovery
+classification, and a 180-row source manifest. Every row hashes its config,
+evaluation, and final checkpoint, plus available logs. Large raw artifacts are
+excluded. Exact local training-file digests are recorded because the run
+configs did not store a Git revision; releasing a clean runnable snapshot remains tracked in
+[TODO.md](TODO.md).
+
 ## Paper
 
 The anonymous AISTATS 2026 sources, official style files, build instructions,

@@ -9,7 +9,7 @@
     \item An analysis of the properties and complexity (time, space, sample size) of any algorithm. [Yes/No/Not Applicable]\\
     \textbf{Yes.} Section~\ref{sec:method} states that BAR uses $K$ persistent actors and $K$ actor optimizer calls per delayed update; the theoretical properties are stated in Propositions~\ref{prop:margin}--\ref{prop:local_composition}.
     \item (Optional) Anonymized source code, with specification of all dependencies, including external libraries. [Yes/No/Not Applicable]\\
-    \textbf{Yes.} The supplementary material specifies the implementation and dependencies; the anonymized release contains launch, evaluation, diagnostic, and verification scripts.
+    \textbf{Partial.} The anonymized release contains the BAR launch, evaluation, diagnostic, and verification code plus the compact policy-separation audit. The control-run configs identify local training-source files by SHA-256, but did not record a clean Git revision.
   \end{enumerate}
 
   \item For any theoretical claim, check if you include:
@@ -27,11 +27,11 @@
     \item The code, data, and instructions needed to reproduce the main experimental results (either in the supplemental material or as a URL). [Yes/No/Not Applicable]\\
     \textbf{Yes.} Released CSVs, figure-generation code, a numerical claim verifier, and build instructions reproduce every main figure and aggregate table.
     \item All the training details (e.g., data splits, hyperparameters, how they were chosen). [Yes/No/Not Applicable]\\
-    \textbf{No.} All recoverable settings are listed, but exact per-run BAR-P4 configurations and manifests for proximal seeds 2--3 are unavailable.
+    \textbf{No.} All recoverable settings are listed, but exact per-run BAR-P4 configurations and manifests for proximal seeds 2--3 are unavailable; the policy-separation configs also omit a source revision and environment lock.
     \item A clear definition of the specific measure or statistics and error bars (e.g., with respect to the random seed after running experiments multiple times). [Yes/No/Not Applicable]\\
     \textbf{Yes.} Captions and text define the equally task-and-budget-weighted high-budget estimand, seed-mean cells, raw seeded runs, collapse thresholds, paired ratios, and task-resampling intervals. Both headline grids use four seeds; proximal seeds form two host-separated pairs. Mechanism audits use the explicitly reported two- or four-seed subsets.
     \item A description of the computing infrastructure used. (e.g., type of GPUs, internal cluster, or cloud provider). [Yes/No/Not Applicable]\\
-    \textbf{No.} The released artifact records software and execution protocols but does not contain a complete, independently verified inventory of all external-machine hardware.
+    \textbf{No.} The released artifact records software and execution protocols, including the policy-separation CPU recovery chain, but does not contain a complete, independently verified inventory of all external-machine hardware.
   \end{enumerate}
 
   \item If you are using existing assets (e.g., code, data, models) or curating/releasing new assets, check if you include:

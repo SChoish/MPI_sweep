@@ -881,7 +881,7 @@ evidence for discretization / semigroup-error claims. Spec: repo `TODO.md` P0-A.
 | File | Role |
 | --- | --- |
 | `HARNESS.json` | Analytic d=2 validation |
-| `FROZEN_PROTOCOL.json` | Locked grid, formulas, gates |
+| `FROZEN_PROTOCOL.json` | Preflight grid, formulas, gates; reconcile with TODO before audit |
 | `CHECKPOINTS.json` / `CHECKPOINTS_UNRESOLVED.json` | 18 T=1 critic fingerprints |
 | `state_indices/*.npy` | Frozen 512-row index sets |
 | `endpoint_errors.csv` | Compact 720-cell endpoint table (after audit) |
@@ -896,8 +896,11 @@ python scripts/diagnostics/run_fixed_operator_order.py --phase all \\
   --checkpoint-roots /path/to/results_qnorm
 ```
 
-On ext_csh the 18 critics are currently unresolved (owned by ext_csv
-`results_qnorm`). Harness + protocol + state indices can still be produced.
+On ext_csh the 18 critics are unresolved (owned by ext_csv
+`results_qnorm`). The analytic harness and state indices are ready, but
+`FROZEN_PROTOCOL.json` remains a preflight scaffold until the mismatches
+listed in `TODO.md` P0-A are reconciled. Do not run or cite learned-critic
+order results before the exact 18-checkpoint inventory and verifier gates pass.
 """
     (out_dir / "README.md").write_text(text)
 

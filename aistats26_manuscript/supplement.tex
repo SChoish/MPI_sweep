@@ -261,6 +261,17 @@ For route-native evaluation, $\rho_1$ and $\rho_K$ are respectively the Polyak f
 
 The compute-matched study uses the same eight final cells. Sequential $K=3$ performs actor updates anchored at $\mu_0,\mu_1,$ and $\mu_2$; the fixed-reference control anchors both later actors at $\mu_1$; the direct-final control applies two optimizer calls to one $2T/3$ objective anchored at $\mu_1$. Every condition performs three actor optimizer calls per delayed update. The target-lag control instead keeps $K=1$ and changes only the actor-target Polyak rate from $.005$ to $.005/3$, leaving the critic-target rate unchanged.
 
+The broader policy-separation control covers all nine tasks,
+$T\in\{4,7,10,14,20\}$, and seeds 0--1 at one million updates. Its independently
+initialized target and evaluation actors are both anchored directly to dataset
+actions. The target actor uses coefficient $T/3$ and alone supplies Bellman
+targets; the deployed actor uses $T$. We pair it by task, budget, and seed with
+a contemporaneous BAR-P3 rerun under the same evaluation protocol. It performs
+two rather than three actor optimizer calls and follows a separately realized
+critic trajectory. It is therefore an MCEP-inspired policy-separation
+mechanism control, not a published-MCEP reproduction, a compute-matched
+re-centering ablation, or an exact shared-trajectory comparison.
+
 The frozen-critic small-step audit uses the final TD3+BC $T=1$ critic for all nine environments and two seeds. At 512 interior dataset actions per run it compares the projected explicit step with a projected fixed-point solution of the implicit action equation for $h\in\{.001,.003,.01,.03,.1\}$. This is an action-level local-consistency test, not a return or coupled-training experiment.
 
 \subsection{Estimands and uncertainty}
@@ -436,6 +447,47 @@ $3\times$ target lag, $K=1$ &12.0&1.5&7/8\\
 \end{tabular}
 \label{tab:targeted_controls}
 \end{table}
+
+\begin{table}[t]
+\caption{Two-seed high-budget policy-separation control. $\Delta$ is control
+minus contemporaneous BAR at matched task--budget--seed cells. Collapse uses
+the descriptive score-20 threshold.}
+\centering
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Condition & Mean & Median $\Delta$ & Raw collapse & Seed-mean collapse\\
+\midrule
+BAR-P3 rerun &57.67&---&23/90&9/45\\
+Two-actor control &59.22&$-.42$&21/90&9/45\\
+\bottomrule
+\end{tabular}
+\label{tab:mcep_control}
+\end{table}
+
+The control-minus-BAR task-equal mean is $+1.56$, with a 95\%
+task-resampling interval $[-1.52,5.44]$; only 2/9 task means favor the control.
+At the run level the control wins 34 cells, BAR wins 52, and four tie. The
+positive mean but negative paired median reflects tail redistribution rather
+than a broad cellwise shift: the mean differences are $+5.53$ for seed 0 and
+$-2.42$ for seed 1, and the two seeds have opposite signs in 30/45
+task--budget pairs. Using normalized return below 20 as collapse, the control
+rescues five BAR collapses and introduces three at the run level. After
+averaging the two seeds first, both procedures collapse in 9/45 cells, and
+none of the 45 paired classifications changes.
+
+Eight Walker2d-expert cells resumed from the matching logged
+emergency-checkpoint steps on the CPU recovery path, and the two $T=20$ cells
+began there from zero. Removing the entire ten-cell task changes the mean
+difference to $+1.83$; because this also
+removes a task, it is not a hardware-effect estimate. The contemporaneous
+BAR-P3 aggregate is only $.14$ above the released P3 aggregate on these cells,
+but their cellwise differences have RMSE $24.03$ and range from $-99.50$ to
+$+98.63$. We therefore pair the control only with the contemporaneous rerun.
+The higher observed control mean and identical seed-mean collapse count show
+that sequential re-centering is not a prerequisite for those two aggregate
+outcomes on this grid. The bundled comparison establishes neither equivalence
+nor which simpler-procedure element is responsible.
 
 The paired route-only study uses the same eight runs and aggregates four
 checkpoints per run. For critic route $r\in\{\mathrm{first},\mathrm{final}\}$

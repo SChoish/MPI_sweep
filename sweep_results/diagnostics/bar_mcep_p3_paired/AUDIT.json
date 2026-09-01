@@ -1,0 +1,44 @@
+{
+  "protocol": "bar_mcep_p3_paired_five_budget",
+  "n_expected_each": 90,
+  "bar": {
+    "root": "/home/ext_csv/MPI_sweep/results/bar_p3",
+    "n_expected": 90,
+    "n_ok": 90,
+    "n_fail": 0,
+    "failures": []
+  },
+  "mcep": {
+    "root": "/home/ext_csv/MPI_sweep/results/mcep_p3",
+    "n_expected": 90,
+    "n_ok": 90,
+    "n_fail": 0,
+    "failures": []
+  },
+  "paired_keys": 90,
+  "missing_bar_keys": [],
+  "missing_mcep_keys": [],
+  "shared_config": {
+    "mpi_steps": 3,
+    "integrator": "implicit",
+    "q_scale_norm": true,
+    "normalize": true,
+    "max_timesteps": 1000000,
+    "eval_episodes": 10,
+    "eval_freq": 1000000,
+    "batch_size": 256,
+    "discount": 0.99,
+    "polyak": 0.005,
+    "policy_noise": 0.2,
+    "noise_clip": 0.5,
+    "policy_freq": 2,
+    "lr": 0.0003,
+    "n_jitted_updates": 8,
+    "updates_per_dispatch": 64
+  },
+  "pass": true,
+  "cpu_finish_note": "MCEP walker2d-expert 10 cells finished on CPU after a GPU orchestrator drop; they remain in the paired grid if configs and 1M evals match.",
+  "manuscript_status": "mechanism-control audit only; not a released score table",
+  "bar_failures": [],
+  "mcep_failures": []
+}

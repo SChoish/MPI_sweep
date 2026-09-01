@@ -1,0 +1,19 @@
+{
+  "primary_key": "critic_symmetric_relative_error_rho_at_ak_p50",
+  "continuation_estimand": "source-native (rho_1 for shadow_mu1; rho_K for shadow_muk)",
+  "run_estimand": "mean over requested checkpoints of shadow_muk minus shadow_mu1 per-checkpoint state-median symmetric relative calibration error",
+  "inference_unit": "training run",
+  "n_runs": 8,
+  "mean_delta": 0.37819619369854873,
+  "median_delta": 0.2522265168648044,
+  "positive_delta_runs": 5,
+  "two_sided_exact_sign_flip_p": 0.0625,
+  "run_bootstrap_mean_95_interval": [
+    0.12228294193682855,
+    0.6562881502094373
+  ],
+  "bootstrap_samples": 10000,
+  "directional_hypothesis": "mean_delta > 0",
+  "decision_rule": "support requires mean_delta > 0 and two_sided_exact_sign_flip_p < 0.05",
+  "scope": "targeted mechanism study; not a universal task-level estimate"
+}

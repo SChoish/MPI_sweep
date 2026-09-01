@@ -31,7 +31,9 @@ folders below in place; see ARTIFACT_MAP.
 | `hosts/ext_csh/target_policy_exposure/` | 80-checkpoint P2/P3 extension: four tasks, five budgets, seeds 2--3 |
 | `hosts/ext_csh/matched_geometry/` | 80-run seed-2/3 geometry sensitivity audit using a separate \(T=.05\) reference critic |
 | `simulator_calibration/` | Exploratory 60-checkpoint simulator-reference screening |
-| `route_shadow/` | Eight-run route-native and common-continuation shadow-critic audit |
+| `route_shadow/` | Eight-run K=3 shadow-critic audit (archived manuscript snapshot) |
+| `route_shadow_k4/` | Eight-run K=4 route-native simulator audit; 5/8, p=.0625, excluded |
+| `bar_mcep_p3_paired/` | Completeness/config/paired-key audit of the five-budget BAR vs MCEP grids |
 | `frozen_critic_small_step/` | Explicit/implicit local-consistency audit on 18 frozen critics |
 | `fixed_operator_order/` | In-progress fixed-operator Euler order audit (TODO P0-A); harness+protocol ready on ext_csh, 18 T=1 critics unresolved here |
 | `actor_path_semigroup/` | Archived endpoint-continuation diagnostic; excluded from manuscript error claims |

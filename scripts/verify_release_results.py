@@ -949,6 +949,28 @@ def verify_diagnostics(diag: Path, claims: dict[str, object]) -> None:
         "frozen critic, and simulator medians"
     )
 
+    bar_mcep = json.loads((diag / "bar_mcep_p3_paired" / "AUDIT.json").read_text())
+    assert bar_mcep["pass"] is True
+    assert bar_mcep["bar"]["n_ok"] == bar_mcep["mcep"]["n_ok"] == 90
+    assert bar_mcep["paired_keys"] == 90
+    assert bar_mcep["manuscript_status"].startswith("mechanism-control")
+
+    route_k4_dir = diag / "route_shadow_k4"
+    route_k4 = json.loads((route_k4_dir / "SUMMARY.json").read_text())
+    route_k4_runs = csv_rows(
+        route_k4_dir / "run_level.csv",
+        {"env", "tau", "seed", "n_checkpoints", "mean_paired_delta_muk_minus_mu1"},
+    )
+    assert len(route_k4_runs) == route_k4["n_runs"] == 8
+    assert route_k4["positive_delta_runs"] == 5
+    close(route_k4["two_sided_exact_sign_flip_p"], 0.0625, 1e-12)
+    assert route_k4["continuation_estimand"].startswith("source-native")
+
+    print(
+        "PASS diagnostics extras: BAR/MCEP paired 90/90 audit and K4 "
+        "route-native exclusion (5/8, p=.0625)"
+    )
+
 
 def verify_figure_inputs(diag: Path) -> None:
     geometry = diag / "matched_geometry"

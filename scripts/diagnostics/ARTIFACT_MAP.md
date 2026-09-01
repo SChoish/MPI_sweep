@@ -24,6 +24,8 @@ selection of runs.
 | `target_policy_exposure/` (top-level archive) | archive | partial | Same dumper; archive was a curated 270-run snapshot with SUMMARY |
 | `matched_geometry/prox2_*`, `lin2_*`, `td3_prox3_*` | archive | **no (different schema)** | Older matched-geometry pipeline / renamed outputs; host dumps use `hop_geometry.csv` |
 | `route_shadow/` (top-level archive) | archive | partial | Use `run_route_shadow_mc.py` on `results_route_shadow` |
+| `route_shadow_k4/` | archive | partial | Compact copy of `audit_report_20260901/route_shadow_mc_k4`; excluded from manuscript |
+| `bar_mcep_p3_paired/` | aggregate | **yes** | `audit_bar_mcep_p3_paired.py` |
 | `frozen_critic_small_step/` (top-level archive) | archive | partial | Use `run_frozen_critic_small_step.py` |
 | `actor_path_semigroup/` (top-level archive) | archive | **yes** | `run_actor_semigroup.py`; full local `mpi1/2/3/exp3` seeds 2/3 grid (incl. tau 0.7 and 12); provenance only, not manuscript error evidence |
 | `simulator_calibration/` | archive | **no in this package** | Exploratory screening; not wired here |

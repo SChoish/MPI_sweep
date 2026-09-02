@@ -1,38 +1,75 @@
 # Source and Claim Manifest
 
-## Manuscript basis
+## Canonical manuscript and implementation sources
 
-- Prior scientific manuscript source: `../aistats26_manuscript/`
-- Trainer and dataset implementation: `../train_td3bc.py`, `../d4rl_data.py`
-- Complete proximal sweep matrices: `../sweep_results/K={1,2,3,4}/Imp/seed{0,1,2,3}.csv`
-- Complete linearized sweep matrices: `../sweep_results/K={2,3}/Exp/seed{0,1}.csv`
-- Compact diagnostic audit: `../sweep_results/diagnostics/audit_pack/`
-- Targeted controls: `../sweep_results/diagnostics/control_*.csv`
-- Frozen-critic and route/simulator summaries: `../sweep_results/diagnostics/`
+- Prior AISTATS scientific source: `../aistats26_manuscript/`
+- Trainer and dataset code: `../train_td3bc.py`, `../d4rl_data.py`
+- Proximal four-seed score matrices: `../sweep_results/K={1,2,3,4}/Imp/seed{0,1,2,3}.csv`
+- Projected-linearized score matrices: `../sweep_results/K={2,3}/Exp/`
+- Current submission TODO/provenance ledger: `../TODO.md`
 
-## Bundled compact data
+## Decisive control evidence
 
-- `data/aggregate_summary.csv`: low/high/tail means and collapse counts.
-- `data/budget_means.csv`: mean score at each of fourteen nominal coefficient budgets.
-- `data/environment_high_means.csv`: per-task high-budget means with consistent E labels.
-- `data/task_cluster_uncertainty.csv`: descriptive task-resampling summaries supplied by the audit.
-- `data/audit_claims.json`: claim-level target, failure, simulator, route, and control statistics.
-- `data/config_summary.csv`: implementation and archived-run configuration ledger.
+### P3 direct two-actor control
 
-## Claim provenance
+`../sweep_results/diagnostics/bar_mcep_p3_paired/`
 
-- `25.38 -> 63.97`, `34/63 -> 8/63`, and the rescued-cell gain share `54.7%`: recomputed from the pooled four-seed proximal matrices.
-- Disjoint host-separated pair depth sequences (`25.97,42.02,52.78,63.61` and `24.79,40.38,51.05,64.33`): recomputed separately from seeds 0--1 and 2--3.
-- K4-K1 and K4-K3 score and collapse-risk intervals: descriptive resampling over nine task-level four-seed high-budget summaries.
-- `88/90`, `84/90`, `36/90`: recomputed by the compact audit from matched run/checkpoint outputs.
-- Route `8/8` primary and `5/8` final-checkpoint sensitivity: `route_intervention_run.csv` and `sensitivity.csv`.
-- Simulator `-41.4` vs `1.70e12`: medians of the checkpoint-level signed-error medians.
-- Failure medians/common-critic sign reversals: `failure_diagnostics_run.csv` and `claim_reproduction.json`.
+Supported use:
+- directly data-anchored target/deployment separation reaches the P3 aggregate regime without sequential re-centering;
+- not an equivalence test and not a reproduction of published MCEP;
+- exact historical Git revision was never persisted, so source identity is limited to retained file digests and the documented recovered implementation.
 
-## Packaged evidence
+### P0 BAR-P4 versus two-actor-P4
 
-`package_bundle.py` includes the source score matrices and the four compact audit CSVs read by `verify_bundle.py`. It replaces absolute checkpoint fields with deterministic `artifact://checkpoint/...` identifiers and rejects local workspace identifiers before writing the ZIP.
+`../sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/`
 
-## Evidence not duplicated
+Primary score-level facts:
+- 90 matched pairs / 180 completed finals;
+- BAR minus two-actor task-equal mean `-2.3075524705`;
+- 95% task-resampling interval `[-7.2476019091, 2.4117874956]`;
+- paired median `+0.6810655715`;
+- BAR wins/ties/two-actor wins `55/1/34`;
+- predeclared label `unresolved`.
 
-The original multi-gigabyte NPZ/per-state raw diagnostic inputs remain on author-held machines. Their checksums, row contracts, and re-aggregated compact outputs are documented in the audit pack. Exact per-run configuration manifests and code hashes for proximal seeds 2--3 are also not retained in the repository; their score matrices and host-separated replication summaries are retained. The GPT bundle does not claim to independently rerun training or simulator rollouts.
+Scope limitation:
+- frozen cross-host score-level merge;
+- `official_ckpt_bound_analyze_verify=false` in the score archive;
+- do not describe the result as equivalence or as a verified chain/control superiority result.
+
+## Mechanism diagnostics
+
+### P1 target-value audit
+
+`../sweep_results/diagnostics/p1_target_value_audit/`
+
+Covers 270 TD3/P3/P4 checkpoints over 9 tasks, 5 high budgets, and seeds 0--1. Scientific outputs include:
+- `td_target_value.csv` — same-noise within-run target-value RMS perturbation;
+- `same_next_state_geometry.csv` — first/final geometry on the same next-state batch;
+- `geometry_correlations.csv` — stable/collapsed geometry/value correlations;
+- `comparator_residuals.csv`, `residual_aggregates.csv` — post-hoc feasible-comparator residual diagnostics;
+- `VERIFY.json` and manifest files — audit integrity evidence.
+
+Supported use: target-value perturbation is a critic-sensitive diagnostic distinct from action displacement. It is not critic accuracy and does not cause or certify environment return.
+
+### P2 learned-ReLU local-scope audit
+
+`../sweep_results/diagnostics/p2_relu_residence_final/`
+
+Supported use: pooled full-region residence `0.954/0.911/0.842/0.748` at local horizons `.025/.05/.1/.2` delimits the local affine interpretation. Do not infer a learned convergence-order slope or global proximal solution.
+
+### Critic-failure and simulator audits
+
+Use the compact diagnostic artifacts under `../sweep_results/diagnostics/` only with their stated scopes. The common critic is a cross-critic diagnostic, not ground truth; simulator-reference results are targeted checkpoint-level calibration evidence.
+
+## Practical cost
+
+Actor-cost artifacts under `../sweep_results/diagnostics/` support one-stack H200/JAX 0.10.2 measurements: compiled actor-phase time about `1.435 -> 1.887 ms` and scoped backend high-water memory about `9.68 -> 18.05 MB` from K1 to K4. Do not report these as whole-training wall-clock or total memory.
+
+## Claims intentionally excluded
+
+- Sequential re-centering is necessary for the stability gain.
+- BAR-P4 is superior to direct two-actor separation.
+- Two-actor-P4 is superior or equivalent to BAR-P4.
+- Target-action displacement is dataset-support distance, critic error, or a return certificate.
+- The live persistent Adam chain is an exact Wasserstein proximal flow.
+- The learned ReLU audit establishes a global `1/K` discretization law.

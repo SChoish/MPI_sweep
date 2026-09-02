@@ -1,22 +1,24 @@
-# Revision Map
+# Revision Map — AISTATS Rewrite
 
-| Audit item | AAAI-26 revision |
+The GPT bundle was rewritten after the completed P0/P1/P2/P3 follow-up evidence changed the safest mechanism claim.
+
+| Evidence | Manuscript consequence |
 |---|---|
-| `C_k` did not match implementation | Separate equations for P1, Pk, L1, Lk in main and supplement |
-| Linearized first hop not fully scale matched | Renamed action-metric-matched projected linearization |
-| Intermediate cadence overgeneralized | Reports run-family-specific cadence; all headline scores use the common 10-episode final-1M checkpoint |
-| `C^2` insufficient for `O(beta^3)` | Added locally Lipschitz Hessian; stated `C^2` gives `o(beta^2)` |
-| E/ME/expert inconsistency | Uses E = exact `expert-v2`; exact nine IDs in supplement |
-| Ideal proximal analysis overstated | Explicitly states one-Adam-step persistent chain is not certified |
-| Proximal grid expanded to four seeds | Reports the exact equally weighted `T>=4` aggregate, both disjoint host-separated depth replications, and task-resampling intervals |
-| Target metric named too strongly | Uses sample-anchored next-state target-action displacement |
-| Target and final metrics conflated | States different states, anchors, and Polyak status; scopes the 270-checkpoint mechanism audit to TD3+BC/P2/P3 |
-| Route `8/8` lacked selection/sensitivity | States post-hoc selection and final-checkpoint `5/8` |
-| Simulator aggregation ambiguous | Uses median of checkpoint medians: `-41.4` vs `1.70e12` |
-| Newer seed-pair provenance incomplete | Uses the full four-seed score grid but discloses that exact newer-pair run manifests/code hashes are unavailable |
-| Stability envelope undefined | Operational definition appears in the introduction |
-| `T` mapping was ambiguous | Defines `T=tau=alpha/2`, exact `K=1` TD3+BC mapping, and `h=T/K`; distinguishes it from compute and realized distance |
-| Missing pseudocode/configuration | Added Algorithm 1 and compact main/supplement configuration tables |
-| Checklist was abbreviated and overstated reproducibility | Inputs all 31 official questions; uses `Partial`/`No` where exact lockfiles, manifests, hardware records, or wrappers are unavailable |
-| WPO missing | Added 2025 ICML WPO and clarified novelty |
-| Earlier GPT seed-confound criticism | Withdrawn; supplement explains marginal randomized-procedure estimand |
+| Four-seed BAR depth sweep: high-budget mean `25.38 -> 41.20 -> 51.92 -> 63.97`, collapse cells `34 -> 22 -> 16 -> 8` | Retain BAR depth as a strong end-to-end stability intervention. |
+| P3 direct movement: target displacement lower in 88/90 vs TD3+BC while typical final displacement does not contract | Retain target/deployment movement asymmetry as an empirical BAR signature. |
+| P3 direct two-actor control: 59.22 vs 57.67 contemporaneous BAR-P3; 9/45 seed-mean collapses for both | Remove any claim that sequential re-centering is necessary for the P3 aggregate. |
+| Locked P4 control: BAR minus two-actor mean `-2.31`, interval `[-7.25, 2.41]`, paired median `+0.68`, BAR wins 55/90 | Treat the chain's incremental return value as unresolved. Do not claim equivalence, BAR superiority, or two-actor superiority. |
+| P0 heavy tails and opposite mean/median signs | Describe the procedures as having heterogeneous seed/task failures rather than a uniform ordering. |
+| Verified P1 270-checkpoint target-value audit | Distinguish target-action displacement from actual target-value perturbation; both remain diagnostics rather than return certificates. |
+| Verified P2 ReLU residence rates `.954/.911/.842/.748` at local horizons `.025/.05/.1/.2` | Narrow the Wasserstein/explicit--implicit discussion to a local organizing interpretation. |
+| H200 actor-cost audit | Report measured cost in addition to the analytical `O(K)` actor-work statement. |
+
+## New central claim
+
+The current manuscript's strongest mechanistic statement is **target--deployment separation**, not sequential-chain superiority. A conservative branch supplies Bellman targets while a separately stronger branch may be deployed. BAR remains the depth-indexed procedure that exposed and stress-tested this design axis.
+
+This framing explicitly acknowledges MCEP as prior work on conservative target / less constrained evaluation policies. The paper does not claim the broad two-policy principle as novel.
+
+## P0 provenance wording
+
+All 180 P0 final scores are present in a frozen cross-host score-level archive, but the archive does not satisfy the originally specified single-artifact-tree checkpoint-bound analyze/verify receipt. The manuscript therefore reports the locked numerical result and `unresolved` label while retaining this provenance limitation.

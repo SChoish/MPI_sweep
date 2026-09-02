@@ -1,4 +1,4 @@
-# P2 ReLU activation-region residence pilot
+# P2 ReLU activation-region residence audit
 
 This development-only P2 v4 pilot replaces an invalid learned-ReLU convergence-
 order estimate with an exact activation-region scope audit.  It is an
@@ -43,13 +43,13 @@ index files (512 rows each, 1,022-row union).  Missing, extra, duplicate, or
 hash-mismatched exclusions are rejected.  Residence rates have no pass/support
 threshold and are never merged into a scientific result.
 
-The locked final contract excludes the entire HalfCheetah family.  A later
-final run must use the six Hopper/Walker tasks, seeds 0--1, and 512 newly sampled
+The locked final contract excludes the entire HalfCheetah family.  The final
+runner uses the six Hopper/Walker tasks, seeds 0--1, and 512 newly sampled
 indices per run after protocol freeze.  Its exclusion inventory must contain
 every development-attempt index set.  This includes failed and superseded bundles
-`VnOjA4`, `InTWgf`, `OLDBdx`, `xlMNfc`, and `sqfIVj`.  The last is
-the final import-safe development bundle.  This pilot runner intentionally does
-not implement or execute the confirmatory run.
+`VnOjA4`, `InTWgf`, `OLDBdx`, `xlMNfc`, `sqfIVj`, and `meAdJI`.
+The final phase is implemented separately from the development pilot and fails
+closed if any discovered development bundle has no parseable environment.
 
 ## Run
 
@@ -87,9 +87,9 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
   --out-dir "$OUT" --check-existing
 ```
 
-The runner copies its exact runner/verifier sources into the create-only bundle
-and records the dirty Git revision, CPU backend, and enabled x64 mode; invoke
-that snapshot verifier as shown.
+The pilot runner copies its exact runner/verifier sources into the create-only
+bundle and records the Git revision and dirty state, CPU backend, and enabled
+x64 mode; invoke that snapshot verifier as shown.
 The verifier does not import the runner.  It recomputes the smooth harness with
 high-precision `Decimal`, reconstructs Q1 with independent NumPy code,
 regenerates selected rows, checks coordinate finite differences, directly
@@ -112,7 +112,7 @@ claim in this bundle.
 
 ## Final scientific audit (Hopper + Walker, seeds 0-1)
 
-The final confirmatory audit runs the six Hopper/Walker `tau=1` tasks at seeds
+The final scope audit runs the six Hopper/Walker `tau=1` tasks at seeds
 0 and 1 (12 bundles), samples 512 new anchors per bundle, and reuses the exact
 pilot geometry/residence math.  It never estimates a learned `1/K` slope.  The
 HalfCheetah family is excluded entirely.  `--phase final` writes
@@ -121,13 +121,18 @@ exclusion inventory, and raw-byte input hashes) **before** any checkpoint or
 dataset is deserialized for sampling.  Indices are created only after that
 freeze.
 
+Run it only from a separate, completely clean worktree whose `HEAD` equals
+local `origin/main`.  Both tracked and untracked worktree changes are rejected.
+This is a prelocked fresh-index audit on previously studied critics, not a new
+checkpoint-level holdout.
+
 The exclusion inventory is built by discovery, not hard-coded: it enumerates
 every archived `fixed_operator` state-index file under
 `sweep_results/diagnostics/fixed_operator_order/state_indices/` (all envs, both
 seeds) and every `pilot_state_indices.npy` under
 `/home/ext_csv/mpi_sweep_lab/p2_relu_residence_pilot.*`.  The known development
-attempts `VnOjA4`, `InTWgf`, `OLDBdx`, `xlMNfc`, and `sqfIVj` must all be
-present (a `meAdJI` bundle and any future bundle are picked up automatically).
+attempts `VnOjA4`, `InTWgf`, `OLDBdx`, `xlMNfc`, `sqfIVj`, and `meAdJI` must
+all be present (any future bundle is picked up automatically).
 Exclusions are applied env-scoped: for each Hopper/Walker run only that env's
 archived seed-0 and seed-1 rows are numerically removed (the HalfCheetah
 development rows index a different dataset, so they are documented but never
@@ -158,7 +163,8 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
 ```
 
 Output layout under `$OUT`: `FINAL_DESIGN_LOCK.json`, `HARNESS.json`,
-`SUMMARY.json` (aggregate + per-run + pooled/family survival curves),
+`SUMMARY.json` (per-run, task, task-equal, pooled, and family survival curves
+with boundary-category counts),
 `MANIFEST.json`, `STATUS.json`, `VERIFY.json`, a `SOURCE_SNAPSHOT/` of the
 runner and both verifiers, and one `"{env}_seed{S}"` subdir per bundle
 (`state_indices.npy`, `STATE_GEOMETRY.npz`, `residence_cells.csv`,
@@ -168,10 +174,13 @@ runner and both verifiers, and one `"{env}_seed{S}"` subdir per bundle
 pilot verifier's independent NumPy geometry and oracle code, re-freezes and
 re-hashes the protocol and every input, regenerates all 12 index sets, checks
 geometry / finite differences / ReLU-and-box exit brackets per bundle,
-recomputes every residence cell, and independently rebuilds the per-run,
-pooled, and per-family survival curves.  The final audit is
-`scientific_admissible` only when `VERIFY.json.pass == true` and a fresh
-`--check-existing` replay succeeds.  The primary reportable quantity is the
+recomputes every residence cell, and independently rebuilds the per-run, task,
+task-equal, pooled, and per-family survival curves.  Raw `MANIFEST.json`,
+`STATUS.json`, and `SUMMARY.json` remain
+`analysis_complete_pending_verification` with `scientific_admissible=false`.
+Only `VERIFY.json` declares `verified_complete` and
+`scientific_admissible=true`, and only after a fresh `--check-existing` replay
+succeeds.  The primary reportable quantity is the
 unique-horizon empirical survival curve `P(t_exit > t)`; repeated `(T, K)`
 cells sharing a horizon are deterministic views and are never counted as
 independent evidence.

@@ -1,5 +1,6 @@
 import copy
 import json
+import math
 import os
 import subprocess
 import sys
@@ -394,7 +395,7 @@ def test_git_provenance_rejects_tampering():
 
 def test_final_verifier_requires_clean_origin_main_provenance():
     valid = {
-        "git_dirty": True,
+        "git_dirty": False,
         "git_tracked_dirty": False,
         "git_revision": "a" * 40,
         "origin_main_revision": "a" * 40,
@@ -403,6 +404,12 @@ def test_final_verifier_requires_clean_origin_main_provenance():
     }
     p2.require_clean_origin_main(valid)
     verify_final.verify_final_git_provenance(valid)
+
+    untracked_dirty = {**valid, "git_dirty": True}
+    with pytest.raises(RuntimeError, match="fully clean worktree"):
+        p2.require_clean_origin_main(untracked_dirty)
+    with pytest.raises(AssertionError, match="fully clean worktree"):
+        verify_final.verify_final_git_provenance(untracked_dirty)
 
     dirty = {**valid, "git_tracked_dirty": True}
     with pytest.raises(RuntimeError, match="clean tracked worktree"):
@@ -534,6 +541,14 @@ def test_final_exclusion_inventory_and_env_scoped_application(tmp_path: Path):
     walker_excluded, _ = p2.applied_exclusions_for_env(inventory, "walker2d-expert-v2")
     assert walker_excluded == {10, 11, 12, 13}
 
+    broken = tmp_path / "p2_relu_residence_pilot.BROKEN"
+    broken.mkdir()
+    _write_indices(broken / "pilot_state_indices.npy", [7, 8])
+    with pytest.raises(ValueError, match="environment is missing or unparseable"):
+        p2.build_exclusion_inventory(
+            archived, str(tmp_path / "p2_relu_residence_pilot.*")
+        )
+
 
 def test_final_select_indices_excludes_and_is_deterministic():
     actions = np.zeros((200, 3), dtype=np.float64)
@@ -561,3 +576,18 @@ def test_final_survival_and_pooled_aggregation_consistent():
     for pooled_row, survival_row in zip(pooled, survival, strict=True):
         assert pooled_row["n_total"] == 2
         assert pooled_row["n_resident"] == 2 * survival_row["n_resident"]
+        assert pooled_row["categories"] == {
+            name: 2 * survival_row["categories"][name] for name in p2.CATEGORIES
+        }
+
+    tasks = {
+        "hopper-medium-v2": pooled,
+        "walker2d-medium-v2": pooled,
+    }
+    task_equal = p2.task_equal_survival(tasks, horizons)
+    independently_recomputed = verify_final.recompute_task_equal(tasks, horizons)
+    assert task_equal == independently_recomputed
+    for row, survival_row in zip(task_equal, survival, strict=True):
+        assert row["n_tasks"] == 2
+        assert row["resident_fraction"] == survival_row["resident_fraction"]
+        assert math.isclose(sum(row["category_fractions"].values()), 1.0)

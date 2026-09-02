@@ -25,7 +25,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import verify_p2_relu_residence as vp  # noqa: E402
 
 
-FINAL_PROTOCOL = "p2_relu_residence_final_v1"
+FINAL_PROTOCOL = "p2_relu_residence_final_v2"
+FINAL_RAW_STATUS = "analysis_complete_pending_verification"
 FINAL_N_STATES = 512
 FINAL_SEEDS = (0, 1)
 FINAL_TAU = 1.0
@@ -48,6 +49,20 @@ KNOWN_DEV_BUNDLE_IDS = (
     "meAdJI",
 )
 CHECKPOINT_STEP = 1_000_000
+FINAL_REQUIRED_FIXED_CONFIG = {
+    "eval_freq": 50_000,
+    "eval_episodes": 10,
+    "max_timesteps": 1_000_000,
+    "batch_size": 256,
+    "discount": 0.99,
+    "polyak": 0.005,
+    "policy_noise": 0.2,
+    "noise_clip": 0.5,
+    "policy_freq": 2,
+    "lr": 0.0003,
+    "normalize": True,
+    "n_jitted_updates": 8,
+}
 
 TIMES = vp.TIMES
 SUBSTEPS = vp.SUBSTEPS
@@ -151,6 +166,8 @@ def verify_design(out_dir: Path) -> dict[str, Any]:
         raise AssertionError("final exclude-all declaration missing")
     if int(design.get("sample_seed_base")) != FINAL_SAMPLE_SEED_BASE:
         raise AssertionError("final sample seed base mismatch")
+    if design.get("checkpoint_config_contract") != FINAL_REQUIRED_FIXED_CONFIG:
+        raise AssertionError("final checkpoint config contract mismatch")
     expected_seeds = {
         f"{env}_seed{seed}": final_sample_seed(env, seed)
         for env in FINAL_ENVIRONMENTS
@@ -215,6 +232,8 @@ def verify_input_inventory(design: dict[str, Any]) -> None:
 
 def verify_final_git_provenance(provenance: Any) -> None:
     vp.verify_git_provenance(provenance)
+    if provenance.get("git_dirty") is not False:
+        raise AssertionError("final run did not record a fully clean worktree")
     if provenance.get("git_tracked_dirty") is not False:
         raise AssertionError("final run did not record a clean tracked worktree")
     if provenance.get("head_matches_origin_main") is not True:
@@ -261,7 +280,13 @@ def verify_run(
         raise AssertionError(f"{env} seed{seed}: RUN_INPUTS dataset hash mismatch")
 
     config = json.loads(config_path.read_text())
-    for key, expected in (("env", env), ("seed", seed), ("tau", FINAL_TAU), ("normalize", True)):
+    required_config = {
+        "env": env,
+        "seed": seed,
+        "tau": FINAL_TAU,
+        **FINAL_REQUIRED_FIXED_CONFIG,
+    }
+    for key, expected in required_config.items():
         if config.get(key) != expected:
             raise AssertionError(f"{env} seed{seed}: config {key} mismatch")
     with checkpoint.open("rb") as handle:
@@ -317,6 +342,11 @@ def verify_run(
     ) / np.asarray(payload["std"], dtype=np.float64)
     anchors = actions[selected].astype(np.float64)
     params = vp.extract_q1(payload)
+    expected_shapes = {
+        name: list(np.asarray(value).shape) for name, value in params.items()
+    }
+    if run_inputs.get("q1_parameter_shapes") != expected_shapes:
+        raise AssertionError(f"{env} seed{seed}: Q1 parameter schema mismatch")
     q_anchor = vp.direct_forward(params, states, anchors)[0]
     c_ref = float(np.mean(np.abs(q_anchor)) + 1e-6)
     geometry = vp.independent_geometry(params, states, anchors, c_ref)
@@ -442,8 +472,12 @@ def verify_run(
         float(run_summary["analytic_vs_jax_grad_max_abs"]), analytic_jax_error, rel_tol=0.0, abs_tol=1e-12
     ):
         raise AssertionError(f"{env} seed{seed}: RUN_SUMMARY analytic/JAX error mismatch")
-    if run_summary.get("scientific_admissible") is not True:
-        raise AssertionError(f"{env} seed{seed}: RUN_SUMMARY must be scientifically admissible")
+    if run_summary.get("status") != "run_complete_pending_verification":
+        raise AssertionError(f"{env} seed{seed}: RUN_SUMMARY status mismatch")
+    if run_summary.get("scientific_admissible") is not False:
+        raise AssertionError(f"{env} seed{seed}: raw run cannot self-admit")
+    if run_summary.get("scientific_admissible_when_verified") is not True:
+        raise AssertionError(f"{env} seed{seed}: verification gate missing")
     if run_summary.get("n_states") != FINAL_N_STATES:
         raise AssertionError(f"{env} seed{seed}: RUN_SUMMARY n_states mismatch")
 
@@ -471,18 +505,59 @@ def recompute_pooled(
     for horizon in horizons:
         n_resident = 0
         n_total = 0
+        categories = {name: 0 for name in CATEGORIES}
         for run in runs:
             match = next(
                 item for item in run["survival"] if math.isclose(item["horizon"], horizon)
             )
             n_resident += int(match["n_resident"])
             n_total += int(run["n_states"])
+            for name in CATEGORIES:
+                categories[name] += int(match["categories"][name])
         rows.append(
             {
                 "horizon": float(horizon),
                 "n_resident": n_resident,
                 "n_total": n_total,
                 "resident_fraction": (n_resident / n_total) if n_total else 0.0,
+                "categories": categories,
+            }
+        )
+    return rows
+
+
+def recompute_task_equal(
+    task_survival: dict[str, list[dict[str, Any]]], horizons: list[float]
+) -> list[dict[str, Any]]:
+    tasks = sorted(task_survival)
+    rows: list[dict[str, Any]] = []
+    for horizon in horizons:
+        matches = [
+            next(
+                row
+                for row in task_survival[task]
+                if math.isclose(row["horizon"], horizon)
+            )
+            for task in tasks
+        ]
+        rows.append(
+            {
+                "horizon": float(horizon),
+                "n_tasks": len(tasks),
+                "resident_fraction": float(
+                    np.mean([row["resident_fraction"] for row in matches])
+                ),
+                "category_fractions": {
+                    name: float(
+                        np.mean(
+                            [
+                                row["categories"][name] / row["n_total"]
+                                for row in matches
+                            ]
+                        )
+                    )
+                    for name in CATEGORIES
+                },
             }
         )
     return rows
@@ -500,6 +575,39 @@ def assert_survival_equal(expected: list[dict[str, Any]], actual: Any, label: st
             float(act["resident_fraction"]), exp["resident_fraction"], rel_tol=0.0, abs_tol=1e-12
         ):
             raise AssertionError(f"{label}: pooled fraction mismatch")
+        if {name: int(value) for name, value in act["categories"].items()} != exp[
+            "categories"
+        ]:
+            raise AssertionError(f"{label}: pooled category mismatch")
+
+
+def assert_task_equal_equal(
+    expected: list[dict[str, Any]], actual: Any, label: str
+) -> None:
+    if not isinstance(actual, list) or len(actual) != len(expected):
+        raise AssertionError(f"{label}: task-equal length mismatch")
+    for exp, act in zip(expected, actual, strict=True):
+        if not math.isclose(
+            float(act["horizon"]), exp["horizon"], rel_tol=0.0, abs_tol=1e-12
+        ):
+            raise AssertionError(f"{label}: task-equal horizon mismatch")
+        if int(act["n_tasks"]) != exp["n_tasks"]:
+            raise AssertionError(f"{label}: task count mismatch")
+        if not math.isclose(
+            float(act["resident_fraction"]),
+            exp["resident_fraction"],
+            rel_tol=0.0,
+            abs_tol=1e-12,
+        ):
+            raise AssertionError(f"{label}: task-equal resident fraction mismatch")
+        for name in CATEGORIES:
+            if not math.isclose(
+                float(act["category_fractions"][name]),
+                exp["category_fractions"][name],
+                rel_tol=0.0,
+                abs_tol=1e-12,
+            ):
+                raise AssertionError(f"{label}: task-equal category mismatch {name}")
 
 
 def verify_final(out_dir: Path, *, check_existing: bool = False) -> dict[str, Any]:
@@ -532,10 +640,12 @@ def verify_final(out_dir: Path, *, check_existing: bool = False) -> dict[str, An
     if runtime.get("jax_enable_x64") is not True:
         raise AssertionError("manifest x64 runtime missing")
     for doc in (manifest, status, summary):
-        if doc.get("status") != "final_complete":
-            raise AssertionError("final status mismatch")
-        if doc.get("scientific_admissible") is not True:
-            raise AssertionError("final artifacts must be scientifically admissible")
+        if doc.get("status") != FINAL_RAW_STATUS:
+            raise AssertionError("raw final status mismatch")
+        if doc.get("scientific_admissible") is not False:
+            raise AssertionError("raw final artifacts cannot self-admit")
+        if doc.get("scientific_admissible_when_verified") is not True:
+            raise AssertionError("raw final verification gate missing")
     if summary.get("coverage_gate") is not None or summary.get("learned_slope") is not None:
         raise AssertionError("final summary contains a forbidden learned outcome gate")
     if manifest.get("design_sha256") != design["design_sha256"]:
@@ -597,8 +707,22 @@ def verify_final(out_dir: Path, *, check_existing: bool = False) -> dict[str, An
     summary_runs = {
         (row["environment"], int(row["seed"])): row for row in summary["per_run"]
     }
+    expected_run_keys = {
+        (env, seed) for env in FINAL_ENVIRONMENTS for seed in FINAL_SEEDS
+    }
+    if set(summary_runs) != expected_run_keys:
+        raise AssertionError("SUMMARY per-run key grid mismatch")
     for record in per_run:
         stored_run = summary_runs[(record["environment"], record["seed"])]
+        sub_run = json.loads(
+            (
+                out_dir
+                / f"{record['environment']}_seed{record['seed']}"
+                / "RUN_SUMMARY.json"
+            ).read_text()
+        )
+        if canonical_bytes(stored_run) != canonical_bytes(sub_run):
+            raise AssertionError("SUMMARY per-run copy differs from RUN_SUMMARY")
         assert_run_survival = stored_run["survival"]
         if len(assert_run_survival) != len(record["survival"]):
             raise AssertionError("SUMMARY per-run survival length mismatch")
@@ -611,7 +735,29 @@ def verify_final(out_dir: Path, *, check_existing: bool = False) -> dict[str, An
         raise AssertionError("SUMMARY horizon grid mismatch")
     expected_pooled = recompute_pooled(per_run, horizons)
     assert_survival_equal(expected_pooled, summary.get("pooled_survival"), "pooled")
+    expected_tasks = {
+        env: recompute_pooled(
+            per_run,
+            horizons,
+            [run for run in per_run if run["environment"] == env],
+        )
+        for env in FINAL_ENVIRONMENTS
+    }
+    if set(summary.get("task_survival", {})) != set(FINAL_ENVIRONMENTS):
+        raise AssertionError("SUMMARY task-survival grid mismatch")
+    for env, expected_task in expected_tasks.items():
+        assert_survival_equal(
+            expected_task, summary["task_survival"][env], f"task/{env}"
+        )
+    expected_task_equal = recompute_task_equal(expected_tasks, horizons)
+    assert_task_equal_equal(
+        expected_task_equal,
+        summary.get("task_equal_survival"),
+        "task_equal",
+    )
     families = sorted({env.split("-", 1)[0] for env in FINAL_ENVIRONMENTS})
+    if set(summary.get("family_survival", {})) != set(families):
+        raise AssertionError("SUMMARY family-survival grid mismatch")
     for family in families:
         subset = [run for run in per_run if run["environment"].split("-", 1)[0] == family]
         expected_family = recompute_pooled(per_run, horizons, subset)
@@ -625,6 +771,7 @@ def verify_final(out_dir: Path, *, check_existing: bool = False) -> dict[str, An
 
     report = {
         "protocol": FINAL_PROTOCOL,
+        "status": "verified_complete",
         "pass": True,
         "scientific_admissible": True,
         "n_runs": len(per_run),
@@ -639,6 +786,9 @@ def verify_final(out_dir: Path, *, check_existing: bool = False) -> dict[str, An
         "combined_event_rows_checked": combined_total,
         "combined_ties_checked": ties_total,
         "pooled_survival_pass": True,
+        "task_survival_pass": True,
+        "task_equal_survival_pass": True,
+        "aggregate_boundary_categories_pass": True,
         "family_survival_pass": True,
         "manifest_sha256": sha256_file(out_dir / "MANIFEST.json"),
         "design_sha256": design["design_sha256"],

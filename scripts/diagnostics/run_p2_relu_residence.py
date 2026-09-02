@@ -103,7 +103,8 @@ DEFAULT_OLD_INDICES = (
 ROOT = Path(__file__).resolve().parents[2]
 
 # --- Final scientific audit constants -------------------------------------
-FINAL_PROTOCOL = "p2_relu_residence_final_v1"
+FINAL_PROTOCOL = "p2_relu_residence_final_v2"
+FINAL_RAW_STATUS = "analysis_complete_pending_verification"
 FINAL_N_STATES = 512
 FINAL_SEEDS = (0, 1)
 FINAL_TAU = 1.0
@@ -122,6 +123,20 @@ DEFAULT_ARCHIVED_INDEX_DIR = (
     ROOT / "sweep_results/diagnostics/fixed_operator_order/state_indices"
 )
 DEFAULT_DEV_BUNDLE_GLOB = "/home/ext_csv/mpi_sweep_lab/p2_relu_residence_pilot.*"
+FINAL_REQUIRED_FIXED_CONFIG = {
+    "eval_freq": 50_000,
+    "eval_episodes": 10,
+    "max_timesteps": 1_000_000,
+    "batch_size": 256,
+    "discount": 0.99,
+    "polyak": 0.005,
+    "policy_noise": 0.2,
+    "noise_clip": 0.5,
+    "policy_freq": 2,
+    "lr": 0.0003,
+    "normalize": True,
+    "n_jitted_updates": 8,
+}
 
 FIRST_NONE = 0
 FIRST_RELU = 1
@@ -397,6 +412,8 @@ def git_provenance() -> dict[str, Any]:
 
 
 def require_clean_origin_main(provenance: dict[str, Any]) -> None:
+    if provenance.get("git_dirty") is not False:
+        raise RuntimeError("final audit requires a fully clean worktree")
     if provenance.get("git_tracked_dirty") is not False:
         raise RuntimeError("final audit requires a clean tracked worktree")
     if provenance.get("head_matches_origin_main") is not True:
@@ -1236,11 +1253,16 @@ def build_exclusion_inventory(
         if not index_path.is_file():
             continue
         bundle_id = bundle_dir.name.rsplit(".", 1)[-1]
+        environment = read_dev_bundle_env(bundle_dir)
+        if environment is None:
+            raise ValueError(
+                f"development index environment is missing or unparseable: {bundle_dir}"
+            )
         values = np.asarray(np.load(index_path), dtype=np.int64)
         inventory.append(
             {
                 "role": "dev_pilot_bundle",
-                "env": read_dev_bundle_env(bundle_dir),
+                "env": environment,
                 "bundle_id": bundle_id,
                 "path": str(index_path),
                 "basename": f"{bundle_dir.name}/pilot_state_indices.npy",
@@ -1292,7 +1314,12 @@ def validate_final_inputs(
         if not path.resolve().is_file():
             raise FileNotFoundError(path)
     config = json.loads(config_path.read_text(encoding="utf-8"))
-    required = {"env": env, "seed": seed, "tau": FINAL_TAU, "normalize": True}
+    required = {
+        "env": env,
+        "seed": seed,
+        "tau": FINAL_TAU,
+        **FINAL_REQUIRED_FIXED_CONFIG,
+    }
     for key, expected in required.items():
         if config.get(key) != expected:
             raise ValueError(f"config {key}={config.get(key)!r}, expected {expected!r}")
@@ -1498,6 +1525,9 @@ def run_one_final(
         "selected_index_file_sha256": sha256_file(index_path),
         "applied_exclusions": applied_records,
         "applied_exclusion_union_n_indices": len(excluded),
+        "q1_parameter_shapes": {
+            name: list(np.asarray(value).shape) for name, value in params.items()
+        },
     }
     write_json_create(sub_dir / "RUN_INPUTS.json", run_inputs)
 
@@ -1513,7 +1543,9 @@ def run_one_final(
         "full_category_counts_by_T": full_counts_by_T,
         "survival": survival,
         "n_cells": len(cells),
-        "scientific_admissible": True,
+        "status": "run_complete_pending_verification",
+        "scientific_admissible": False,
+        "scientific_admissible_when_verified": True,
         "written_at": now_iso(),
     }
     write_json_create(sub_dir / "RUN_SUMMARY.json", run_summary)
@@ -1596,6 +1628,7 @@ def write_final_design_lock(
             "categories": list(CATEGORIES),
             "denominator_rule": "all sampled anchors retained in exactly one category",
         },
+        "checkpoint_config_contract": FINAL_REQUIRED_FIXED_CONFIG,
         "environments": list(environments),
         "excluded_family": FINAL_EXCLUDED_FAMILY,
         "seeds": list(FINAL_SEEDS),
@@ -1632,18 +1665,59 @@ def pooled_survival(
     for horizon in horizons:
         n_resident = 0
         n_total = 0
+        categories = {name: 0 for name in CATEGORIES}
         for run in runs:
             match = next(
                 item for item in run["survival"] if math.isclose(item["horizon"], horizon)
             )
             n_resident += int(match["n_resident"])
             n_total += int(run["n_states"])
+            for name in CATEGORIES:
+                categories[name] += int(match["categories"][name])
         rows.append(
             {
                 "horizon": float(horizon),
                 "n_resident": n_resident,
                 "n_total": n_total,
                 "resident_fraction": (n_resident / n_total) if n_total else 0.0,
+                "categories": categories,
+            }
+        )
+    return rows
+
+
+def task_equal_survival(
+    task_survival: dict[str, list[dict[str, Any]]], horizons: list[float]
+) -> list[dict[str, Any]]:
+    tasks = sorted(task_survival)
+    rows: list[dict[str, Any]] = []
+    for horizon in horizons:
+        matches = [
+            next(
+                row
+                for row in task_survival[task]
+                if math.isclose(row["horizon"], horizon)
+            )
+            for task in tasks
+        ]
+        rows.append(
+            {
+                "horizon": float(horizon),
+                "n_tasks": len(tasks),
+                "resident_fraction": float(
+                    np.mean([row["resident_fraction"] for row in matches])
+                ),
+                "category_fractions": {
+                    name: float(
+                        np.mean(
+                            [
+                                row["categories"][name] / row["n_total"]
+                                for row in matches
+                            ]
+                        )
+                    )
+                    for name in CATEGORIES
+                },
             }
         )
     return rows
@@ -1715,6 +1789,14 @@ def run_final(
 
     horizons = unique_horizons()
     families = sorted({env.split("-", 1)[0] for env in environments})
+    task_survival = {
+        env: pooled_survival(
+            per_run,
+            horizons,
+            [run for run in per_run if run["environment"] == env],
+        )
+        for env in environments
+    }
     family_survival = {
         family: pooled_survival(
             per_run,
@@ -1726,8 +1808,9 @@ def run_final(
     n_anchors_total = sum(run["n_states"] for run in per_run)
     summary = {
         "protocol": FINAL_PROTOCOL,
-        "status": "final_complete",
-        "scientific_admissible": True,
+        "status": FINAL_RAW_STATUS,
+        "scientific_admissible": False,
+        "scientific_admissible_when_verified": True,
         "n_runs": len(per_run),
         "n_states_per_run": FINAL_N_STATES,
         "n_anchors_total": n_anchors_total,
@@ -1736,6 +1819,8 @@ def run_final(
         "horizons": horizons,
         "per_run": per_run,
         "pooled_survival": pooled_survival(per_run, horizons),
+        "task_survival": task_survival,
+        "task_equal_survival": task_equal_survival(task_survival, horizons),
         "family_survival": family_survival,
         "coverage_gate": None,
         "learned_slope": None,
@@ -1765,11 +1850,13 @@ def run_final(
 
     manifest = {
         "protocol": FINAL_PROTOCOL,
-        "status": "final_complete",
-        "scientific_admissible": True,
+        "status": FINAL_RAW_STATUS,
+        "scientific_admissible": False,
+        "scientific_admissible_when_verified": True,
         "reason": (
-            "confirmatory Hopper/Walker ReLU residence audit; HalfCheetah family "
-            "and every archived/development-attempt index set excluded"
+            "prelocked fresh-index Hopper/Walker ReLU residence audit on "
+            "previously studied critics; HalfCheetah and every archived or "
+            "development-attempt index set excluded"
         ),
         "design_sha256": design["design_sha256"],
         "source_sha256": locked_source_hashes,
@@ -1795,8 +1882,9 @@ def run_final(
         out_dir / "STATUS.json",
         {
             "protocol": FINAL_PROTOCOL,
-            "status": "final_complete",
-            "scientific_admissible": True,
+            "status": FINAL_RAW_STATUS,
+            "scientific_admissible": False,
+            "scientific_admissible_when_verified": True,
             "written_at": now_iso(),
         },
     )

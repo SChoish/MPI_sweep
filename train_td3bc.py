@@ -42,7 +42,10 @@ import numpy as np
 import optax
 from flax.training.train_state import TrainState
 
-from d4rl_data import DATASET_FILES, download_dataset
+import provenance
+from d4rl_data import DATASET_FILES, dataset_path, download_dataset
+
+ROOT = Path(__file__).resolve().parent
 
 EVAL_ENV = {
     "halfcheetah": "HalfCheetah-v4",
@@ -895,6 +898,80 @@ def install_stop_handler(save_dir: Path) -> dict:
     return stop_requested
 
 
+def write_initial_provenance(out_dir: Path, args) -> Path | None:
+    """Best-effort PROVENANCE.json next to config.json. Never raises.
+
+    Normalization and final-checkpoint fields are placeholders here; they are
+    filled in later by ``update_provenance_normalization`` (after data load) and
+    at the final checkpoint save.
+    """
+    prov_path = out_dir / "PROVENANCE.json"
+    try:
+        source_files = {
+            "train_td3bc.py": ROOT / "train_td3bc.py",
+            "launch_mpi_sweep.py": ROOT / "launch_mpi_sweep.py",
+        }
+        payload = provenance.base_provenance(
+            ROOT,
+            source_files,
+            extra={
+                "run_name": out_dir.name,
+                "config": vars(args),
+                "dataset": provenance.dataset_identity(
+                    dataset_path(args.env, args.data_dir)
+                ),
+                "normalization": {"status": "deferred until after data load"},
+                "final_checkpoint": None,
+            },
+        )
+        provenance.write_json(prov_path, payload)
+        return prov_path
+    except Exception as error:  # provenance must never break training
+        print(f"[provenance] initial capture skipped: {error}", flush=True)
+        return None
+
+
+def update_provenance_normalization(prov_path: Path | None, mean, std) -> None:
+    """Record SHA-256 of the loaded normalization statistics (best-effort)."""
+    if prov_path is None:
+        return
+    try:
+        mean_arr = np.asarray(mean, dtype=np.float32)
+        std_arr = np.asarray(std, dtype=np.float32)
+        provenance.update_json(
+            prov_path,
+            {
+                "normalization": {
+                    "status": "computed",
+                    "dim": int(mean_arr.shape[-1]),
+                    "mean_sha256": provenance.sha256_bytes(mean_arr.tobytes()),
+                    "std_sha256": provenance.sha256_bytes(std_arr.tobytes()),
+                }
+            },
+        )
+    except Exception as error:
+        print(f"[provenance] normalization update skipped: {error}", flush=True)
+
+
+def update_provenance_final_checkpoint(prov_path: Path | None, ckpt_path: Path, step: int) -> None:
+    """Record the final-checkpoint path + SHA-256 (best-effort)."""
+    if prov_path is None:
+        return
+    try:
+        provenance.update_json(
+            prov_path,
+            {
+                "final_checkpoint": {
+                    "path": str(ckpt_path),
+                    "step": int(step),
+                    "sha256": provenance.sha256_file(ckpt_path),
+                }
+            },
+        )
+    except Exception as error:
+        print(f"[provenance] final-checkpoint update skipped: {error}", flush=True)
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     if args.env not in DATASET_FILES:
@@ -952,9 +1029,11 @@ def main(argv: list[str] | None = None) -> int:
     (out_dir / "config.json").write_text(
         json.dumps(vars(args), indent=2, default=str), encoding="utf-8"
     )
+    prov_path = write_initial_provenance(out_dir, args)
     stop_requested = install_stop_handler(out_dir)
 
     data, mean, std = load_transition(args.env, args.data_dir, args.normalize)
+    update_provenance_normalization(prov_path, mean, std)
     example = jax.tree_util.tree_map(lambda x: x[:1], data)
     max_action = float(np.max(np.abs(np.asarray(data.actions))))
     max_action = 1.0 if max_action <= 1.0 + 1e-5 else max_action
@@ -1130,6 +1209,8 @@ def main(argv: list[str] | None = None) -> int:
                 ckpt_path = out_dir / f"params_{step}.pkl"
                 save_checkpoint(ckpt_path, ts, step, rng, mean, std, args)
                 print(f"[ckpt] Saved to {ckpt_path}", flush=True)
+                if step == args.max_timesteps:
+                    update_provenance_final_checkpoint(prov_path, ckpt_path, step)
             if emergency_stop:
                 marker = out_dir / f"EMERGENCY_SAVE_step{step}"
                 marker.write_text(

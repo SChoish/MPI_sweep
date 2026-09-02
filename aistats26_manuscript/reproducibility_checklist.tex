@@ -7,7 +7,7 @@
     \item A clear description of the mathematical setting, assumptions, algorithm, and/or model. [Yes/No/Not Applicable]\\
     \textbf{Yes.} Sections~\ref{sec:background}--\ref{sec:method} define the setting, actor chain, losses, and assumptions.
     \item An analysis of the properties and complexity (time, space, sample size) of any algorithm. [Yes/No/Not Applicable]\\
-    \textbf{Yes.} Section~\ref{sec:method} states that BAR uses $K$ persistent actors and $K$ actor optimizer calls per delayed update; Eq.~\eqref{eq:margin}, Proposition~\ref{prop:exposure}, and the local-idealization subsection state the theoretical properties and scope.
+    \textbf{Yes.} Section~\ref{sec:method} states that BAR uses $K$ persistent actors and $K$ actor optimizer calls per delayed update; Eq.~\eqref{eq:margin}, Proposition~\ref{prop:exposure}, and the local-idealization subsection state the theoretical properties and scope. The supplement reports a verified one-stack time and memory profile.
     \item (Optional) Anonymized source code, with specification of all dependencies, including external libraries. [Yes/No/Not Applicable]\\
     \textbf{Partial.} The anonymized release contains the BAR launch, evaluation, diagnostic, and verification code plus the compact policy-separation audit. The control-run configs identify local training-source files by SHA-256, but did not record a clean Git revision.
   \end{enumerate}
@@ -31,7 +31,7 @@
     \item A clear definition of the specific measure or statistics and error bars (e.g., with respect to the random seed after running experiments multiple times). [Yes/No/Not Applicable]\\
     \textbf{Yes.} Captions and text define the equally task-and-budget-weighted high-budget estimand, seed-mean cells, raw seeded runs, collapse thresholds, paired ratios, and task-resampling intervals. Both headline grids use four seeds; proximal seeds form two host-separated pairs. Mechanism audits use the explicitly reported two- or four-seed subsets.
     \item A description of the computing infrastructure used. (e.g., type of GPUs, internal cluster, or cloud provider). [Yes/No/Not Applicable]\\
-    \textbf{No.} The released artifact records software and execution protocols, including the policy-separation CPU recovery chain, but does not contain a complete, independently verified inventory of all external-machine hardware.
+    \textbf{No.} The released artifact fully records the H200 used for the actor-cost profile and the policy-separation CPU recovery chain, but does not contain a complete, independently verified inventory of all training hardware.
   \end{enumerate}
 
   \item If you are using existing assets (e.g., code, data, models) or curating/releasing new assets, check if you include:

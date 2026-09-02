@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from itertools import product
 from pathlib import Path
 
+import provenance
 from d4rl_data import DATASET_FILES, download_dataset
 from tau_grids import MPI_TAU_GRID, mpi_tau_grid
 
@@ -271,6 +272,42 @@ def terminate_workers(running: dict[int, subprocess.Popen]) -> None:
             process.kill()
 
 
+def write_sweep_provenance(args: argparse.Namespace, jobs: list[Job]) -> None:
+    """Record orchestrator-level provenance once per sweep (best-effort)."""
+    try:
+        source_files = {
+            "launch_mpi_sweep.py": ROOT / "launch_mpi_sweep.py",
+            "train_td3bc.py": ROOT / "train_td3bc.py",
+        }
+        payload = provenance.base_provenance(
+            ROOT,
+            source_files,
+            extra={
+                "role": "sweep_orchestrator",
+                "sweep": {
+                    "method": args.method,
+                    "integrator": args.integrator,
+                    "hops": args.hops,
+                    "taus": selected_taus(args),
+                    "seeds": _split(args.seeds),
+                    "envs": selected_envs(args),
+                    "gpus": _split(args.gpus),
+                    "slots_per_gpu": args.slots_per_gpu,
+                    "max_timesteps": args.max_timesteps,
+                    "pending_jobs": [job.tag for job in jobs],
+                    "pending_job_count": len(jobs),
+                },
+            },
+        )
+        provenance.write_json(args.log_dir / "SWEEP_PROVENANCE.json", payload)
+        print(
+            f"[provenance] wrote {args.log_dir / 'SWEEP_PROVENANCE.json'}",
+            flush=True,
+        )
+    except Exception as error:  # provenance must never break a sweep
+        print(f"[provenance] sweep capture skipped: {error}", flush=True)
+
+
 def run(args: argparse.Namespace) -> int:
     validate_args(args)
     jobs = build_jobs(args)
@@ -294,6 +331,7 @@ def run(args: argparse.Namespace) -> int:
     args.save_dir.mkdir(parents=True, exist_ok=True)
     args.data_dir.mkdir(parents=True, exist_ok=True)
     args.log_dir.mkdir(parents=True, exist_ok=True)
+    write_sweep_provenance(args, jobs)
     if args.prefetch:
         for env_name in selected_envs(args):
             path = download_dataset(env_name, args.data_dir)

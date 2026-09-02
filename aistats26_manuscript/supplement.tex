@@ -172,6 +172,14 @@ $x(T)=x_0+Tf_0+\tfrac12T^2J_0f_0+O(T^3)$. Thus explicit Euler has leading
 error $-T^2J_0f_0/(2K)$, while backward Euler has
 $+T^2J_0f_0/(2K)$. Both remain first-order methods.
 
+The trained critic uses ReLU hidden units. At fixed state it is piecewise
+affine in action, so its action gradient is constant inside one activation
+region. Within such a region, the ideal explicit and backward-Euler updates
+coincide exactly; at the first activation boundary, the smooth-field
+assumptions used in the expansion above no longer apply. The learned-critic
+follow-up therefore audits activation-region residence and boundary incidence
+rather than fitting a nonzero $1/K$ error slope.
+
 \section{EXPERIMENTAL DETAILS}
 \label{app:experiments}
 
@@ -189,6 +197,38 @@ references from the updated online chain. Equations~\eqref{eq:qnorm} and the mai
 actual normalization, with safeguard $10^{-6}$. All methods share data, critic
 architecture, and $10^6$ critic updates, while a $K$-hop run performs $K$ actor
 optimizer steps and is not compute matched.
+
+\paragraph{Measured actor-phase cost.}
+A locked profile held one NVIDIA H200, JAX/JAXlib 0.10.2,
+\texttt{hopper-medium-v2}, batch size 256, $T=12$, initialization, and the
+sampled batch fixed while varying only $K$. Table~\ref{tab:actor_cost} reports
+the median synchronized dispatch of the compiled full $K$-actor production
+phase. It excludes lowering, compilation, warmup, and critic optimization.
+
+\begin{table}[t]
+\caption{Verified one-stack actor-phase profile. Peak is the fresh-worker
+backend process-lifetime high-water mark, not an isolated actor-call peak.}
+\centering
+\small
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+$K$ & Time (ms) & Time/$K{=}1$ & Peak (bytes) & Peak/$K{=}1$\\
+\midrule
+1 & 1.434567 & 1.000 & 9,684,736 & 1.000\\
+2 & 1.542470 & 1.075 & 14,680,064 & 1.516\\
+3 & 1.685672 & 1.175 & 15,627,520 & 1.614\\
+4 & 1.887347 & 1.316 & 18,045,440 & 1.863\\
+\bottomrule
+\end{tabular}
+\label{tab:actor_cost}
+\end{table}
+
+The peak covers dataset/batch transfer, actor/critic-state initialization,
+compilation, warmup, and timed trials. Thus the measured $K=4$ actor phase is
+1.316 times $K=1$ on this stack, while the scoped high-water mark is 1.863
+times $K=1$. The raw archive and independent verifier are released. This profile
+quantifies practical overhead for the tested stack; it is not an end-to-end
+training-time or hardware-independent memory law.
 
 The ideal proximal map is not a certificate for this live chain. For a later
 persistent actor that differs from its predecessor, even $h=0$ leaves
@@ -225,17 +265,18 @@ bootstrapping.
 from post-hoc diagnostics and exploratory controls.}
 \centering
 \small
-\setlength{\tabcolsep}{5pt}
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}llll@{}}
 \toprule
 Evidence & Unit / scope & Seeds & Role\\
 \midrule
 Proximal and linearized scores & $9$ tasks $\times14$ budgets & 0--3 & Headline grids\\
 P3 target/final displacement & 270 checkpoints; 90 matched contrasts & 0--1 & Post-hoc full audit\\
-P4 target branch & 180 checkpoints; 90 matched contrasts & 0--3 / 0--1 & Post-hoc audit; no full final actor\\
+P4 target branch & 180 checkpoints; 90 contrasts & 0--3 / 0--1 & Post-hoc; no full final actor\\
 P4 final branch & 24 frontier cells & 0--1 & Post-hoc targeted panel\\
 P3 two-actor control & 90 pairs; 180 final scores & 0--1 & Exploratory mechanism control\\
 Route and component controls & 8 selected runs & 0--1 & Post-hoc targeted controls\\
+Actor cost & $K=1$--4; H200 & init. 0 & Systems profile\\
 \bottomrule
 \end{tabular}
 \label{tab:evidence_map}

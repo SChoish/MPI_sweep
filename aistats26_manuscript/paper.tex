@@ -398,8 +398,14 @@ schemes; a generic consistent map has fixed-$K$ flow bias of order $T^2/K$.
 The full expansion is in the Supplement. It is not an explanation of the
 headline regime: persistent later actors need not approach the identity as
 $h\to0$, and large-$T$ training changes projection, fitting, critic, scale,
-and optimizer history. The pending fixed-operator audit tests only this local
-numerical statement, not return or the live chain.
+and optimizer history. For the learned ReLU critic, the fixed-state action
+gradient is piecewise constant: the two ideal maps coincide inside one
+activation region, while a boundary crossing exits the smooth analysis. On the
+locked Hopper/Walker twelve-run residence audit (6144 anchors; independent
+verifier pass), empirical full-horizon residence is $0.954$, $0.911$, $0.842$,
+and $0.748$ at $T\in\{.025,.05,.1,.2\}$. These rates delimit the local affine
+scope; they are not return effects, global proximal certificates, or a learned
+$1/K$ slope.
 
 \section{EXPERIMENTS}
 \label{sec:experiments}
@@ -673,9 +679,13 @@ The tasks span three dynamics families, collapse is descriptive, and controls
 are post hoc. The 90-pair policy-separation control uses seeds 0--1, is not
 compute matched, and includes ten Walker2d-expert cells completed through a
 documented CPU recovery chain (eight resumed and two CPU-only). We provide no
-offline rule for choosing $T$ or $K$. Actor time
-and memory scale as $O(K)$; the ideal fixed-critic analysis motivates but does
-not certify the live chain.
+offline rule for choosing $T$ or $K$. BAR makes $K$ actor optimizer calls per
+delayed update and stores $K$ persistent actors, so actor work and persistent
+actor state scale as $O(K)$. On one H200/JAX 0.10.2 stack, compiled actor-phase
+time rises from $1.435$ to $1.887$ ms and scoped backend high-water memory from
+9.68 to 18.05 MB between $K=1$ and $K=4$ (1.316$\times$, 1.863$\times$); these
+one-stack measurements are not end-to-end scaling. The ideal fixed-critic
+analysis motivates but does not certify the live chain.
 
 \section{CONCLUSION}
 \label{sec:conclusion}

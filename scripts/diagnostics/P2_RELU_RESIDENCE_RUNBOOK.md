@@ -78,8 +78,18 @@ JAX_PLATFORMS=cpu CUDA_VISIBLE_DEVICES='' \
 "$PY" "$OUT/SOURCE_SNAPSHOT/verify_p2_relu_residence.py" --out-dir "$OUT"
 ```
 
+For any later audit, replay the exact snapshot verifier without changing the
+stored report:
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+"$PY" "$OUT/SOURCE_SNAPSHOT/verify_p2_relu_residence.py" \
+  --out-dir "$OUT" --check-existing
+```
+
 The runner copies its exact runner/verifier sources into the create-only bundle
-and records the dirty Git revision; invoke that snapshot verifier as shown.
+and records the dirty Git revision, CPU backend, and enabled x64 mode; invoke
+that snapshot verifier as shown.
 The verifier does not import the runner.  It recomputes the smooth harness with
 high-precision `Decimal`, reconstructs Q1 with independent NumPy code,
 regenerates selected rows, checks coordinate finite differences, directly
@@ -93,8 +103,75 @@ overwriting create-only artifacts.
 
 ## Inclusion boundary
 
-The pilot is healthy only when `MANIFEST.json.status == "pilot_complete"` and
-`VERIFY.json.pass == true`.  Even then, both files must state
-`scientific_admissible == false`.  Residence coverage is development output;
-there is no learned slope, learned support gate, return claim, or live-chain
+The pilot is healthy only when `MANIFEST.json.status == "pilot_complete"`,
+`VERIFY.json.pass == true`, and a fresh `--check-existing` replay succeeds.
+Even then, both files must state `scientific_admissible == false`.  Residence
+coverage is development output; there is no learned slope, support gate,
+return, or live-chain
 claim in this bundle.
+
+## Final scientific audit (Hopper + Walker, seeds 0-1)
+
+The final confirmatory audit runs the six Hopper/Walker `tau=1` tasks at seeds
+0 and 1 (12 bundles), samples 512 new anchors per bundle, and reuses the exact
+pilot geometry/residence math.  It never estimates a learned `1/K` slope.  The
+HalfCheetah family is excluded entirely.  `--phase final` writes
+`FINAL_DESIGN_LOCK.json` (the frozen protocol, per-run sample seeds, the full
+exclusion inventory, and raw-byte input hashes) **before** any checkpoint or
+dataset is deserialized for sampling.  Indices are created only after that
+freeze.
+
+The exclusion inventory is built by discovery, not hard-coded: it enumerates
+every archived `fixed_operator` state-index file under
+`sweep_results/diagnostics/fixed_operator_order/state_indices/` (all envs, both
+seeds) and every `pilot_state_indices.npy` under
+`/home/ext_csv/mpi_sweep_lab/p2_relu_residence_pilot.*`.  The known development
+attempts `VnOjA4`, `InTWgf`, `OLDBdx`, `xlMNfc`, and `sqfIVj` must all be
+present (a `meAdJI` bundle and any future bundle are picked up automatically).
+Exclusions are applied env-scoped: for each Hopper/Walker run only that env's
+archived seed-0 and seed-1 rows are numerically removed (the HalfCheetah
+development rows index a different dataset, so they are documented but never
+applied).
+
+```bash
+export PY=/home/ext_csv/miniconda3/envs/offrl/bin/python
+export OUT=/home/ext_csv/mpi_sweep_lab/p2-relu-final-YYYYMMDD
+
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+JAX_PLATFORMS=cpu CUDA_VISIBLE_DEVICES='' \
+"$PY" scripts/diagnostics/run_p2_relu_residence.py \
+  --phase final \
+  --out-dir "$OUT" \
+  --results-root /home/ext_csv/mpi_sweep_lab/results_qnorm \
+  --dataset-dir /raid/ext_csv/datasets/d4rl \
+  --archived-index-dir sweep_results/diagnostics/fixed_operator_order/state_indices \
+  --dev-bundle-glob '/home/ext_csv/mpi_sweep_lab/p2_relu_residence_pilot.*'
+
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+JAX_PLATFORMS=cpu CUDA_VISIBLE_DEVICES='' \
+"$PY" "$OUT/SOURCE_SNAPSHOT/verify_p2_relu_residence_final.py" --out-dir "$OUT"
+
+# Read-only replay against the stored report:
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+"$PY" "$OUT/SOURCE_SNAPSHOT/verify_p2_relu_residence_final.py" \
+  --out-dir "$OUT" --check-existing
+```
+
+Output layout under `$OUT`: `FINAL_DESIGN_LOCK.json`, `HARNESS.json`,
+`SUMMARY.json` (aggregate + per-run + pooled/family survival curves),
+`MANIFEST.json`, `STATUS.json`, `VERIFY.json`, a `SOURCE_SNAPSHOT/` of the
+runner and both verifiers, and one `"{env}_seed{S}"` subdir per bundle
+(`state_indices.npy`, `STATE_GEOMETRY.npz`, `residence_cells.csv`,
+`RUN_INPUTS.json`, `RUN_SUMMARY.json`).
+
+`verify_p2_relu_residence_final.py` does not import the runner.  It reuses the
+pilot verifier's independent NumPy geometry and oracle code, re-freezes and
+re-hashes the protocol and every input, regenerates all 12 index sets, checks
+geometry / finite differences / ReLU-and-box exit brackets per bundle,
+recomputes every residence cell, and independently rebuilds the per-run,
+pooled, and per-family survival curves.  The final audit is
+`scientific_admissible` only when `VERIFY.json.pass == true` and a fresh
+`--check-existing` replay succeeds.  The primary reportable quantity is the
+unique-horizon empirical survival curve `P(t_exit > t)`; repeated `(T, K)`
+cells sharing a horizon are deterministic views and are never counted as
+independent evidence.

@@ -1,0 +1,10 @@
+method,stability,n_cells,pearson_final_target_ratio_vs_within_run_delta_y_rms,external_stability_definition
+td3,all,90,-0.3353734118914479,normalized return <20 is collapsed
+td3,stable,46,-0.2411662490948594,normalized return <20 is collapsed
+td3,collapsed,44,0.013335977371376323,normalized return <20 is collapsed
+p3,all,90,-0.3043156253681694,normalized return <20 is collapsed
+p3,stable,65,0.7349437871256128,normalized return <20 is collapsed
+p3,collapsed,25,-0.5401710731263332,normalized return <20 is collapsed
+p4,all,90,-0.2133711537115855,normalized return <20 is collapsed
+p4,stable,71,0.7066980817983024,normalized return <20 is collapsed
+p4,collapsed,19,-0.6057391970935335,normalized return <20 is collapsed

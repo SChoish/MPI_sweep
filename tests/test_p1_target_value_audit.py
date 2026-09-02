@@ -19,31 +19,63 @@ import verify_p1_target_value_audit as verify_p1  # noqa: E402
 def _valid_verified_record(tmp_path: Path, method: str = "p3"):
     expected = next(
         record
-        for record in verify_p1._expected_record_metadata().values()
+        for record in verify_p1._expected_record_metadata(tmp_path).values()
         if record["method"] == method
     )
     config = {
         "env": expected["environment"],
         "seed": expected["seed"],
         "tau": expected["tau"],
-        "mpi_steps": expected["hops"],
-        **verify_p1.REQUIRED_CONFIG,
+        **{
+            key: value
+            for key, value in verify_p1.REQUIRED_CONFIG.items()
+            if key not in {"mpi_steps", "q_scale_norm", "integrator"}
+        },
     }
-    run_dir = (tmp_path / expected["run_name"]).resolve()
+    if method == "td3":
+        config["save_dir"] = "/home/ext_csv/td3_bc_jax/results_qnorm"
+    elif method == "p3":
+        config.update(
+            {
+                "save_dir": "/home/ext_csv/td3_bc_jax/results_mpi3",
+                "mpi_two_step": False,
+                "mpi_three_step": True,
+            }
+        )
+    else:
+        config.update(
+            {
+                "mpi_steps": 4,
+                "q_scale_norm": True,
+                "integrator": "implicit",
+            }
+        )
+    effective_config, resolution, errors = verify_p1._resolve_config_contract(
+        config, expected
+    )
+    assert errors == []
     digest = "a" * 64
-    expected_actor_step = verify_p1.CHECKPOINT_STEP // int(config["policy_freq"])
+    expected_actor_step = verify_p1.CHECKPOINT_STEP // int(
+        effective_config["policy_freq"]
+    )
+    legacy_profile = (
+        resolution["profile_id"]
+        != verify_p1.CONFIG_COMPATIBILITY_CONTRACT["fully_serialized_profile"]
+    )
     row = {
         **expected,
-        "run_dir": str(run_dir),
-        "checkpoint_path": str(run_dir / f"params_{verify_p1.CHECKPOINT_STEP}.pkl"),
-        "config_path": str(run_dir / "config.json"),
-        "eval_path": str(run_dir / "eval.csv"),
         "checkpoint_step": verify_p1.CHECKPOINT_STEP,
         "external_score_step": verify_p1.CHECKPOINT_STEP,
         "config": config,
         "config_sha256": hashlib.sha256(
             verify_p1._canonical_json_bytes(config)
         ).hexdigest(),
+        "config_schema": resolution["profile_id"],
+        "effective_config": effective_config,
+        "effective_config_sha256": hashlib.sha256(
+            verify_p1._canonical_json_bytes(effective_config)
+        ).hexdigest(),
+        "compatibility_resolution": resolution,
         "external_score": 50.0,
         "collapsed_lt20": False,
         "max_action": 1.0,
@@ -55,8 +87,17 @@ def _valid_verified_record(tmp_path: Path, method: str = "p3"):
         "residual_supported": True,
         "residual_intervention": "posthoc_final_checkpoint_one_adam_step",
         "optimizer_reconstruction": {
-            "optimizer": "optax.adam with imported training defaults",
+            "optimizer": "optax.adam with frozen audit hyperparameters",
             "learning_rate": 3e-4,
+            "storage_layout": verify_p1.OPTIMIZER_COMPATIBILITY_CONTRACT[
+                "legacy_layout" if legacy_profile else "current_layout"
+            ],
+            "actor_step_source": (
+                verify_p1.OPTIMIZER_COMPATIBILITY_CONTRACT["legacy_step_source"]
+                if legacy_profile
+                else "independently_stored_actor_step_and_adam_count"
+            ),
+            "actor_step_independently_stored": not legacy_profile,
             "expected_actor_step": expected_actor_step,
             "actors": [
                 {
@@ -67,6 +108,7 @@ def _valid_verified_record(tmp_path: Path, method: str = "p3"):
                 }
                 for index in range(1, int(expected["hops"]) + 1)
             ],
+            "inactive_legacy_slots": [],
             "all_optimizer_states_sha256": digest,
         },
     }
@@ -105,6 +147,10 @@ def test_expected_grid_is_exact_270_without_discovery(tmp_path: Path):
 def test_fixed_config_contract_matches_verifier_and_rejects_training_drift(tmp_path: Path):
     assert p1.REQUIRED_CONFIG == verify_p1.REQUIRED_CONFIG
     assert p1.OPTIONAL_CONFIG_IF_PRESENT == verify_p1.OPTIONAL_CONFIG_IF_PRESENT
+    assert p1.CONFIG_COMPATIBILITY_CONTRACT == verify_p1.CONFIG_COMPATIBILITY_CONTRACT
+    assert p1.OPTIMIZER_COMPATIBILITY_CONTRACT == verify_p1.OPTIMIZER_COMPATIBILITY_CONTRACT
+    assert p1.ALLOWED_RAW_CONFIG_FIELDS == verify_p1.ALLOWED_RAW_CONFIG_FIELDS
+    assert p1.PROTOCOL_VERSION == verify_p1.PROTOCOL_VERSION
     cell = p1.expected_cells(tmp_path)[0]
     config = {
         "env": cell["environment"],
@@ -148,6 +194,258 @@ def test_fixed_config_contract_rejects_incompatible_headline_settings(
     errors = p1._validate_config(config, cell, p1.CHECKPOINT_STEP)
     assert any(f"config {field}" in error for error in errors)
 
+
+def test_closed_legacy_profiles_match_runner_and_independent_verifier(tmp_path: Path):
+    verifier_expected = verify_p1._expected_record_metadata(tmp_path)
+
+    def raw_base(cell):
+        return {
+            "env": cell["environment"],
+            "seed": cell["seed"],
+            "tau": cell["tau"],
+            **{
+                key: value
+                for key, value in p1.REQUIRED_CONFIG.items()
+                if key not in {"q_scale_norm", "integrator"}
+            },
+        }
+
+    td3 = next(cell for cell in p1.expected_cells(tmp_path) if cell["method"] == "td3")
+    p3 = next(cell for cell in p1.expected_cells(tmp_path) if cell["method"] == "p3")
+    p4 = next(cell for cell in p1.expected_cells(tmp_path) if cell["method"] == "p4")
+    td3_config = raw_base(td3)
+    td3_config["save_dir"] = "/home/ext_csv/td3_bc_jax/results_qnorm"
+    p3_config = raw_base(p3)
+    p3_config.update(
+        {
+            "save_dir": "/home/ext_csv/td3_bc_jax/results_mpi3",
+            "mpi_two_step": False,
+            "mpi_three_step": True,
+        }
+    )
+    p4_config = {
+        "env": p4["environment"],
+        "seed": p4["seed"],
+        "tau": p4["tau"],
+        "mpi_steps": 4,
+        **p1.REQUIRED_CONFIG,
+    }
+
+    expected_profiles = {
+        "td3": "legacy_td3_qnorm_minimal_v0",
+        "p3": "legacy_p3_implicit_minimal_v0",
+        "p4": "fully_serialized_config_v1",
+    }
+    for cell, config in ((td3, td3_config), (p3, p3_config), (p4, p4_config)):
+        before = copy.deepcopy(config)
+        effective, resolution, errors = p1._resolve_config_contract(
+            config, cell, p1.CHECKPOINT_STEP
+        )
+        verified_effective, verified_resolution, verified_errors = (
+            verify_p1._resolve_config_contract(
+                config, verifier_expected[cell["key"]]
+            )
+        )
+        assert errors == verified_errors == []
+        assert effective == verified_effective
+        assert resolution == verified_resolution
+        assert resolution["profile_id"] == expected_profiles[cell["method"]]
+        assert config == before
+        assert all(field not in config for field in resolution["inferred_fields"])
+
+    mutations = []
+    bad_save = copy.deepcopy(td3_config)
+    bad_save["save_dir"] = "/home/ext_csv/td3_bc_jax/results_mpi3"
+    mutations.append((td3, bad_save))
+    bad_td3_mode = copy.deepcopy(td3_config)
+    bad_td3_mode["mpi_three_step"] = True
+    mutations.append((td3, bad_td3_mode))
+    bad_p3_scale = copy.deepcopy(p3_config)
+    bad_p3_scale["q_scale_norm"] = False
+    mutations.append((p3, bad_p3_scale))
+    bad_p3_mode = copy.deepcopy(p3_config)
+    bad_p3_mode["explicit_two_step"] = True
+    mutations.append((p3, bad_p3_mode))
+    missing_p4_field = copy.deepcopy(p4_config)
+    missing_p4_field.pop("integrator")
+    mutations.append((p4, missing_p4_field))
+    bool_hop = copy.deepcopy(p4_config)
+    bool_hop["mpi_steps"] = True
+    mutations.append((p4, bool_hop))
+    raw_float_drift = copy.deepcopy(p4_config)
+    raw_float_drift["policy_noise"] = 0.2 + 1e-10
+    mutations.append((p4, raw_float_drift))
+    string_float = copy.deepcopy(p4_config)
+    string_float["discount"] = "0.99"
+    mutations.append((p4, string_float))
+    for field, value in (
+        ("refinement_control", "direct_final"),
+        ("critic_target_route", "final"),
+        ("route_shadow_critics", True),
+        ("track_final_target_actor", True),
+    ):
+        unknown_semantic_control = copy.deepcopy(p4_config)
+        unknown_semantic_control[field] = value
+        mutations.append((p4, unknown_semantic_control))
+
+    for cell, config in mutations:
+        runner_errors = p1._resolve_config_contract(
+            config, cell, p1.CHECKPOINT_STEP
+        )[2]
+        verifier_errors = verify_p1._resolve_config_contract(
+            config, verifier_expected[cell["key"]]
+        )[2]
+        assert runner_errors
+        assert verifier_errors
+
+
+def test_action_scalar_contract_accepts_only_exact_float_encodings():
+    expected_float32 = float(np.float32(0.2) * np.float32(1.0))
+    accepted = (0.2, expected_float32)
+    rejected = (
+        float(np.nextafter(np.float32(expected_float32), np.float32(np.inf))),
+        expected_float32 + 1e-12,
+        float("nan"),
+        float("inf"),
+        "0.2",
+        np.asarray(0.2),
+    )
+    for value in accepted:
+        assert p1._stored_action_scalar_matches(value, 0.2, 1.0)
+        assert verify_p1._stored_action_scalar_matches(value, 0.2, 1.0)
+    for value in rejected:
+        assert not p1._stored_action_scalar_matches(value, 0.2, 1.0)
+        assert not verify_p1._stored_action_scalar_matches(value, 0.2, 1.0)
+
+
+def test_payload_config_requires_json_objects(tmp_path: Path):
+    config_path = tmp_path / "config.json"
+    config_path.write_text("[]\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="companion config.json is not a JSON object"):
+        p1._payload_config({"config": {}}, config_path)
+
+    config_path.write_text("{}\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="embedded checkpoint config is not a JSON object"):
+        p1._payload_config({"config": []}, config_path)
+
+
+def test_external_score_requires_a_canonical_integer_step(tmp_path: Path):
+    eval_path = tmp_path / "eval.csv"
+    eval_path.write_text(
+        "step,d4rl_score\n1000000,42.5\n",
+        encoding="utf-8",
+    )
+    cell = {"eval_path": str(eval_path), "method": "td3"}
+    score, step, _ = p1._read_external_score(cell)
+    assert score == 42.5
+    assert step == p1.CHECKPOINT_STEP
+
+    for malformed in ("1000000.9", "1000000.00000000001", " 1000000"):
+        eval_path.write_text(
+            f"step,d4rl_score\n{malformed},42.5\n",
+            encoding="utf-8",
+        )
+        with pytest.raises(ValueError, match="found 0"):
+            p1._read_external_score(cell)
+
+
+def test_verifier_integer_parsers_reject_coercible_values():
+    assert verify_p1._json_integer(1, "json") == 1
+    assert verify_p1._csv_integer("1", "csv") == 1
+    for value in ("1", 1.0, 1.9, True, None):
+        with pytest.raises(AssertionError, match="exact JSON integer"):
+            verify_p1._json_integer(value, "json")
+    for value in ("1.0", "1.9", " 1", "+1", 1, True):
+        with pytest.raises(AssertionError, match="canonical CSV integer"):
+            verify_p1._csv_integer(value, "csv")
+
+
+def test_present_file_gate_rejects_descendant_symlinks(tmp_path: Path):
+    root = tmp_path / "root"
+    target = tmp_path / "target"
+    root.mkdir()
+    first = p1.expected_cells(root)[0]
+    target_run = target / first["run_name"]
+    target_run.mkdir(parents=True)
+    for name in ("params_1000000.pkl", "config.json", "eval.csv"):
+        (target_run / name).write_bytes(b"trusted fixture")
+    (root / first["result_dir"]).symlink_to(target, target_is_directory=True)
+
+    failures = p1._present_file_gate(
+        [first], ("checkpoint_path", "config_path", "eval_path")
+    )
+    assert len(failures) == 3
+    assert {failure["reason"] for failure in failures} == {
+        "path is not a canonical nonsymlink descendant"
+    }
+
+
+@pytest.mark.parametrize("stored_step", ["1000000", 1_000_000.9, True])
+def test_checkpoint_step_requires_an_exact_integer_scalar(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, stored_step: object
+):
+    payload = {
+        "step": stored_step,
+        "mean": np.zeros(1, dtype=np.float32),
+        "std": np.ones(1, dtype=np.float32),
+        "max_action": 1.0,
+        "policy_noise": 0.2,
+        "noise_clip": 0.5,
+        "critic_params": {},
+        "target_actor_params": {},
+        "target_critic_params": {},
+    }
+    monkeypatch.setattr(p1, "load_checkpoint", lambda _: payload)
+    cell = {
+        "checkpoint_path": str(tmp_path / "params_1000000.pkl"),
+        "config_path": str(tmp_path / "config.json"),
+    }
+    with pytest.raises(ValueError, match="is not exact integer 1000000"):
+        p1._inspect_checkpoint_cell(cell, p1.CHECKPOINT_STEP)
+
+
+@pytest.mark.parametrize(
+    ("field", "stored_value", "message"),
+    [
+        ("max_action", "1.0", "max_action must be exact fixed value 1.0"),
+        ("policy_noise", "0.2", "stored policy_noise"),
+        ("noise_clip", np.asarray(0.5), "stored noise_clip"),
+    ],
+)
+def test_checkpoint_action_scalars_are_checked_before_conversion(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    field: str,
+    stored_value: object,
+    message: str,
+):
+    payload = {
+        "step": p1.CHECKPOINT_STEP,
+        "mean": np.zeros(1, dtype=np.float32),
+        "std": np.ones(1, dtype=np.float32),
+        "max_action": 1.0,
+        "policy_noise": 0.2,
+        "noise_clip": 0.5,
+        "critic_params": {},
+        "target_actor_params": {},
+        "target_critic_params": {},
+    }
+    payload[field] = stored_value
+    monkeypatch.setattr(p1, "load_checkpoint", lambda _: payload)
+    monkeypatch.setattr(p1, "_payload_config", lambda *_: ({}, "a" * 64, "b" * 64))
+    monkeypatch.setattr(
+        p1,
+        "_resolve_config_contract",
+        lambda *_: ({"policy_noise": 0.2, "noise_clip": 0.5}, {}, []),
+    )
+    monkeypatch.setattr(p1, "_actors", lambda *_: (object(),))
+    cell = {
+        "checkpoint_path": str(tmp_path / "params_1000000.pkl"),
+        "config_path": str(tmp_path / "config.json"),
+        "hops": 1,
+    }
+    with pytest.raises(ValueError, match=message):
+        p1._inspect_checkpoint_cell(cell, p1.CHECKPOINT_STEP)
 
 def test_provenance_binds_all_sources_versions_and_git_state():
     provenance = p1._provenance_bundle()
@@ -442,6 +740,7 @@ def test_optimizer_preflight_rejects_actor_step_adam_count_mismatch():
     )
     actors = tuple(actor.params for actor in train_state.actors)
     payload = {
+        "actors_params": actors,
         "actors_opt_states": tuple(actor.opt_state for actor in train_state.actors),
         "actors_steps": tuple(actor.step for actor in train_state.actors),
     }
@@ -455,6 +754,107 @@ def test_optimizer_preflight_rejects_actor_step_adam_count_mismatch():
     assert supported is False
     assert "step/count mismatch" in str(reason)
     assert details == {}
+
+
+def test_legacy_optimizer_uses_stored_adam_count_and_rejects_dirty_inactive_slots():
+    states = np.zeros((2, 3), dtype=np.float32)
+    actions = np.zeros((2, 2), dtype=np.float32)
+    train_state = p1._train_module.create_train_state(
+        jax.random.PRNGKey(19),
+        states[:1],
+        actions[:1],
+        max_action=1.0,
+        lr=3e-4,
+        policy_noise=0.2,
+        noise_clip=0.5,
+        mpi_steps=3,
+    )
+    actors = tuple(actor.params for actor in train_state.actors)
+    opt_states = tuple(actor.opt_state for actor in train_state.actors)
+    legacy_payload = {
+        "actor_params": actors[0],
+        "actor2_params": actors[1],
+        "actor3_params": actors[2],
+        "actor_opt_state": opt_states[0],
+        "actor2_opt_state": opt_states[1],
+        "actor3_opt_state": opt_states[2],
+        "critic_params": train_state.critic.params,
+    }
+
+    supported, reason, details = p1._optimizer_state_exact(
+        legacy_payload, actors[:1], 3e-4
+    )
+    assert supported is True
+    assert reason is None
+    assert details["storage_layout"] == p1.OPTIMIZER_COMPATIBILITY_CONTRACT[
+        "legacy_layout"
+    ]
+    assert details["actor_step_source"] == "unique_stored_adam_integer_count"
+    assert details["actor_step_independently_stored"] is False
+    assert len(details["inactive_legacy_slots"]) == 2
+    assert all(
+        slot["adam_count"] == 0 and slot["fresh_optimizer_state_exact"]
+        for slot in details["inactive_legacy_slots"]
+    )
+
+    mixed_layout = copy.copy(legacy_payload)
+    mixed_layout["actors_params"] = actors[:1]
+    supported, reason, _ = p1._optimizer_state_exact(
+        mixed_layout, actors[:1], 3e-4
+    )
+    assert supported is False
+    assert "mixes tuple actor params" in str(reason)
+
+    dirty_moments = copy.copy(legacy_payload)
+    dirty_moments["actor2_opt_state"] = jax.tree_util.tree_map(
+        lambda leaf: (
+            p1.jnp.ones_like(leaf)
+            if np.issubdtype(np.asarray(leaf).dtype, np.floating)
+            else leaf
+        ),
+        legacy_payload["actor2_opt_state"],
+    )
+    supported, reason, _ = p1._optimizer_state_exact(
+        dirty_moments, actors[:1], 3e-4
+    )
+    assert supported is False
+    assert "not fresh-zero" in str(reason)
+
+    dirty_count = copy.copy(legacy_payload)
+    dirty_count["actor2_opt_state"] = jax.tree_util.tree_map(
+        lambda leaf: (
+            leaf + 1
+            if np.asarray(leaf).shape == ()
+            and np.issubdtype(np.asarray(leaf).dtype, np.integer)
+            else leaf
+        ),
+        legacy_payload["actor2_opt_state"],
+    )
+    supported, reason, _ = p1._optimizer_state_exact(
+        dirty_count, actors[:1], 3e-4
+    )
+    assert supported is False
+    assert "expected 0" in str(reason)
+
+    supported, reason, p3_details = p1._optimizer_state_exact(
+        legacy_payload, actors, 3e-4
+    )
+    assert supported is True
+    assert reason is None
+    assert [actor["actor_step"] for actor in p3_details["actors"]] == [0, 0, 0]
+
+    rows, _ = p1._posthoc_residual_interventions(
+        payload=legacy_payload,
+        actors=actors,
+        actor_model=p1.Actor(action_dim=2, max_action=1.0),
+        critic=p1.TwinCritic(),
+        states=states,
+        tau=4.0,
+        learning_rate=3e-4,
+    )
+    assert [row["optimizer_step_before"] for row in rows] == [0, 0]
+    assert [row["optimizer_step_after"] for row in rows] == [1, 1]
+
 
 
 def test_scientific_outputs_are_create_only_and_paths_are_bundle_relative(
@@ -548,6 +948,40 @@ def test_verifier_source_must_match_frozen_provenance():
         verify_p1._verify_verifier_source(provenance)
 
 
+def test_verifier_protocol_headers_require_exact_types_and_values():
+    inventory = {
+        "protocol": verify_p1.PROTOCOL_VERSION,
+        "atomic_inventory": True,
+        "analysis_started": False,
+        "no_substitution": True,
+        "inventory_complete": True,
+        "n_expected": 270,
+        "n_resolved": 270,
+        "checkpoint_step": verify_p1.CHECKPOINT_STEP,
+    }
+    protocol = {"protocol": verify_p1.PROTOCOL_VERSION, "locked": True}
+    verify_p1._verify_protocol_headers(inventory, protocol)
+
+    mutations = []
+    for field, value in (
+        ("atomic_inventory", "true"),
+        ("analysis_started", 0),
+        ("no_substitution", 1),
+        ("inventory_complete", "true"),
+        ("n_expected", 270.9),
+        ("n_resolved", "270"),
+        ("checkpoint_step", 1_000_000.9),
+    ):
+        changed = copy.deepcopy(inventory)
+        changed[field] = value
+        mutations.append((changed, protocol))
+    mutations.append((inventory, {**protocol, "protocol": "wrong"}))
+    mutations.append((inventory, {**protocol, "locked": "true"}))
+    for changed_inventory, changed_protocol in mutations:
+        with pytest.raises(AssertionError):
+            verify_p1._verify_protocol_headers(changed_inventory, changed_protocol)
+
+
 def test_verifier_rejects_record_metadata_config_and_optimizer_tampering(
     tmp_path: Path,
 ):
@@ -571,6 +1005,54 @@ def test_verifier_rejects_record_metadata_config_and_optimizer_tampering(
     hash_tamper["config_sha256"] = "0" * 64
     with pytest.raises(AssertionError, match="checkpoint config hash mismatch"):
         verify_p1._verify_record_contract(expected["key"], hash_tamper, expected)
+    effective_tamper = copy.deepcopy(row)
+    effective_tamper["effective_config"]["q_scale_norm"] = False
+    effective_tamper["effective_config_sha256"] = hashlib.sha256(
+        verify_p1._canonical_json_bytes(effective_tamper["effective_config"])
+    ).hexdigest()
+    with pytest.raises(AssertionError, match="effective checkpoint config mismatch"):
+        verify_p1._verify_record_contract(expected["key"], effective_tamper, expected)
+
+    resolution_tamper = copy.deepcopy(row)
+    resolution_tamper["compatibility_resolution"]["profile_id"] = (
+        "legacy_p3_implicit_explicit_flags_v1"
+    )
+    with pytest.raises(
+        AssertionError, match="checkpoint compatibility resolution mismatch"
+    ):
+        verify_p1._verify_record_contract(expected["key"], resolution_tamper, expected)
+
+    scalar_tamper = copy.deepcopy(row)
+    scalar_tamper["policy_noise"] = float(
+        np.nextafter(np.float32(0.2), np.float32(np.inf))
+    )
+    with pytest.raises(AssertionError, match="policy_noise encoding mismatch"):
+        verify_p1._verify_record_contract(expected["key"], scalar_tamper, expected)
+
+    rescaled_action_tamper = copy.deepcopy(row)
+    rescaled_action_tamper.update(
+        {"max_action": 2.0, "policy_noise": 0.4, "noise_clip": 1.0}
+    )
+    with pytest.raises(AssertionError, match="max_action is invalid"):
+        verify_p1._verify_record_contract(
+            expected["key"], rescaled_action_tamper, expected
+        )
+
+    step_source_tamper = copy.deepcopy(row)
+    step_source_tamper["optimizer_reconstruction"]["actor_step_source"] = (
+        "independently_stored_actor_step_and_adam_count"
+    )
+    with pytest.raises(AssertionError, match="optimizer actor-step source mismatch"):
+        verify_p1._verify_record_contract(expected["key"], step_source_tamper, expected)
+
+    missing_step_storage = copy.deepcopy(row)
+    missing_step_storage["optimizer_reconstruction"].pop(
+        "actor_step_independently_stored"
+    )
+    with pytest.raises(AssertionError, match="optimizer actor-step storage claim mismatch"):
+        verify_p1._verify_record_contract(expected["key"], missing_step_storage, expected)
+
+
 
     optimizer_tamper = copy.deepcopy(row)
     optimizer_tamper["optimizer_reconstruction"]["actors"][0]["adam_count"] -= 1
@@ -579,8 +1061,13 @@ def test_verifier_rejects_record_metadata_config_and_optimizer_tampering(
 
     path_tamper = copy.deepcopy(row)
     path_tamper["checkpoint_path"] = path_tamper["config_path"]
-    with pytest.raises(AssertionError, match="checkpoint companion path mismatch"):
+    with pytest.raises(AssertionError, match="canonical checkpoint path mismatch"):
         verify_p1._verify_record_contract(expected["key"], path_tamper, expected)
+
+    path_alias_tamper = copy.deepcopy(row)
+    path_alias_tamper["run_dir"] = path_alias_tamper["run_dir"] + "/."
+    with pytest.raises(AssertionError, match="canonical checkpoint path mismatch"):
+        verify_p1._verify_record_contract(expected["key"], path_alias_tamper, expected)
 
 
 def test_verifier_is_artifact_only_and_rejects_formula_corruption():

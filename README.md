@@ -260,7 +260,8 @@ Use `mpi-sweep --help` and `mpi-train --help` for all options.
 
 Locked submission follow-ups use separate, fail-closed entrypoints: the
 [P0 BAR-P4/two-actor-P4 harness](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md),
-the [P1 target-value audit](scripts/diagnostics/P1_TARGET_VALUE_RUNBOOK.md), and
+the [P1 target-value audit](scripts/diagnostics/P1_TARGET_VALUE_RUNBOOK.md),
+the [P2 ReLU residence audit](scripts/diagnostics/P2_RELU_RESIDENCE_RUNBOOK.md), and
 the [actor-cost profiler](scripts/diagnostics/ACTOR_COST_RUNBOOK.md).
 These tools are not part of the generic sweep or host-diagnostic wrappers.
 Preview or preflight is the safe default; their runbooks identify the explicit
@@ -285,6 +286,14 @@ host-specific diagnostic bundle includes compact outputs and post-hoc manifests
 derived from all 504 local K4 checkpoints, including a 180-cell four-seed
 target-action-displacement audit. Those audit manifests do not reconstruct the
 missing historical training configurations for proximal seeds 2--3.
+
+A verified one-stack actor-cost profile is released under
+[`sweep_results/diagnostics/actor_cost/`](sweep_results/diagnostics/actor_cost/).
+On one H200/JAX 0.10.2 stack, compiled actor-phase dispatch rises from
+1.435 ms at K=1 to 1.887 ms at K=4 (1.316x); the scoped fresh-worker backend
+high-water mark rises from 9,684,736 to 18,045,440 bytes (1.863x). The timing
+excludes compilation and warmup, and the memory figure is not an isolated
+steady-state actor-call peak.
 
 Audited movement, critic failure, target exposure, simulator calibration, and
 targeted controls are documented in
@@ -328,8 +337,8 @@ historical training checkout. That remaining provenance gap is tracked in
 
 The anonymous AISTATS 2026 sources, official style files, build instructions,
 and generated PDFs are in [aistats26_manuscript/](aistats26_manuscript/).
-Submission-facing experiment decisions, including the redesigned fixed-operator
-error audit, are tracked in [TODO.md](TODO.md).
+Submission-facing experiment decisions, including the ReLU activation-region
+scope audit, are tracked in [TODO.md](TODO.md).
 
 ## Development
 

@@ -125,6 +125,43 @@ def write_json_create(path: Path, payload: dict[str, Any]) -> None:
         handle.write("\n")
 
 
+def verify_artifact_inventory(
+    out_dir: Path, artifacts: Any, expected_paths: set[str]
+) -> None:
+    if not isinstance(artifacts, dict):
+        raise AssertionError("manifest artifact inventory missing")
+    if set(artifacts) != expected_paths:
+        raise AssertionError("manifest artifact inventory mismatch")
+    for name, digest in artifacts.items():
+        if sha256_file(out_dir / name) != digest:
+            raise AssertionError(f"artifact hash mismatch: {name}")
+
+
+def verify_git_provenance(provenance: Any) -> None:
+    if not isinstance(provenance, dict) or not isinstance(
+        provenance.get("git_dirty"), bool
+    ):
+        raise AssertionError("git dirty provenance missing")
+    if len(str(provenance.get("git_revision", ""))) != 40:
+        raise AssertionError("git revision provenance missing")
+    if provenance.get("source_snapshot_is_durable_provenance") is not True:
+        raise AssertionError("durable source provenance declaration missing")
+
+
+def verify_stored_report(verify_path: Path, recomputed: dict[str, Any]) -> None:
+    stored = json.loads(verify_path.read_text())
+    if not isinstance(stored.get("written_at"), str):
+        raise AssertionError("stored VERIFY timestamp missing")
+    stored_comparable = dict(stored)
+    recomputed_comparable = dict(recomputed)
+    stored_comparable.pop("written_at")
+    recomputed_comparable.pop("written_at")
+    if canonical_bytes(stored_comparable) != canonical_bytes(
+        recomputed_comparable
+    ):
+        raise AssertionError("stored VERIFY does not match read-only recomputation")
+
+
 def gamma_n(n_terms: int) -> float:
     eps = np.finfo(np.float64).eps
     product = float(n_terms) * eps
@@ -937,9 +974,14 @@ def verify_bundle(out_dir: Path, *, check_existing: bool = False) -> dict[str, A
         raise AssertionError("learned slope must be absent")
     if design["estimand"]["learned_support_gate"] is not None:
         raise AssertionError("learned support gate must be absent")
-    if design["estimand"].get("unique_horizon_estimand") != "empirical survival curve P(t_exit > t)":
+    if (
+        design["estimand"].get("unique_horizon_estimand")
+        != "empirical survival curve P(t_exit > t)"
+    ):
         raise AssertionError("unique-horizon estimand missing")
-    if "never independent evidence" not in design["estimand"].get("cell_dependence", ""):
+    if "never independent evidence" not in design["estimand"].get(
+        "cell_dependence", ""
+    ):
         raise AssertionError("repeated-cell dependence contract missing")
     final = design["final_contract_not_executed"]
     if final["excluded_family"] != "halfcheetah" or final["n_runs"] != 12:
@@ -981,14 +1023,7 @@ def verify_bundle(out_dir: Path, *, check_existing: bool = False) -> dict[str, A
     expected_artifacts.update(
         f"{SOURCE_SNAPSHOT_DIR}/{name}" for name in design["source_sha256"]
     )
-    manifest_artifacts = manifest.get("artifacts")
-    if not isinstance(manifest_artifacts, dict):
-        raise AssertionError("manifest artifact inventory missing")
-    if set(manifest_artifacts) != expected_artifacts:
-        raise AssertionError("manifest artifact inventory mismatch")
-    for name, digest in manifest_artifacts.items():
-        if sha256_file(out_dir / name) != digest:
-            raise AssertionError(f"artifact hash mismatch: {name}")
+    verify_artifact_inventory(out_dir, manifest.get("artifacts"), expected_artifacts)
     if design["source_sha256"] != manifest["source_sha256"]:
         raise AssertionError("design/manifest source hashes differ")
     snapshots = manifest.get("source_snapshots", {})
@@ -1004,13 +1039,7 @@ def verify_bundle(out_dir: Path, *, check_existing: bool = False) -> dict[str, A
     verifier_name = Path(__file__).name
     if sha256_file(Path(__file__).resolve()) != manifest["source_sha256"][verifier_name]:
         raise AssertionError("invoke the exact snapshotted verifier")
-    provenance = manifest.get("git_provenance", {})
-    if not isinstance(provenance.get("git_dirty"), bool):
-        raise AssertionError("git dirty provenance missing")
-    if len(str(provenance.get("git_revision", ""))) != 40:
-        raise AssertionError("git revision provenance missing")
-    if provenance.get("source_snapshot_is_durable_provenance") is not True:
-        raise AssertionError("durable source provenance declaration missing")
+    verify_git_provenance(manifest.get("git_provenance"))
     verify_harness(json.loads((out_dir / "HARNESS.json").read_text()))
 
     inputs = json.loads((out_dir / "PILOT_INPUTS.json").read_text())
@@ -1247,15 +1276,7 @@ def verify_bundle(out_dir: Path, *, check_existing: bool = False) -> dict[str, A
         "written_at": now_iso(),
     }
     if check_existing:
-        stored_report = json.loads(verify_path.read_text())
-        if not isinstance(stored_report.get("written_at"), str):
-            raise AssertionError("stored VERIFY timestamp missing")
-        stored_comparable = dict(stored_report)
-        recomputed_comparable = dict(report)
-        stored_comparable.pop("written_at")
-        recomputed_comparable.pop("written_at")
-        if canonical_bytes(stored_comparable) != canonical_bytes(recomputed_comparable):
-            raise AssertionError("stored VERIFY does not match read-only recomputation")
+        verify_stored_report(verify_path, report)
     else:
         write_json_create(verify_path, report)
     return report

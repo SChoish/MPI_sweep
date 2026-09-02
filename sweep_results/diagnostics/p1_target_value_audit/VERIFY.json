@@ -1,0 +1,22 @@
+{
+  "artifact_integrity_pass": true,
+  "artifact_only": true,
+  "counts": {
+    "checkpoints": 270,
+    "geometry_rows": 270,
+    "raw_npz": 270,
+    "residual_rows": 450,
+    "value_rows": 540
+  },
+  "finite_value_gate": true,
+  "imports_analysis_runner": false,
+  "inventory_sha256": "1a359cb085e88f126a12f044e2bef087696dee0b4a9135cfdcabfef3aa55c6b7",
+  "manifest_sha256": "b5686296192d9f9c3b485eae8766184fec4ed5dbf4276bde8ec0e4117eb3224b",
+  "pass": true,
+  "protocol": "p1_target_value_audit_v2",
+  "protocol_sha256": "6597f3fec17583e6bec20855a7b1a089292f5f8b951426220a1255805a4321e4",
+  "scientific_inclusion_gate_pass": true,
+  "verification_scope": "artifact hashes and independently recomputed arithmetic; checkpoint networks are not reexecuted",
+  "verifier_source_sha256": "9b30e121ba4567c01dbc4d341829859da429954a94d812eaaadc95b40d7aa65e",
+  "written_at": "2026-09-02T13:17:02.651932+00:00"
+}

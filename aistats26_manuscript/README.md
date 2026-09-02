@@ -30,7 +30,7 @@ value; a matched P4 two-actor control is the top pending experiment.
 - `make_figures.py`: regenerates empirical figures from released CSV files
 - `build_pdf.sh`: canonical build and validation entry point
 
-Experiment-inclusion decisions and the controlled operator-error rerun are
+Experiment-inclusion decisions and the ReLU activation-region follow-up are
 tracked in [`../TODO.md`](../TODO.md).
 
 The build produces:
@@ -69,5 +69,7 @@ checklist. The optional supplement uses the required single-column format.
   screening, and a frozen-critic local-consistency audit
 - A 90-pair, two-seed MCEP-inspired policy-separation control with a
   contemporaneous BAR-P3 rerun and documented CPU-recovery sensitivity
+- A verified K=1--4 H200/JAX actor-phase profile with hash-pinned raw timing
+  and scoped backend-memory records
 - Task-resampling uncertainty, dynamics-family sensitivity, collapse-risk sensitivity, and rescued-cell gain attribution
 

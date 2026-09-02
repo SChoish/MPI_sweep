@@ -22,6 +22,7 @@ import hashlib
 import json
 import os
 import platform
+import re
 import subprocess
 import sys
 from collections.abc import Mapping, Sequence
@@ -90,6 +91,8 @@ COLLAPSE_THRESHOLD = 20.0
 EXPECTED_VALUE_ROWS = 270 * 2
 EXPECTED_GEOMETRY_ROWS = 270
 EXPECTED_RESIDUAL_ROWS = 90 * 2 + 90 * 3
+PROTOCOL_VERSION = "p1_target_value_audit_v2"
+MAX_ACTION = 1.0
 
 
 @dataclass(frozen=True)
@@ -125,6 +128,190 @@ REQUIRED_CONFIG = {
 # the field is present, it must identify BAR; P1's td3/p3/p4 labels remain the
 # independent path-and-hop schema above.
 OPTIONAL_CONFIG_IF_PRESENT = {"method": "bar"}
+ABSENT_CONFIG_FIELD = "<absent>"
+CONFIG_SIGNATURE_FIELDS = (
+    "mpi_steps",
+    "q_scale_norm",
+    "integrator",
+    "mpi_two_step",
+    "mpi_three_step",
+    "mpi_four_step",
+    "explicit_two_step",
+    "explicit_three_step",
+    "explicit_q_term",
+    "fb",
+)
+ALLOWED_RAW_CONFIG_FIELDS = (
+    "batch_size",
+    "compilation_cache_dir",
+    "data_dir",
+    "discount",
+    "env",
+    "eval_episodes",
+    "eval_freq",
+    "explicit_q_term",
+    "explicit_three_step",
+    "explicit_two_step",
+    "fb",
+    "integrator",
+    "lr",
+    "max_timesteps",
+    "method",
+    "mpi_steps",
+    "mpi_three_step",
+    "mpi_two_step",
+    "n_jitted_updates",
+    "no_resume",
+    "noise_clip",
+    "normalize",
+    "policy_freq",
+    "policy_noise",
+    "polyak",
+    "q_scale_norm",
+    "restore_path",
+    "save_dir",
+    "save_interval",
+    "seed",
+    "tau",
+    "updates_per_dispatch",
+)
+LEGACY_CONFIG_PROFILES: dict[str, dict[str, Any]] = {
+    "legacy_td3_qnorm_minimal_v0": {
+        "method": "td3",
+        "result_dir": "results_qnorm",
+        "save_dir": "/home/ext_csv/td3_bc_jax/results_qnorm",
+        "signature": {field: ABSENT_CONFIG_FIELD for field in CONFIG_SIGNATURE_FIELDS},
+        "inferred_fields": {
+            "mpi_steps": 1,
+            "q_scale_norm": True,
+            "integrator": "implicit",
+        },
+        "expected_inactive_optimizer_slots": 0,
+    },
+    "legacy_td3_qnorm_control_fields_v1": {
+        "method": "td3",
+        "result_dir": "results_qnorm",
+        "save_dir": "/home/ext_csv/td3_bc_jax/results_qnorm",
+        "signature": {
+            "mpi_steps": ABSENT_CONFIG_FIELD,
+            "q_scale_norm": ABSENT_CONFIG_FIELD,
+            "integrator": ABSENT_CONFIG_FIELD,
+            "mpi_two_step": False,
+            "mpi_three_step": False,
+            "mpi_four_step": ABSENT_CONFIG_FIELD,
+            "explicit_two_step": False,
+            "explicit_three_step": False,
+            "explicit_q_term": True,
+            "fb": False,
+        },
+        "inferred_fields": {
+            "mpi_steps": 1,
+            "q_scale_norm": True,
+            "integrator": "implicit",
+        },
+        "expected_inactive_optimizer_slots": 2,
+    },
+    "legacy_p3_implicit_minimal_v0": {
+        "method": "p3",
+        "result_dir": "results_mpi3",
+        "save_dir": "/home/ext_csv/td3_bc_jax/results_mpi3",
+        "signature": {
+            "mpi_steps": ABSENT_CONFIG_FIELD,
+            "q_scale_norm": ABSENT_CONFIG_FIELD,
+            "integrator": ABSENT_CONFIG_FIELD,
+            "mpi_two_step": False,
+            "mpi_three_step": True,
+            "mpi_four_step": ABSENT_CONFIG_FIELD,
+            "explicit_two_step": ABSENT_CONFIG_FIELD,
+            "explicit_three_step": ABSENT_CONFIG_FIELD,
+            "explicit_q_term": ABSENT_CONFIG_FIELD,
+            "fb": ABSENT_CONFIG_FIELD,
+        },
+        "inferred_fields": {
+            "mpi_steps": 3,
+            "q_scale_norm": True,
+            "integrator": "implicit",
+        },
+        "expected_inactive_optimizer_slots": 0,
+    },
+    "legacy_p3_implicit_explicit_flags_v1": {
+        "method": "p3",
+        "result_dir": "results_mpi3",
+        "save_dir": "/home/ext_csv/td3_bc_jax/results_mpi3",
+        "signature": {
+            "mpi_steps": ABSENT_CONFIG_FIELD,
+            "q_scale_norm": ABSENT_CONFIG_FIELD,
+            "integrator": ABSENT_CONFIG_FIELD,
+            "mpi_two_step": False,
+            "mpi_three_step": True,
+            "mpi_four_step": ABSENT_CONFIG_FIELD,
+            "explicit_two_step": False,
+            "explicit_three_step": False,
+            "explicit_q_term": ABSENT_CONFIG_FIELD,
+            "fb": ABSENT_CONFIG_FIELD,
+        },
+        "inferred_fields": {
+            "mpi_steps": 3,
+            "q_scale_norm": True,
+            "integrator": "implicit",
+        },
+        "expected_inactive_optimizer_slots": 0,
+    },
+    "legacy_p3_implicit_qnorm_fields_v2": {
+        "method": "p3",
+        "result_dir": "results_mpi3",
+        "save_dir": "/home/ext_csv/td3_bc_jax/results_mpi3",
+        "signature": {
+            "mpi_steps": ABSENT_CONFIG_FIELD,
+            "q_scale_norm": True,
+            "integrator": ABSENT_CONFIG_FIELD,
+            "mpi_two_step": False,
+            "mpi_three_step": True,
+            "mpi_four_step": ABSENT_CONFIG_FIELD,
+            "explicit_two_step": False,
+            "explicit_three_step": False,
+            "explicit_q_term": True,
+            "fb": False,
+        },
+        "inferred_fields": {
+            "mpi_steps": 3,
+            "integrator": "implicit",
+        },
+        "expected_inactive_optimizer_slots": 0,
+    },
+}
+CONFIG_COMPATIBILITY_CONTRACT = {
+    "version": "p1_checkpoint_config_compat_v2",
+    "fully_serialized_profile": "fully_serialized_config_v1",
+    "allowed_raw_config_fields": list(ALLOWED_RAW_CONFIG_FIELDS),
+    "unknown_raw_config_fields_rejected": True,
+    "raw_config_preserved": True,
+    "inference_only_when_field_absent": True,
+    "historical_method_identity_proven": False,
+    "historical_identity_limit": (
+        "legacy path, save_dir, flags, and optimizer layout identify an eligible "
+        "compatibility profile but do not prove the historical training revision"
+    ),
+    "legacy_profiles": LEGACY_CONFIG_PROFILES,
+}
+AUDIT_ADAM_HYPERPARAMETERS = {
+    "b1": 0.9,
+    "b2": 0.999,
+    "eps": 1e-8,
+    "eps_root": 0.0,
+    "mu_dtype": None,
+    "nesterov": False,
+}
+OPTIMIZER_COMPATIBILITY_CONTRACT = {
+    "current_layout": "actors_tuple_with_independent_steps",
+    "legacy_layout": "named_actor_states_with_adam_count_steps",
+    "fresh_optimizer_allowed": False,
+    "legacy_step_source": "unique_stored_adam_integer_count",
+    "inactive_legacy_slot_required_count": 0,
+    "schedule_derived_active_step": CHECKPOINT_STEP // REQUIRED_CONFIG["policy_freq"],
+    "audit_adam_hyperparameters": AUDIT_ADAM_HYPERPARAMETERS,
+    "historical_optimizer_hyperparameters_proven": False,
+}
 
 VALUE_SCOPE_OWN = "within_run_target_critic"
 VALUE_SCOPE_COMMON = "common_td3_target_critic"
@@ -221,13 +408,14 @@ def cell_key(method: str, environment: str, tau: float, seed: int) -> str:
 
 
 def expected_cells(root: Path, checkpoint_step: int = CHECKPOINT_STEP) -> list[dict[str, Any]]:
+    canonical_root = root.resolve()
     cells: list[dict[str, Any]] = []
     for environment in ENVIRONMENTS:
         for tau in TAUS:
             for seed in SEEDS:
                 for method, spec in METHODS.items():
                     name = run_name(method, environment, tau, seed)
-                    run_dir = root / spec.result_dir / name
+                    run_dir = canonical_root / spec.result_dir / name
                     cells.append(
                         {
                             "key": cell_key(method, environment, tau, seed),
@@ -237,12 +425,14 @@ def expected_cells(root: Path, checkpoint_step: int = CHECKPOINT_STEP) -> list[d
                             "seed": int(seed),
                             "hops": int(spec.hops),
                             "run_name": name,
-                            "run_dir": str(run_dir.resolve()),
+                            "result_dir": spec.result_dir,
+                            "root": str(canonical_root),
+                            "run_dir": str(run_dir),
                             "checkpoint_path": str(
-                                (run_dir / f"params_{int(checkpoint_step)}.pkl").resolve()
+                                run_dir / f"params_{int(checkpoint_step)}.pkl"
                             ),
-                            "config_path": str((run_dir / "config.json").resolve()),
-                            "eval_path": str((run_dir / "eval.csv").resolve()),
+                            "config_path": str(run_dir / "config.json"),
+                            "eval_path": str(run_dir / "eval.csv"),
                         }
                     )
     if len(cells) != 270 or len({cell["key"] for cell in cells}) != 270:
@@ -392,7 +582,7 @@ def _provenance_bundle() -> dict[str, Any]:
 
 def write_expected_grid(out_dir: Path, root: Path, checkpoint_step: int) -> dict[str, Any]:
     document = {
-        "protocol": "p1_target_value_audit_v1",
+        "protocol": PROTOCOL_VERSION,
         "mode": "dry_run",
         "analysis_started": False,
         "no_substitution": True,
@@ -443,27 +633,153 @@ def _payload_config(
 ) -> tuple[dict[str, Any], str, str]:
     if "config" not in payload:
         raise ValueError("checkpoint payload has no config")
+    if not isinstance(payload["config"], Mapping):
+        raise ValueError("embedded checkpoint config is not a JSON object")
     if not config_path.is_file():
         raise ValueError("companion config.json is missing")
     embedded = jsonable(payload["config"])
     companion = json.loads(config_path.read_text(encoding="utf-8"))
+    if not isinstance(companion, Mapping):
+        raise ValueError("companion config.json is not a JSON object")
     if canonical_json_bytes(embedded) != canonical_json_bytes(companion):
         raise ValueError("embedded checkpoint config differs from companion config.json")
     return embedded, sha256_json(embedded), sha256_file(config_path)
 
 
 def _same_value(actual: Any, expected: Any) -> bool:
+    if isinstance(expected, bool):
+        return isinstance(actual, bool) and actual is expected
+    if isinstance(expected, int):
+        return isinstance(actual, int) and not isinstance(actual, bool) and actual == expected
     if isinstance(expected, float):
-        try:
-            return abs(float(actual) - expected) <= 1e-12
-        except (TypeError, ValueError):
+        return isinstance(actual, (float, np.floating)) and float(actual) == expected
+    return type(actual) is type(expected) and actual == expected
+
+
+def _profile_value_matches(actual: Any, expected: Any) -> bool:
+    if isinstance(expected, bool):
+        return isinstance(actual, bool) and actual is expected
+    return _same_value(actual, expected)
+
+
+
+def _config_signature(config: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
+    return {
+        field: {
+            "present": field in config,
+            "value": jsonable(config[field]) if field in config else None,
+        }
+        for field in CONFIG_SIGNATURE_FIELDS
+    }
+
+
+def _profile_matches(config: Mapping[str, Any], profile: Mapping[str, Any]) -> bool:
+    for field, expected in profile["signature"].items():
+        if expected == ABSENT_CONFIG_FIELD:
+            if field in config:
+                return False
+        elif field not in config or not _profile_value_matches(config[field], expected):
             return False
-    return actual == expected
+    return True
 
 
-def _validate_config(
+def _mode_flag_errors(config: Mapping[str, Any], expected_hops: int) -> list[str]:
+    errors: list[str] = []
+    mpi_flags = {
+        "mpi_two_step": 2,
+        "mpi_three_step": 3,
+        "mpi_four_step": 4,
+    }
+    explicit_flags = ("explicit_two_step", "explicit_three_step", "fb")
+    for field in (*mpi_flags, *explicit_flags):
+        if field in config and not isinstance(config[field], bool):
+            errors.append(f"legacy mode flag {field} must be boolean")
+    true_mpi = [
+        (field, hops)
+        for field, hops in mpi_flags.items()
+        if config.get(field) is True
+    ]
+    if len(true_mpi) > 1:
+        errors.append(f"multiple MPI mode flags are true: {[field for field, _ in true_mpi]}")
+    elif true_mpi and true_mpi[0][1] != int(expected_hops):
+        errors.append(
+            f"legacy mode flag {true_mpi[0][0]} implies {true_mpi[0][1]} hops, "
+            f"expected {int(expected_hops)}"
+        )
+    true_explicit = [field for field in explicit_flags if config.get(field) is True]
+    if true_explicit:
+        errors.append(f"explicit/FB mode is incompatible with implicit P1 grid: {true_explicit}")
+    return errors
+
+
+def _resolve_config_contract(
     config: Mapping[str, Any], cell: Mapping[str, Any], checkpoint_step: int
-) -> list[str]:
+) -> tuple[dict[str, Any], dict[str, Any], list[str]]:
+    raw_config = dict(config)
+    errors = _mode_flag_errors(raw_config, int(cell["hops"]))
+    unknown_fields = sorted(set(raw_config).difference(ALLOWED_RAW_CONFIG_FIELDS))
+    if unknown_fields:
+        errors.append(f"unknown raw config fields: {unknown_fields}")
+    compatibility_fields = ("mpi_steps", "q_scale_norm", "integrator")
+    missing_compatibility = [
+        field for field in compatibility_fields if field not in raw_config
+    ]
+    inferred_fields: dict[str, Any] = {}
+    profile_id = str(CONFIG_COMPATIBILITY_CONTRACT["fully_serialized_profile"])
+    expected_inactive_slots = 0
+
+    if missing_compatibility:
+        matches = [
+            (name, profile)
+            for name, profile in LEGACY_CONFIG_PROFILES.items()
+            if profile["method"] == cell["method"]
+            and _profile_matches(raw_config, profile)
+        ]
+        if len(matches) != 1:
+            errors.append(
+                "raw config does not match exactly one closed legacy profile "
+                f"for {cell['method']}: {[name for name, _ in matches]}"
+            )
+            profile_id = "unresolved"
+        else:
+            profile_id, profile = matches[0]
+            inferred_fields = dict(profile["inferred_fields"])
+            expected_inactive_slots = int(profile["expected_inactive_optimizer_slots"])
+            if cell.get("result_dir") != profile["result_dir"]:
+                errors.append(
+                    f"cell result_dir={cell.get('result_dir')!r} != "
+                    f"legacy profile {profile['result_dir']!r}"
+                )
+            root_path = Path(str(cell.get("root", "")))
+            run_dir = Path(str(cell.get("run_dir", "")))
+            expected_run_dir = (
+                root_path / str(profile["result_dir"]) / str(cell["run_name"])
+            )
+            if (
+                not root_path.is_absolute()
+                or not run_dir.is_absolute()
+                or run_dir != expected_run_dir
+            ):
+                errors.append("legacy run_dir is not the exact canonical root/method/run path")
+            try:
+                expected_run_dir.relative_to(root_path)
+            except ValueError:
+                errors.append("legacy run_dir escapes the canonical root")
+            save_dir_text = raw_config.get("save_dir")
+            if (
+                not isinstance(save_dir_text, str)
+                or not Path(save_dir_text).is_absolute()
+                or save_dir_text != profile["save_dir"]
+            ):
+                errors.append("legacy config save_dir does not match the closed profile")
+
+    effective_config = dict(raw_config)
+    for field, value in inferred_fields.items():
+        if field in effective_config:
+            errors.append(f"legacy inference attempted to overwrite config key {field}")
+        else:
+            effective_config[field] = value
+
     expected = {
         "env": cell["environment"],
         "seed": cell["seed"],
@@ -472,16 +788,61 @@ def _validate_config(
         **REQUIRED_CONFIG,
         "max_timesteps": int(checkpoint_step),
     }
-    errors = []
     for key, value in expected.items():
-        if key not in config:
-            errors.append(f"missing config key {key}")
-        elif not _same_value(config[key], value):
-            errors.append(f"config {key}={config[key]!r} != {value!r}")
+        if key not in effective_config:
+            errors.append(f"missing effective config key {key}")
+        elif not _same_value(effective_config[key], value):
+            errors.append(f"effective config {key}={effective_config[key]!r} != {value!r}")
     for key, value in OPTIONAL_CONFIG_IF_PRESENT.items():
-        if key in config and not _same_value(config[key], value):
-            errors.append(f"config {key}={config[key]!r} != {value!r}")
-    return errors
+        if key in raw_config and not _same_value(raw_config[key], value):
+            errors.append(f"config {key}={raw_config[key]!r} != {value!r}")
+
+    result_dir = str(cell.get("result_dir", METHODS[str(cell["method"])].result_dir))
+    run_suffix = str(Path(result_dir) / str(cell["run_name"]))
+    resolution = {
+        "version": CONFIG_COMPATIBILITY_CONTRACT["version"],
+        "profile_id": profile_id,
+        "raw_config_unchanged": True,
+        "raw_config_sha256": sha256_json(raw_config),
+        "inferred_fields": jsonable(inferred_fields),
+        "expected_inactive_optimizer_slots": expected_inactive_slots,
+        "evidence": {
+            "method": str(cell["method"]),
+            "result_dir": result_dir,
+            "run_dir_suffix": run_suffix,
+            "config_save_dir": jsonable(raw_config.get("save_dir")),
+            "signature": _config_signature(raw_config),
+        },
+    }
+    return effective_config, resolution, errors
+
+
+def _validate_config(
+    config: Mapping[str, Any], cell: Mapping[str, Any], checkpoint_step: int
+) -> list[str]:
+    return _resolve_config_contract(config, cell, checkpoint_step)[2]
+
+
+def _stored_action_scalar_matches(stored: Any, scale: Any, max_action: Any) -> bool:
+    values = (stored, scale, max_action)
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, float, np.integer, np.floating))
+        for value in values
+    ):
+        return False
+    stored_value, scale_value, max_action_value = (float(value) for value in values)
+    if not all(np.isfinite(value) for value in (stored_value, scale_value, max_action_value)):
+        return False
+    expected_float64 = scale_value * max_action_value
+    expected_float32 = float(np.float32(scale_value) * np.float32(max_action_value))
+    return stored_value == expected_float64 or stored_value == expected_float32
+
+
+def _parse_csv_integer(value: Any) -> int | None:
+    if not isinstance(value, str) or re.fullmatch(r"-?(0|[1-9][0-9]*)", value) is None:
+        return None
+    return int(value)
 
 
 def _read_external_score(cell: Mapping[str, Any]) -> tuple[float, int, str]:
@@ -490,11 +851,7 @@ def _read_external_score(cell: Mapping[str, Any]) -> tuple[float, int, str]:
         raise ValueError("eval.csv is missing")
     with path.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
-    at_step = [
-        row
-        for row in rows
-        if int(float(row.get("step", -1))) == CHECKPOINT_STEP
-    ]
+    at_step = [row for row in rows if _parse_csv_integer(row.get("step")) == CHECKPOINT_STEP]
     if len(at_step) != 1:
         raise ValueError(
             f"eval.csv must have exactly one row at {CHECKPOINT_STEP}; found {len(at_step)}"
@@ -509,79 +866,204 @@ def _read_external_score(cell: Mapping[str, Any]) -> tuple[float, int, str]:
     return score, CHECKPOINT_STEP, sha256_file(path)
 
 
+LEGACY_ACTOR_PARAM_KEYS = (
+    "actor_params",
+    "actor2_params",
+    "actor3_params",
+    "actor4_params",
+    "actor5_params",
+)
+LEGACY_ACTOR_OPT_STATE_KEYS = (
+    "actor_opt_state",
+    "actor2_opt_state",
+    "actor3_opt_state",
+    "actor4_opt_state",
+    "actor5_opt_state",
+)
+
+
+@dataclass(frozen=True)
+class StoredOptimizerBundle:
+    active_opt_states: tuple[Any, ...]
+    active_steps: tuple[Any, ...]
+    serialized_opt_states: tuple[Any, ...]
+    serialized_params: tuple[Any, ...]
+    storage_layout: str
+    actor_step_source: str
+    actor_step_independently_stored: bool
+    inactive_slots: tuple[dict[str, Any], ...]
+
+
+def _adam_count_from_state(state: Any, label: str) -> int:
+    count_candidates = [
+        int(np.asarray(leaf))
+        for leaf in jax.tree_util.tree_leaves(state)
+        if np.asarray(leaf).shape == ()
+        and np.issubdtype(np.asarray(leaf).dtype, np.integer)
+    ]
+    if len(count_candidates) != 1:
+        raise ValueError(
+            f"{label} Adam state has {len(count_candidates)} count candidates"
+        )
+    return count_candidates[0]
+
+
+def _contiguous_named_values(
+    payload: Mapping[str, Any], keys: Sequence[str], label: str
+) -> tuple[Any, ...]:
+    present = [index for index, key in enumerate(keys) if key in payload]
+    if not present:
+        return ()
+    if present != list(range(present[-1] + 1)):
+        raise ValueError(f"{label} slots are not a contiguous prefix: {present}")
+    return tuple(payload[key] for key in keys[: present[-1] + 1])
+
+
+def _stored_actor_optimizer_bundle(
+    payload: Mapping[str, Any], expected_hops: int
+) -> StoredOptimizerBundle:
+    modern_present = "actors_opt_states" in payload or "actors_steps" in payload
+    legacy_state_present = any(key in payload for key in LEGACY_ACTOR_OPT_STATE_KEYS)
+    legacy_param_present = any(key in payload for key in LEGACY_ACTOR_PARAM_KEYS)
+    if modern_present:
+        if legacy_state_present or legacy_param_present:
+            raise ValueError("checkpoint mixes current and legacy actor optimizer layouts")
+        if "actors_opt_states" not in payload or "actors_steps" not in payload:
+            raise ValueError("current optimizer layout requires states and independent steps")
+        opt_states = tuple(payload["actors_opt_states"])
+        actor_steps = tuple(payload["actors_steps"])
+        params = tuple(payload.get("actors_params", ()))
+        if (
+            len(opt_states) != int(expected_hops)
+            or len(actor_steps) != int(expected_hops)
+            or len(params) != int(expected_hops)
+        ):
+            raise ValueError("current optimizer/step/parameter count differs from active hops")
+        return StoredOptimizerBundle(
+            active_opt_states=opt_states,
+            active_steps=actor_steps,
+            serialized_opt_states=opt_states,
+            serialized_params=params,
+            storage_layout=str(OPTIMIZER_COMPATIBILITY_CONTRACT["current_layout"]),
+            actor_step_source="independently_stored_actor_step_and_adam_count",
+            actor_step_independently_stored=True,
+            inactive_slots=(),
+        )
+
+    if "actors_params" in payload:
+        raise ValueError("checkpoint mixes tuple actor params with legacy optimizer layout")
+    opt_states = _contiguous_named_values(
+        payload, LEGACY_ACTOR_OPT_STATE_KEYS, "legacy optimizer"
+    )
+    params = _contiguous_named_values(payload, LEGACY_ACTOR_PARAM_KEYS, "legacy actor")
+    if len(opt_states) != len(params):
+        raise ValueError("legacy optimizer and parameter slot counts differ")
+    if len(opt_states) < int(expected_hops):
+        raise ValueError("legacy optimizer layout has fewer states than active hops")
+    active_opt_states = opt_states[: int(expected_hops)]
+    active_steps = tuple(
+        _adam_count_from_state(state, f"actor {index}")
+        for index, state in enumerate(active_opt_states, start=1)
+    )
+    inactive: list[dict[str, Any]] = []
+    for index, state in enumerate(opt_states[int(expected_hops) :], start=expected_hops + 1):
+        adam_count = _adam_count_from_state(state, f"inactive actor {index}")
+        if adam_count != int(
+            OPTIMIZER_COMPATIBILITY_CONTRACT["inactive_legacy_slot_required_count"]
+        ):
+            raise ValueError(
+                f"inactive legacy actor {index} Adam count is {adam_count}, expected 0"
+            )
+        inactive.append(
+            {
+                "actor": int(index),
+                "adam_count": adam_count,
+                "optimizer_state_sha256": sha256_tree(state),
+            }
+        )
+    return StoredOptimizerBundle(
+        active_opt_states=active_opt_states,
+        active_steps=active_steps,
+        serialized_opt_states=opt_states,
+        serialized_params=params,
+        storage_layout=str(OPTIMIZER_COMPATIBILITY_CONTRACT["legacy_layout"]),
+        actor_step_source=str(OPTIMIZER_COMPATIBILITY_CONTRACT["legacy_step_source"]),
+        actor_step_independently_stored=False,
+        inactive_slots=tuple(inactive),
+    )
+
+
+def _audit_adam(learning_rate: float) -> optax.GradientTransformationExtraArgs:
+    return optax.adam(
+        learning_rate=float(learning_rate),
+        **AUDIT_ADAM_HYPERPARAMETERS,
+    )
+
+
 def _optimizer_state_exact(
     payload: Mapping[str, Any], actors: Sequence[Any], learning_rate: float
 ) -> tuple[bool, str | None, dict[str, Any]]:
-    opt_states = payload.get("actors_opt_states")
-    actor_steps = payload.get("actors_steps")
-    if opt_states is None or actor_steps is None:
-        return False, "actors_opt_states/actors_steps missing", {}
-    if len(opt_states) != len(actors) or len(actor_steps) != len(actors):
-        return False, "stored optimizer/step count differs from actor count", {}
-    optimizer = optax.adam(float(learning_rate))
-    details: list[dict[str, Any]] = []
-    for index, (params, stored, actor_step) in enumerate(
-        zip(actors, opt_states, actor_steps, strict=True)
+    try:
+        bundle = _stored_actor_optimizer_bundle(payload, len(actors))
+    except ValueError as error:
+        return False, str(error), {}
+    optimizer = _audit_adam(learning_rate)
+    for index, (params, stored) in enumerate(
+        zip(bundle.serialized_params, bundle.serialized_opt_states, strict=True),
+        start=1,
     ):
         fresh = optimizer.init(jax.tree_util.tree_map(jnp.asarray, params))
         if jax.tree_util.tree_structure(fresh) != jax.tree_util.tree_structure(stored):
-            return (
-                False,
-                f"actor {index + 1} optimizer tree structure mismatch",
-                {},
-            )
+            return False, f"actor {index} optimizer tree structure mismatch", {}
         fresh_leaves = jax.tree_util.tree_leaves(fresh)
         stored_leaves = jax.tree_util.tree_leaves(stored)
         for fresh_leaf, stored_leaf in zip(fresh_leaves, stored_leaves, strict=True):
             fresh_array = np.asarray(fresh_leaf)
             stored_array = np.asarray(stored_leaf)
             if fresh_array.shape != stored_array.shape or fresh_array.dtype != stored_array.dtype:
-                return (
-                    False,
-                    f"actor {index + 1} optimizer leaf shape/dtype mismatch",
-                    {},
-                )
-        count_candidates = [
-            int(np.asarray(leaf))
-            for leaf in stored_leaves
-            if np.asarray(leaf).shape == ()
-            and np.issubdtype(np.asarray(leaf).dtype, np.integer)
-        ]
-        if len(count_candidates) != 1:
-            return (
-                False,
-                f"actor {index + 1} Adam state has {len(count_candidates)} count candidates",
-                {},
-            )
+                return False, f"actor {index} optimizer leaf shape/dtype mismatch", {}
+            if index > len(actors) and not np.array_equal(stored_array, fresh_array):
+                return False, f"inactive actor {index} optimizer state is not fresh-zero", {}
+
+    details: list[dict[str, Any]] = []
+    for index, (stored, actor_step) in enumerate(
+        zip(bundle.active_opt_states, bundle.active_steps, strict=True),
+        start=1,
+    ):
+        try:
+            adam_count = _adam_count_from_state(stored, f"actor {index}")
+        except ValueError as error:
+            return False, str(error), {}
         step_array = np.asarray(actor_step)
-        if step_array.shape != () or not np.issubdtype(
-            step_array.dtype, np.integer
-        ):
-            return False, f"actor {index + 1} step is not an integer scalar", {}
+        if step_array.shape != () or not np.issubdtype(step_array.dtype, np.integer):
+            return False, f"actor {index} step is not an integer scalar", {}
         step = int(step_array)
-        adam_count = count_candidates[0]
         if step < 0 or adam_count != step:
-            return (
-                False,
-                f"actor {index + 1} step/count mismatch: {step} != {adam_count}",
-                {},
-            )
+            return False, f"actor {index} step/count mismatch: {step} != {adam_count}", {}
         details.append(
             {
-                "actor": index + 1,
+                "actor": index,
                 "actor_step": step,
                 "adam_count": adam_count,
                 "optimizer_state_sha256": sha256_tree(stored),
             }
         )
+    inactive_details = [
+        {**slot, "fresh_optimizer_state_exact": True}
+        for slot in bundle.inactive_slots
+    ]
     return (
         True,
         None,
         {
-            "optimizer": "optax.adam with imported training defaults",
+            "optimizer": "optax.adam with frozen audit hyperparameters",
             "learning_rate": float(learning_rate),
+            "storage_layout": bundle.storage_layout,
+            "actor_step_source": bundle.actor_step_source,
+            "actor_step_independently_stored": bundle.actor_step_independently_stored,
             "actors": details,
-            "all_optimizer_states_sha256": sha256_tree(tuple(opt_states)),
+            "inactive_legacy_slots": inactive_details,
+            "all_optimizer_states_sha256": sha256_tree(bundle.serialized_opt_states),
         },
     )
 
@@ -614,6 +1096,7 @@ def _present_file_gate(
 ) -> list[dict[str, str]]:
     missing: list[dict[str, str]] = []
     for cell in cells:
+        root = Path(str(cell["root"]))
         for field in fields:
             path = Path(str(cell[field]))
             if not path.is_file():
@@ -622,6 +1105,21 @@ def _present_file_gate(
                         "key": str(cell["key"]),
                         "field": field,
                         "path": str(path),
+                    }
+                )
+                continue
+            try:
+                path.relative_to(root)
+                resolved = path.resolve(strict=True)
+            except (OSError, ValueError):
+                resolved = None
+            if resolved != path:
+                missing.append(
+                    {
+                        "key": str(cell["key"]),
+                        "field": field,
+                        "path": str(path),
+                        "reason": "path is not a canonical nonsymlink descendant",
                     }
                 )
     return missing
@@ -647,7 +1145,7 @@ def _unresolved_document(
             }
         )
     return {
-        "protocol": "p1_target_value_audit_v1",
+        "protocol": PROTOCOL_VERSION,
         "atomic_inventory": True,
         "analysis_started": False,
         "no_substitution": True,
@@ -711,14 +1209,21 @@ def _inspect_checkpoint_cell(
     missing_keys = [key for key in required if key not in payload]
     if missing_keys:
         raise ValueError(f"checkpoint missing keys: {missing_keys}")
-    if int(payload.get("step", -1)) != int(checkpoint_step):
+    payload_step = payload.get("step")
+    if (
+        isinstance(payload_step, bool)
+        or not isinstance(payload_step, (int, np.integer))
+        or int(payload_step) != int(checkpoint_step)
+    ):
         raise ValueError(
-            f"payload step={payload.get('step')!r} != {int(checkpoint_step)}"
+            f"payload step={payload_step!r} is not exact integer {int(checkpoint_step)}"
         )
     config, config_sha256, config_file_sha256 = _payload_config(
         payload, config_path
     )
-    config_errors = _validate_config(config, cell, checkpoint_step)
+    effective_config, compatibility_resolution, config_errors = (
+        _resolve_config_contract(config, cell, checkpoint_step)
+    )
     if config_errors:
         raise ValueError("; ".join(config_errors))
     actors = _actors(payload, int(cell["hops"]))
@@ -728,24 +1233,62 @@ def _inspect_checkpoint_cell(
         raise ValueError("checkpoint normalization arrays have invalid shapes")
     if not np.all(np.isfinite(mean)) or not np.all(np.isfinite(std)) or np.any(std <= 0):
         raise ValueError("checkpoint normalization arrays are nonfinite/nonpositive")
-    max_action = float(payload["max_action"])
-    policy_noise = float(payload["policy_noise"])
-    noise_clip = float(payload["noise_clip"])
-    if not np.isfinite(max_action) or max_action <= 0:
-        raise ValueError("max_action must be finite and positive")
-    if abs(policy_noise - float(config["policy_noise"]) * max_action) > 1e-12:
-        raise ValueError("stored policy_noise differs from config scale * max_action")
-    if abs(noise_clip - float(config["noise_clip"]) * max_action) > 1e-12:
-        raise ValueError("stored noise_clip differs from config scale * max_action")
+    max_action_raw = payload["max_action"]
+    policy_noise_raw = payload["policy_noise"]
+    noise_clip_raw = payload["noise_clip"]
+    if (
+        isinstance(max_action_raw, bool)
+        or not isinstance(max_action_raw, (int, float, np.integer, np.floating))
+        or not np.isfinite(float(max_action_raw))
+        or float(max_action_raw) != MAX_ACTION
+    ):
+        raise ValueError(f"max_action must be exact fixed value {MAX_ACTION}")
+    if not _stored_action_scalar_matches(
+        policy_noise_raw, effective_config["policy_noise"], max_action_raw
+    ):
+        raise ValueError(
+            "stored policy_noise is not an allowed exact config scale * max_action encoding"
+        )
+    if not _stored_action_scalar_matches(
+        noise_clip_raw, effective_config["noise_clip"], max_action_raw
+    ):
+        raise ValueError(
+            "stored noise_clip is not an allowed exact config scale * max_action encoding"
+        )
+    max_action = float(max_action_raw)
+    policy_noise = float(policy_noise_raw)
+    noise_clip = float(noise_clip_raw)
     optimizer_ok, optimizer_error, optimizer_details = _optimizer_state_exact(
-        payload, actors, float(config["lr"])
+        payload, actors, float(effective_config["lr"])
     )
     if not optimizer_ok:
         raise ValueError(
             "P1-C residual unsupported: exact Adam reconstruction failed: "
             f"{optimizer_error}"
         )
-    policy_freq = int(config["policy_freq"])
+    legacy_profile = (
+        compatibility_resolution["profile_id"]
+        != CONFIG_COMPATIBILITY_CONTRACT["fully_serialized_profile"]
+    )
+    expected_layout = OPTIMIZER_COMPATIBILITY_CONTRACT[
+        "legacy_layout" if legacy_profile else "current_layout"
+    ]
+    if optimizer_details["storage_layout"] != expected_layout:
+        raise ValueError(
+            "config profile and stored optimizer layout disagree: "
+            f"{compatibility_resolution['profile_id']} vs "
+            f"{optimizer_details['storage_layout']}"
+        )
+    inactive_slots = optimizer_details["inactive_legacy_slots"]
+    expected_inactive_slots = int(
+        compatibility_resolution["expected_inactive_optimizer_slots"]
+    )
+    if len(inactive_slots) != expected_inactive_slots:
+        raise ValueError(
+            "config profile and inactive optimizer slots disagree: "
+            f"{len(inactive_slots)} != {expected_inactive_slots}"
+        )
+    policy_freq = int(effective_config["policy_freq"])
     if int(checkpoint_step) % policy_freq:
         raise ValueError("checkpoint step is not divisible by policy_freq")
     expected_actor_step = int(checkpoint_step) // policy_freq
@@ -772,12 +1315,16 @@ def _inspect_checkpoint_cell(
         "config": config,
         "config_sha256": config_sha256,
         "config_file_sha256": config_file_sha256,
+        "config_schema": compatibility_resolution["profile_id"],
+        "effective_config": effective_config,
+        "effective_config_sha256": sha256_json(effective_config),
+        "compatibility_resolution": compatibility_resolution,
         "normalization_sha256": _normalization_hash(mean, std),
         "max_action": max_action,
         "policy_noise": policy_noise,
         "noise_clip": noise_clip,
-        "discount": float(config["discount"]),
-        "learning_rate": float(config["lr"]),
+        "discount": float(effective_config["discount"]),
+        "learning_rate": float(effective_config["lr"]),
         "residual_supported": True,
         "optimizer_reconstruction": optimizer_details,
         "residual_intervention": "posthoc_final_checkpoint_one_adam_step",
@@ -1093,7 +1640,7 @@ def preflight(
         record["training_source_sha256"] = source_sha256
         record["provenance_bundle_sha256"] = provenance_sha256
     document = {
-        "protocol": "p1_target_value_audit_v1",
+        "protocol": PROTOCOL_VERSION,
         "atomic_inventory": True,
         "analysis_started": False,
         "no_substitution": True,
@@ -1118,17 +1665,24 @@ def preflight(
     checkpoint_manifest = out_dir / "CHECKPOINTS.json"
     _write_json(checkpoint_manifest, document, allow_identical=True)
     protocol = {
-        "protocol": "p1_target_value_audit_v1",
+        "protocol": PROTOCOL_VERSION,
         "locked": True,
         "checkpoint_manifest_sha256": sha256_file(checkpoint_manifest),
         "diagnostic_code_sha256": document["diagnostic_code_sha256"],
         "training_source_sha256": document["training_source_sha256"],
         "provenance_bundle_sha256": document["provenance_bundle_sha256"],
         "checkpoint_config_contract": {
-            "required_fixed": jsonable(REQUIRED_CONFIG),
-            "required_per_cell": ["env", "seed", "tau", "mpi_steps"],
-            "optional_if_present": jsonable(OPTIONAL_CONFIG_IF_PRESENT),
+            "required_effective_fixed": jsonable(REQUIRED_CONFIG),
+            "required_effective_per_cell": ["env", "seed", "tau", "mpi_steps"],
+            "optional_raw_if_present": jsonable(OPTIONAL_CONFIG_IF_PRESENT),
+            "max_action": MAX_ACTION,
+            "compatibility": jsonable(CONFIG_COMPATIBILITY_CONTRACT),
+            "stored_action_scalar_encodings": [
+                "exact_float64_scale_times_max_action",
+                "exact_ieee754_float32_scale_times_max_action",
+            ],
         },
+        "optimizer_state_contract": jsonable(OPTIMIZER_COMPATIBILITY_CONTRACT),
         "grid": {
             "environments": list(ENVIRONMENTS),
             "taus": list(TAUS),
@@ -1407,10 +1961,11 @@ def _posthoc_residual_interventions(
             "residual_transport_before": empty,
             "residual_transport_after": empty,
         }
-    opt_states = payload["actors_opt_states"]
-    actor_steps = payload["actors_steps"]
+    optimizer_bundle = _stored_actor_optimizer_bundle(payload, total_hops)
+    opt_states = optimizer_bundle.active_opt_states
+    actor_steps = optimizer_bundle.active_steps
     critic_params = payload["critic_params"]
-    optimizer = optax.adam(float(learning_rate))
+    optimizer = _audit_adam(learning_rate)
     tau_step = float(tau) / float(total_hops)
     rows: list[dict[str, Any]] = []
     raw: dict[str, list[Any]] = {
@@ -2093,7 +2648,7 @@ def run_analysis(
         and all(bool(row["all_finite"]) for row in residual_rows)
     )
     manifest = {
-        "protocol": "p1_target_value_audit_v1",
+        "protocol": PROTOCOL_VERSION,
         "status": "analysis_complete",
         "cpu_only": True,
         "jax_backend": backend,

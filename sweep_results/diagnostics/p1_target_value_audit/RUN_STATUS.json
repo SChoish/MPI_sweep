@@ -1,0 +1,8 @@
+{
+  "analysis_started": true,
+  "finite_value_gate": true,
+  "independent_verifier_required": true,
+  "run_allowed": true,
+  "state": "analysis_complete_unverified",
+  "written_at": "2026-09-02T13:16:58.677901+00:00"
+}

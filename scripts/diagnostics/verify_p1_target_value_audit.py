@@ -12,6 +12,7 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 from collections.abc import Mapping, Sequence
 from datetime import datetime, timezone
 from pathlib import Path
@@ -34,8 +35,11 @@ ENVIRONMENTS = (
 TAUS = (4.0, 7.0, 10.0, 14.0, 20.0)
 SEEDS = (0, 1)
 METHOD_HOPS = {"td3": 1, "p3": 3, "p4": 4}
+METHOD_RESULT_DIRS = {"td3": "results_qnorm", "p3": "results_mpi3", "p4": "results/mpi4_norm"}
 CHECKPOINT_STEP = 1_000_000
 COLLAPSE_THRESHOLD = 20.0
+PROTOCOL_VERSION = "p1_target_value_audit_v2"
+MAX_ACTION = 1.0
 REQUIRED_CONFIG = {
     "normalize": True,
     "q_scale_norm": True,
@@ -52,6 +56,190 @@ REQUIRED_CONFIG = {
     "n_jitted_updates": 8,
 }
 OPTIONAL_CONFIG_IF_PRESENT = {"method": "bar"}
+ABSENT_CONFIG_FIELD = "<absent>"
+CONFIG_SIGNATURE_FIELDS = (
+    "mpi_steps",
+    "q_scale_norm",
+    "integrator",
+    "mpi_two_step",
+    "mpi_three_step",
+    "mpi_four_step",
+    "explicit_two_step",
+    "explicit_three_step",
+    "explicit_q_term",
+    "fb",
+)
+ALLOWED_RAW_CONFIG_FIELDS = (
+    "batch_size",
+    "compilation_cache_dir",
+    "data_dir",
+    "discount",
+    "env",
+    "eval_episodes",
+    "eval_freq",
+    "explicit_q_term",
+    "explicit_three_step",
+    "explicit_two_step",
+    "fb",
+    "integrator",
+    "lr",
+    "max_timesteps",
+    "method",
+    "mpi_steps",
+    "mpi_three_step",
+    "mpi_two_step",
+    "n_jitted_updates",
+    "no_resume",
+    "noise_clip",
+    "normalize",
+    "policy_freq",
+    "policy_noise",
+    "polyak",
+    "q_scale_norm",
+    "restore_path",
+    "save_dir",
+    "save_interval",
+    "seed",
+    "tau",
+    "updates_per_dispatch",
+)
+LEGACY_CONFIG_PROFILES: dict[str, dict[str, Any]] = {
+    "legacy_td3_qnorm_minimal_v0": {
+        "method": "td3",
+        "result_dir": "results_qnorm",
+        "save_dir": "/home/ext_csv/td3_bc_jax/results_qnorm",
+        "signature": {field: ABSENT_CONFIG_FIELD for field in CONFIG_SIGNATURE_FIELDS},
+        "inferred_fields": {
+            "mpi_steps": 1,
+            "q_scale_norm": True,
+            "integrator": "implicit",
+        },
+        "expected_inactive_optimizer_slots": 0,
+    },
+    "legacy_td3_qnorm_control_fields_v1": {
+        "method": "td3",
+        "result_dir": "results_qnorm",
+        "save_dir": "/home/ext_csv/td3_bc_jax/results_qnorm",
+        "signature": {
+            "mpi_steps": ABSENT_CONFIG_FIELD,
+            "q_scale_norm": ABSENT_CONFIG_FIELD,
+            "integrator": ABSENT_CONFIG_FIELD,
+            "mpi_two_step": False,
+            "mpi_three_step": False,
+            "mpi_four_step": ABSENT_CONFIG_FIELD,
+            "explicit_two_step": False,
+            "explicit_three_step": False,
+            "explicit_q_term": True,
+            "fb": False,
+        },
+        "inferred_fields": {
+            "mpi_steps": 1,
+            "q_scale_norm": True,
+            "integrator": "implicit",
+        },
+        "expected_inactive_optimizer_slots": 2,
+    },
+    "legacy_p3_implicit_minimal_v0": {
+        "method": "p3",
+        "result_dir": "results_mpi3",
+        "save_dir": "/home/ext_csv/td3_bc_jax/results_mpi3",
+        "signature": {
+            "mpi_steps": ABSENT_CONFIG_FIELD,
+            "q_scale_norm": ABSENT_CONFIG_FIELD,
+            "integrator": ABSENT_CONFIG_FIELD,
+            "mpi_two_step": False,
+            "mpi_three_step": True,
+            "mpi_four_step": ABSENT_CONFIG_FIELD,
+            "explicit_two_step": ABSENT_CONFIG_FIELD,
+            "explicit_three_step": ABSENT_CONFIG_FIELD,
+            "explicit_q_term": ABSENT_CONFIG_FIELD,
+            "fb": ABSENT_CONFIG_FIELD,
+        },
+        "inferred_fields": {
+            "mpi_steps": 3,
+            "q_scale_norm": True,
+            "integrator": "implicit",
+        },
+        "expected_inactive_optimizer_slots": 0,
+    },
+    "legacy_p3_implicit_explicit_flags_v1": {
+        "method": "p3",
+        "result_dir": "results_mpi3",
+        "save_dir": "/home/ext_csv/td3_bc_jax/results_mpi3",
+        "signature": {
+            "mpi_steps": ABSENT_CONFIG_FIELD,
+            "q_scale_norm": ABSENT_CONFIG_FIELD,
+            "integrator": ABSENT_CONFIG_FIELD,
+            "mpi_two_step": False,
+            "mpi_three_step": True,
+            "mpi_four_step": ABSENT_CONFIG_FIELD,
+            "explicit_two_step": False,
+            "explicit_three_step": False,
+            "explicit_q_term": ABSENT_CONFIG_FIELD,
+            "fb": ABSENT_CONFIG_FIELD,
+        },
+        "inferred_fields": {
+            "mpi_steps": 3,
+            "q_scale_norm": True,
+            "integrator": "implicit",
+        },
+        "expected_inactive_optimizer_slots": 0,
+    },
+    "legacy_p3_implicit_qnorm_fields_v2": {
+        "method": "p3",
+        "result_dir": "results_mpi3",
+        "save_dir": "/home/ext_csv/td3_bc_jax/results_mpi3",
+        "signature": {
+            "mpi_steps": ABSENT_CONFIG_FIELD,
+            "q_scale_norm": True,
+            "integrator": ABSENT_CONFIG_FIELD,
+            "mpi_two_step": False,
+            "mpi_three_step": True,
+            "mpi_four_step": ABSENT_CONFIG_FIELD,
+            "explicit_two_step": False,
+            "explicit_three_step": False,
+            "explicit_q_term": True,
+            "fb": False,
+        },
+        "inferred_fields": {
+            "mpi_steps": 3,
+            "integrator": "implicit",
+        },
+        "expected_inactive_optimizer_slots": 0,
+    },
+}
+CONFIG_COMPATIBILITY_CONTRACT = {
+    "version": "p1_checkpoint_config_compat_v2",
+    "fully_serialized_profile": "fully_serialized_config_v1",
+    "allowed_raw_config_fields": list(ALLOWED_RAW_CONFIG_FIELDS),
+    "unknown_raw_config_fields_rejected": True,
+    "raw_config_preserved": True,
+    "inference_only_when_field_absent": True,
+    "historical_method_identity_proven": False,
+    "historical_identity_limit": (
+        "legacy path, save_dir, flags, and optimizer layout identify an eligible "
+        "compatibility profile but do not prove the historical training revision"
+    ),
+    "legacy_profiles": LEGACY_CONFIG_PROFILES,
+}
+AUDIT_ADAM_HYPERPARAMETERS = {
+    "b1": 0.9,
+    "b2": 0.999,
+    "eps": 1e-8,
+    "eps_root": 0.0,
+    "mu_dtype": None,
+    "nesterov": False,
+}
+OPTIMIZER_COMPATIBILITY_CONTRACT = {
+    "current_layout": "actors_tuple_with_independent_steps",
+    "legacy_layout": "named_actor_states_with_adam_count_steps",
+    "fresh_optimizer_allowed": False,
+    "legacy_step_source": "unique_stored_adam_integer_count",
+    "inactive_legacy_slot_required_count": 0,
+    "schedule_derived_active_step": CHECKPOINT_STEP // REQUIRED_CONFIG["policy_freq"],
+    "audit_adam_hyperparameters": AUDIT_ADAM_HYPERPARAMETERS,
+    "historical_optimizer_hyperparameters_proven": False,
+}
 OWN_SCOPE = "within_run_target_critic"
 COMMON_SCOPE = "common_td3_target_critic"
 RESIDUAL_SCOPE = "within_run_online_critic"
@@ -118,17 +306,31 @@ def _expected_keys() -> set[str]:
 
 
 def _is_sha256(value: Any) -> bool:
-    text = str(value)
-    return len(text) == 64 and all(character in "0123456789abcdef" for character in text)
+    return isinstance(value, str) and len(value) == 64 and all(
+        character in "0123456789abcdef" for character in value
+    )
+
+
+def _json_integer(value: Any, label: str) -> int:
+    if type(value) is not int:
+        raise AssertionError(f"{label} is not an exact JSON integer: {value!r}")
+    return value
+
+
+def _csv_integer(value: Any, label: str) -> int:
+    if not isinstance(value, str) or re.fullmatch(r"-?(0|[1-9][0-9]*)", value) is None:
+        raise AssertionError(f"{label} is not a canonical CSV integer: {value!r}")
+    return int(value)
 
 
 def _same_value(actual: Any, expected: Any) -> bool:
+    if isinstance(expected, bool):
+        return isinstance(actual, bool) and actual is expected
+    if isinstance(expected, int):
+        return isinstance(actual, int) and not isinstance(actual, bool) and actual == expected
     if isinstance(expected, float):
-        try:
-            return abs(float(actual) - expected) <= 1e-12
-        except (TypeError, ValueError):
-            return False
-    return actual == expected
+        return isinstance(actual, (float, np.floating)) and float(actual) == expected
+    return type(actual) is type(expected) and actual == expected
 
 
 def _run_name(method: str, environment: str, tau: float, seed: int) -> str:
@@ -137,13 +339,23 @@ def _run_name(method: str, environment: str, tau: float, seed: int) -> str:
     return f"{environment}_tau{float(tau):g}{middle}_seed{int(seed)}"
 
 
-def _expected_record_metadata() -> dict[str, dict[str, Any]]:
+def _expected_record_metadata(root: Path) -> dict[str, dict[str, Any]]:
+    canonical_root = root.resolve()
     expected: dict[str, dict[str, Any]] = {}
     for environment in ENVIRONMENTS:
         for tau in TAUS:
             for seed in SEEDS:
                 for method, hops in METHOD_HOPS.items():
                     key = _cell_key(method, environment, tau, seed)
+                    run_name = _run_name(method, environment, tau, seed)
+                    result_dir = METHOD_RESULT_DIRS[method]
+                    run_dir = canonical_root / result_dir / run_name
+                    try:
+                        run_dir.relative_to(canonical_root)
+                    except ValueError as error:
+                        raise AssertionError(
+                            f"canonical result path escapes inventory root: {key}"
+                        ) from error
                     expected[key] = {
                         "key": key,
                         "method": method,
@@ -151,14 +363,126 @@ def _expected_record_metadata() -> dict[str, dict[str, Any]]:
                         "tau": float(tau),
                         "seed": int(seed),
                         "hops": int(hops),
-                        "run_name": _run_name(method, environment, tau, seed),
+                        "run_name": run_name,
+                        "result_dir": result_dir,
+                        "root": str(canonical_root),
+                        "run_dir": str(run_dir),
+                        "checkpoint_path": str(run_dir / f"params_{CHECKPOINT_STEP}.pkl"),
+                        "config_path": str(run_dir / "config.json"),
+                        "eval_path": str(run_dir / "eval.csv"),
                     }
     return expected
 
 
-def _config_contract_errors(
+def _profile_value_matches(actual: Any, expected: Any) -> bool:
+    if isinstance(expected, bool):
+        return isinstance(actual, bool) and actual is expected
+    return _same_value(actual, expected)
+
+
+def _config_signature(config: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
+    return {
+        field: {
+            "present": field in config,
+            "value": config[field] if field in config else None,
+        }
+        for field in CONFIG_SIGNATURE_FIELDS
+    }
+
+
+def _profile_matches(config: Mapping[str, Any], profile: Mapping[str, Any]) -> bool:
+    for field, expected in profile["signature"].items():
+        if expected == ABSENT_CONFIG_FIELD:
+            if field in config:
+                return False
+        elif field not in config or not _profile_value_matches(config[field], expected):
+            return False
+    return True
+
+
+def _mode_flag_errors(config: Mapping[str, Any], expected_hops: int) -> list[str]:
+    errors: list[str] = []
+    mpi_flags = {
+        "mpi_two_step": 2,
+        "mpi_three_step": 3,
+        "mpi_four_step": 4,
+    }
+    explicit_flags = ("explicit_two_step", "explicit_three_step", "fb")
+    for field in (*mpi_flags, *explicit_flags):
+        if field in config and not isinstance(config[field], bool):
+            errors.append(f"legacy mode flag {field} must be boolean")
+    true_mpi = [
+        (field, hops)
+        for field, hops in mpi_flags.items()
+        if config.get(field) is True
+    ]
+    if len(true_mpi) > 1:
+        errors.append(f"multiple MPI mode flags are true: {[field for field, _ in true_mpi]}")
+    elif true_mpi and true_mpi[0][1] != int(expected_hops):
+        errors.append(
+            f"legacy mode flag {true_mpi[0][0]} implies {true_mpi[0][1]} hops, "
+            f"expected {int(expected_hops)}"
+        )
+    true_explicit = [field for field in explicit_flags if config.get(field) is True]
+    if true_explicit:
+        errors.append(f"explicit/FB mode is incompatible with implicit P1 grid: {true_explicit}")
+    return errors
+
+
+def _resolve_config_contract(
     config: Mapping[str, Any], expected: Mapping[str, Any]
-) -> list[str]:
+) -> tuple[dict[str, Any], dict[str, Any], list[str]]:
+    raw_config = dict(config)
+    errors = _mode_flag_errors(raw_config, int(expected["hops"]))
+    unknown_fields = sorted(set(raw_config).difference(ALLOWED_RAW_CONFIG_FIELDS))
+    if unknown_fields:
+        errors.append(f"unknown raw config fields: {unknown_fields}")
+    compatibility_fields = ("mpi_steps", "q_scale_norm", "integrator")
+    missing_compatibility = [
+        field for field in compatibility_fields if field not in raw_config
+    ]
+    inferred_fields: dict[str, Any] = {}
+    profile_id = str(CONFIG_COMPATIBILITY_CONTRACT["fully_serialized_profile"])
+    expected_inactive_slots = 0
+
+    if missing_compatibility:
+        matches = [
+            (name, profile)
+            for name, profile in LEGACY_CONFIG_PROFILES.items()
+            if profile["method"] == expected["method"]
+            and _profile_matches(raw_config, profile)
+        ]
+        if len(matches) != 1:
+            errors.append(
+                "raw config does not match exactly one closed legacy profile "
+                f"for {expected['method']}: {[name for name, _ in matches]}"
+            )
+            profile_id = "unresolved"
+        else:
+            profile_id, profile = matches[0]
+            inferred_fields = dict(profile["inferred_fields"])
+            expected_inactive_slots = int(profile["expected_inactive_optimizer_slots"])
+            if expected["result_dir"] != profile["result_dir"]:
+                errors.append("record result_dir does not match the legacy profile")
+            if Path(expected["run_dir"]) != (
+                Path(expected["root"]) / profile["result_dir"] / expected["run_name"]
+            ):
+                errors.append("legacy run_dir is not the exact canonical root/method/run path")
+            save_dir_text = raw_config.get("save_dir")
+            if (
+                not isinstance(save_dir_text, str)
+                or not Path(save_dir_text).is_absolute()
+                or save_dir_text != profile["save_dir"]
+            ):
+                errors.append("legacy config save_dir does not match the closed profile")
+
+    effective_config = dict(raw_config)
+    for field, value in inferred_fields.items():
+        if field in effective_config:
+            errors.append(f"legacy inference attempted to overwrite config key {field}")
+        else:
+            effective_config[field] = value
+
     locked = {
         "env": expected["environment"],
         "seed": expected["seed"],
@@ -166,16 +490,55 @@ def _config_contract_errors(
         "mpi_steps": expected["hops"],
         **REQUIRED_CONFIG,
     }
-    errors: list[str] = []
     for key, value in locked.items():
-        if key not in config:
-            errors.append(f"missing config key {key}")
-        elif not _same_value(config[key], value):
-            errors.append(f"config {key}={config[key]!r} != {value!r}")
+        if key not in effective_config:
+            errors.append(f"missing effective config key {key}")
+        elif not _same_value(effective_config[key], value):
+            errors.append(f"effective config {key}={effective_config[key]!r} != {value!r}")
     for key, value in OPTIONAL_CONFIG_IF_PRESENT.items():
-        if key in config and not _same_value(config[key], value):
-            errors.append(f"config {key}={config[key]!r} != {value!r}")
-    return errors
+        if key in raw_config and not _same_value(raw_config[key], value):
+            errors.append(f"config {key}={raw_config[key]!r} != {value!r}")
+
+    run_suffix = str(Path(expected["result_dir"]) / expected["run_name"])
+    raw_config_sha256 = hashlib.sha256(_canonical_json_bytes(raw_config)).hexdigest()
+    resolution = {
+        "version": CONFIG_COMPATIBILITY_CONTRACT["version"],
+        "profile_id": profile_id,
+        "raw_config_unchanged": True,
+        "raw_config_sha256": raw_config_sha256,
+        "inferred_fields": inferred_fields,
+        "expected_inactive_optimizer_slots": expected_inactive_slots,
+        "evidence": {
+            "method": expected["method"],
+            "result_dir": expected["result_dir"],
+            "run_dir_suffix": run_suffix,
+            "config_save_dir": raw_config.get("save_dir"),
+            "signature": _config_signature(raw_config),
+        },
+    }
+    return effective_config, resolution, errors
+
+
+def _config_contract_errors(
+    config: Mapping[str, Any], expected: Mapping[str, Any]
+) -> list[str]:
+    return _resolve_config_contract(config, expected)[2]
+
+
+def _stored_action_scalar_matches(stored: Any, scale: Any, max_action: Any) -> bool:
+    values = (stored, scale, max_action)
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, float, np.integer, np.floating))
+        for value in values
+    ):
+        return False
+    stored_value, scale_value, max_action_value = (float(value) for value in values)
+    if not all(np.isfinite(value) for value in (stored_value, scale_value, max_action_value)):
+        return False
+    expected_float64 = scale_value * max_action_value
+    expected_float32 = float(np.float32(scale_value) * np.float32(max_action_value))
+    return stored_value == expected_float64 or stored_value == expected_float32
 
 
 def _bool(text: Any) -> bool:
@@ -224,97 +587,169 @@ def _verify_verifier_source(provenance: Mapping[str, Any]) -> str:
 def _verify_record_contract(
     key: str, row: Mapping[str, Any], expected: Mapping[str, Any]
 ) -> None:
-    for field in ("key", "method", "environment", "seed", "hops", "run_name"):
+    identity_fields = (
+        "key",
+        "method",
+        "environment",
+        "seed",
+        "hops",
+        "run_name",
+        "result_dir",
+        "root",
+    )
+    for field in identity_fields:
         if not _same_value(row.get(field), expected[field]):
             raise AssertionError(f"fixed record metadata mismatch: {key} {field}")
     if not _same_value(row.get("tau"), expected["tau"]):
         raise AssertionError(f"fixed record metadata mismatch: {key} tau")
-    if int(row.get("checkpoint_step", -1)) != CHECKPOINT_STEP:
+    for field in ("run_dir", "checkpoint_path", "config_path", "eval_path"):
+        actual_path = row.get(field)
+        if (
+            not isinstance(actual_path, str)
+            or not Path(actual_path).is_absolute()
+            or actual_path != expected[field]
+        ):
+            raise AssertionError(f"canonical checkpoint path mismatch: {key} {field}")
+    if _json_integer(row.get("checkpoint_step"), f"{key} checkpoint_step") != CHECKPOINT_STEP:
         raise AssertionError(f"checkpoint step mismatch: {key}")
-    if int(row.get("external_score_step", -1)) != CHECKPOINT_STEP:
+    if _json_integer(
+        row.get("external_score_step"), f"{key} external_score_step"
+    ) != CHECKPOINT_STEP:
         raise AssertionError(f"external score step mismatch: {key}")
+
     config = row.get("config")
     if not isinstance(config, Mapping):
         raise AssertionError(f"checkpoint config is missing or invalid: {key}")
-    config_errors = _config_contract_errors(config, expected)
+    effective_config, resolution, config_errors = _resolve_config_contract(
+        config, expected
+    )
     if config_errors:
         raise AssertionError(f"checkpoint config mismatch: {key}: {'; '.join(config_errors)}")
     config_hash = hashlib.sha256(_canonical_json_bytes(config)).hexdigest()
     if config_hash != row.get("config_sha256"):
         raise AssertionError(f"checkpoint config hash mismatch: {key}")
-    expected_names = {
-        "checkpoint_path": f"params_{CHECKPOINT_STEP}.pkl",
-        "config_path": "config.json",
-        "eval_path": "eval.csv",
-    }
-    resolved_paths: dict[str, Path] = {}
-    for field, filename in expected_names.items():
-        path = Path(str(row.get(field, "")))
-        if not path.is_absolute() or path.name != filename:
-            raise AssertionError(f"checkpoint companion path mismatch: {key} {field}")
-        resolved_paths[field] = path
-    run_dir = Path(str(row.get("run_dir", "")))
-    if not run_dir.is_absolute() or any(
-        path.parent != run_dir for path in resolved_paths.values()
+    if row.get("config_schema") != resolution["profile_id"]:
+        raise AssertionError(f"checkpoint config schema mismatch: {key}")
+    recorded_effective = row.get("effective_config")
+    if not isinstance(recorded_effective, Mapping) or dict(recorded_effective) != effective_config:
+        raise AssertionError(f"effective checkpoint config mismatch: {key}")
+    effective_hash = hashlib.sha256(
+        _canonical_json_bytes(effective_config)
+    ).hexdigest()
+    if effective_hash != row.get("effective_config_sha256"):
+        raise AssertionError(f"effective checkpoint config hash mismatch: {key}")
+    recorded_resolution = row.get("compatibility_resolution")
+    if (
+        not isinstance(recorded_resolution, Mapping)
+        or _canonical_json_bytes(recorded_resolution)
+        != _canonical_json_bytes(resolution)
     ):
-        raise AssertionError(f"checkpoint companion directories differ: {key}")
+        raise AssertionError(f"checkpoint compatibility resolution mismatch: {key}")
+
     external_score = float(row.get("external_score", float("nan")))
     if not np.isfinite(external_score):
         raise AssertionError(f"external score is nonfinite: {key}")
     expected_collapsed = external_score < COLLAPSE_THRESHOLD
-    if _bool(row.get("collapsed_lt20")) != expected_collapsed:
+    if row.get("collapsed_lt20") is not expected_collapsed:
         raise AssertionError(f"collapse label mismatch: {key}")
-    max_action = float(row.get("max_action", float("nan")))
-    policy_noise = float(row.get("policy_noise", float("nan")))
-    noise_clip = float(row.get("noise_clip", float("nan")))
-    if not np.isfinite(max_action) or max_action <= 0.0:
+    max_action_raw = row.get("max_action")
+    policy_noise_raw = row.get("policy_noise")
+    noise_clip_raw = row.get("noise_clip")
+    if (
+        isinstance(max_action_raw, bool)
+        or not isinstance(max_action_raw, (int, float, np.integer, np.floating))
+        or not np.isfinite(float(max_action_raw))
+        or float(max_action_raw) != MAX_ACTION
+    ):
         raise AssertionError(f"max_action is invalid: {key}")
+    if not _stored_action_scalar_matches(
+        policy_noise_raw, effective_config["policy_noise"], max_action_raw
+    ):
+        raise AssertionError(f"{key} policy_noise encoding mismatch")
+    if not _stored_action_scalar_matches(
+        noise_clip_raw, effective_config["noise_clip"], max_action_raw
+    ):
+        raise AssertionError(f"{key} noise_clip encoding mismatch")
     _close(
-        policy_noise,
-        float(config["policy_noise"]) * max_action,
-        f"{key} policy_noise",
-        tolerance=1e-12,
+        float(row.get("discount")),
+        float(effective_config["discount"]),
+        f"{key} discount",
     )
-    _close(
-        noise_clip,
-        float(config["noise_clip"]) * max_action,
-        f"{key} noise_clip",
-        tolerance=1e-12,
-    )
-    _close(float(row.get("discount")), float(config["discount"]), f"{key} discount")
     _close(
         float(row.get("learning_rate")),
-        float(config["lr"]),
-        f"{key} learning_rate",
+        float(effective_config["lr"]),
+        f"{key} learning rate",
         tolerance=1e-12,
     )
-    if not row.get("resolved") or not row.get("residual_supported"):
+    if row.get("resolved") is not True or row.get("residual_supported") is not True:
         raise AssertionError(f"unsupported inventory cell: {key}")
     if row.get("residual_intervention") != "posthoc_final_checkpoint_one_adam_step":
         raise AssertionError(f"residual intervention mismatch: {key}")
+
     optimizer = row.get("optimizer_reconstruction", {})
-    if optimizer.get("optimizer") != "optax.adam with imported training defaults":
+    if optimizer.get("optimizer") != "optax.adam with frozen audit hyperparameters":
         raise AssertionError(f"optimizer identity mismatch: {key}")
     _close(
         float(optimizer.get("learning_rate")),
-        float(config["lr"]),
+        float(effective_config["lr"]),
         f"{key} optimizer learning rate",
         tolerance=1e-12,
     )
-    expected_actor_step = CHECKPOINT_STEP // int(config["policy_freq"])
-    if int(optimizer.get("expected_actor_step", -1)) != expected_actor_step:
+    legacy_profile = (
+        resolution["profile_id"]
+        != CONFIG_COMPATIBILITY_CONTRACT["fully_serialized_profile"]
+    )
+    expected_layout = OPTIMIZER_COMPATIBILITY_CONTRACT[
+        "legacy_layout" if legacy_profile else "current_layout"
+    ]
+    expected_step_source = (
+        OPTIMIZER_COMPATIBILITY_CONTRACT["legacy_step_source"]
+        if legacy_profile
+        else "independently_stored_actor_step_and_adam_count"
+    )
+    if optimizer.get("storage_layout") != expected_layout:
+        raise AssertionError(f"optimizer storage layout mismatch: {key}")
+    if optimizer.get("actor_step_source") != expected_step_source:
+        raise AssertionError(f"optimizer actor-step source mismatch: {key}")
+    if optimizer.get("actor_step_independently_stored") is not (not legacy_profile):
+        raise AssertionError(f"optimizer actor-step storage claim mismatch: {key}")
+
+    expected_actor_step = CHECKPOINT_STEP // int(effective_config["policy_freq"])
+    if _json_integer(
+        optimizer.get("expected_actor_step"), f"{key} expected_actor_step"
+    ) != expected_actor_step:
         raise AssertionError(f"expected optimizer step mismatch: {key}")
     actors = optimizer.get("actors", ())
     if len(actors) != int(expected["hops"]):
         raise AssertionError(f"optimizer actor count mismatch: {key}")
     for index, actor in enumerate(actors, start=1):
         if (
-            int(actor.get("actor", -1)) != index
-            or int(actor.get("actor_step", -1)) != expected_actor_step
-            or int(actor.get("adam_count", -1)) != expected_actor_step
+            _json_integer(actor.get("actor"), f"{key} actor index") != index
+            or _json_integer(actor.get("actor_step"), f"{key} actor step")
+            != expected_actor_step
+            or _json_integer(actor.get("adam_count"), f"{key} Adam count")
+            != expected_actor_step
             or not _is_sha256(actor.get("optimizer_state_sha256"))
         ):
             raise AssertionError(f"optimizer reconstruction mismatch: {key} actor {index}")
+
+    inactive_slots = optimizer.get("inactive_legacy_slots", ())
+    expected_inactive = int(resolution["expected_inactive_optimizer_slots"])
+    if len(inactive_slots) != expected_inactive:
+        raise AssertionError(f"inactive optimizer slot count mismatch: {key}")
+    for offset, slot in enumerate(inactive_slots, start=1):
+        expected_actor = int(expected["hops"]) + offset
+        if (
+            _json_integer(slot.get("actor"), f"{key} inactive actor index")
+            != expected_actor
+            or _json_integer(slot.get("adam_count"), f"{key} inactive Adam count")
+            != int(OPTIMIZER_COMPATIBILITY_CONTRACT["inactive_legacy_slot_required_count"])
+            or slot.get("fresh_optimizer_state_exact") is not True
+            or not _is_sha256(slot.get("optimizer_state_sha256"))
+        ):
+            raise AssertionError(
+                f"inactive optimizer reconstruction mismatch: {key} actor {expected_actor}"
+            )
     if not _is_sha256(optimizer.get("all_optimizer_states_sha256")):
         raise AssertionError(f"optimizer-state bundle hash missing: {key}")
 
@@ -395,13 +830,17 @@ def _verify_common_contracts(
         residual_indices = set(map(int, arrays["residual_source_indices"].tolist()))
         if value_indices & residual_indices:
             raise AssertionError(f"fixed audit batches overlap: {environment}")
-        if len(value_indices) != int(contract["value_rows"]):
+        value_rows = _json_integer(contract.get("value_rows"), f"{environment} value_rows")
+        residual_rows = _json_integer(
+            contract.get("residual_audit_rows"), f"{environment} residual_audit_rows"
+        )
+        if len(value_indices) != value_rows:
             raise AssertionError(f"value audit row count mismatch: {environment}")
-        if len(residual_indices) != int(contract["residual_audit_rows"]):
+        if len(residual_indices) != residual_rows:
             raise AssertionError(f"residual audit row count mismatch: {environment}")
         for prefix, expected_rows in (
-            ("value", int(contract["value_rows"])),
-            ("residual", int(contract["residual_audit_rows"])),
+            ("value", value_rows),
+            ("residual", residual_rows),
         ):
             for suffix in transition_suffixes:
                 if np.asarray(arrays[f"{prefix}_{suffix}"]).shape[0] != expected_rows:
@@ -551,7 +990,11 @@ def _verify_value_and_geometry(
         target_rms = _rms(raw["target_actions"], raw["dataset_next_actions"])
         final_rms = _rms(raw["final_actions"], raw["dataset_next_actions"])
         n_rows, action_dim = np.asarray(raw["target_actions"]).shape
-        if int(geometry["n_rows"]) != n_rows or int(geometry["action_dim"]) != action_dim:
+        if (
+            _csv_integer(geometry["n_rows"], f"{key} geometry n_rows") != n_rows
+            or _csv_integer(geometry["action_dim"], f"{key} geometry action_dim")
+            != action_dim
+        ):
             raise AssertionError(f"{key} geometry dimensions do not match raw arrays")
         _close(float(geometry["target_to_next_data_rms"]), target_rms, f"{key} target")
         _close(float(geometry["final_to_next_data_rms"]), final_rms, f"{key} final")
@@ -744,7 +1187,7 @@ def _verify_value_and_geometry(
             )
             if _bool(row["all_finite"]) != expected_all_finite:
                 raise AssertionError(f"{key} {scope} finite flag mismatch")
-            if int(row["n_rows"]) != rewards.size:
+            if _csv_integer(row["n_rows"], f"{key} {scope} n_rows") != rewards.size:
                 raise AssertionError(f"{key} {scope} row count mismatch")
     for environment in ENVIRONMENTS:
         for tau in TAUS:
@@ -791,7 +1234,10 @@ def _verify_residuals(
         for method, total_hops in METHOD_HOPS.items()
         for hop in range(2, total_hops + 1)
     }
-    actual = {(row["key"], int(row["hop"])) for row in residual_rows}
+    actual = {
+        (row["key"], _csv_integer(row["hop"], f"{row['key']} residual hop"))
+        for row in residual_rows
+    }
     if actual != expected or any(hop < 2 for _, hop in actual):
         raise AssertionError("residual keys incomplete, duplicated, or include k=1")
     for row in residual_rows:
@@ -811,9 +1257,9 @@ def _verify_residuals(
         if row["stability"] != expected_stability:
             raise AssertionError(f"residual stability label mismatch: {row['key']}")
         raw = raw_cache[str(row["raw_npz"])]
-        hop = int(row["hop"])
+        hop = _csv_integer(row["hop"], f"{row['key']} residual hop")
         total_hops = METHOD_HOPS[row["method"]]
-        if int(row["total_hops"]) != total_hops:
+        if _csv_integer(row["total_hops"], f"{row['key']} total_hops") != total_hops:
             raise AssertionError(f"total-hop mismatch: {row['key']} k={hop}")
         tau_step = float(row["tau"]) / total_hops
         _close(float(row["tau_step"]), tau_step, f"{row['key']} k={hop} tau_step")
@@ -869,10 +1315,19 @@ def _verify_residuals(
         optimizer_actors = inventory_records[row["key"]]["optimizer_reconstruction"][
             "actors"
         ]
-        expected_step = int(optimizer_actors[hop - 1]["actor_step"])
-        if int(row["optimizer_step_before"]) != expected_step:
+        expected_step = _json_integer(
+            optimizer_actors[hop - 1].get("actor_step"),
+            f"{row['key']} stored optimizer step",
+        )
+        step_before = _csv_integer(
+            row["optimizer_step_before"], f"{row['key']} optimizer_step_before"
+        )
+        step_after = _csv_integer(
+            row["optimizer_step_after"], f"{row['key']} optimizer_step_after"
+        )
+        if step_before != expected_step:
             raise AssertionError(f"stored optimizer step mismatch: {row['key']} k={hop}")
-        if int(row["optimizer_step_after"]) != int(row["optimizer_step_before"]) + 1:
+        if step_after != step_before + 1:
             raise AssertionError(f"not exactly one Adam step: {row['key']} k={hop}")
         finite = bool(
             all(
@@ -898,7 +1353,7 @@ def _verify_method_contrasts(
             row["method"],
             row["environment"],
             float(row["tau"]),
-            int(row["seed"]),
+            _csv_integer(row["seed"], "method contrast value seed"),
             row["critic_scope"],
         ): row
         for row in value_rows
@@ -1038,7 +1493,7 @@ def _verify_residual_aggregates(
     for row in residual_rows:
         key = (
             row["method"],
-            int(row["hop"]),
+            _csv_integer(row["hop"], f"{row['key']} aggregate source hop"),
             float(row["tau"]),
             row["environment"],
             row["stability"],
@@ -1047,7 +1502,7 @@ def _verify_residual_aggregates(
     actual = {
         (
             row["method"],
-            int(row["hop"]),
+            _csv_integer(row["hop"], "aggregate row hop"),
             float(row["tau"]),
             row["environment"],
             row["stability"],
@@ -1064,7 +1519,7 @@ def _verify_residual_aggregates(
     }
     for key, selected in groups.items():
         row = actual[key]
-        if int(row["n_seed_cells"]) != len(selected):
+        if _csv_integer(row["n_seed_cells"], f"{key} n_seed_cells") != len(selected):
             raise AssertionError(f"residual aggregate count mismatch: {key}")
         for output, source in source_fields.items():
             expected = float(np.mean([float(item[source]) for item in selected]))
@@ -1110,7 +1565,7 @@ def _verify_geometry_correlations(
             and float(np.std(y[finite])) > 0.0
             else float("nan")
         )
-        if int(row["n_cells"]) != n_cells:
+        if _csv_integer(row["n_cells"], f"{key} n_cells") != n_cells:
             raise AssertionError(f"geometry correlation count mismatch: {key}")
         _close(
             float(row["pearson_final_target_ratio_vs_within_run_delta_y_rms"]),
@@ -1121,9 +1576,37 @@ def _verify_geometry_correlations(
             raise AssertionError(f"geometry correlation label mismatch: {key}")
 
 
+def _verify_protocol_headers(
+    inventory: Mapping[str, Any], protocol: Mapping[str, Any]
+) -> None:
+    if inventory.get("protocol") != PROTOCOL_VERSION:
+        raise AssertionError("inventory protocol identity changed")
+    if protocol.get("protocol") != PROTOCOL_VERSION:
+        raise AssertionError("frozen protocol identity changed")
+    if protocol.get("locked") is not True:
+        raise AssertionError("frozen protocol is not locked")
+    for field, expected in (
+        ("atomic_inventory", True),
+        ("analysis_started", False),
+        ("no_substitution", True),
+        ("inventory_complete", True),
+    ):
+        if inventory.get(field) is not expected:
+            raise AssertionError(f"inventory header flag changed: {field}")
+    for field in ("n_expected", "n_resolved"):
+        if _json_integer(inventory.get(field), f"inventory {field}") != 270:
+            raise AssertionError(f"inventory count changed: {field}")
+    if (
+        _json_integer(inventory.get("checkpoint_step"), "inventory checkpoint_step")
+        != CHECKPOINT_STEP
+    ):
+        raise AssertionError("inventory checkpoint step changed")
+
+
 def _verify_inventory_and_protocol(
     inventory: Mapping[str, Any], protocol: Mapping[str, Any]
 ) -> dict[str, Mapping[str, Any]]:
+    _verify_protocol_headers(inventory, protocol)
     expected_counts = {
         "checkpoints": 270,
         "value_rows": 540,
@@ -1156,19 +1639,32 @@ def _verify_inventory_and_protocol(
     if protocol.get("formulas") != expected_formulas:
         raise AssertionError("frozen protocol formulas changed")
     expected_config_contract = {
-        "required_fixed": REQUIRED_CONFIG,
-        "required_per_cell": ["env", "seed", "tau", "mpi_steps"],
-        "optional_if_present": OPTIONAL_CONFIG_IF_PRESENT,
+        "required_effective_fixed": REQUIRED_CONFIG,
+        "required_effective_per_cell": ["env", "seed", "tau", "mpi_steps"],
+        "optional_raw_if_present": OPTIONAL_CONFIG_IF_PRESENT,
+        "max_action": MAX_ACTION,
+        "compatibility": CONFIG_COMPATIBILITY_CONTRACT,
+        "stored_action_scalar_encodings": [
+            "exact_float64_scale_times_max_action",
+            "exact_ieee754_float32_scale_times_max_action",
+        ],
     }
     if protocol.get("checkpoint_config_contract") != expected_config_contract:
         raise AssertionError("frozen checkpoint config contract changed")
+    if protocol.get("optimizer_state_contract") != OPTIMIZER_COMPATIBILITY_CONTRACT:
+        raise AssertionError("frozen optimizer compatibility contract changed")
     grid = protocol.get("grid", {})
     if (
         tuple(grid.get("environments", ())) != ENVIRONMENTS
         or tuple(float(value) for value in grid.get("taus", ())) != TAUS
-        or tuple(int(value) for value in grid.get("seeds", ())) != SEEDS
+        or tuple(
+            _json_integer(value, "frozen grid seed")
+            for value in grid.get("seeds", ())
+        )
+        != SEEDS
         or tuple(grid.get("methods", ())) != tuple(METHOD_HOPS)
-        or int(grid.get("checkpoint_step", -1)) != 1_000_000
+        or _json_integer(grid.get("checkpoint_step"), "frozen grid checkpoint_step")
+        != 1_000_000
     ):
         raise AssertionError("frozen protocol grid changed")
     if protocol.get("value_scopes") != [OWN_SCOPE, COMMON_SCOPE]:
@@ -1179,8 +1675,8 @@ def _verify_inventory_and_protocol(
         or residual_contract.get("critic_scope") != RESIDUAL_SCOPE
         or residual_contract.get("intervention")
         != "posthoc_final_checkpoint_one_adam_step"
-        or _bool(residual_contract.get("historical_training_step_recovered", True))
-        or _bool(residual_contract.get("fresh_optimizer_allowed", True))
+        or residual_contract.get("historical_training_step_recovered") is not False
+        or residual_contract.get("fresh_optimizer_allowed") is not False
     ):
         raise AssertionError("frozen residual intervention contract changed")
     provenance = inventory.get("provenance", {})
@@ -1224,11 +1720,21 @@ def _verify_inventory_and_protocol(
             or len(str(git_state.get("status_sha256", ""))) != 64
         ):
             raise AssertionError(f"Git provenance is incomplete: {git_name}")
+    inventory_root_text = inventory.get("root")
+    if (
+        not isinstance(inventory_root_text, str)
+        or not Path(inventory_root_text).is_absolute()
+        or str(Path(inventory_root_text).resolve()) != inventory_root_text
+    ):
+        raise AssertionError("inventory root is not one canonical absolute path")
     entries = inventory["entries"]
     records = {str(row["key"]): row for row in entries}
     if len(entries) != 270 or len(records) != 270 or set(records) != _expected_keys():
         raise AssertionError("inventory key set is incomplete or duplicated")
-    expected_records = _expected_record_metadata()
+    checkpoint_paths = [str(row.get("checkpoint_path", "")) for row in entries]
+    if len(set(checkpoint_paths)) != 270:
+        raise AssertionError("resolved checkpoint paths are duplicated")
+    expected_records = _expected_record_metadata(Path(inventory_root_text))
     training_hash = sources["train_td3bc"]["sha256"]
     if inventory.get("training_source_sha256") != training_hash:
         raise AssertionError("inventory training source hash mismatch")
@@ -1273,13 +1779,14 @@ def _verify_inventory_and_protocol(
             raise AssertionError(f"optimizer actor count mismatch: {key}")
         for index, actor in enumerate(actors, start=1):
             if (
-                int(actor.get("actor", -1)) != index
-                or int(actor.get("actor_step", -1)) < 0
-                or int(actor.get("actor_step", -1)) != int(actor.get("adam_count", -2))
-                or len(str(actor.get("optimizer_state_sha256", ""))) != 64
+                _json_integer(actor.get("actor"), f"{key} actor index") != index
+                or _json_integer(actor.get("actor_step"), f"{key} actor step") < 0
+                or _json_integer(actor.get("actor_step"), f"{key} actor step")
+                != _json_integer(actor.get("adam_count"), f"{key} Adam count")
+                or not _is_sha256(actor.get("optimizer_state_sha256"))
             ):
                 raise AssertionError(f"optimizer reconstruction mismatch: {key} actor {index}")
-        if len(str(optimizer.get("all_optimizer_states_sha256", ""))) != 64:
+        if not _is_sha256(optimizer.get("all_optimizer_states_sha256")):
             raise AssertionError(f"optimizer-state bundle hash missing: {key}")
     return records
 
@@ -1304,8 +1811,14 @@ def _verify_base_rows(
             if str(row[field]) != str(record[field]):
                 raise AssertionError(f"base-row fingerprint mismatch: {row['key']} {field}")
         if (
-            int(row["seed"]) != int(record["seed"])
-            or int(row["checkpoint_step"]) != int(record["checkpoint_step"])
+            _csv_integer(row["seed"], f"{row['key']} base seed")
+            != _json_integer(record["seed"], f"{row['key']} record seed")
+            or _csv_integer(
+                row["checkpoint_step"], f"{row['key']} base checkpoint_step"
+            )
+            != _json_integer(
+                record["checkpoint_step"], f"{row['key']} record checkpoint_step"
+            )
         ):
             raise AssertionError(f"base-row integer metadata mismatch: {row['key']}")
         _close(float(row["tau"]), float(record["tau"]), f"{row['key']} tau")
@@ -1323,7 +1836,7 @@ def verify_artifacts(out_dir: Path) -> dict[str, Any]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
-    if manifest["protocol"] != "p1_target_value_audit_v1":
+    if manifest["protocol"] != PROTOCOL_VERSION:
         raise AssertionError("unexpected analysis protocol")
     _verify_manifest_contract(manifest)
     if sha256_file(inventory_path) != manifest["inventory_sha256"]:
@@ -1332,8 +1845,6 @@ def verify_artifacts(out_dir: Path) -> dict[str, Any]:
         raise AssertionError("protocol hash differs from manifest")
     if protocol["checkpoint_manifest_sha256"] != sha256_file(inventory_path):
         raise AssertionError("protocol does not bind inventory")
-    if inventory.get("n_resolved") != 270 or not inventory.get("inventory_complete"):
-        raise AssertionError("inventory is not the complete 270 grid")
     records = _verify_inventory_and_protocol(inventory, protocol)
     expected_artifacts = {
         "td_target_value.csv",
@@ -1440,7 +1951,7 @@ def verify_artifacts(out_dir: Path) -> dict[str, Any]:
     if bool(manifest["finite_value_gate"]) != finite:
         raise AssertionError("finite gate disagrees with rows")
     return {
-        "protocol": "p1_target_value_audit_v1",
+        "protocol": PROTOCOL_VERSION,
         "pass": bool(finite),
         "artifact_integrity_pass": True,
         "artifact_only": True,
@@ -1478,7 +1989,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         report = verify_artifacts(out_dir)
     except Exception as error:
         report = {
-            "protocol": "p1_target_value_audit_v1",
+            "protocol": PROTOCOL_VERSION,
             "pass": False,
             "artifact_integrity_pass": False,
             "artifact_only": True,

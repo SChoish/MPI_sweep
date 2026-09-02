@@ -1,0 +1,293 @@
+{
+  "checkpoint_config_contract": {
+    "compatibility": {
+      "allowed_raw_config_fields": [
+        "batch_size",
+        "compilation_cache_dir",
+        "data_dir",
+        "discount",
+        "env",
+        "eval_episodes",
+        "eval_freq",
+        "explicit_q_term",
+        "explicit_three_step",
+        "explicit_two_step",
+        "fb",
+        "integrator",
+        "lr",
+        "max_timesteps",
+        "method",
+        "mpi_steps",
+        "mpi_three_step",
+        "mpi_two_step",
+        "n_jitted_updates",
+        "no_resume",
+        "noise_clip",
+        "normalize",
+        "policy_freq",
+        "policy_noise",
+        "polyak",
+        "q_scale_norm",
+        "restore_path",
+        "save_dir",
+        "save_interval",
+        "seed",
+        "tau",
+        "updates_per_dispatch"
+      ],
+      "fully_serialized_profile": "fully_serialized_config_v1",
+      "historical_identity_limit": "legacy path, save_dir, flags, and optimizer layout identify an eligible compatibility profile but do not prove the historical training revision",
+      "historical_method_identity_proven": false,
+      "inference_only_when_field_absent": true,
+      "legacy_profiles": {
+        "legacy_p3_implicit_explicit_flags_v1": {
+          "expected_inactive_optimizer_slots": 0,
+          "inferred_fields": {
+            "integrator": "implicit",
+            "mpi_steps": 3,
+            "q_scale_norm": true
+          },
+          "method": "p3",
+          "result_dir": "results_mpi3",
+          "save_dir": "/home/ext_csv/td3_bc_jax/results_mpi3",
+          "signature": {
+            "explicit_q_term": "<absent>",
+            "explicit_three_step": false,
+            "explicit_two_step": false,
+            "fb": "<absent>",
+            "integrator": "<absent>",
+            "mpi_four_step": "<absent>",
+            "mpi_steps": "<absent>",
+            "mpi_three_step": true,
+            "mpi_two_step": false,
+            "q_scale_norm": "<absent>"
+          }
+        },
+        "legacy_p3_implicit_minimal_v0": {
+          "expected_inactive_optimizer_slots": 0,
+          "inferred_fields": {
+            "integrator": "implicit",
+            "mpi_steps": 3,
+            "q_scale_norm": true
+          },
+          "method": "p3",
+          "result_dir": "results_mpi3",
+          "save_dir": "/home/ext_csv/td3_bc_jax/results_mpi3",
+          "signature": {
+            "explicit_q_term": "<absent>",
+            "explicit_three_step": "<absent>",
+            "explicit_two_step": "<absent>",
+            "fb": "<absent>",
+            "integrator": "<absent>",
+            "mpi_four_step": "<absent>",
+            "mpi_steps": "<absent>",
+            "mpi_three_step": true,
+            "mpi_two_step": false,
+            "q_scale_norm": "<absent>"
+          }
+        },
+        "legacy_p3_implicit_qnorm_fields_v2": {
+          "expected_inactive_optimizer_slots": 0,
+          "inferred_fields": {
+            "integrator": "implicit",
+            "mpi_steps": 3
+          },
+          "method": "p3",
+          "result_dir": "results_mpi3",
+          "save_dir": "/home/ext_csv/td3_bc_jax/results_mpi3",
+          "signature": {
+            "explicit_q_term": true,
+            "explicit_three_step": false,
+            "explicit_two_step": false,
+            "fb": false,
+            "integrator": "<absent>",
+            "mpi_four_step": "<absent>",
+            "mpi_steps": "<absent>",
+            "mpi_three_step": true,
+            "mpi_two_step": false,
+            "q_scale_norm": true
+          }
+        },
+        "legacy_td3_qnorm_control_fields_v1": {
+          "expected_inactive_optimizer_slots": 2,
+          "inferred_fields": {
+            "integrator": "implicit",
+            "mpi_steps": 1,
+            "q_scale_norm": true
+          },
+          "method": "td3",
+          "result_dir": "results_qnorm",
+          "save_dir": "/home/ext_csv/td3_bc_jax/results_qnorm",
+          "signature": {
+            "explicit_q_term": true,
+            "explicit_three_step": false,
+            "explicit_two_step": false,
+            "fb": false,
+            "integrator": "<absent>",
+            "mpi_four_step": "<absent>",
+            "mpi_steps": "<absent>",
+            "mpi_three_step": false,
+            "mpi_two_step": false,
+            "q_scale_norm": "<absent>"
+          }
+        },
+        "legacy_td3_qnorm_minimal_v0": {
+          "expected_inactive_optimizer_slots": 0,
+          "inferred_fields": {
+            "integrator": "implicit",
+            "mpi_steps": 1,
+            "q_scale_norm": true
+          },
+          "method": "td3",
+          "result_dir": "results_qnorm",
+          "save_dir": "/home/ext_csv/td3_bc_jax/results_qnorm",
+          "signature": {
+            "explicit_q_term": "<absent>",
+            "explicit_three_step": "<absent>",
+            "explicit_two_step": "<absent>",
+            "fb": "<absent>",
+            "integrator": "<absent>",
+            "mpi_four_step": "<absent>",
+            "mpi_steps": "<absent>",
+            "mpi_three_step": "<absent>",
+            "mpi_two_step": "<absent>",
+            "q_scale_norm": "<absent>"
+          }
+        }
+      },
+      "raw_config_preserved": true,
+      "unknown_raw_config_fields_rejected": true,
+      "version": "p1_checkpoint_config_compat_v2"
+    },
+    "max_action": 1.0,
+    "optional_raw_if_present": {
+      "method": "bar"
+    },
+    "required_effective_fixed": {
+      "batch_size": 256,
+      "discount": 0.99,
+      "eval_episodes": 10,
+      "integrator": "implicit",
+      "lr": 0.0003,
+      "max_timesteps": 1000000,
+      "n_jitted_updates": 8,
+      "noise_clip": 0.5,
+      "normalize": true,
+      "policy_freq": 2,
+      "policy_noise": 0.2,
+      "polyak": 0.005,
+      "q_scale_norm": true
+    },
+    "required_effective_per_cell": [
+      "env",
+      "seed",
+      "tau",
+      "mpi_steps"
+    ],
+    "stored_action_scalar_encodings": [
+      "exact_float64_scale_times_max_action",
+      "exact_ieee754_float32_scale_times_max_action"
+    ]
+  },
+  "checkpoint_manifest_sha256": "1a359cb085e88f126a12f044e2bef087696dee0b4a9135cfdcabfef3aa55c6b7",
+  "collapse_label": "external normalized return < 20",
+  "common_batch": {
+    "disjoint": true,
+    "residual_audit_rows_per_environment": 4096,
+    "sample_seed_base": 20260902,
+    "transition_mask": "training-loader rows with not_done=1",
+    "value_rows_per_environment": 4096
+  },
+  "common_critic": "matched TD3 target critic at identical environment/tau/seed",
+  "common_noise": {
+    "noise_seed_base": 20260903,
+    "same_clipped_epsilon_for_actor_and_recorded_next_action": true,
+    "same_epsilon_across_methods_and_seeds_within_environment": true
+  },
+  "diagnostic_code_sha256": "68518ada0d0bf729e07276338d2e51ef0cb939e2d08ea64ff016ad9b32884ad9",
+  "expected_counts": {
+    "checkpoints": 270,
+    "geometry_rows": 270,
+    "raw_npz": 270,
+    "residual_rows": 450,
+    "value_rows": 540
+  },
+  "formulas": {
+    "C_k": "mean(abs(Q1(s,mu_(k-1)(s)))) + 1e-6",
+    "direct_td_target_rms": "gamma * sqrt(mean((min(Q1-,Q2-)(s_next,clip(mu1-(s_next)+epsilon)) - min(Q1-,Q2-)(s_next,clip(a_next+epsilon)))**2))",
+    "direct_td_target_rms_no_noise": "gamma * sqrt(mean((min(Q1-,Q2-)(s_next,clip(mu1-(s_next))) - min(Q1-,Q2-)(s_next,clip(a_next)))**2))",
+    "feasible_comparator_slack": "max(0,residual)",
+    "final_geometry": "sqrt(mean((muK(s_next)-a_next)**2))",
+    "q_weight_k": "2*(T/K)/C_k",
+    "residual": "[-q_weight_k*mean(Q1(s,mu_k(s)))+mean((mu_k(s)-mu_(k-1)(s))**2)]-[-q_weight_k*mean(Q1(s,mu_(k-1)(s)))]",
+    "target_geometry": "sqrt(mean((mu1-(s_next)-a_next)**2))"
+  },
+  "geometry_state": "same frozen next-state batch for target and final actors",
+  "grid": {
+    "checkpoint_step": 1000000,
+    "environments": [
+      "halfcheetah-medium-v2",
+      "halfcheetah-medium-replay-v2",
+      "halfcheetah-expert-v2",
+      "hopper-medium-v2",
+      "hopper-medium-replay-v2",
+      "hopper-expert-v2",
+      "walker2d-medium-v2",
+      "walker2d-medium-replay-v2",
+      "walker2d-expert-v2"
+    ],
+    "methods": [
+      "td3",
+      "p3",
+      "p4"
+    ],
+    "seeds": [
+      0,
+      1
+    ],
+    "taus": [
+      4.0,
+      7.0,
+      10.0,
+      14.0,
+      20.0
+    ]
+  },
+  "interpretation_limits": {
+    "causality": "movement/value/residual are post-hoc mechanism readouts",
+    "critic": "neither critic scope is an accuracy estimate",
+    "residual": "sampled feasible-comparator premise check; not a global optimality gap or bound on epsilon_k"
+  },
+  "locked": true,
+  "optimizer_state_contract": {
+    "audit_adam_hyperparameters": {
+      "b1": 0.9,
+      "b2": 0.999,
+      "eps": 1e-08,
+      "eps_root": 0.0,
+      "mu_dtype": null,
+      "nesterov": false
+    },
+    "current_layout": "actors_tuple_with_independent_steps",
+    "fresh_optimizer_allowed": false,
+    "historical_optimizer_hyperparameters_proven": false,
+    "inactive_legacy_slot_required_count": 0,
+    "legacy_layout": "named_actor_states_with_adam_count_steps",
+    "legacy_step_source": "unique_stored_adam_integer_count",
+    "schedule_derived_active_step": 500000
+  },
+  "protocol": "p1_target_value_audit_v2",
+  "provenance_bundle_sha256": "def255a9cb2f40a6fc8ebaf798353f909110eb297973ec386ff264c82ce5d60c",
+  "residual": {
+    "critic_scope": "within_run_online_critic",
+    "fresh_optimizer_allowed": false,
+    "historical_training_step_recovered": false,
+    "hops": "k>=2 only",
+    "intervention": "posthoc_final_checkpoint_one_adam_step"
+  },
+  "training_source_sha256": "670ce57a86b9b9b61b5a3196142034f4bb33946447679ef2a84fa2b94463d2ad",
+  "value_scopes": [
+    "within_run_target_critic",
+    "common_td3_target_critic"
+  ]
+}

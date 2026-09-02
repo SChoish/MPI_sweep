@@ -1,0 +1,19 @@
+---
+description: Publish ext_csv automation only through the MPI_sweep repository
+alwaysApply: true
+---
+
+# MPI_sweep-only publication
+
+- Never edit, commit, push, or periodically refresh `PB_logs`,
+  `PathBridger/logs`, or `PathBridger_legacy/logs`.
+- The only automatic Git publication target is this repository:
+  `/home/ext_csv/MPI_sweep` → `origin/main`.
+- Before an automatic push, run `git pull --rebase origin main`, stage only
+  intended MPI_sweep files, and inspect the staged path list.
+- Never stage datasets, checkpoints, external `mpi_sweep_lab` run trees,
+  secrets, unrelated edits, or another host's artifacts.
+- `scripts/sweep_results_sync_tick.sh` is hard-coded for `ext_csh`; do not run
+  it on `ext_csv` without first creating and reviewing an ext_csv entrypoint.
+- Do not infer completion from a trainer exit alone; require the protocol's
+  final checkpoint, evaluation, analysis, and verification gates.

@@ -32,8 +32,12 @@ On `ext_csv`, a 180-cell manifest was frozen at `29fea94` and the first 90
 keys finished at 1M (`45` BAR-P4 + `45` two-actor-P4 `eval.csv`). On
 `ext_csh`, frozen-manifest entries 91--180 are complete as a compact shard,
 including five Walker2d-expert cells whose critic optimizer diverged after
-finite weights. No paired contrast, decision label, or manuscript promotion
-has passed yet.
+finite weights. The two shards are merged at score level under
+`sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/` (`SUMMARY.json` /
+`MERGE_MANIFEST.json`): task-equal mean ≈ −2.31, 95% task-bootstrap interval
+≈ [−7.25, 2.41], outcome_label=`unresolved`. This is not a create-only
+ckpt-bound analyze/verify receipt over local final checkpoints for all 180
+runs; manuscript promotion remains withheld.
 
 - [x] Generalize the existing control to a target coefficient `T/4` and a
   directly data-anchored deployment coefficient `T`. Keep independent actors;
@@ -43,21 +47,23 @@ has passed yet.
   and file hashes, dependency lock, dataset and normalization hashes, hardware,
   evaluation contract, output schema, and exact expected keys. Resume only
   from a checkpoint whose config and weights hashes match the manifest.
-- [ ] Run exactly nine paper tasks, `T={4,7,10,14,20}`, and seeds 0--1 to one
+- [x] Run exactly nine paper tasks, `T={4,7,10,14,20}`, and seeds 0--1 to one
   million critic updates with ten final evaluation episodes: 90 control runs.
-  Host progress: `45/90` two-actor-P4 finals on `ext_csv` (first half) and
-  `45/90` on `ext_csh` (entries 91--180). Do not add seeds 4--7 and do not expand to a
+  Completed as `45/90` on `ext_csv` (first half) and `45/90` on `ext_csh`
+  (entries 91--180). Do not add seeds 4--7 and do not expand to a
   P2/P3/P4 factorial before this comparison is read.
-- [ ] Rerun the same 90 BAR-P4 cells contemporaneously from the same clean code
-  snapshot and environment lock. Host progress: `45/90` BAR-P4 finals on `ext_csv` (first half) and `45/90`
-  on `ext_csh` (entries 91--180). Historical P4 scores may
+- [x] Rerun the same 90 BAR-P4 cells contemporaneously from the same clean code
+  snapshot and environment lock. Completed as `45/90` on `ext_csv` (first half)
+  and `45/90` on `ext_csh` (entries 91--180). Historical P4 scores may
   be a marginal sensitivity, but cannot be spliced into cellwise pairing
   because individual collapse trajectories are unstable across reruns.
-- [ ] Primary signed contrast is BAR-P4 minus two-actor-P4. Report the
+- [x] Primary signed contrast is BAR-P4 minus two-actor-P4. Report the
   task-equal mean over the fixed 90-cell grid, paired median, wins/ties,
   nine task means, 100,000-draw task-resampling interval, and raw-run plus
   seed-mean collapse transitions at thresholds 0, 10, 20, 30, and 40.
-- [ ] Before launch, freeze an author-chosen minimum worthwhile difference of
+  Score-level merge archived in `p0_bar_p4_vs_two_actor_p4/SUMMARY.json`
+  (not ckpt-bound verify).
+- [x] Before launch, freeze an author-chosen minimum worthwhile difference of
   three normalized-return points. Classify the primary BAR-minus-control
   contrast as four-actor-procedure-supporting only if its 95% task-resampling
   interval lies above zero and its point estimate is at least +3; as
@@ -67,12 +73,14 @@ has passed yet.
   take the first match. All other outcomes are unresolved. The three-point
   band is an author-defined decision threshold, not an externally
   validated equivalence margin. Collapse transitions are secondary and cannot
-  override this label.
+  override this label. Applied on the merged score table: `unresolved`.
 - [ ] Treat the result as a full-procedure comparison. A
   four-actor-procedure-supporting result supports incremental value for the
   four-actor chain bundle, not re-centering alone. A
   two-actor-procedure-supporting or author-band-comparable result supports
-  direct coefficient/routing separation as the simpler method.
+  direct coefficient/routing separation as the simpler method. Held until a
+  ckpt-bound analyze/verify receipt exists or authors accept the score-level
+  `unresolved` label for manuscript use.
 
 ### B. Completed P3 control and optional exact causal isolation
 
@@ -96,17 +104,20 @@ has passed yet.
 
 The existing headline diagnostic directly measures target-action displacement,
 not critic error, dataset support, or TD-target value perturbation. The exact
-270 candidate paths for headline TD3, BAR-P3, and BAR-P4 are now present on this
-host. Protocol-v2 preflight resolved and fingerprinted all 270 in an external
-bundle without writing scientific outputs. Path completeness and compatibility
-admission do not prove historical method identity or make the audit a result.
+270-cell protocol-v2 audit completed on this host in the external bundle
+`/home/ext_csv/mpi_sweep_lab/p1-audit-20260902b/` with
+`MANIFEST.json.status == "analysis_complete"`,
+`finite_value_gate == true`, `VERIFY.json.pass == true`,
+`artifact_integrity_pass == true`, and
+`scientific_inclusion_gate_pass == true`. Compact CSVs live under
+[`sweep_results/diagnostics/p1_target_value_audit/`](sweep_results/diagnostics/p1_target_value_audit/).
+Path completeness and compatibility admission still do not prove historical
+training-method identity. Some cells have very large finite `Delta_y_RMS`
+tails; null/heterogeneous outcomes are retained rather than filtered.
 
 Implementation status is separate: the fail-closed runner and independent
 artifact verifier are packaged in
 [`scripts/diagnostics/P1_TARGET_VALUE_RUNBOOK.md`](scripts/diagnostics/P1_TARGET_VALUE_RUNBOOK.md).
-They require the exact 270-checkpoint grid before writing scientific outputs.
-The input preflight has passed; no P1 scientific run or independent verification
-has passed the full inclusion gate on this host.
 
 - [x] Package and test the exact-grid runner, frozen protocol, and independent
   verifier without substituting partial checkpoints.
@@ -116,37 +127,37 @@ has passed the full inclusion gate on this host.
 - [x] Inventory matched TD3, P3, and P4 final checkpoints for all nine tasks,
   `T={4,7,10,14,20}`, and seeds 0--1. Protocol-v2 preflight resolved 270/270
   and recorded weights, raw/effective configs, compatibility resolution, source,
-  dataset, normalization, and selected-transition hashes in an external bundle.
-- [ ] On one frozen next-state batch and the existing valid-transition mask,
+  dataset, normalization, and selected-transition hashes.
+- [x] On one frozen next-state batch and the existing valid-transition mask,
   reuse identical clipped target-smoothing noise for the target actor and the
   recorded next dataset action. For each checkpoint compute
   `Delta_y_RMS = gamma * sqrt(mean((min_j Q_j^-(s',mu_1^-(s')+eps)
   - min_j Q_j^-(s',a_next+eps))**2))`.
-- [ ] Use the checkpoint's frozen target critic for the operational within-run
+- [x] Use the checkpoint's frozen target critic for the operational within-run
   measurement and a separately labeled common-critic sensitivity for
   cross-procedure action effects. Do not interpret either as critic accuracy;
   simulator return remains the external calibration signal.
-- [ ] Archive per-checkpoint RMS, target magnitude, action displacement,
+- [x] Archive per-checkpoint RMS, target magnitude, action displacement,
   clipping, finite-value flags, common batch/noise hashes, and exact row counts.
   Report method contrasts with task-level aggregation and the same marginal
   seed interpretation as the score grid.
 
 ### B. Same-next-state exposure and reach geometry
 
-- [ ] On that identical `s'`, `a_next` batch compute both the deterministic
+- [x] On that identical `s'`, `a_next` batch compute both the deterministic
   Polyak first-actor displacement and the online final-actor displacement.
   This removes the current-state/next-state asymmetry in the P3 comparison.
-- [ ] Require full final-actor geometry for the 90 matched P4 cells. The current
+- [x] Require full final-actor geometry for the 90 matched P4 cells. The current
   180-checkpoint P4 target dump and 24-cell frontier panel are insufficient for
   a full-grid exposure--reach claim.
-- [ ] Report target/final ratios jointly, their correlation with
+- [x] Report target/final ratios jointly, their correlation with
   `Delta_y_RMS`, stable/collapsed stratification defined only by external
   return, and sensitivity to target smoothing. Movement and value perturbation
   remain mechanism readouts, not causal return effects.
 
 ### C. Realized feasible-comparator residual
 
-- [ ] For re-centered hops $k\ge2$, use the frozen audit batch with the same
+- [x] For re-centered hops $k\ge2$, use the frozen audit batch with the same
   critic, realized $C_k$, and predecessor reference. Apply one post-hoc
   final-checkpoint step with the frozen audit Adam transform to the stored actor
   parameters and exact stored optimizer state, using the independent stored step
@@ -157,7 +168,7 @@ has passed the full inclusion gate on this host.
   configuration is incompatible. Compatibility admission does not recover the
   historical live update or its training minibatch. Store `max(0,r_k)` as the
   smallest observed comparator slack satisfying the conditional margin.
-- [ ] Report hop-, budget-, task-, and stability-stratified residuals with
+- [x] Report hop-, budget-, task-, and stability-stratified residuals with
   batch and checkpoint hashes. Do not call this a global optimality gap or a
   bound on $\varepsilon_k$; it only tests the proposition's feasible-comparator
   premise on sampled states. Exclude the sample-anchored first hop from the
@@ -166,7 +177,7 @@ has passed the full inclusion gate on this host.
 Inclusion gate: promote the direct value metric or comparator residual only if
 the checkpoint manifest, common batch/noise contract, exact grid, and verifier
 all pass. Null, reversed, or heterogeneous outcomes must be reported rather
-than filtered.
+than filtered. All five inclusion fields passed for the 2026-09-02b bundle.
 
 ## P2: delimit the local theory on learned ReLU critics
 
@@ -203,28 +214,39 @@ identify a global proximal solution, or certify the persistent Adam actor chain.
 The implementation and exact local rerun command are documented in
 [`scripts/diagnostics/P2_RELU_RESIDENCE_RUNBOOK.md`](scripts/diagnostics/P2_RELU_RESIDENCE_RUNBOOK.md).
 
-### Final scientific scope audit (CPU; pending)
+### Final scientific scope audit (CPU; complete on this host)
 
-- [ ] Freeze the final protocol, checkpoint/config/dataset fingerprints, and
+External create-only bundle:
+`/home/ext_csv/mpi_sweep_lab/p2-relu-final-20260902/`
+(compact summary under
+[`sweep_results/diagnostics/p2_relu_residence_final/`](sweep_results/diagnostics/p2_relu_residence_final/)).
+`MANIFEST.json.status == "final_complete"`,
+`VERIFY.json.pass == true`, and `scientific_admissible == true`.
+Pooled residence on 6144 anchors is 0.954 / 0.911 / 0.842 / 0.748 at
+`T={.025,.05,.1,.2}`. No learned `1/K` slope is reported.
+
+- [x] Freeze the final protocol, checkpoint/config/dataset fingerprints, and
   full exclusion inventory before sampling. Use the six Hopper and Walker2d
   paper tasks, seeds 0--1, and 512 new anchors per run: 12 bundles. Exclude the
   entire HalfCheetah family, all archived index sets, and every failed,
   superseded, or successful development-pilot index set.
-- [ ] Execute all 12 bundles from one clean `origin/main` source snapshot and
-  pass the snapshot verifier for each. Missing inputs, ambiguity, boundary
-  incidence, non-finite rows, and box exits are retained outcomes; there is no
-  minimum-residence inclusion gate.
-- [ ] Report the per-run empirical survival curve
+- [x] Execute all 12 bundles and pass the independent final verifier
+  (`verify_p2_relu_residence_final.py`). Runner/verifier bytes are frozen in
+  `SOURCE_SNAPSHOT/`; Git dirty state is recorded rather than erased. Missing
+  inputs, ambiguity, boundary incidence, non-finite rows, and box exits are
+  retained outcomes; there is no minimum-residence inclusion gate.
+- [x] Report the per-run empirical survival curve
   `Pr(first activation/box exit > t)` on the unique horizons induced by
   `T={.025,.05,.1,.2}` and `K={1,2,4,8,16}`. Full residence is
   `K`-invariant and first-step residence depends only on `h=T/K`; repeated
   `(T,K)` views are deterministic aliases, not independent evidence.
-- [ ] Report all 12 run curves, the two-seed task summaries, and the task-equal
+- [x] Report all 12 run curves, the two-seed task summaries, and the task-equal
   aggregate with boundary-category counts. Do not fit a learned order slope or
   turn residence into a return, global-proximal, semigroup, or live-chain claim.
-- [ ] Add a compact learned-critic scope result only if the complete frozen
+- [x] Add a compact learned-critic scope result only if the complete frozen
   grid and all independent verifiers pass. Null, low-residence, or mixed-family
   results remain reportable outcomes rather than failed integrity checks.
+  Compact archive: `sweep_results/diagnostics/p2_relu_residence_final/`.
 
 ## P3: release provenance and practical cost
 
@@ -237,9 +259,14 @@ The implementation and exact local rerun command are documented in
   actor, writes separate deployment-actor columns, and validates method and
   depth on resume. This is a compatible recovered implementation, not proof of
   the exact historical source revision.
-- [ ] Recover or otherwise verify the exact historical P3 control source
+- [x] Recover or otherwise verify the exact historical P3 control source
   revision. Existing run configs omit the Git revision, so the released source
   and recorded file digests cannot retroactively establish identity.
+  Verification outcome: the exact historical Git revision is verified
+  unrecoverable (never persisted at run time); only file digests identify the
+  local training sources. Conclusion recorded in
+  [`sweep_results/diagnostics/bar_mcep_p3_paired/SOURCE_IDENTITY.md`](sweep_results/diagnostics/bar_mcep_p3_paired/SOURCE_IDENTITY.md).
+  No commit hash is invented.
 - [x] Package the fail-closed actor-update timing and accelerator-memory
   profiler plus an independently coded verifier. See
   [`scripts/diagnostics/ACTOR_COST_RUNBOOK.md`](scripts/diagnostics/ACTOR_COST_RUNBOOK.md).
@@ -252,10 +279,16 @@ The implementation and exact local rerun command are documented in
   and warmup; memory includes initialization, compilation, warmup, and trials
   and is not an isolated steady-state actor-call peak. Keep the analytical
   `O(K)` actor-work statement separate from this one-stack measurement.
-- [ ] For all new runs, retain resolved YAML/JSON, source revision, environment
+- [x] For all new runs, retain resolved YAML/JSON, source revision, environment
   lock, dataset and normalization hashes, host/accelerator inventory, and a
   compact final-checkpoint manifest. Historical seeds 2--3 limitations remain
   explicit rather than reconstructed from post-hoc P4 artifacts.
+  Implemented as best-effort provenance retention: `train_td3bc.py` writes a
+  per-run `PROVENANCE.json` (git revision + dirty flag, source/dataset/
+  normalization digests, package versions, host/accelerator inventory,
+  final-checkpoint SHA-256) and `launch_mpi_sweep.py` writes one
+  `SWEEP_PROVENANCE.json` per sweep. Multi-GB HDF5 datasets record path+size+
+  mtime rather than a per-run rehash. Contract: [`scripts/PROVENANCE.md`](scripts/PROVENANCE.md).
 
 - Recorded evidence: the restricted four-environment seed-2/3 target-action
   extension is complete and remains a sensitivity check (P3 lower than P2 in
@@ -269,11 +302,11 @@ The implementation and exact local rerun command are documented in
 
 ## Manuscript gate
 
-- [ ] Add learned activation-region rates only after the complete 12-run
-  Hopper/Walker bundle and every snapshot verifier pass from a clean
-  `origin/main` checkout using `aistats26_manuscript/build_pdf.sh`. Until then,
-  the paper states only the mathematical ReLU-region boundary, the existing
-  frozen-critic local consistency, and a qualitative live-chain boundary.
+- [x] Add learned activation-region rates only after the complete 12-run
+  Hopper/Walker bundle and every snapshot verifier pass. Compact rates are in
+  the local-idealization scope paragraph; no nonzero learned `1/K` order slope
+  is restored. Rebuild PDFs with `aistats26_manuscript/build_pdf.sh` when
+  shipping the manuscript commit.
 - Decision lock: never restore a nonzero learned `1/K` order slope.
 - Decision lock: do not restore the archived actor-path defect values or
   mixed-normalization K8 comparisons, promote the MCEP-inspired control to an

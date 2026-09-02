@@ -1,0 +1,151 @@
+{
+  "built_at": "2026-09-02T22:17:47+09:00",
+  "collapse_role": "secondary; cannot override the primary outcome label",
+  "collapse_transitions": {
+    "raw_run": {
+      "0": {
+        "bar_collapsed": 0,
+        "bar_only_collapsed": 0,
+        "both_collapsed": 0,
+        "neither_collapsed": 89,
+        "pairs": 90,
+        "two_actor_collapsed": 1,
+        "two_actor_only_collapsed": 1
+      },
+      "10": {
+        "bar_collapsed": 11,
+        "bar_only_collapsed": 4,
+        "both_collapsed": 7,
+        "neither_collapsed": 77,
+        "pairs": 90,
+        "two_actor_collapsed": 9,
+        "two_actor_only_collapsed": 2
+      },
+      "20": {
+        "bar_collapsed": 12,
+        "bar_only_collapsed": 4,
+        "both_collapsed": 8,
+        "neither_collapsed": 75,
+        "pairs": 90,
+        "two_actor_collapsed": 11,
+        "two_actor_only_collapsed": 3
+      },
+      "30": {
+        "bar_collapsed": 14,
+        "bar_only_collapsed": 6,
+        "both_collapsed": 8,
+        "neither_collapsed": 72,
+        "pairs": 90,
+        "two_actor_collapsed": 12,
+        "two_actor_only_collapsed": 4
+      },
+      "40": {
+        "bar_collapsed": 17,
+        "bar_only_collapsed": 8,
+        "both_collapsed": 9,
+        "neither_collapsed": 69,
+        "pairs": 90,
+        "two_actor_collapsed": 13,
+        "two_actor_only_collapsed": 4
+      }
+    },
+    "two_seed_mean": {
+      "0": {
+        "bar_collapsed": 0,
+        "bar_only_collapsed": 0,
+        "both_collapsed": 0,
+        "neither_collapsed": 45,
+        "pairs": 45,
+        "two_actor_collapsed": 0,
+        "two_actor_only_collapsed": 0
+      },
+      "10": {
+        "bar_collapsed": 4,
+        "bar_only_collapsed": 1,
+        "both_collapsed": 3,
+        "neither_collapsed": 41,
+        "pairs": 45,
+        "two_actor_collapsed": 3,
+        "two_actor_only_collapsed": 0
+      },
+      "20": {
+        "bar_collapsed": 5,
+        "bar_only_collapsed": 2,
+        "both_collapsed": 3,
+        "neither_collapsed": 40,
+        "pairs": 45,
+        "two_actor_collapsed": 3,
+        "two_actor_only_collapsed": 0
+      },
+      "30": {
+        "bar_collapsed": 6,
+        "bar_only_collapsed": 3,
+        "both_collapsed": 3,
+        "neither_collapsed": 39,
+        "pairs": 45,
+        "two_actor_collapsed": 3,
+        "two_actor_only_collapsed": 0
+      },
+      "40": {
+        "bar_collapsed": 8,
+        "bar_only_collapsed": 1,
+        "both_collapsed": 7,
+        "neither_collapsed": 37,
+        "pairs": 45,
+        "two_actor_collapsed": 7,
+        "two_actor_only_collapsed": 0
+      }
+    }
+  },
+  "experiment": "p0_bar_p4_vs_two_actor_p4",
+  "head_frozen_manifest_sha256": "3b3276f85f0b7398fd3b3240bcd49789e31250e02162479812b06a975df0b9ba",
+  "inference_scope": "fixed 9-task x 5-T x 2-seed grid; task variants share three dynamics families; not broader offline-RL generalization",
+  "merge": {
+    "head_host": "ext_csv",
+    "kind": "cross_host_score_level",
+    "official_ckpt_bound_analyze_verify": false,
+    "optimizer_diverged_tail_runs": [
+      "bar_p4|walker2d-expert-v2|T=14|seed=1",
+      "two_actor_p4|walker2d-expert-v2|T=14|seed=1",
+      "bar_p4|walker2d-expert-v2|T=20|seed=0",
+      "two_actor_p4|walker2d-expert-v2|T=20|seed=0",
+      "bar_p4|walker2d-expert-v2|T=20|seed=1"
+    ],
+    "tail_host": "ext_csh"
+  },
+  "n_paired_runs": 90,
+  "primary": {
+    "author_defined_minimum_worthwhile_difference": 3.0,
+    "contrast": "BAR-P4 deployment minus two-actor-P4 deployment",
+    "outcome_label": "unresolved",
+    "outcome_scope": "full procedure; the continuous contrast is primary",
+    "paired_median": 0.6810655715118443,
+    "task_bootstrap_95_interval": [
+      -7.247601909110738,
+      2.4117874955787904
+    ],
+    "task_bootstrap_draws": 100000,
+    "task_bootstrap_seed": 20260902,
+    "task_equal_mean": -2.307552470498189,
+    "task_means": {
+      "halfcheetah-expert-v2": -10.109271102317525,
+      "halfcheetah-medium-replay-v2": 1.8538419108607294,
+      "halfcheetah-medium-v2": -0.05074841118725217,
+      "hopper-expert-v2": -12.409864684038332,
+      "hopper-medium-replay-v2": 0.735545790538319,
+      "hopper-medium-v2": 1.6449546621387217,
+      "walker2d-expert-v2": 1.1433760303783944,
+      "walker2d-medium-replay-v2": 9.877990458609442,
+      "walker2d-medium-v2": -13.453796889466199
+    },
+    "wins_ties": {
+      "bar_wins": 55,
+      "tie_tolerance": 1e-12,
+      "ties": 1,
+      "two_actor_wins": 34
+    }
+  },
+  "resampling_unit": "nine fixed task variants",
+  "schema_version": 1,
+  "tail_frozen_manifest_sha256": "fced784a486598753bf3e6da3dd302cd2f38ccb9242b7ffd491c0065c6f3339b"
+}

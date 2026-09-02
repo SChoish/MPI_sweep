@@ -27,8 +27,9 @@ selection of runs.
 | `route_shadow/` (top-level archive) | archive | partial | Use `run_route_shadow_mc.py` on `results_route_shadow` |
 | `route_shadow_k4/` | archive | partial | Compact copy of `audit_report_20260901/route_shadow_mc_k4`; excluded from manuscript |
 | `bar_mcep_p3_paired/` | aggregate/archive | partial | `audit_bar_mcep_p3_paired.py` regenerates `AUDIT.json` only; the paired CSV, summary, and source manifest are frozen and verifier-gated |
-| `p0_bar_p4_vs_two_actor_p4/` | retrain + aggregate | **ext_csv first-90 compact archive** + `hosts/ext_csh/p0_manifest_tail90/`; **no merged contrast / decision label yet** | Head scores under this path; tail shard on ext_csh; exact merge still required |
+| `p0_bar_p4_vs_two_actor_p4/` | retrain + aggregate | **merged 180-cell score archive**; outcome_label=`unresolved`; **not ckpt-bound verify** | Head=`ext_csv` first90 + tail=`hosts/ext_csh/p0_manifest_tail90/`; see `SUMMARY.json` / `MERGE_MANIFEST.json` |
 | `p1_target_value_audit/` (future compact archive) | ckpt | harness + external preflight ready; **no scientific result released** | Strict 270-checkpoint post-hoc audit; see `P1_TARGET_VALUE_RUNBOOK.md` |
+| `p1_target_value_audit/` | archive | **verified analysis_complete**; raw NPZ external | Compact CSVs + VERIFY; full bundle `/home/ext_csv/mpi_sweep_lab/p1-audit-20260902b/`; see `P1_TARGET_VALUE_RUNBOOK.md` |
 | `actor_cost/` | benchmark/archive | **verified measured snapshot**; rerun needs local data/GPU | Hash-pinned K=1--4 H200 profile plus profiler and independent verifier; see `ACTOR_COST_RUNBOOK.md` |
 | `frozen_critic_small_step/` (top-level archive) | archive | partial | Use `run_frozen_critic_small_step.py` |
 | `fixed_operator_order/` | archive | retired preflight scaffold; **no learned result** | Frozen 0/18 snapshot retained as verifier-gated provenance; superseded by `P2_RELU_RESIDENCE_RUNBOOK.md` |

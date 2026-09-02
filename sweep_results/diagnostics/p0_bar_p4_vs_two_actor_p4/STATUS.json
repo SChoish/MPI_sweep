@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "experiment": "p0_bar_p4_vs_two_actor_p4",
-  "archive_scope": "first_90_of_180",
+  "archive_scope": "merged_180_score_level",
   "host": "ext_csv",
   "frozen_manifest_sha256": "3b3276f85f0b7398fd3b3240bcd49789e31250e02162479812b06a975df0b9ba",
   "source_revision_claimed": {
@@ -18,16 +18,24 @@
     "git_revision": "29fea94bee9d9276ac463caa2b897e3474fe1b2b",
     "tracked_worktree_clean": true
   },
-  "completed_finals": 90,
+  "completed_finals": 180,
   "completed_by_condition": {
-    "bar_p4": 45,
-    "two_actor_p4": 45
+    "bar_p4": 90,
+    "two_actor_p4": 90
   },
-  "paired_cells_in_archive": 45,
-  "second_90": "hosted_on_ext_csh_as_p0_manifest_tail90_not_merged_here",
-  "decision_label": null,
-  "decision_note": "Full 180-cell analyze/verify gate not satisfied on this archive alone; ext_csh holds the tail-90 shard. No author decision label released.",
+  "paired_cells_in_archive": 90,
+  "second_90": "merged_from_ext_csh_p0_manifest_tail90",
+  "decision_label": "unresolved",
+  "decision_note": "Score-level cross-host merge using locked summarize(); not ckpt-bound analyze/verify PASS.",
   "built_at": "2026-09-02T22:13:32+09:00",
   "raw_checkpoints": "not committed; hashed in SOURCE_MANIFEST.csv only",
-  "updated_at": "2026-09-02T22:14:48+09:00"
+  "updated_at": "2026-09-02T22:17:47+09:00",
+  "outcome": {
+    "task_equal_mean": -2.307552470498189,
+    "task_bootstrap_95_interval": [
+      -7.247601909110738,
+      2.4117874955787904
+    ],
+    "outcome_label": "unresolved"
+  }
 }

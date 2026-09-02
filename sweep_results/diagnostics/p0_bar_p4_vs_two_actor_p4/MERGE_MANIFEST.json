@@ -1,0 +1,58 @@
+{
+  "built_at": "2026-09-02T22:17:47+09:00",
+  "experiment": "p0_bar_p4_vs_two_actor_p4",
+  "files": {
+    "SUMMARY.json": "c47c37e4322d525650b6346a86b75fffaa71510dcc730e392b63749f384dc996",
+    "merged_final_scores.csv": "7d3544155ae01de6371347552bbc894a1782789bc5a62790c02ff29c97bdc241",
+    "paired_scores.csv": "9b1a93a530cd28d9dea9bcc165347aeff20abcfd9de5e59cad5edf7bf0131ebd"
+  },
+  "head": {
+    "frozen_manifest": "FROZEN_MANIFEST.json",
+    "frozen_manifest_sha256": "3b3276f85f0b7398fd3b3240bcd49789e31250e02162479812b06a975df0b9ba",
+    "host": "ext_csv",
+    "manifest_index_range_one_based": [
+      1,
+      90
+    ],
+    "scores": "first90_final_scores.csv",
+    "scores_sha256": "07a54130f77044a5a81ef9ee2de0f4cfa7ccf282510109427da16f7c9a92bb9d"
+  },
+  "merge_kind": "cross_host_score_level",
+  "note": "SUMMARY.json uses scripts/diagnostics/analyze_p0_bar_two_actor_p4.summarize on the merged 90 deployment-score pairs. It is not a create-only analyze/verify receipt over local final checkpoints for all 180 runs.",
+  "official_ckpt_bound_analyze_verify": false,
+  "schema_version": 1,
+  "scientific_identity": {
+    "dataset_normalization_equal": true,
+    "host_paths_python_hardware_differ": true,
+    "requirements_sha256_equal": true,
+    "resolved_config_and_config_sha256_equal": true,
+    "run_keys_equal": true,
+    "source_file_hashes_equal": true
+  },
+  "source_revision": "29fea94bee9d9276ac463caa2b897e3474fe1b2b",
+  "tail": {
+    "frozen_manifest_sha256": "fced784a486598753bf3e6da3dd302cd2f38ccb9242b7ffd491c0065c6f3339b",
+    "host": "ext_csh",
+    "host_shard_manifest": "hosts/ext_csh/p0_manifest_tail90/MANIFEST.json",
+    "host_shard_manifest_sha256": "87b110b43b24a75788b3070d31da4444e75470ed754ecf51accf549ef3f0c1b1",
+    "manifest_index_range_one_based": [
+      91,
+      180
+    ],
+    "optimizer_diverged_runs": [
+      "bar_p4|walker2d-expert-v2|T=14|seed=1",
+      "two_actor_p4|walker2d-expert-v2|T=14|seed=1",
+      "bar_p4|walker2d-expert-v2|T=20|seed=0",
+      "two_actor_p4|walker2d-expert-v2|T=20|seed=0",
+      "bar_p4|walker2d-expert-v2|T=20|seed=1"
+    ],
+    "scores": "hosts/ext_csh/p0_manifest_tail90/scores.csv",
+    "scores_sha256": "e62f635f24b17ea6731d409e06674a14b279fb00bcb25cd0b52dcfdbc7fb0b59",
+    "verify": {
+      "manifest_sha256": "87b110b43b24a75788b3070d31da4444e75470ed754ecf51accf549ef3f0c1b1",
+      "optimizer_diverged_runs": 5,
+      "pass": true,
+      "runs": 90
+    }
+  }
+}

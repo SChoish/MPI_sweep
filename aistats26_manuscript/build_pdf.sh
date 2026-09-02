@@ -49,7 +49,9 @@ cd "$MANUSCRIPT_DIR"
 "$PYTHON_CMD" make_figures.py --results-dir "$RESULTS_DIR"
 "$PYTHON_CMD" ../scripts/verify_release_results.py \
   --results-dir "$RESULTS_DIR" \
-  --manuscript-dir "$MANUSCRIPT_DIR"
+  --manuscript-dir "$MANUSCRIPT_DIR" \
+  --require-p2-compact
+"$PYTHON_CMD" ../scripts/diagnostics/verify_p0_score_merge.py
 
 "$TECTONIC_CMD" paper.tex --keep-logs --keep-intermediates
 "$TECTONIC_CMD" supplement.tex --keep-logs --keep-intermediates

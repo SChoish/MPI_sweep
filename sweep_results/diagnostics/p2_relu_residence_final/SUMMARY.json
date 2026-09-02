@@ -11,48 +11,120 @@
   "family_survival": {
     "hopper": [
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 7,
+          "resident": 3065,
+          "tie_cross": 0
+        },
         "horizon": 0.0015625,
         "n_resident": 3065,
         "n_total": 3072,
         "resident_fraction": 0.9977213541666666
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 14,
+          "resident": 3058,
+          "tie_cross": 0
+        },
         "horizon": 0.003125,
         "n_resident": 3058,
         "n_total": 3072,
         "resident_fraction": 0.9954427083333334
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 19,
+          "resident": 3053,
+          "tie_cross": 0
+        },
         "horizon": 0.00625,
         "n_resident": 3053,
         "n_total": 3072,
         "resident_fraction": 0.9938151041666666
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 41,
+          "resident": 3031,
+          "tie_cross": 0
+        },
         "horizon": 0.0125,
         "n_resident": 3031,
         "n_total": 3072,
         "resident_fraction": 0.9866536458333334
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 73,
+          "resident": 2999,
+          "tie_cross": 0
+        },
         "horizon": 0.025,
         "n_resident": 2999,
         "n_total": 3072,
         "resident_fraction": 0.9762369791666666
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 151,
+          "resident": 2921,
+          "tie_cross": 0
+        },
         "horizon": 0.05,
         "n_resident": 2921,
         "n_total": 3072,
         "resident_fraction": 0.9508463541666666
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 273,
+          "resident": 2799,
+          "tie_cross": 0
+        },
         "horizon": 0.1,
         "n_resident": 2799,
         "n_total": 3072,
         "resident_fraction": 0.9111328125
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 2,
+          "nonfinite": 0,
+          "relu_cross": 476,
+          "resident": 2594,
+          "tie_cross": 0
+        },
         "horizon": 0.2,
         "n_resident": 2594,
         "n_total": 3072,
@@ -61,48 +133,120 @@
     ],
     "walker2d": [
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 19,
+          "resident": 3053,
+          "tie_cross": 0
+        },
         "horizon": 0.0015625,
         "n_resident": 3053,
         "n_total": 3072,
         "resident_fraction": 0.9938151041666666
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 37,
+          "resident": 3035,
+          "tie_cross": 0
+        },
         "horizon": 0.003125,
         "n_resident": 3035,
         "n_total": 3072,
         "resident_fraction": 0.9879557291666666
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 67,
+          "resident": 3005,
+          "tie_cross": 0
+        },
         "horizon": 0.00625,
         "n_resident": 3005,
         "n_total": 3072,
         "resident_fraction": 0.9781901041666666
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 113,
+          "resident": 2959,
+          "tie_cross": 0
+        },
         "horizon": 0.0125,
         "n_resident": 2959,
         "n_total": 3072,
         "resident_fraction": 0.9632161458333334
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 210,
+          "resident": 2862,
+          "tie_cross": 0
+        },
         "horizon": 0.025,
         "n_resident": 2862,
         "n_total": 3072,
         "resident_fraction": 0.931640625
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 398,
+          "resident": 2674,
+          "tie_cross": 0
+        },
         "horizon": 0.05,
         "n_resident": 2674,
         "n_total": 3072,
         "resident_fraction": 0.8704427083333334
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 700,
+          "resident": 2372,
+          "tie_cross": 0
+        },
         "horizon": 0.1,
         "n_resident": 2372,
         "n_total": 3072,
         "resident_fraction": 0.7721354166666666
       },
       {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 1,
+          "nonfinite": 0,
+          "relu_cross": 1068,
+          "resident": 2003,
+          "tie_cross": 0
+        },
         "horizon": 0.2,
         "n_resident": 2003,
         "n_total": 3072,
@@ -170,10 +314,12 @@
       "n_cells": 20,
       "n_eligible": 571217,
       "n_states": 512,
-      "protocol": "p2_relu_residence_final_v1",
+      "protocol": "p2_relu_residence_final_v2",
       "sample_seed": 20260903,
-      "scientific_admissible": true,
+      "scientific_admissible": false,
+      "scientific_admissible_when_verified": true,
       "seed": 0,
+      "status": "run_complete_pending_verification",
       "survival": [
         {
           "categories": {
@@ -288,7 +434,7 @@
           "resident_fraction": 0.916015625
         }
       ],
-      "written_at": "2026-09-02T13:05:52+00:00"
+      "written_at": "2026-09-02T22:44:32+09:00"
     },
     {
       "C_ref": 225.83335451915423,
@@ -335,10 +481,12 @@
       "n_cells": 20,
       "n_eligible": 571217,
       "n_states": 512,
-      "protocol": "p2_relu_residence_final_v1",
+      "protocol": "p2_relu_residence_final_v2",
       "sample_seed": 20260904,
-      "scientific_admissible": true,
+      "scientific_admissible": false,
+      "scientific_admissible_when_verified": true,
       "seed": 1,
+      "status": "run_complete_pending_verification",
       "survival": [
         {
           "categories": {
@@ -453,7 +601,7 @@
           "resident_fraction": 0.908203125
         }
       ],
-      "written_at": "2026-09-02T13:05:53+00:00"
+      "written_at": "2026-09-02T22:44:36+09:00"
     },
     {
       "C_ref": 162.08117313814287,
@@ -500,10 +648,12 @@
       "n_cells": 20,
       "n_eligible": 226983,
       "n_states": 512,
-      "protocol": "p2_relu_residence_final_v1",
+      "protocol": "p2_relu_residence_final_v2",
       "sample_seed": 20260913,
-      "scientific_admissible": true,
+      "scientific_admissible": false,
+      "scientific_admissible_when_verified": true,
       "seed": 0,
+      "status": "run_complete_pending_verification",
       "survival": [
         {
           "categories": {
@@ -618,7 +768,7 @@
           "resident_fraction": 0.6484375
         }
       ],
-      "written_at": "2026-09-02T13:05:54+00:00"
+      "written_at": "2026-09-02T22:44:36+09:00"
     },
     {
       "C_ref": 162.3023584240911,
@@ -665,10 +815,12 @@
       "n_cells": 20,
       "n_eligible": 226983,
       "n_states": 512,
-      "protocol": "p2_relu_residence_final_v1",
+      "protocol": "p2_relu_residence_final_v2",
       "sample_seed": 20260914,
-      "scientific_admissible": true,
+      "scientific_admissible": false,
+      "scientific_admissible_when_verified": true,
       "seed": 1,
+      "status": "run_complete_pending_verification",
       "survival": [
         {
           "categories": {
@@ -783,7 +935,7 @@
           "resident_fraction": 0.6328125
         }
       ],
-      "written_at": "2026-09-02T13:05:54+00:00"
+      "written_at": "2026-09-02T22:44:38+09:00"
     },
     {
       "C_ref": 347.014834938501,
@@ -830,10 +982,12 @@
       "n_cells": 20,
       "n_eligible": 686139,
       "n_states": 512,
-      "protocol": "p2_relu_residence_final_v1",
+      "protocol": "p2_relu_residence_final_v2",
       "sample_seed": 20260923,
-      "scientific_admissible": true,
+      "scientific_admissible": false,
+      "scientific_admissible_when_verified": true,
       "seed": 0,
+      "status": "run_complete_pending_verification",
       "survival": [
         {
           "categories": {
@@ -948,7 +1102,7 @@
           "resident_fraction": 0.978515625
         }
       ],
-      "written_at": "2026-09-02T13:05:55+00:00"
+      "written_at": "2026-09-02T22:44:40+09:00"
     },
     {
       "C_ref": 347.76969392534414,
@@ -995,10 +1149,12 @@
       "n_cells": 20,
       "n_eligible": 686139,
       "n_states": 512,
-      "protocol": "p2_relu_residence_final_v1",
+      "protocol": "p2_relu_residence_final_v2",
       "sample_seed": 20260924,
-      "scientific_admissible": true,
+      "scientific_admissible": false,
+      "scientific_admissible_when_verified": true,
       "seed": 1,
+      "status": "run_complete_pending_verification",
       "survival": [
         {
           "categories": {
@@ -1113,7 +1269,7 @@
           "resident_fraction": 0.982421875
         }
       ],
-      "written_at": "2026-09-02T13:05:56+00:00"
+      "written_at": "2026-09-02T22:44:44+09:00"
     },
     {
       "C_ref": 249.69866601659027,
@@ -1160,10 +1316,12 @@
       "n_cells": 20,
       "n_eligible": 274304,
       "n_states": 512,
-      "protocol": "p2_relu_residence_final_v1",
+      "protocol": "p2_relu_residence_final_v2",
       "sample_seed": 20260933,
-      "scientific_admissible": true,
+      "scientific_admissible": false,
+      "scientific_admissible_when_verified": true,
       "seed": 0,
+      "status": "run_complete_pending_verification",
       "survival": [
         {
           "categories": {
@@ -1278,7 +1436,7 @@
           "resident_fraction": 0.74609375
         }
       ],
-      "written_at": "2026-09-02T13:05:57+00:00"
+      "written_at": "2026-09-02T22:44:45+09:00"
     },
     {
       "C_ref": 247.68094407578954,
@@ -1325,10 +1483,12 @@
       "n_cells": 20,
       "n_eligible": 274304,
       "n_states": 512,
-      "protocol": "p2_relu_residence_final_v1",
+      "protocol": "p2_relu_residence_final_v2",
       "sample_seed": 20260934,
-      "scientific_admissible": true,
+      "scientific_admissible": false,
+      "scientific_admissible_when_verified": true,
       "seed": 1,
+      "status": "run_complete_pending_verification",
       "survival": [
         {
           "categories": {
@@ -1443,7 +1603,7 @@
           "resident_fraction": 0.755859375
         }
       ],
-      "written_at": "2026-09-02T13:05:58+00:00"
+      "written_at": "2026-09-02T22:44:47+09:00"
     },
     {
       "C_ref": 190.92914819681204,
@@ -1490,10 +1650,12 @@
       "n_cells": 20,
       "n_eligible": 113330,
       "n_states": 512,
-      "protocol": "p2_relu_residence_final_v1",
+      "protocol": "p2_relu_residence_final_v2",
       "sample_seed": 20260943,
-      "scientific_admissible": true,
+      "scientific_admissible": false,
+      "scientific_admissible_when_verified": true,
       "seed": 0,
+      "status": "run_complete_pending_verification",
       "survival": [
         {
           "categories": {
@@ -1608,7 +1770,7 @@
           "resident_fraction": 0.3359375
         }
       ],
-      "written_at": "2026-09-02T13:05:59+00:00"
+      "written_at": "2026-09-02T22:44:47+09:00"
     },
     {
       "C_ref": 186.70697941499776,
@@ -1655,10 +1817,12 @@
       "n_cells": 20,
       "n_eligible": 113330,
       "n_states": 512,
-      "protocol": "p2_relu_residence_final_v1",
+      "protocol": "p2_relu_residence_final_v2",
       "sample_seed": 20260944,
-      "scientific_admissible": true,
+      "scientific_admissible": false,
+      "scientific_admissible_when_verified": true,
       "seed": 1,
+      "status": "run_complete_pending_verification",
       "survival": [
         {
           "categories": {
@@ -1773,7 +1937,7 @@
           "resident_fraction": 0.283203125
         }
       ],
-      "written_at": "2026-09-02T13:06:00+00:00"
+      "written_at": "2026-09-02T22:44:48+09:00"
     },
     {
       "C_ref": 472.2640843219954,
@@ -1820,10 +1984,12 @@
       "n_cells": 20,
       "n_eligible": 269374,
       "n_states": 512,
-      "protocol": "p2_relu_residence_final_v1",
+      "protocol": "p2_relu_residence_final_v2",
       "sample_seed": 20260953,
-      "scientific_admissible": true,
+      "scientific_admissible": false,
+      "scientific_admissible_when_verified": true,
       "seed": 0,
+      "status": "run_complete_pending_verification",
       "survival": [
         {
           "categories": {
@@ -1938,7 +2104,7 @@
           "resident_fraction": 0.8828125
         }
       ],
-      "written_at": "2026-09-02T13:06:01+00:00"
+      "written_at": "2026-09-02T22:44:49+09:00"
     },
     {
       "C_ref": 473.31235139678574,
@@ -1985,10 +2151,12 @@
       "n_cells": 20,
       "n_eligible": 269374,
       "n_states": 512,
-      "protocol": "p2_relu_residence_final_v1",
+      "protocol": "p2_relu_residence_final_v2",
       "sample_seed": 20260954,
-      "scientific_admissible": true,
+      "scientific_admissible": false,
+      "scientific_admissible_when_verified": true,
       "seed": 1,
+      "status": "run_complete_pending_verification",
       "survival": [
         {
           "categories": {
@@ -2103,65 +2271,986 @@
           "resident_fraction": 0.908203125
         }
       ],
-      "written_at": "2026-09-02T13:06:02+00:00"
+      "written_at": "2026-09-02T22:44:50+09:00"
     }
   ],
   "pooled_survival": [
     {
+      "categories": {
+        "boundary_ambiguous": 0,
+        "boundary_touch": 0,
+        "box_cross": 0,
+        "nonfinite": 0,
+        "relu_cross": 26,
+        "resident": 6118,
+        "tie_cross": 0
+      },
       "horizon": 0.0015625,
       "n_resident": 6118,
       "n_total": 6144,
       "resident_fraction": 0.9957682291666666
     },
     {
+      "categories": {
+        "boundary_ambiguous": 0,
+        "boundary_touch": 0,
+        "box_cross": 0,
+        "nonfinite": 0,
+        "relu_cross": 51,
+        "resident": 6093,
+        "tie_cross": 0
+      },
       "horizon": 0.003125,
       "n_resident": 6093,
       "n_total": 6144,
       "resident_fraction": 0.99169921875
     },
     {
+      "categories": {
+        "boundary_ambiguous": 0,
+        "boundary_touch": 0,
+        "box_cross": 0,
+        "nonfinite": 0,
+        "relu_cross": 86,
+        "resident": 6058,
+        "tie_cross": 0
+      },
       "horizon": 0.00625,
       "n_resident": 6058,
       "n_total": 6144,
       "resident_fraction": 0.9860026041666666
     },
     {
+      "categories": {
+        "boundary_ambiguous": 0,
+        "boundary_touch": 0,
+        "box_cross": 0,
+        "nonfinite": 0,
+        "relu_cross": 154,
+        "resident": 5990,
+        "tie_cross": 0
+      },
       "horizon": 0.0125,
       "n_resident": 5990,
       "n_total": 6144,
       "resident_fraction": 0.9749348958333334
     },
     {
+      "categories": {
+        "boundary_ambiguous": 0,
+        "boundary_touch": 0,
+        "box_cross": 0,
+        "nonfinite": 0,
+        "relu_cross": 283,
+        "resident": 5861,
+        "tie_cross": 0
+      },
       "horizon": 0.025,
       "n_resident": 5861,
       "n_total": 6144,
       "resident_fraction": 0.9539388020833334
     },
     {
+      "categories": {
+        "boundary_ambiguous": 0,
+        "boundary_touch": 0,
+        "box_cross": 0,
+        "nonfinite": 0,
+        "relu_cross": 549,
+        "resident": 5595,
+        "tie_cross": 0
+      },
       "horizon": 0.05,
       "n_resident": 5595,
       "n_total": 6144,
       "resident_fraction": 0.91064453125
     },
     {
+      "categories": {
+        "boundary_ambiguous": 0,
+        "boundary_touch": 0,
+        "box_cross": 0,
+        "nonfinite": 0,
+        "relu_cross": 973,
+        "resident": 5171,
+        "tie_cross": 0
+      },
       "horizon": 0.1,
       "n_resident": 5171,
       "n_total": 6144,
       "resident_fraction": 0.8416341145833334
     },
     {
+      "categories": {
+        "boundary_ambiguous": 0,
+        "boundary_touch": 0,
+        "box_cross": 3,
+        "nonfinite": 0,
+        "relu_cross": 1544,
+        "resident": 4597,
+        "tie_cross": 0
+      },
       "horizon": 0.2,
       "n_resident": 4597,
       "n_total": 6144,
       "resident_fraction": 0.7482096354166666
     }
   ],
-  "protocol": "p2_relu_residence_final_v1",
-  "scientific_admissible": true,
+  "protocol": "p2_relu_residence_final_v2",
+  "scientific_admissible": false,
+  "scientific_admissible_when_verified": true,
   "seeds": [
     0,
     1
   ],
-  "status": "final_complete",
-  "written_at": "2026-09-02T13:06:02+00:00"
+  "status": "analysis_complete_pending_verification",
+  "task_equal_survival": [
+    {
+      "category_fractions": {
+        "boundary_ambiguous": 0.0,
+        "boundary_touch": 0.0,
+        "box_cross": 0.0,
+        "nonfinite": 0.0,
+        "relu_cross": 0.004231770833333333,
+        "resident": 0.9957682291666666,
+        "tie_cross": 0.0
+      },
+      "horizon": 0.0015625,
+      "n_tasks": 6,
+      "resident_fraction": 0.9957682291666666
+    },
+    {
+      "category_fractions": {
+        "boundary_ambiguous": 0.0,
+        "boundary_touch": 0.0,
+        "box_cross": 0.0,
+        "nonfinite": 0.0,
+        "relu_cross": 0.00830078125,
+        "resident": 0.99169921875,
+        "tie_cross": 0.0
+      },
+      "horizon": 0.003125,
+      "n_tasks": 6,
+      "resident_fraction": 0.99169921875
+    },
+    {
+      "category_fractions": {
+        "boundary_ambiguous": 0.0,
+        "boundary_touch": 0.0,
+        "box_cross": 0.0,
+        "nonfinite": 0.0,
+        "relu_cross": 0.013997395833333334,
+        "resident": 0.9860026041666666,
+        "tie_cross": 0.0
+      },
+      "horizon": 0.00625,
+      "n_tasks": 6,
+      "resident_fraction": 0.9860026041666666
+    },
+    {
+      "category_fractions": {
+        "boundary_ambiguous": 0.0,
+        "boundary_touch": 0.0,
+        "box_cross": 0.0,
+        "nonfinite": 0.0,
+        "relu_cross": 0.025065104166666668,
+        "resident": 0.9749348958333334,
+        "tie_cross": 0.0
+      },
+      "horizon": 0.0125,
+      "n_tasks": 6,
+      "resident_fraction": 0.9749348958333334
+    },
+    {
+      "category_fractions": {
+        "boundary_ambiguous": 0.0,
+        "boundary_touch": 0.0,
+        "box_cross": 0.0,
+        "nonfinite": 0.0,
+        "relu_cross": 0.046061197916666664,
+        "resident": 0.9539388020833334,
+        "tie_cross": 0.0
+      },
+      "horizon": 0.025,
+      "n_tasks": 6,
+      "resident_fraction": 0.9539388020833334
+    },
+    {
+      "category_fractions": {
+        "boundary_ambiguous": 0.0,
+        "boundary_touch": 0.0,
+        "box_cross": 0.0,
+        "nonfinite": 0.0,
+        "relu_cross": 0.08935546875,
+        "resident": 0.91064453125,
+        "tie_cross": 0.0
+      },
+      "horizon": 0.05,
+      "n_tasks": 6,
+      "resident_fraction": 0.91064453125
+    },
+    {
+      "category_fractions": {
+        "boundary_ambiguous": 0.0,
+        "boundary_touch": 0.0,
+        "box_cross": 0.0,
+        "nonfinite": 0.0,
+        "relu_cross": 0.15836588541666666,
+        "resident": 0.8416341145833334,
+        "tie_cross": 0.0
+      },
+      "horizon": 0.1,
+      "n_tasks": 6,
+      "resident_fraction": 0.8416341145833334
+    },
+    {
+      "category_fractions": {
+        "boundary_ambiguous": 0.0,
+        "boundary_touch": 0.0,
+        "box_cross": 0.00048828125,
+        "nonfinite": 0.0,
+        "relu_cross": 0.2513020833333333,
+        "resident": 0.7482096354166666,
+        "tie_cross": 0.0
+      },
+      "horizon": 0.2,
+      "n_tasks": 6,
+      "resident_fraction": 0.7482096354166666
+    }
+  ],
+  "task_survival": {
+    "hopper-expert-v2": [
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 1,
+          "resident": 1023,
+          "tie_cross": 0
+        },
+        "horizon": 0.0015625,
+        "n_resident": 1023,
+        "n_total": 1024,
+        "resident_fraction": 0.9990234375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 1,
+          "resident": 1023,
+          "tie_cross": 0
+        },
+        "horizon": 0.003125,
+        "n_resident": 1023,
+        "n_total": 1024,
+        "resident_fraction": 0.9990234375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 1,
+          "resident": 1023,
+          "tie_cross": 0
+        },
+        "horizon": 0.00625,
+        "n_resident": 1023,
+        "n_total": 1024,
+        "resident_fraction": 0.9990234375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 2,
+          "resident": 1022,
+          "tie_cross": 0
+        },
+        "horizon": 0.0125,
+        "n_resident": 1022,
+        "n_total": 1024,
+        "resident_fraction": 0.998046875
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 3,
+          "resident": 1021,
+          "tie_cross": 0
+        },
+        "horizon": 0.025,
+        "n_resident": 1021,
+        "n_total": 1024,
+        "resident_fraction": 0.9970703125
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 7,
+          "resident": 1017,
+          "tie_cross": 0
+        },
+        "horizon": 0.05,
+        "n_resident": 1017,
+        "n_total": 1024,
+        "resident_fraction": 0.9931640625
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 10,
+          "resident": 1014,
+          "tie_cross": 0
+        },
+        "horizon": 0.1,
+        "n_resident": 1014,
+        "n_total": 1024,
+        "resident_fraction": 0.990234375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 20,
+          "resident": 1004,
+          "tie_cross": 0
+        },
+        "horizon": 0.2,
+        "n_resident": 1004,
+        "n_total": 1024,
+        "resident_fraction": 0.98046875
+      }
+    ],
+    "hopper-medium-replay-v2": [
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 6,
+          "resident": 1018,
+          "tie_cross": 0
+        },
+        "horizon": 0.0015625,
+        "n_resident": 1018,
+        "n_total": 1024,
+        "resident_fraction": 0.994140625
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 11,
+          "resident": 1013,
+          "tie_cross": 0
+        },
+        "horizon": 0.003125,
+        "n_resident": 1013,
+        "n_total": 1024,
+        "resident_fraction": 0.9892578125
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 15,
+          "resident": 1009,
+          "tie_cross": 0
+        },
+        "horizon": 0.00625,
+        "n_resident": 1009,
+        "n_total": 1024,
+        "resident_fraction": 0.9853515625
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 33,
+          "resident": 991,
+          "tie_cross": 0
+        },
+        "horizon": 0.0125,
+        "n_resident": 991,
+        "n_total": 1024,
+        "resident_fraction": 0.9677734375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 55,
+          "resident": 969,
+          "tie_cross": 0
+        },
+        "horizon": 0.025,
+        "n_resident": 969,
+        "n_total": 1024,
+        "resident_fraction": 0.9462890625
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 113,
+          "resident": 911,
+          "tie_cross": 0
+        },
+        "horizon": 0.05,
+        "n_resident": 911,
+        "n_total": 1024,
+        "resident_fraction": 0.8896484375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 212,
+          "resident": 812,
+          "tie_cross": 0
+        },
+        "horizon": 0.1,
+        "n_resident": 812,
+        "n_total": 1024,
+        "resident_fraction": 0.79296875
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 2,
+          "nonfinite": 0,
+          "relu_cross": 366,
+          "resident": 656,
+          "tie_cross": 0
+        },
+        "horizon": 0.2,
+        "n_resident": 656,
+        "n_total": 1024,
+        "resident_fraction": 0.640625
+      }
+    ],
+    "hopper-medium-v2": [
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 0,
+          "resident": 1024,
+          "tie_cross": 0
+        },
+        "horizon": 0.0015625,
+        "n_resident": 1024,
+        "n_total": 1024,
+        "resident_fraction": 1.0
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 2,
+          "resident": 1022,
+          "tie_cross": 0
+        },
+        "horizon": 0.003125,
+        "n_resident": 1022,
+        "n_total": 1024,
+        "resident_fraction": 0.998046875
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 3,
+          "resident": 1021,
+          "tie_cross": 0
+        },
+        "horizon": 0.00625,
+        "n_resident": 1021,
+        "n_total": 1024,
+        "resident_fraction": 0.9970703125
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 6,
+          "resident": 1018,
+          "tie_cross": 0
+        },
+        "horizon": 0.0125,
+        "n_resident": 1018,
+        "n_total": 1024,
+        "resident_fraction": 0.994140625
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 15,
+          "resident": 1009,
+          "tie_cross": 0
+        },
+        "horizon": 0.025,
+        "n_resident": 1009,
+        "n_total": 1024,
+        "resident_fraction": 0.9853515625
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 31,
+          "resident": 993,
+          "tie_cross": 0
+        },
+        "horizon": 0.05,
+        "n_resident": 993,
+        "n_total": 1024,
+        "resident_fraction": 0.9697265625
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 51,
+          "resident": 973,
+          "tie_cross": 0
+        },
+        "horizon": 0.1,
+        "n_resident": 973,
+        "n_total": 1024,
+        "resident_fraction": 0.9501953125
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 90,
+          "resident": 934,
+          "tie_cross": 0
+        },
+        "horizon": 0.2,
+        "n_resident": 934,
+        "n_total": 1024,
+        "resident_fraction": 0.912109375
+      }
+    ],
+    "walker2d-expert-v2": [
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 0,
+          "resident": 1024,
+          "tie_cross": 0
+        },
+        "horizon": 0.0015625,
+        "n_resident": 1024,
+        "n_total": 1024,
+        "resident_fraction": 1.0
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 1,
+          "resident": 1023,
+          "tie_cross": 0
+        },
+        "horizon": 0.003125,
+        "n_resident": 1023,
+        "n_total": 1024,
+        "resident_fraction": 0.9990234375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 1,
+          "resident": 1023,
+          "tie_cross": 0
+        },
+        "horizon": 0.00625,
+        "n_resident": 1023,
+        "n_total": 1024,
+        "resident_fraction": 0.9990234375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 5,
+          "resident": 1019,
+          "tie_cross": 0
+        },
+        "horizon": 0.0125,
+        "n_resident": 1019,
+        "n_total": 1024,
+        "resident_fraction": 0.9951171875
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 13,
+          "resident": 1011,
+          "tie_cross": 0
+        },
+        "horizon": 0.025,
+        "n_resident": 1011,
+        "n_total": 1024,
+        "resident_fraction": 0.9873046875
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 26,
+          "resident": 998,
+          "tie_cross": 0
+        },
+        "horizon": 0.05,
+        "n_resident": 998,
+        "n_total": 1024,
+        "resident_fraction": 0.974609375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 58,
+          "resident": 966,
+          "tie_cross": 0
+        },
+        "horizon": 0.1,
+        "n_resident": 966,
+        "n_total": 1024,
+        "resident_fraction": 0.943359375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 107,
+          "resident": 917,
+          "tie_cross": 0
+        },
+        "horizon": 0.2,
+        "n_resident": 917,
+        "n_total": 1024,
+        "resident_fraction": 0.8955078125
+      }
+    ],
+    "walker2d-medium-replay-v2": [
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 17,
+          "resident": 1007,
+          "tie_cross": 0
+        },
+        "horizon": 0.0015625,
+        "n_resident": 1007,
+        "n_total": 1024,
+        "resident_fraction": 0.9833984375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 31,
+          "resident": 993,
+          "tie_cross": 0
+        },
+        "horizon": 0.003125,
+        "n_resident": 993,
+        "n_total": 1024,
+        "resident_fraction": 0.9697265625
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 55,
+          "resident": 969,
+          "tie_cross": 0
+        },
+        "horizon": 0.00625,
+        "n_resident": 969,
+        "n_total": 1024,
+        "resident_fraction": 0.9462890625
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 89,
+          "resident": 935,
+          "tie_cross": 0
+        },
+        "horizon": 0.0125,
+        "n_resident": 935,
+        "n_total": 1024,
+        "resident_fraction": 0.9130859375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 154,
+          "resident": 870,
+          "tie_cross": 0
+        },
+        "horizon": 0.025,
+        "n_resident": 870,
+        "n_total": 1024,
+        "resident_fraction": 0.849609375
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 294,
+          "resident": 730,
+          "tie_cross": 0
+        },
+        "horizon": 0.05,
+        "n_resident": 730,
+        "n_total": 1024,
+        "resident_fraction": 0.712890625
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 496,
+          "resident": 528,
+          "tie_cross": 0
+        },
+        "horizon": 0.1,
+        "n_resident": 528,
+        "n_total": 1024,
+        "resident_fraction": 0.515625
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 1,
+          "nonfinite": 0,
+          "relu_cross": 706,
+          "resident": 317,
+          "tie_cross": 0
+        },
+        "horizon": 0.2,
+        "n_resident": 317,
+        "n_total": 1024,
+        "resident_fraction": 0.3095703125
+      }
+    ],
+    "walker2d-medium-v2": [
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 2,
+          "resident": 1022,
+          "tie_cross": 0
+        },
+        "horizon": 0.0015625,
+        "n_resident": 1022,
+        "n_total": 1024,
+        "resident_fraction": 0.998046875
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 5,
+          "resident": 1019,
+          "tie_cross": 0
+        },
+        "horizon": 0.003125,
+        "n_resident": 1019,
+        "n_total": 1024,
+        "resident_fraction": 0.9951171875
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 11,
+          "resident": 1013,
+          "tie_cross": 0
+        },
+        "horizon": 0.00625,
+        "n_resident": 1013,
+        "n_total": 1024,
+        "resident_fraction": 0.9892578125
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 19,
+          "resident": 1005,
+          "tie_cross": 0
+        },
+        "horizon": 0.0125,
+        "n_resident": 1005,
+        "n_total": 1024,
+        "resident_fraction": 0.9814453125
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 43,
+          "resident": 981,
+          "tie_cross": 0
+        },
+        "horizon": 0.025,
+        "n_resident": 981,
+        "n_total": 1024,
+        "resident_fraction": 0.9580078125
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 78,
+          "resident": 946,
+          "tie_cross": 0
+        },
+        "horizon": 0.05,
+        "n_resident": 946,
+        "n_total": 1024,
+        "resident_fraction": 0.923828125
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 146,
+          "resident": 878,
+          "tie_cross": 0
+        },
+        "horizon": 0.1,
+        "n_resident": 878,
+        "n_total": 1024,
+        "resident_fraction": 0.857421875
+      },
+      {
+        "categories": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 255,
+          "resident": 769,
+          "tie_cross": 0
+        },
+        "horizon": 0.2,
+        "n_resident": 769,
+        "n_total": 1024,
+        "resident_fraction": 0.7509765625
+      }
+    ]
+  },
+  "written_at": "2026-09-02T22:44:50+09:00"
 }

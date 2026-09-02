@@ -101,6 +101,7 @@
   "head_frozen_manifest_sha256": "3b3276f85f0b7398fd3b3240bcd49789e31250e02162479812b06a975df0b9ba",
   "inference_scope": "fixed 9-task x 5-T x 2-seed grid; task variants share three dynamics families; not broader offline-RL generalization",
   "merge": {
+    "compact_integrity_pass": true,
     "head_host": "ext_csv",
     "kind": "cross_host_score_level",
     "official_ckpt_bound_analyze_verify": false,
@@ -111,7 +112,15 @@
       "two_actor_p4|walker2d-expert-v2|T=20|seed=0",
       "bar_p4|walker2d-expert-v2|T=20|seed=1"
     ],
-    "tail_host": "ext_csh"
+    "tail_host": "ext_csh",
+    "scientific_admissible_under_frozen_p0_contract": false,
+    "manuscript_primary_promotion_allowed": false,
+    "reason_codes": [
+      "multiple_frozen_manifests",
+      "resolved_dependency_snapshot_mismatch",
+      "tail_raw_artifacts_unavailable",
+      "five_nonfinite_optimizer_states"
+    ]
   },
   "n_paired_runs": 90,
   "primary": {

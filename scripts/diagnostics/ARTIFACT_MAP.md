@@ -27,12 +27,12 @@ selection of runs.
 | `route_shadow/` (top-level archive) | archive | partial | Use `run_route_shadow_mc.py` on `results_route_shadow` |
 | `route_shadow_k4/` | archive | partial | Compact copy of `audit_report_20260901/route_shadow_mc_k4`; excluded from manuscript |
 | `bar_mcep_p3_paired/` | aggregate/archive | partial | `audit_bar_mcep_p3_paired.py` regenerates `AUDIT.json` only; the paired CSV, summary, and source manifest are frozen and verifier-gated |
-| `p0_bar_p4_vs_two_actor_p4/` | retrain + aggregate | **merged 180-cell score archive**; outcome_label=`unresolved`; **not ckpt-bound verify** | Head=`ext_csv` first90 + tail=`hosts/ext_csh/p0_manifest_tail90/`; see `SUMMARY.json` / `MERGE_MANIFEST.json` |
-| `p1_target_value_audit/` | archive | **verified analysis_complete**; raw NPZ external | Compact CSVs + VERIFY; full bundle `/home/ext_csv/mpi_sweep_lab/p1-audit-20260902b/`; see `P1_TARGET_VALUE_RUNBOOK.md` |
+| `p0_bar_p4_vs_two_actor_p4/` | retrain + aggregate | **180-cell score integrity only**; numeric `unresolved`; **P0-inadmissible** | `verify_p0_score_merge.py` independently checks the compact merge; host dependency stacks differ, five optimizer states are nonfinite, and no full ckpt-bound verify exists |
+| `p1_target_value_audit/` | archive | **artifact-arithmetic verified**; raw NPZ external | Common-critic paired ratios and full geometry are promoted; outlier-dominated absolute means and comparator residual are not headline evidence |
 | `actor_cost/` | benchmark/archive | **verified measured snapshot**; rerun needs local data/GPU | Hash-pinned K=1--4 H200 profile plus profiler and independent verifier; see `ACTOR_COST_RUNBOOK.md` |
 | `frozen_critic_small_step/` (top-level archive) | archive | partial | Use `run_frozen_critic_small_step.py` |
 | `fixed_operator_order/` | archive | retired preflight scaffold; **no learned result** | Frozen 0/18 snapshot retained as verifier-gated provenance; superseded by `P2_RELU_RESIDENCE_RUNBOOK.md` |
-| `p2_relu_residence_final/` | archive | **verified scientific residence**; raw NPZ stay external | Compact 12-run Hopper/Walker summary + cell tables; full bundle under external `p2-relu-final-*`; see `P2_RELU_RESIDENCE_RUNBOOK.md` |
+| `p2_relu_residence_final/` | archive | **clean-source final-v2 verified**; raw NPZ stay external | Hash-pinned 12-run Hopper/Walker cell tables + task/task-equal/category summaries; full bundle `/home/ext_csv/mpi_sweep_lab/p2-relu-final-v2-06d64b3/` |
 | `actor_path_semigroup/` (top-level archive) | archive | **yes** | `run_actor_semigroup.py`; full local `mpi1/2/3/exp3` seeds 2/3 grid (incl. tau 0.7 and 12); provenance only, not manuscript error evidence |
 | `simulator_calibration/` | archive | **no in this package** | Exploratory screening; not wired here |
 | `control_final_scores.csv`, `control_summary.csv` | retrain | **no** | From compute-matched / target-lag **training** (`launch_causal_controls.py` in lab) |

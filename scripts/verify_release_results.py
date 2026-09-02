@@ -10,10 +10,18 @@ import json
 import math
 import re
 import statistics
+from decimal import Decimal
 from itertools import product
 from pathlib import Path
 
 import numpy as np
+
+if __package__:
+    from scripts.diagnostics.verify_p1_compact_release import (
+        verify_p1_target_value_compact,
+    )
+else:
+    from diagnostics.verify_p1_compact_release import verify_p1_target_value_compact
 
 GRID = (0.05, 0.1, 0.2, 0.4, 0.7, 1.5, 2.5, 4.0, 7.0, 10.0, 12.0, 14.0, 17.0, 20.0)
 HIGH = tuple(tau for tau in GRID if tau >= 4.0)
@@ -212,12 +220,64 @@ ACTOR_COST_MEMORY_SCOPE = (
 )
 
 
+P2_COMPACT_SCHEMA = "p2-relu-residence-compact-v1"
+P2_EMPTY_SHA256 = hashlib.sha256(b"").hexdigest()
+P2_FINAL_PROTOCOL = "p2_relu_residence_final_v2"
+P2_FINAL_RAW_STATUS = "analysis_complete_pending_verification"
+P2_FINAL_VERIFIED_STATUS = "verified_complete"
+P2_FINAL_ENVIRONMENTS = (
+    "hopper-medium-v2",
+    "hopper-medium-replay-v2",
+    "hopper-expert-v2",
+    "walker2d-medium-v2",
+    "walker2d-medium-replay-v2",
+    "walker2d-expert-v2",
+)
+P2_FINAL_SEEDS = (0, 1)
+P2_FINAL_T = (0.025, 0.05, 0.1, 0.2)
+P2_FINAL_K = (1, 2, 4, 8, 16)
+P2_FINAL_N_STATES = 512
+P2_FINAL_CATEGORIES = (
+    "resident",
+    "relu_cross",
+    "box_cross",
+    "tie_cross",
+    "boundary_ambiguous",
+    "boundary_touch",
+    "nonfinite",
+)
+P2_CELL_FIELDS = (
+    "environment",
+    "seed",
+    "T",
+    "K",
+    "h",
+    "n_states",
+    *(f"full_{name}" for name in P2_FINAL_CATEGORIES),
+    *(f"step_{name}" for name in P2_FINAL_CATEGORIES),
+    "full_residence_fraction",
+    "step_residence_fraction",
+    "full_affine_q_max_abs_residual",
+)
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
         while chunk := handle.read(1 << 20):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def canonical_sha256(value: object) -> str:
+    encoded = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+        allow_nan=False,
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def close(actual: float, expected: float, tol: float = 5e-4) -> None:
@@ -1156,6 +1216,536 @@ def verify_actor_cost_archive(diag: Path) -> None:
     )
 
 
+
+def verify_p2_relu_residence_compact(diag: Path) -> None:
+    """Independently rebuild the compact P2-v2 result from its 12 cell tables."""
+    compact_dir = diag / "p2_relu_residence_final"
+    compact_path = compact_dir / "COMPACT_MANIFEST.json"
+    if not compact_path.is_file():
+        raise FileNotFoundError(compact_path)
+
+    compact = json.loads(compact_path.read_text(encoding="utf-8"))
+    expected_cells = {
+        f"{environment}_seed{seed}/residence_cells.csv"
+        for environment in P2_FINAL_ENVIRONMENTS
+        for seed in P2_FINAL_SEEDS
+    }
+    expected_payload = {
+        "FINAL_DESIGN_LOCK.json",
+        "MANIFEST.json",
+        "STATUS.json",
+        "SUMMARY.json",
+        "VERIFY.json",
+        "README.md",
+        *expected_cells,
+    }
+    inventory = compact.get("inventory")
+    if not isinstance(inventory, dict) or set(inventory) != expected_payload:
+        raise AssertionError("P2 compact payload inventory is not exact")
+    actual_files = {
+        path.relative_to(compact_dir).as_posix()
+        for path in compact_dir.rglob("*")
+        if path.is_file()
+    }
+    if actual_files != {*expected_payload, "COMPACT_MANIFEST.json"}:
+        raise AssertionError("P2 compact archive contains a missing or extra file")
+    for relative, digest in inventory.items():
+        if sha256_file(compact_dir / relative) != digest:
+            raise AssertionError(f"P2 compact payload hash mismatch: {relative}")
+    if compact.get("payload_tree_sha256") != canonical_sha256(inventory):
+        raise AssertionError("P2 compact payload-tree hash mismatch")
+    if (
+        compact.get("schema_version") != P2_COMPACT_SCHEMA
+        or compact.get("artifact") != "p2_relu_residence_final_compact"
+        or compact.get("protocol") != P2_FINAL_PROTOCOL
+        or compact.get("status") != "verified_compact"
+        or compact.get("scientific_admissible") is not True
+    ):
+        raise AssertionError("P2 compact manifest identity/status mismatch")
+    expected_grid = {
+        "environments": list(P2_FINAL_ENVIRONMENTS),
+        "seeds": list(P2_FINAL_SEEDS),
+        "T": list(P2_FINAL_T),
+        "K": list(P2_FINAL_K),
+        "runs": 12,
+        "cells_per_run": 20,
+        "states_per_run": P2_FINAL_N_STATES,
+        "anchors_total": 12 * P2_FINAL_N_STATES,
+    }
+    if compact.get("grid") != expected_grid:
+        raise AssertionError("P2 compact grid metadata mismatch")
+
+    design = json.loads((compact_dir / "FINAL_DESIGN_LOCK.json").read_text())
+    raw_manifest = json.loads((compact_dir / "MANIFEST.json").read_text())
+    status = json.loads((compact_dir / "STATUS.json").read_text())
+    summary = json.loads((compact_dir / "SUMMARY.json").read_text())
+    receipt = json.loads((compact_dir / "VERIFY.json").read_text())
+    for label, document in (
+        ("design", design),
+        ("manifest", raw_manifest),
+        ("status", status),
+        ("summary", summary),
+        ("verify", receipt),
+    ):
+        if document.get("protocol") != P2_FINAL_PROTOCOL:
+            raise AssertionError(f"P2 compact {label} protocol mismatch")
+    for label, document in (
+        ("manifest", raw_manifest),
+        ("status", status),
+        ("summary", summary),
+    ):
+        if (
+            document.get("status") != P2_FINAL_RAW_STATUS
+            or document.get("scientific_admissible") is not False
+            or document.get("scientific_admissible_when_verified") is not True
+        ):
+            raise AssertionError(f"P2 compact {label} bypasses the raw verification gate")
+
+    design_without_hash = dict(design)
+    claimed_design_hash = design_without_hash.pop("design_sha256", None)
+    if claimed_design_hash != canonical_sha256(design_without_hash):
+        raise AssertionError("P2 compact design self-hash mismatch")
+    if raw_manifest.get("design_sha256") != claimed_design_hash:
+        raise AssertionError("P2 compact raw-manifest design hash mismatch")
+    if receipt.get("design_sha256") != claimed_design_hash:
+        raise AssertionError("P2 compact VERIFY design hash mismatch")
+    if receipt.get("manifest_sha256") != sha256_file(compact_dir / "MANIFEST.json"):
+        raise AssertionError("P2 compact VERIFY does not bind MANIFEST.json")
+
+    provenance = raw_manifest.get("git_provenance")
+    if not isinstance(provenance, dict):
+        raise AssertionError("P2 compact Git provenance missing")
+    if (
+        provenance.get("git_dirty") is not False
+        or provenance.get("git_tracked_dirty") is not False
+        or provenance.get("head_matches_origin_main") is not True
+        or provenance.get("git_revision") != provenance.get("origin_main_revision")
+        or not isinstance(provenance.get("git_revision"), str)
+        or re.fullmatch(r"[0-9a-f]{40}", provenance["git_revision"]) is None
+        or provenance.get("git_status_porcelain_sha256") != P2_EMPTY_SHA256
+        or provenance.get("git_tracked_status_porcelain_sha256") != P2_EMPTY_SHA256
+        or provenance.get("source_snapshot_is_durable_provenance") is not True
+    ):
+        raise AssertionError("P2 compact run did not record clean origin/main provenance")
+    if compact.get("source_git") != {
+        "revision": provenance["git_revision"],
+        "origin_main_revision": provenance["origin_main_revision"],
+        "recorded_clean": True,
+    }:
+        raise AssertionError("P2 compact source-Git summary mismatch")
+    runtime = raw_manifest.get("runtime", {})
+    if runtime.get("backend") != "cpu" or runtime.get("jax_enable_x64") is not True:
+        raise AssertionError("P2 compact raw runtime is not CPU float64")
+
+    source_hashes = raw_manifest.get("source_sha256")
+    if not isinstance(source_hashes, dict) or design.get("source_sha256") != source_hashes:
+        raise AssertionError("P2 compact design/source snapshot hashes differ")
+    expected_source_names = {
+        "run_p2_relu_residence.py",
+        "verify_p2_relu_residence.py",
+        "verify_p2_relu_residence_final.py",
+    }
+    if set(source_hashes) != expected_source_names:
+        raise AssertionError("P2 compact source inventory mismatch")
+    snapshots = raw_manifest.get("source_snapshots")
+    if not isinstance(snapshots, dict) or set(snapshots) != expected_source_names:
+        raise AssertionError("P2 compact source-snapshot inventory mismatch")
+    repo = diag.parents[1]
+    for name, digest in source_hashes.items():
+        if snapshots[name] != {
+            "path": f"SOURCE_SNAPSHOT/{name}",
+            "sha256": digest,
+        }:
+            raise AssertionError(f"P2 compact source-snapshot record mismatch: {name}")
+        current = repo / "scripts" / "diagnostics" / name
+        if not current.is_file() or sha256_file(current) != digest:
+            raise AssertionError(f"P2 compact released source differs: {name}")
+
+    required_receipt_gates = (
+        "independent_geometry_recompute_pass",
+        "finite_difference_pass",
+        "exit_bracket_pass",
+        "pooled_survival_pass",
+        "task_survival_pass",
+        "task_equal_survival_pass",
+        "aggregate_boundary_categories_pass",
+        "family_survival_pass",
+    )
+    if (
+        receipt.get("status") != P2_FINAL_VERIFIED_STATUS
+        or receipt.get("pass") is not True
+        or receipt.get("scientific_admissible") is not True
+        or any(receipt.get(field) is not True for field in required_receipt_gates)
+        or int(receipt.get("n_runs", -1)) != 12
+        or int(receipt.get("n_states_per_run", -1)) != P2_FINAL_N_STATES
+        or int(receipt.get("n_anchors_total", -1)) != 12 * P2_FINAL_N_STATES
+        or receipt.get("verifier_sha256")
+        != source_hashes["verify_p2_relu_residence_final.py"]
+    ):
+        raise AssertionError("P2 compact raw VERIFY receipt did not pass every gate")
+    if compact.get("raw_verification") != {
+        "status": receipt["status"],
+        "pass": receipt["pass"],
+        "scientific_admissible": receipt["scientific_admissible"],
+        "design_sha256": receipt["design_sha256"],
+        "manifest_sha256": receipt["manifest_sha256"],
+        "verifier_sha256": receipt["verifier_sha256"],
+    }:
+        raise AssertionError("P2 compact raw-verification summary mismatch")
+
+    if design.get("grid") != {"T": list(P2_FINAL_T), "K": list(P2_FINAL_K)}:
+        raise AssertionError("P2 compact design T/K grid mismatch")
+    if (
+        design.get("environments") != list(P2_FINAL_ENVIRONMENTS)
+        or design.get("seeds") != list(P2_FINAL_SEEDS)
+        or int(design.get("n_runs", -1)) != 12
+        or int(design.get("n_states_per_run", -1)) != P2_FINAL_N_STATES
+        or design.get("coverage_gate") is not None
+        or design.get("learned_slope") is not None
+    ):
+        raise AssertionError("P2 compact design scope/count mismatch")
+    if raw_manifest.get("counts") != {
+        "runs": 12,
+        "states_per_run": P2_FINAL_N_STATES,
+        "anchors_total": 12 * P2_FINAL_N_STATES,
+    }:
+        raise AssertionError("P2 compact raw-manifest counts mismatch")
+    if (
+        summary.get("environments") != list(P2_FINAL_ENVIRONMENTS)
+        or summary.get("seeds") != list(P2_FINAL_SEEDS)
+        or int(summary.get("n_runs", -1)) != 12
+        or int(summary.get("n_states_per_run", -1)) != P2_FINAL_N_STATES
+        or int(summary.get("n_anchors_total", -1)) != 12 * P2_FINAL_N_STATES
+        or summary.get("coverage_gate") is not None
+        or summary.get("learned_slope") is not None
+    ):
+        raise AssertionError("P2 compact SUMMARY scope/count mismatch")
+
+    expected_horizons_decimal = sorted(
+        {
+            Decimal(str(total)) / Decimal(k)
+            for total in P2_FINAL_T
+            for k in P2_FINAL_K
+        }
+    )
+    expected_horizons = [float(value) for value in expected_horizons_decimal]
+    if len(expected_horizons) != 8:
+        raise AssertionError("internal P2 unique-horizon contract drift")
+
+    def category_counts(row: dict[str, str], prefix: str, label: str) -> dict[str, int]:
+        counts: dict[str, int] = {}
+        for name in P2_FINAL_CATEGORIES:
+            raw = row[f"{prefix}{name}"]
+            try:
+                value = int(raw)
+            except ValueError as error:
+                raise AssertionError(f"{label}: noninteger category {raw!r}") from error
+            if value < 0:
+                raise AssertionError(f"{label}: negative category count")
+            counts[name] = value
+        if sum(counts.values()) != P2_FINAL_N_STATES:
+            raise AssertionError(f"{label}: category denominator mismatch")
+        return counts
+
+    run_curves: dict[tuple[str, int], list[dict[str, object]]] = {}
+    raw_artifacts = raw_manifest.get("artifacts")
+    if not isinstance(raw_artifacts, dict):
+        raise AssertionError("P2 compact raw artifact inventory missing")
+    for copied in ("FINAL_DESIGN_LOCK.json", "SUMMARY.json"):
+        if raw_artifacts.get(copied) != sha256_file(compact_dir / copied):
+            raise AssertionError(f"P2 compact raw artifact hash mismatch: {copied}")
+
+    summary_rows = summary.get("per_run")
+    if not isinstance(summary_rows, list):
+        raise AssertionError("P2 compact SUMMARY per_run is missing")
+    summary_by_run = {
+        (row.get("environment"), int(row.get("seed", -1))): row
+        for row in summary_rows
+        if isinstance(row, dict)
+    }
+    expected_run_keys = {
+        (environment, seed)
+        for environment in P2_FINAL_ENVIRONMENTS
+        for seed in P2_FINAL_SEEDS
+    }
+    if len(summary_rows) != 12 or set(summary_by_run) != expected_run_keys:
+        raise AssertionError("P2 compact SUMMARY per-run key grid mismatch")
+
+    expected_cell_order = [
+        (Decimal(str(total)), k) for total in P2_FINAL_T for k in P2_FINAL_K
+    ]
+    for environment in P2_FINAL_ENVIRONMENTS:
+        for seed in P2_FINAL_SEEDS:
+            relative = f"{environment}_seed{seed}/residence_cells.csv"
+            path = compact_dir / relative
+            if raw_artifacts.get(relative) != sha256_file(path):
+                raise AssertionError(f"P2 compact raw cell hash mismatch: {relative}")
+            with path.open(newline="", encoding="utf-8") as handle:
+                reader = csv.DictReader(handle)
+                if tuple(reader.fieldnames or ()) != P2_CELL_FIELDS:
+                    raise AssertionError(f"{relative}: exact CSV schema mismatch")
+                rows = list(reader)
+            if len(rows) != 20:
+                raise AssertionError(f"{relative}: expected 20 cells")
+            actual_order = [(Decimal(row["T"]), int(row["K"])) for row in rows]
+            if actual_order != expected_cell_order or len(set(actual_order)) != 20:
+                raise AssertionError(f"{relative}: exact ordered T/K grid mismatch")
+
+            full_aliases: dict[Decimal, tuple[dict[str, int], float, float | None]] = {}
+            step_aliases: dict[Decimal, tuple[dict[str, int], float]] = {}
+            for row in rows:
+                label = f"{relative}: T={row['T']}, K={row['K']}"
+                if row["environment"] != environment or int(row["seed"]) != seed:
+                    raise AssertionError(f"{label}: run identity mismatch")
+                total = Decimal(row["T"])
+                k = int(row["K"])
+                horizon = Decimal(row["h"])
+                if horizon != total / Decimal(k):
+                    raise AssertionError(f"{label}: h != T/K")
+                if int(row["n_states"]) != P2_FINAL_N_STATES:
+                    raise AssertionError(f"{label}: n_states mismatch")
+                full_counts = category_counts(row, "full_", label)
+                step_counts = category_counts(row, "step_", label)
+                full_fraction = finite(row["full_residence_fraction"], f"{label}: full fraction")
+                step_fraction = finite(row["step_residence_fraction"], f"{label}: step fraction")
+                if not math.isclose(
+                    full_fraction,
+                    full_counts["resident"] / P2_FINAL_N_STATES,
+                    rel_tol=0.0,
+                    abs_tol=1e-12,
+                ) or not math.isclose(
+                    step_fraction,
+                    step_counts["resident"] / P2_FINAL_N_STATES,
+                    rel_tol=0.0,
+                    abs_tol=1e-12,
+                ):
+                    raise AssertionError(f"{label}: residence fraction/count mismatch")
+                residual_text = row["full_affine_q_max_abs_residual"].strip()
+                residual = (
+                    None
+                    if not residual_text
+                    else finite(residual_text, f"{label}: residual")
+                )
+                if residual is not None and residual < 0.0:
+                    raise AssertionError(f"{label}: negative affine residual")
+
+                full_record = (full_counts, full_fraction, residual)
+                if total in full_aliases and full_aliases[total] != full_record:
+                    raise AssertionError(f"{relative}: full-horizon result changed with K")
+                full_aliases[total] = full_record
+                step_record = (step_counts, step_fraction)
+                if horizon in step_aliases and step_aliases[horizon] != step_record:
+                    raise AssertionError(f"{relative}: repeated T/K horizon aliases differ")
+                step_aliases[horizon] = step_record
+                if k == 1 and (
+                    full_counts != step_counts
+                    or not math.isclose(full_fraction, step_fraction, abs_tol=1e-12)
+                ):
+                    raise AssertionError(f"{relative}: K=1 full and step views differ")
+
+            if set(full_aliases) != {Decimal(str(value)) for value in P2_FINAL_T}:
+                raise AssertionError(f"{relative}: full-horizon aliases incomplete")
+            if set(step_aliases) != set(expected_horizons_decimal):
+                raise AssertionError(f"{relative}: unique step horizons incomplete")
+            curve = [
+                {
+                    "horizon": float(horizon),
+                    "n_resident": step_aliases[horizon][0]["resident"],
+                    "resident_fraction": step_aliases[horizon][1],
+                    "categories": step_aliases[horizon][0],
+                }
+                for horizon in expected_horizons_decimal
+            ]
+            run_curves[(environment, seed)] = curve
+
+            stored = summary_by_run[(environment, seed)]
+            if (
+                stored.get("protocol") != P2_FINAL_PROTOCOL
+                or stored.get("status") != "run_complete_pending_verification"
+                or stored.get("scientific_admissible") is not False
+                or stored.get("scientific_admissible_when_verified") is not True
+                or int(stored.get("n_states", -1)) != P2_FINAL_N_STATES
+                or int(stored.get("n_cells", -1)) != 20
+            ):
+                raise AssertionError(f"{relative}: stored run status/count mismatch")
+            expected_full = {
+                str(float(total)): full_aliases[total][0]
+                for total in sorted(full_aliases)
+            }
+            if stored.get("full_category_counts_by_T") != expected_full:
+                raise AssertionError(f"{relative}: full-category summary mismatch")
+            for field in ("C_ref", "analytic_vs_jax_grad_max_abs"):
+                value = finite(stored.get(field), f"{relative}: {field}")
+                if value < 0.0 or (field == "C_ref" and value == 0.0):
+                    raise AssertionError(f"{relative}: invalid {field}")
+
+            actual_curve = stored.get("survival")
+            if not isinstance(actual_curve, list) or len(actual_curve) != len(curve):
+                raise AssertionError(f"{relative}: run survival length mismatch")
+            for expected, actual in zip(curve, actual_curve, strict=True):
+                if set(actual) != {
+                    "horizon",
+                    "n_resident",
+                    "resident_fraction",
+                    "categories",
+                }:
+                    raise AssertionError(f"{relative}: run survival schema mismatch")
+                if (
+                    not math.isclose(
+                        float(actual["horizon"]),
+                        expected["horizon"],
+                        rel_tol=0.0,
+                        abs_tol=1e-12,
+                    )
+                    or int(actual["n_resident"]) != expected["n_resident"]
+                    or not math.isclose(
+                        float(actual["resident_fraction"]),
+                        expected["resident_fraction"],
+                        abs_tol=1e-12,
+                    )
+                    or set(actual["categories"]) != set(P2_FINAL_CATEGORIES)
+                    or {name: int(actual["categories"][name]) for name in P2_FINAL_CATEGORIES}
+                    != expected["categories"]
+                ):
+                    raise AssertionError(f"{relative}: run survival mismatch")
+
+    def aggregate(keys: list[tuple[str, int]]) -> list[dict[str, object]]:
+        rows: list[dict[str, object]] = []
+        for index, horizon in enumerate(expected_horizons):
+            categories = {
+                name: sum(int(run_curves[key][index]["categories"][name]) for key in keys)
+                for name in P2_FINAL_CATEGORIES
+            }
+            n_total = len(keys) * P2_FINAL_N_STATES
+            rows.append(
+                {
+                    "horizon": horizon,
+                    "n_resident": categories["resident"],
+                    "n_total": n_total,
+                    "resident_fraction": categories["resident"] / n_total,
+                    "categories": categories,
+                }
+            )
+        return rows
+
+    def assert_aggregate(actual: object, expected: list[dict[str, object]], label: str) -> None:
+        if not isinstance(actual, list) or len(actual) != len(expected):
+            raise AssertionError(f"{label}: aggregate length mismatch")
+        required = {"horizon", "n_resident", "n_total", "resident_fraction", "categories"}
+        for wanted, observed in zip(expected, actual, strict=True):
+            if not isinstance(observed, dict) or set(observed) != required:
+                raise AssertionError(f"{label}: aggregate schema mismatch")
+            if (
+                not math.isclose(
+                    float(observed["horizon"]),
+                    float(wanted["horizon"]),
+                    rel_tol=0.0,
+                    abs_tol=1e-12,
+                )
+                or int(observed["n_resident"]) != wanted["n_resident"]
+                or int(observed["n_total"]) != wanted["n_total"]
+                or not math.isclose(
+                    float(observed["resident_fraction"]),
+                    float(wanted["resident_fraction"]),
+                    abs_tol=1e-12,
+                )
+                or set(observed["categories"]) != set(P2_FINAL_CATEGORIES)
+                or {name: int(observed["categories"][name]) for name in P2_FINAL_CATEGORIES}
+                != wanted["categories"]
+            ):
+                raise AssertionError(f"{label}: aggregate values mismatch")
+
+    if [float(value) for value in summary.get("horizons", [])] != expected_horizons:
+        raise AssertionError("P2 compact SUMMARY unique horizons mismatch")
+    all_keys = sorted(expected_run_keys)
+    assert_aggregate(summary.get("pooled_survival"), aggregate(all_keys), "P2 pooled")
+
+    task_expected = {
+        environment: aggregate([(environment, seed) for seed in P2_FINAL_SEEDS])
+        for environment in P2_FINAL_ENVIRONMENTS
+    }
+    if set(summary.get("task_survival", {})) != set(P2_FINAL_ENVIRONMENTS):
+        raise AssertionError("P2 compact task-survival key grid mismatch")
+    for environment, expected in task_expected.items():
+        assert_aggregate(summary["task_survival"][environment], expected, f"P2 task/{environment}")
+
+    family_expected = {
+        family: aggregate(
+            [
+                key
+                for key in all_keys
+                if key[0].split("-", 1)[0] == family
+            ]
+        )
+        for family in ("hopper", "walker2d")
+    }
+    if set(summary.get("family_survival", {})) != set(family_expected):
+        raise AssertionError("P2 compact family-survival key grid mismatch")
+    for family, expected in family_expected.items():
+        assert_aggregate(summary["family_survival"][family], expected, f"P2 family/{family}")
+
+    task_equal_expected = []
+    for index, horizon in enumerate(expected_horizons):
+        task_equal_expected.append(
+            {
+                "horizon": horizon,
+                "n_tasks": len(P2_FINAL_ENVIRONMENTS),
+                "resident_fraction": statistics.fmean(
+                    task_expected[environment][index]["resident_fraction"]
+                    for environment in P2_FINAL_ENVIRONMENTS
+                ),
+                "category_fractions": {
+                    name: statistics.fmean(
+                        task_expected[environment][index]["categories"][name]
+                        / task_expected[environment][index]["n_total"]
+                        for environment in P2_FINAL_ENVIRONMENTS
+                    )
+                    for name in P2_FINAL_CATEGORIES
+                },
+            }
+        )
+    actual_task_equal = summary.get("task_equal_survival")
+    if not isinstance(actual_task_equal, list) or len(actual_task_equal) != len(
+        task_equal_expected
+    ):
+        raise AssertionError("P2 compact task-equal length mismatch")
+    required_task_equal = {
+        "horizon",
+        "n_tasks",
+        "resident_fraction",
+        "category_fractions",
+    }
+    for wanted, observed in zip(task_equal_expected, actual_task_equal, strict=True):
+        if not isinstance(observed, dict) or set(observed) != required_task_equal:
+            raise AssertionError("P2 compact task-equal schema mismatch")
+        if (
+            not math.isclose(float(observed["horizon"]), wanted["horizon"], abs_tol=1e-12)
+            or int(observed["n_tasks"]) != wanted["n_tasks"]
+            or not math.isclose(
+                float(observed["resident_fraction"]),
+                wanted["resident_fraction"],
+                abs_tol=1e-12,
+            )
+        ):
+            raise AssertionError("P2 compact task-equal values mismatch")
+        fractions = observed.get("category_fractions", {})
+        if set(fractions) != set(P2_FINAL_CATEGORIES):
+            raise AssertionError("P2 compact task-equal category schema mismatch")
+        for name in P2_FINAL_CATEGORIES:
+            if not math.isclose(
+                float(fractions[name]),
+                wanted["category_fractions"][name],
+                abs_tol=1e-12,
+            ):
+                raise AssertionError(f"P2 compact task-equal category mismatch: {name}")
+        if not math.isclose(sum(map(float, fractions.values())), 1.0, abs_tol=1e-12):
+            raise AssertionError("P2 compact task-equal category fractions do not sum to one")
+
+    print(
+        "PASS P2 compact: exact 12x20 cell archive, category denominators, "
+        "horizon aliases, clean provenance, raw VERIFY, and all aggregates"
+    )
+
 def verify_retired_fixed_operator_archive(diag: Path) -> None:
     order_dir = diag / "fixed_operator_order"
     status = json.loads((order_dir / "STATUS.json").read_text())
@@ -1948,7 +2538,14 @@ def verify_manuscript(path: Path) -> None:
         "seed-pair table K3": "3&52.78&51.05&17&16",
         "seed-pair table K4": "4&63.61&64.33&9&10",
         "target displacement count": "88/90",
-        "final proxy count": "36/90",
+        "final proxy count": "37/90",
+        "P4 final proxy count": "44/90",
+        "P1 common-critic counts": "lowerin86/90and88/90cells",
+        "P1 all-task direction": "allninetaskmediansbelowone",
+        "P1 exposure-reach split": (
+            "thefinalactorliesfartherfromthepairednextdatasetactionthanthefirstpolyakactor"
+        ),
+        "P1 interpretation boundary": "notcriticaccuracyorreturncausality",
         "exposure proxy definition": (
             "bootstrapexposuredenotesthistarget-action-displacementproxy,"
             "notdistancetodatasetsupport,criticerror,orbellman-targeterror"
@@ -1961,16 +2558,16 @@ def verify_manuscript(path: Path) -> None:
             "polyak-updatemu_1^-andthetargetcriticswithrate.005"
         ),
         "live local-limit boundary": (
-            "persistentlateractorsneednotapproachtheidentityashto0"
+            "thislimitdoesnotexplainthecoupledlarge-tchain"
         ),
         "ReLU region identity": (
-            "thetwoidealmapscoincideinsideoneactivationregion"
+            "thetwoidealmapsexactlyequalinsideoneactivationregion"
         ),
         "ReLU learned-audit boundary": (
             "ratherthanfittinganonzero1/kerrorslope"
         ),
         "calibrated abstract mechanism": (
-            "resultssupporttarget/deploymentseparation"
+            "matchedevidenceisconsistentwithexposure--reachseparation"
         ),
         "evidence map": "evidencemap",
         "actor-cost main endpoints": (
@@ -1987,10 +2584,11 @@ def verify_manuscript(path: Path) -> None:
         "evidence map P3 control scope": (
             "p3two-actorcontrol&90pairs;180finalscores"
         ),
-        "P4 audit scope": (
-            "p4target-brancharchivecontains180checkpointsacrossseeds0--3."
-            "comparisonsusethe90seed-0/1cellsmatchedtotd3+bcandp3"
+        "P4 audit scope": "fullseed-0/1finalgeometryshowsnotypicalfinalcontraction",
+        "P2 clean residence values": (
+            "residenceover6144eligibleinterioranchorsis.954,.911,.842,.748"
         ),
+        "P2 task heterogeneity": "the.2-horizontaskrangeis.310--.980",
         "restricted exposure sensitivity": "36/40cells",
         "restricted exposure median ratio": "medianratio.905",
         "compressed route qualification": (
@@ -2000,15 +2598,22 @@ def verify_manuscript(path: Path) -> None:
         "stable simulator median": "-41.4",
         "collapsed simulator median": "+1.70times10^12",
         "bootstrap protocol": "100,000drawsusinganalysisseed20260830",
-        "audit scope": "a270-checkpointauditfindslowerp3target-actiondisplacement",
+        "audit scope": "theoriginaldirectauditcovers270methodcheckpoints",
         "manifest limitation": "exactper-runmanifestswerenotretained",
         "provenance qualification": (
             "provenanceconsistsofthearchivedlaunchconfigurationandscorematrices"
         ),
-        "MCEP control means": "scores59.22versus57.67foracontemporaneousp3rerun",
+        "MCEP control mechanism conclusion": (
+            "policyseparationattainstheobservedp3aggregateregimewithout"
+            "sequentialre-centering"
+        ),
         "MCEP main table BAR row": "bar-p3rerun&57.67&23/90&9/45",
         "MCEP main table control row": "two-actorcontrol&59.22&21/90&9/45",
-        "missing P4 control boundary": "nocorrespondingp4controlhasyettested",
+        "P4 control boundary": "p4scoremergeisunresolvedbutcross-stack",
+        "P0 descriptive interval": "task-resamplingintervalis[-7.25,2.41]",
+        "P0 runtime-stack boundary": (
+            "twoshardsusemateriallydifferentresolvedpython/jax/flax/optaxstacks"
+        ),
         "MCEP control contrast": (
             "controlminusbaris+1.56withtask-resamplinginterval[-1.52,5.44]"
         ),
@@ -2057,6 +2662,11 @@ def verify_manuscript(path: Path) -> None:
         "ambiguous four-seed P4 comparison": (
             "four-seedk=4auditlowerstargetdisplacementin89/90matchedseed-0/1"
         ),
+        "old final proxy count": "36/90",
+        "old P3 final ratio": "medianratio1.057",
+        "old P4 missing-final boundary": "archiveomitsp4final-actorgeometry",
+        "old missing P4 control": "nocorrespondingp4controlhasyettested",
+        "retired frozen-critic result": "15of18environment--seedruns",
     }
     stale = [label for label, token in stale_tokens.items() if token in text]
     if re.search(r"35/63.{0,80}9/63", text):
@@ -2087,6 +2697,11 @@ def main() -> None:
         type=Path,
         help="Optional local repository root for checking uncommitted raw-run hashes",
     )
+    parser.add_argument(
+        "--require-p2-compact",
+        action="store_true",
+        help="Fail unless the verified final-v2 P2 compact archive is present",
+    )
     args = parser.parse_args()
     claims = EXPECTED_CLAIMS
     verify_complete_grid(args.results_dir, claims)
@@ -2099,6 +2714,19 @@ def main() -> None:
         args.mcep_source_root,
     )
     verify_actor_cost_archive(args.results_dir / "diagnostics")
+    verify_p1_target_value_compact(args.results_dir / "diagnostics")
+    p2_compact = (
+        args.results_dir
+        / "diagnostics"
+        / "p2_relu_residence_final"
+        / "COMPACT_MANIFEST.json"
+    )
+    if p2_compact.is_file():
+        verify_p2_relu_residence_compact(args.results_dir / "diagnostics")
+    elif args.require_p2_compact:
+        raise FileNotFoundError(p2_compact)
+    else:
+        print("SKIP P2 compact: no verified final-v2 COMPACT_MANIFEST.json")
     verify_retired_fixed_operator_archive(args.results_dir / "diagnostics")
     verify_diagnostics(args.results_dir / "diagnostics", claims)
     verify_figure_inputs(args.results_dir / "diagnostics")

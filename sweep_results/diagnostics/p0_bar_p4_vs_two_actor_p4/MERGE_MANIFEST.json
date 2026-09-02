@@ -2,7 +2,7 @@
   "built_at": "2026-09-02T22:17:47+09:00",
   "experiment": "p0_bar_p4_vs_two_actor_p4",
   "files": {
-    "SUMMARY.json": "c47c37e4322d525650b6346a86b75fffaa71510dcc730e392b63749f384dc996",
+    "SUMMARY.json": "a66a623cc472a1f3439606d2aa22f066b0ce6f54228db9c7f9a3c6497aca6d6a",
     "merged_final_scores.csv": "7d3544155ae01de6371347552bbc894a1782789bc5a62790c02ff29c97bdc241",
     "paired_scores.csv": "9b1a93a530cd28d9dea9bcc165347aeff20abcfd9de5e59cad5edf7bf0131ebd"
   },
@@ -20,15 +20,34 @@
   "merge_kind": "cross_host_score_level",
   "note": "SUMMARY.json uses scripts/diagnostics/analyze_p0_bar_two_actor_p4.summarize on the merged 90 deployment-score pairs. It is not a create-only analyze/verify receipt over local final checkpoints for all 180 runs.",
   "official_ckpt_bound_analyze_verify": false,
+  "compact_integrity_pass": true,
+  "scientific_admissible_under_frozen_p0_contract": false,
+  "manuscript_primary_promotion_allowed": false,
   "schema_version": 1,
   "scientific_identity": {
     "dataset_normalization_equal": true,
     "host_paths_python_hardware_differ": true,
     "requirements_sha256_equal": true,
+    "resolved_dependency_snapshot_equal": false,
+    "resolved_dependency_mismatches": {
+      "python": ["3.12.13", "3.10.20"],
+      "jax": ["0.10.2", "0.4.38"],
+      "jaxlib": ["0.10.2", "0.4.38"],
+      "flax": ["0.12.7", "0.10.4"],
+      "optax": ["0.2.8", "0.2.4"],
+      "numpy": ["2.5.0", "1.26.4"],
+      "gym": ["0.26.2", "0.23.0"]
+    },
     "resolved_config_and_config_sha256_equal": true,
     "run_keys_equal": true,
     "source_file_hashes_equal": true
   },
+  "reason_codes": [
+    "multiple_frozen_manifests",
+    "resolved_dependency_snapshot_mismatch",
+    "tail_raw_artifacts_unavailable",
+    "five_nonfinite_optimizer_states"
+  ],
   "source_revision": "29fea94bee9d9276ac463caa2b897e3474fe1b2b",
   "tail": {
     "frozen_manifest_sha256": "fced784a486598753bf3e6da3dd302cd2f38ccb9242b7ffd491c0065c6f3339b",

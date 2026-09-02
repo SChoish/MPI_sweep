@@ -1,6 +1,20 @@
 {
+  "checkpoint_config_contract": {
+    "batch_size": 256,
+    "discount": 0.99,
+    "eval_episodes": 10,
+    "eval_freq": 50000,
+    "lr": 0.0003,
+    "max_timesteps": 1000000,
+    "n_jitted_updates": 8,
+    "noise_clip": 0.5,
+    "normalize": true,
+    "policy_freq": 2,
+    "policy_noise": 0.2,
+    "polyak": 0.005
+  },
   "coverage_gate": null,
-  "design_sha256": "b31756f7bc65a87cc57615422f20ba7b92d07aa7241bd67b8c63808e265cc5e4",
+  "design_sha256": "e6a193a9dc7c6e7331bfecc5673133a5c4122f50003fe97badc7d860514fd729",
   "environments": [
     "hopper-medium-v2",
     "hopper-medium-replay-v2",
@@ -30,7 +44,7 @@
       "basename": "halfcheetah-expert-v2_seed0.npy",
       "env": "halfcheetah-expert-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-expert-v2_seed0.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-expert-v2_seed0.npy",
       "role": "archived_fixed_operator",
       "seed": 0,
       "sha256": "54202d29eb48baf2daa1be3ad79d4398f78b431f3ed8e64a2b6a95efe25c4555"
@@ -39,7 +53,7 @@
       "basename": "halfcheetah-expert-v2_seed1.npy",
       "env": "halfcheetah-expert-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-expert-v2_seed1.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-expert-v2_seed1.npy",
       "role": "archived_fixed_operator",
       "seed": 1,
       "sha256": "72bcfae0783abc2538672050042d066ac06c7f167e311ac1cf625a04103e22fc"
@@ -48,7 +62,7 @@
       "basename": "halfcheetah-medium-replay-v2_seed0.npy",
       "env": "halfcheetah-medium-replay-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-medium-replay-v2_seed0.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-medium-replay-v2_seed0.npy",
       "role": "archived_fixed_operator",
       "seed": 0,
       "sha256": "38c666c65a70b19a81658a5f82fb46f9f17ed9f4ed42aa2fe648ee6ec94a821d"
@@ -57,7 +71,7 @@
       "basename": "halfcheetah-medium-replay-v2_seed1.npy",
       "env": "halfcheetah-medium-replay-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-medium-replay-v2_seed1.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-medium-replay-v2_seed1.npy",
       "role": "archived_fixed_operator",
       "seed": 1,
       "sha256": "49815cbcedf93d1e67ebe464de46096570e0a65c499f79ca0cb1d9ea21d9dd92"
@@ -66,7 +80,7 @@
       "basename": "halfcheetah-medium-v2_seed0.npy",
       "env": "halfcheetah-medium-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-medium-v2_seed0.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-medium-v2_seed0.npy",
       "role": "archived_fixed_operator",
       "seed": 0,
       "sha256": "ddc575b77e76797d7b021e8f122cb1345747c277b66f8a64e66ac334b1d397d0"
@@ -75,7 +89,7 @@
       "basename": "halfcheetah-medium-v2_seed1.npy",
       "env": "halfcheetah-medium-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-medium-v2_seed1.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-medium-v2_seed1.npy",
       "role": "archived_fixed_operator",
       "seed": 1,
       "sha256": "8e80d56920b1d4c1360ac408863024677a0027457361c4dacd6b3485f16414ae"
@@ -84,7 +98,7 @@
       "basename": "hopper-expert-v2_seed0.npy",
       "env": "hopper-expert-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-expert-v2_seed0.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-expert-v2_seed0.npy",
       "role": "archived_fixed_operator",
       "seed": 0,
       "sha256": "570a3028cf91fa76b3acaf3e846bd80c40c5d1d9846d105b687b123cc90eb320"
@@ -93,7 +107,7 @@
       "basename": "hopper-expert-v2_seed1.npy",
       "env": "hopper-expert-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-expert-v2_seed1.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-expert-v2_seed1.npy",
       "role": "archived_fixed_operator",
       "seed": 1,
       "sha256": "f86dcc17fa86247c78d28e6f0a8d51e30158e6e09719e07c12319a8df53c0a53"
@@ -102,7 +116,7 @@
       "basename": "hopper-medium-replay-v2_seed0.npy",
       "env": "hopper-medium-replay-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-medium-replay-v2_seed0.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-medium-replay-v2_seed0.npy",
       "role": "archived_fixed_operator",
       "seed": 0,
       "sha256": "81b1cc4ac473748159f9bac630a30fe82f482526503c85426e6d4b1e1178c506"
@@ -111,7 +125,7 @@
       "basename": "hopper-medium-replay-v2_seed1.npy",
       "env": "hopper-medium-replay-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-medium-replay-v2_seed1.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-medium-replay-v2_seed1.npy",
       "role": "archived_fixed_operator",
       "seed": 1,
       "sha256": "9d56cb7d1a8d86221e67ddf1ec368e9513d988a744aac2fb6f46effca152a55e"
@@ -120,7 +134,7 @@
       "basename": "hopper-medium-v2_seed0.npy",
       "env": "hopper-medium-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-medium-v2_seed0.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-medium-v2_seed0.npy",
       "role": "archived_fixed_operator",
       "seed": 0,
       "sha256": "c88a71d73a689230a5c529dd5838f8a13d0c9c60eac6bb6907051430271f13ce"
@@ -129,7 +143,7 @@
       "basename": "hopper-medium-v2_seed1.npy",
       "env": "hopper-medium-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-medium-v2_seed1.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-medium-v2_seed1.npy",
       "role": "archived_fixed_operator",
       "seed": 1,
       "sha256": "5b7e6ee83b5521033a3c82f2df96e233a849a6765ea80e7d87ffbf492a7ac421"
@@ -138,7 +152,7 @@
       "basename": "walker2d-expert-v2_seed0.npy",
       "env": "walker2d-expert-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-expert-v2_seed0.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-expert-v2_seed0.npy",
       "role": "archived_fixed_operator",
       "seed": 0,
       "sha256": "60ac125a72e091a2d138e4bb4aefbd8a74a34fd70a620c955cef97927b49a0f8"
@@ -147,7 +161,7 @@
       "basename": "walker2d-expert-v2_seed1.npy",
       "env": "walker2d-expert-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-expert-v2_seed1.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-expert-v2_seed1.npy",
       "role": "archived_fixed_operator",
       "seed": 1,
       "sha256": "dc766f92441ad1c59a9ccac1a3758b64b05e94e013db21590aabffa11a33e556"
@@ -156,7 +170,7 @@
       "basename": "walker2d-medium-replay-v2_seed0.npy",
       "env": "walker2d-medium-replay-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-medium-replay-v2_seed0.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-medium-replay-v2_seed0.npy",
       "role": "archived_fixed_operator",
       "seed": 0,
       "sha256": "9ab1f49f356ae165b48bcf701ac56075a2f08f9d3ef88f24e11e587384647e1a"
@@ -165,7 +179,7 @@
       "basename": "walker2d-medium-replay-v2_seed1.npy",
       "env": "walker2d-medium-replay-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-medium-replay-v2_seed1.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-medium-replay-v2_seed1.npy",
       "role": "archived_fixed_operator",
       "seed": 1,
       "sha256": "7a8e9562bc553e385094ce99cc464134d4851c220364e3b5baa6e0450264cb3e"
@@ -174,7 +188,7 @@
       "basename": "walker2d-medium-v2_seed0.npy",
       "env": "walker2d-medium-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-medium-v2_seed0.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-medium-v2_seed0.npy",
       "role": "archived_fixed_operator",
       "seed": 0,
       "sha256": "eefb6332e0330a738776caea8bb03f23134c2c74cc932717bd71bcccf1dc0b26"
@@ -183,7 +197,7 @@
       "basename": "walker2d-medium-v2_seed1.npy",
       "env": "walker2d-medium-v2",
       "n_indices": 512,
-      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-medium-v2_seed1.npy",
+      "path": "/tmp/mpi-p2-push.Fr6dCM/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-medium-v2_seed1.npy",
       "role": "archived_fixed_operator",
       "seed": 1,
       "sha256": "af936bd4869c8c0d2520b15d5f5211f6dbbd0fd535b5698248bbacfc5c2d4322"
@@ -397,7 +411,8 @@
     "InTWgf",
     "OLDBdx",
     "xlMNfc",
-    "sqfIVj"
+    "sqfIVj",
+    "meAdJI"
   ],
   "learned_slope": null,
   "n_runs": 12,
@@ -435,7 +450,7 @@
     "walker2d-medium-v2_seed1": 20260934
   },
   "primary_summary": "unique-horizon empirical survival curve P(t_exit > t)",
-  "protocol": "p2_relu_residence_final_v1",
+  "protocol": "p2_relu_residence_final_v2",
   "repeated_cell_policy": "collapse equal horizons; do not count as independent evidence",
   "reuses_pilot_geometry_and_residence_math": true,
   "sample_seed_base": 20260903,
@@ -445,10 +460,10 @@
     1
   ],
   "source_sha256": {
-    "run_p2_relu_residence.py": "c555b5e03918f8751696e808b2530d9f4a77f7d44b4b00e0427ef5af5b96f1a0",
+    "run_p2_relu_residence.py": "35d866c5d863bf57bab324fa64edce0a85f44b19f2cd65575c876a5c83e74409",
     "verify_p2_relu_residence.py": "fea7ebb13f5e359a04960d7e623cedfc4752491cf663aacd1b969907df651274",
-    "verify_p2_relu_residence_final.py": "df809ef138bd3041d3276cd31a3d14201f8bf63e968219ec16b4ebeea4693939"
+    "verify_p2_relu_residence_final.py": "59437de9fbe0ec16ebf7ab43cae4d64ac91f7662861cc02c5f52c9b927b9effe"
   },
   "status": "final_protocol_frozen_before_sampling",
-  "written_at": "2026-09-02T13:05:51+00:00"
+  "written_at": "2026-09-02T22:44:30+09:00"
 }

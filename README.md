@@ -273,10 +273,17 @@ must pass before any result is treated as evidence.
 The compact final-score tables are under [`sweep_results/`](sweep_results/).
 Directories `K=1` through `K=4` are organized by hop count and integrator.
 The proximal `K={1,2,3,4}` and projected-linearized `K={2,3}` CSVs for
-seeds 0--3 each complete the same nine-task, fourteen-budget grid. In the
-high-budget region, the four-seed projected-linearized mean rises from 38.43
-at `K=2` to 46.44 at `K=3`, with score-below-20 cells falling from 25/63
-to 21/63. The practical summaries are not confined to that stress tail: at
+seeds 0--3 each complete the same nine-task, fourteen-budget grid. The intended
+reading is regime based. At `T={.05,.1,.2}`, depth has no consistent return
+ordering, matching the role of JKO as a local geometric interpretation rather
+than a performance theorem. TD3+BC peaks at `T=1.5` and then drops to
+67.41/45.93/30.36 at `T=2.5/4/7`, while BAR-P4 remains at
+81.25/82.06/81.79. At `T>=10` every method degrades, but deeper BAR shifts the
+failure frontier: its task-equal tail remains depth ordered through `K=4`, not
+uniformly superior at every extreme cell. In that high-budget region, the
+four-seed projected-linearized mean rises from 38.43 at `K=2` to 46.44 at
+`K=3`, with score-below-20 cells falling from 25/63 to 21/63. The practical
+summaries are not confined to that stress tail: at
 TD3+BC's grid-best shared budget `T=1.5`, BAR-P3 and P4 score 78.95 and 77.70
 versus 74.79, while BAR-P4's descriptive grid maximum is 82.06 at `T=4`.
 A leave-one-dynamics-family-out tuning-transfer sensitivity gives 78.44 for
@@ -294,6 +301,24 @@ On one H200/JAX 0.10.2 stack, compiled actor-phase dispatch rises from
 high-water mark rises from 9,684,736 to 18,045,440 bytes (1.863x). The timing
 excludes compilation and warmup, and the memory figure is not an isolated
 steady-state actor-call peak.
+
+The completed protocol-v2 target-value audit is released under
+[`sweep_results/diagnostics/p1_target_value_audit/`](sweep_results/diagnostics/p1_target_value_audit/).
+On identical next-state batches, a common TD3+BC target critic, and identical
+smoothing noise, BAR-P3 and BAR-P4 have lower operational TD-target
+perturbation in 86/90 and 88/90 matched cells, with median RMS ratios .717 and
+.617 and a below-one median in every task. The same audit supplies full
+seed-0/1 final-actor geometry for P4. Absolute means are not promoted because
+extreme finite critic magnitudes in collapsed cells dominate them; these are
+critic-space sensitivity readouts, not critic-error or causal-return estimates.
+
+The clean-source P2 ReLU residence audit is released under
+[`sweep_results/diagnostics/p2_relu_residence_final/`](sweep_results/diagnostics/p2_relu_residence_final/).
+Across 6144 eligible interior Hopper/Walker dataset-action anchors, task-equal
+full-horizon residence is .954/.911/.842/.748 at probe horizons
+`{.025,.05,.1,.2}`. The `.2`-horizon task rates range from .310 to .980, so the
+archive supports a strong small-horizon local-affine statement while retaining
+the observed task heterogeneity.
 
 Audited movement, critic failure, target exposure, simulator calibration, and
 targeted controls are documented in
@@ -319,9 +344,12 @@ grid. Because the control also changes actor work, anchoring, and the realized
 critic trajectory, it establishes neither superiority nor equivalence and does
 not isolate which element of the simpler procedure is responsible. The matched
 P4 protocol and harness are packaged in the
-[P0 runbook](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md). No P4
-manifest has been frozen and no P4 result exists; no seeds 4--7 expansion is
-planned.
+[P0 runbook](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md). Its two-host
+90-pair score merge is complete and numerically unresolved (BAR minus control
+$-2.31$, task-bootstrap interval $[-7.25,2.41]$), but the shards use materially
+different resolved dependency stacks and five retained runs have nonfinite
+optimizer states. It is therefore a descriptive sensitivity, not an admissible
+locked-P0 result. No seeds 4--7 expansion is planned.
 
 The compact [paired archive](sweep_results/diagnostics/bar_mcep_p3_paired/)
 contains all final scores, independently checked aggregates, recovery
@@ -330,8 +358,8 @@ evaluation, and final checkpoint, plus available logs. Large raw artifacts are
 excluded. Exact local training-file digests are recorded because the run
 configs did not store a Git revision. A clean, compatible two-actor
 implementation is now released, but it cannot retroactively prove the exact
-historical training checkout. That remaining provenance gap is tracked in
-[TODO.md](TODO.md).
+historical training checkout. The exact revision is recorded as unrecoverable
+rather than reconstructed.
 
 ## Paper
 

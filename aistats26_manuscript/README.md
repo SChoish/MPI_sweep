@@ -5,20 +5,21 @@ This directory contains the anonymous submission package for:
 > **BAR: Budgeted Actor Refinement Decouples Bootstrap Exposure from Policy Reach**
 
 Budgeted Actor Refinement (BAR) splits a nominal actor-improvement coefficient
-across a persistent TD3+BC actor chain. The first branch supplies Bellman-target
-actions and the final branch is deployed, structurally separating the measured
-target-action-displacement proxy from policy reach. Across four proximal seeds, the equally weighted
-high-budget aggregate is strictly ordered by depth, and two disjoint
-host-separated seed pairs reproduce that ordering. The four-seed
-projected-linearized grid also reproduces the `K=2` to `K=3` high-budget
-gain, raising the mean from 38.43 to 46.44. BAR-P4's descriptive grid maximum
-is 82.06 versus 74.79 for TD3+BC, and a leave-one-family-out budget-transfer
-sensitivity retains a +3.65 point P4 advantage. Targeted controls probe
-routing, optimizer-count, target-lag, and critic-calibration explanations. A
+across a persistent TD3+BC actor chain. The paper follows one regime-based
+argument: ideal JKO steps explain the common small-$T$ flow; as TD3+BC leaves
+its high-return plateau, BAR limits the target-routed first hop while retaining
+final-policy reach; at extreme $T$, all methods are nonlocal and multi-hop
+shifts rather than removes the collapse boundary. At $T=4,7$, TD3+BC scores
+45.93/30.36 while BAR-P4 remains at 82.06/81.79. Across four proximal seeds,
+the equally weighted high-budget aggregate is strictly ordered by depth, and
+two disjoint host-separated seed pairs reproduce that ordering. Targeted
+controls probe routing, optimizer-count, target-lag, and critic-calibration. A
 90-pair MCEP-inspired two-actor control shows that sequential re-centering is
 not a prerequisite for the observed P3 mean and seed-mean collapse outcomes.
 As a bundled procedure comparison, it does not isolate the chain's incremental
-value; a matched P4 two-actor control is the top pending experiment.
+value. A completed P4 cross-host score sensitivity is numerically unresolved
+but fails the locked same-runtime-stack gate, so a protocol-admissible P4
+comparison remains open.
 
 ## Files
 
@@ -60,16 +61,19 @@ checklist. The optional supplement uses the required single-column format.
 - Complete nine-task, fourteen-budget, four-seed action-metric-matched projected-linearized grid for `K={2,3}`
 - Proximal full-depth replication across disjoint host-separated seed pairs `{0,1}` and `{2,3}`
 - Linearized `K=2` to `K=3` improvement reproduced in both disjoint seed pairs
-- A 270-checkpoint TD3/P2/P3 target-action-displacement audit plus a separate
-  180-checkpoint four-seed P4 target-branch audit
+- A 270-checkpoint TD3/P2/P3 target-action-displacement audit, a separate
+  180-checkpoint four-seed P4 target-branch audit, and full same-next-state
+  target/final geometry for 90 matched TD3/P3/P4 cells
+- A matched-common-critic target-value perturbation audit: P3/P4 lower than
+  TD3+BC in 86/90 and 88/90 cells, with all nine task medians below one
 - A restricted four-environment seed-2/3 P3/P2 target-action-displacement
   sensitivity reproducing the direction in 36/40 cells
-- A 24-cell P4 final-policy frontier panel, kept distinct from the full target-branch audit
 - Route shadows, compute-matched refinement, actor-target lag, simulator
-  screening, and a frozen-critic local-consistency audit
+  screening, and a clean-source six-task ReLU-region residence audit
 - A 90-pair, two-seed MCEP-inspired policy-separation control with a
   contemporaneous BAR-P3 rerun and documented CPU-recovery sensitivity
+- A completed 90-pair P4 two-actor score sensitivity retained only as
+  protocol-inadmissible descriptive evidence because its host stacks differ
 - A verified K=1--4 H200/JAX actor-phase profile with hash-pinned raw timing
   and scoped backend-memory records
 - Task-resampling uncertainty, dynamics-family sensitivity, collapse-risk sensitivity, and rescued-cell gain attribution
-

@@ -1,6 +1,6 @@
 # Submission TODO
 
-Last audited: 2026-09-02.
+Last audited: 2026-09-03.
 
 This file tracks work that can change a manuscript claim. A completed run is
 not included automatically; it must identify the intended quantity, pass its
@@ -23,7 +23,7 @@ has no resolved aggregate difference. Thus target/deployment separation is a
 sufficient candidate mechanism at P3; sequential re-centering is not a
 prerequisite for those aggregate outcomes.
 
-### A. Two-actor P4 versus contemporaneous BAR-P4 (GPU, decisive)
+### A. Two-actor P4 versus contemporaneous BAR-P4 (execution complete; locked gate failed)
 
 Implementation status is tracked separately from experimental status. The
 preview/freeze/launch/analyze/verify harness is packaged in
@@ -35,9 +35,12 @@ including five Walker2d-expert cells whose critic optimizer diverged after
 finite weights. The two shards are merged at score level under
 `sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/` (`SUMMARY.json` /
 `MERGE_MANIFEST.json`): task-equal mean ≈ −2.31, 95% task-bootstrap interval
-≈ [−7.25, 2.41], outcome_label=`unresolved`. This is not a create-only
-ckpt-bound analyze/verify receipt over local final checkpoints for all 180
-runs; manuscript promotion remains withheld.
+≈ [−7.25, 2.41], outcome_label=`unresolved`. Compact score integrity passes,
+but scientific admissibility under the frozen P0 contract does not: the two
+shards use Python 3.12/JAX 0.10/Flax 0.12 versus Python 3.10/JAX 0.4/Flax 0.10
+stacks, five retained runs have nonfinite optimizer states, and tail raw
+checkpoints are not local. This is not a create-only ckpt-bound analyze/verify
+receipt over all 180 runs; only the descriptive score sensitivity is reported.
 
 - [x] Generalize the existing control to a target coefficient `T/4` and a
   directly data-anchored deployment coefficient `T`. Keep independent actors;
@@ -52,11 +55,13 @@ runs; manuscript promotion remains withheld.
   Completed as `45/90` on `ext_csv` (first half) and `45/90` on `ext_csh`
   (entries 91--180). Do not add seeds 4--7 and do not expand to a
   P2/P3/P4 factorial before this comparison is read.
-- [x] Rerun the same 90 BAR-P4 cells contemporaneously from the same clean code
-  snapshot and environment lock. Completed as `45/90` on `ext_csv` (first half)
-  and `45/90` on `ext_csh` (entries 91--180). Historical P4 scores may
-  be a marginal sensitivity, but cannot be spliced into cellwise pairing
-  because individual collapse trajectories are unstable across reruns.
+- [ ] Optional, only if a protocol-admissible P4 mechanism claim is required:
+  rerun both 90-cell arms under one clean code snapshot and one resolved
+  environment lock. All 180 current scores are complete, but the two host
+  shards use different dependency stacks, so this cannot be repaired by
+  rerunning only one arm. Historical P4 scores remain a marginal sensitivity
+  and cannot be spliced into cellwise pairing because individual collapse
+  trajectories are unstable across reruns.
 - [x] Primary signed contrast is BAR-P4 minus two-actor-P4. Report the
   task-equal mean over the fixed 90-cell grid, paired median, wins/ties,
   nine task means, 100,000-draw task-resampling interval, and raw-run plus
@@ -74,13 +79,14 @@ runs; manuscript promotion remains withheld.
   band is an author-defined decision threshold, not an externally
   validated equivalence margin. Collapse transitions are secondary and cannot
   override this label. Applied on the merged score table: `unresolved`.
-- [ ] Treat the result as a full-procedure comparison. A
+- [x] Treat the score-level result as a descriptive full-procedure sensitivity.
+  A
   four-actor-procedure-supporting result supports incremental value for the
   four-actor chain bundle, not re-centering alone. A
   two-actor-procedure-supporting or author-band-comparable result supports
-  direct coefficient/routing separation as the simpler method. Held until a
-  ckpt-bound analyze/verify receipt exists or authors accept the score-level
-  `unresolved` label for manuscript use.
+  direct coefficient/routing separation as the simpler method. The present
+  cross-stack result is `unresolved` and appears only with its failed locked
+  gate disclosed; it does not settle the incremental-value claim.
 
 ### B. Completed P3 control and optional exact causal isolation
 
@@ -165,8 +171,16 @@ artifact verifier are packaged in
   batch and checkpoint hashes. Do not call this a global optimality gap or a
   bound on $\varepsilon_k$.
 
-Inclusion gate: all five inclusion fields passed for the 2026-09-02b bundle.
-Null, reversed, or heterogeneous outcomes are retained in the archive.
+Inclusion gate: all five recorded inclusion fields and the artifact-arithmetic
+verifier passed for the 2026-09-02b bundle; the network checkpoints were not
+reexecuted by that compact verifier and the historical training revision is
+not embedded. Null, reversed, and heterogeneous outcomes remain archived.
+For manuscript promotion, use only the matched-common-critic paired result:
+P3/P4 lower operational target-value perturbation than TD3+BC in 86/90 and
+88/90 cells (median ratios `.717` and `.617`; all nine task medians below one),
+plus the full same-next-state geometry. Do not promote the arithmetic mean:
+extreme finite critic-magnitude tails dominate it. Keep the comparator residual as a
+sampled premise diagnostic, not an $\varepsilon_k$ bound.
 
 ## P2: delimit the local theory on learned ReLU critics
 
@@ -203,15 +217,19 @@ identify a global proximal solution, or certify the persistent Adam actor chain.
 The implementation and exact local rerun command are documented in
 [`scripts/diagnostics/P2_RELU_RESIDENCE_RUNBOOK.md`](scripts/diagnostics/P2_RELU_RESIDENCE_RUNBOOK.md).
 
-### Final scientific scope audit (CPU; complete on this host)
+### Final scientific scope audit (CPU; clean v2 complete and verified)
 
 External create-only bundle:
-`/home/ext_csv/mpi_sweep_lab/p2-relu-final-20260902/`
+`/home/ext_csv/mpi_sweep_lab/p2-relu-final-v2-06d64b3/`
 (compact summary under
 [`sweep_results/diagnostics/p2_relu_residence_final/`](sweep_results/diagnostics/p2_relu_residence_final/)).
-`MANIFEST.json.status == "final_complete"`,
-`VERIFY.json.pass == true`, and `scientific_admissible == true`.
-Pooled residence on 6144 anchors is 0.954 / 0.911 / 0.842 / 0.748 at
+Raw artifacts remain `analysis_complete_pending_verification` with
+`scientific_admissible == false`; only `VERIFY.json` reports
+`status == "verified_complete"`, `pass == true`, and
+`scientific_admissible == true`. The run used clean `origin/main` revision
+`06d64b3`, and snapshot verification plus `--check-existing` replay pass.
+Task-equal residence on 6144 eligible interior anchors is
+0.954 / 0.911 / 0.842 / 0.748 at
 `T={.025,.05,.1,.2}`. No learned `1/K` slope is reported.
 
 - [x] Freeze the final protocol, checkpoint/config/dataset fingerprints, and
@@ -219,9 +237,9 @@ Pooled residence on 6144 anchors is 0.954 / 0.911 / 0.842 / 0.748 at
   paper tasks, seeds 0--1, and 512 new anchors per run: 12 bundles. Exclude the
   entire HalfCheetah family, all archived index sets, and every failed,
   superseded, or successful development-pilot index set.
-- [x] Execute all 12 bundles and pass the independent final verifier
+- [x] Execute all 12 bundles from a fully clean `origin/main` worktree and pass the independent final verifier
   (`verify_p2_relu_residence_final.py`). Runner/verifier bytes are frozen in
-  `SOURCE_SNAPSHOT/`; Git dirty state is recorded rather than erased.
+  `SOURCE_SNAPSHOT/`; both full and tracked Git dirty states are false.
 - [x] Report the per-run empirical survival curve
   `Pr(first activation/box exit > t)` on the unique horizons induced by
   `T={.025,.05,.1,.2}` and `K={1,2,4,8,16}`.
@@ -282,8 +300,13 @@ Pooled residence on 6144 anchors is 0.954 / 0.911 / 0.842 / 0.748 at
 
 ## Manuscript gate
 
-- [x] Add learned activation-region rates only after the complete 12-run
-  Hopper/Walker bundle and every snapshot verifier pass. Compact rates are in
+- [x] Organize the main paper and supplement around one regime narrative:
+  ideal JKO/gradient-flow behavior at small horizons, the observed
+  `T=2.5--7` transition where TD3+BC leaves its high-return plateau, and the
+  nonlocal `T>=10` tail where multi-hop shifts rather than removes the failure
+  boundary. Treat these as descriptive reading regions, not predeclared bins.
+- [x] Add learned activation-region rates only after the complete clean-source
+  12-run Hopper/Walker bundle and both snapshot verifier passes. Compact rates are in
   the local-idealization scope paragraph ($0.954/0.911/0.842/0.748$ at
   $T\in\{.025,.05,.1,.2\}$); no nonzero learned `1/K` order slope is restored.
 - Decision lock: never restore a nonzero learned `1/K` order slope.

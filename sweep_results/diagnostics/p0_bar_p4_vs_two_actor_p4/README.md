@@ -10,9 +10,12 @@ Cross-host merge of the locked P0 grid at source revision
 | keys 1--90 | `ext_csv` | `first90_final_scores.csv` + this tree's `FROZEN_MANIFEST.json` |
 | keys 91--180 | `ext_csh` | `hosts/ext_csh/p0_manifest_tail90/` |
 
-Scientific configs, dataset normalizations, requirements hash, and source-file
-hashes match across the two frozen manifests. Host paths, Python binaries, and
-GPU UUIDs differ (expected).
+Scientific configs, dataset normalizations, the requirements-file hash, and
+source-file hashes match across the two frozen manifests. The resolved runtime
+does not: the shards use Python 3.12/JAX 0.10/Flax 0.12 and Python
+3.10/JAX 0.4/Flax 0.10 stacks, respectively (with corresponding Optax, NumPy,
+Gym, driver, and kernel differences). Therefore this merge fails the frozen
+P0 same-environment contract even though its score-table integrity passes.
 
 ## Primary outcome (score-level)
 
@@ -20,13 +23,29 @@ GPU UUIDs differ (expected).
 - 95% task-bootstrap interval: **[-7.247601909110738, 2.4117874955787904]**
 - wins/ties: {'bar_wins': 55, 'two_actor_wins': 34, 'ties': 1, 'tie_tolerance': 1e-12}
 - **outcome_label: `unresolved`**
+- **compact_integrity_pass: `true`**
+- **scientific_admissible_under_frozen_p0_contract: `false`**
 
 Computed with `analyze_p0_bar_two_actor_p4.summarize` on the merged 90 pairs.
-This is **not** an official create-only analyze/verify receipt over local
-`params_1000000.pkl` for all 180 runs (tail checkpoints stay on `ext_csh`).
+From the repository root, independently reconstruct the compact grid, hashes,
+pair arithmetic, bootstrap, collapse tables, and admissibility flags with:
 
-ext_csh retained 5 Walker2d-expert
-cells whose critic optimizer diverged after finite weights.
+```bash
+python scripts/diagnostics/verify_p0_score_merge.py
+```
+
+An exit status of zero certifies compact score integrity only; the verifier
+still reports `scientific_admissibility: NOT_ADMISSIBLE`.
+This is a descriptive sensitivity only, not a primary P0 result. It is **not**
+an official create-only analyze/verify receipt over local
+`params_1000000.pkl` for all 180 runs (tail checkpoints stay on `ext_csh`), and
+the cross-stack merge cannot isolate the full-procedure contrast under the
+locked protocol.
+
+ext_csh retained 5 Walker2d-expert runs whose critic optimizer diverged after
+finite weights. Keeping their finite 1M scores avoids selective outcome
+filtering, but their nonfinite optimizer states would fail the official
+checkpoint verifier.
 
 ## Files
 

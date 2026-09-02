@@ -7,7 +7,7 @@ Run the canonical entry point from this directory:
 ```
 
 It regenerates figures from released CSV data, verifies the manuscript-facing
-numbers, builds the anonymous main paper with the official AISTATS 2026
+numbers and the released P0/P1/P2 compact audits, builds the anonymous main paper with the official AISTATS 2026
 checklist, builds the single-column technical supplement, and rejects blocking
 TeX warnings or a conclusion that spills beyond technical page 8.
 
@@ -55,7 +55,9 @@ Intermediate `paper.pdf` and `supplement.pdf` files are retained for debugging.
 ```bash
 python3 ../scripts/verify_release_results.py \
   --results-dir ../sweep_results \
-  --manuscript-dir .
+  --manuscript-dir . \
+  --require-p2-compact
+python3 ../scripts/diagnostics/verify_p0_score_merge.py
 rg 'newlabel\{sec:conclusion\}' paper.aux
 rg 'Overfull|Undefined control sequence|Emergency stop|Fatal error' \
   paper.log supplement.log
@@ -63,7 +65,8 @@ rg 'Overfull|Undefined control sequence|Emergency stop|Fatal error' \
 
 Expected results:
 
-- all numerical checks pass;
+- all numerical and compact-audit checks pass (P0 remains explicitly
+  `NOT_ADMISSIBLE` despite passing compact integrity);
 - `sec:conclusion` is on page 8 or earlier;
 - the warning scan returns no output;
 - `paper.tex` uses the official unmodified `aistats2026.sty` submission style;

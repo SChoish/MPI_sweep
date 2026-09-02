@@ -27,29 +27,39 @@ folders below in place; see ARTIFACT_MAP.
 | --- | --- |
 | `matched_geometry/` | Archived proximal/linearized movement, critic-error, and common-critic figure inputs |
 | `target_policy_exposure/` | Archived 270-checkpoint TD3/P2/P3 audit: nine tasks, five budgets, seeds 0--1 |
-| `hosts/offrl/target_policy_exposure/` | 180-checkpoint P4 target-branch audit: nine tasks, five budgets, seeds 0--3; no final-actor metric |
+| `hosts/offrl/target_policy_exposure/` | 180-checkpoint P4 target-branch audit: nine tasks, five budgets, seeds 0--3 |
+| `p1_target_value_audit/` | Protocol-v2 TD3/P3/P4 same-next-state geometry, target-value perturbation, and comparator residuals |
+| `p2_relu_residence_final/` | Clean-source verified ReLU-region residence: six tasks, two seeds, 6144 anchors |
 | `hosts/ext_csh/target_policy_exposure/` | 80-checkpoint P2/P3 extension: four tasks, five budgets, seeds 2--3 |
 | `hosts/ext_csh/matched_geometry/` | 80-run seed-2/3 geometry sensitivity audit using a separate \(T=.05\) reference critic |
 | `simulator_calibration/` | Exploratory 60-checkpoint simulator-reference screening |
 | `route_shadow/` | Eight-run K=3 shadow-critic audit (archived manuscript snapshot) |
 | `route_shadow_k4/` | Eight-run K=4 route-native simulator audit; 5/8, p=.0625, excluded |
-| `frozen_critic_small_step/` | Explicit/implicit local-consistency audit on 18 frozen critics |
-| `fixed_operator_order/` | In-progress fixed-operator audit: harness and state indices ready; protocol scaffold needs TODO reconciliation; 0/18 critics resolved |
+| `frozen_critic_small_step/` | Retired explicit/implicit local-consistency archive; provenance only |
+| `fixed_operator_order/` | Retired 0/18 fixed-operator scaffold; superseded by ReLU residence |
 | `actor_path_semigroup/` | Archived endpoint-continuation diagnostic; excluded from manuscript error claims |
 | `hosts/offrl/actor_path_semigroup/` | Archived mixed-normalization host extension; excluded from depth inference |
 | `environment_t_sensitivity.csv` | Return versus realized first-hop displacement by environment |
 | `control_final_scores.csv`, `control_summary.csv` | Targeted compute-matched and actor-target-lag results |
 | `bar_mcep_p3_paired/` | 90-pair MCEP-inspired control: completeness audit, compact scores, summary, and raw-source hashes |
 | `hosts/ext_csh/p0_manifest_tail90/` | Frozen-manifest entries 91--180; five optimizer-diverged Walker2d-expert cells retained |
+| `p0_bar_p4_vs_two_actor_p4/` | Complete 90-pair score merge; numeric unresolved, but locked-P0 inadmissible because host stacks differ |
 | `*_MANIFEST.json` | Audit protocol and provenance; host manifests are not historical training launch files |
 
 ## Manuscript-facing checks
 
-- BAR-Prox P3 lowers deterministic target-action displacement versus TD3+BC
-  in 88/90 matched cells; its final-policy proxy is lower in 36/90.
+- On the protocol-v2 same-next-state audit, BAR-P3 lowers target displacement
+  versus TD3+BC in 88/90 cells (median ratio `.650`), while final displacement
+  is lower in only 37/90 (`1.060`). BAR-P4 gives 89/90 (`.565`) and 44/90
+  (`1.025`). Relative to the paired next dataset action, every P3 and P4 cell
+  has a larger final- than first-actor RMS displacement.
+- Under the matched TD3+BC target critic and identical smoothing, operational
+  target-value perturbation is lower in 86/90 P3 and 88/90 P4 cells, with
+  median ratios `.717` and `.617` and all nine task medians below one. This is
+  critic-space sensitivity, not critic accuracy or return causality.
 - The 180-checkpoint P4 target-branch dump uses seeds 0--3. Its comparisons use
   the 90 seed-0/1 cells matched to TD3+BC and P3: P4 is lower in 89/90 and
-  85/90. It contains no full-grid P4 final-actor metric.
+  85/90. P1 supplies the separate full 90-cell seed-0/1 final-actor geometry.
 - The restricted four-environment seed-2/3 extension lowers P3 target-action
   displacement versus P2 in 36/40 cells (median ratio `.905`); it is a
   sensitivity check.
@@ -67,18 +77,25 @@ folders below in place; see ARTIFACT_MAP.
   Both procedures have 9/45 seed-mean collapses. This is a bundled
   policy-separation mechanism control, not an equivalence result,
   published-MCEP reproduction, or re-centering-only ablation. It supports
-  separation as a sufficient P3 candidate mechanism; the corresponding P4
-  control has not been run.
+  separation as a sufficient P3 candidate mechanism.
+- The P4 two-actor experiment completed 90 pairs at score level: BAR minus
+  control is `-2.3076`, task-bootstrap interval `[-7.2476, 2.4118]`, paired
+  median `.6811`, and wins `55/34/1`, hence numeric `unresolved`. It is retained
+  only as a descriptive sensitivity because the two host shards use materially
+  different dependency stacks and five runs have nonfinite optimizer states.
 - Ten Walker2d-expert control cells used the documented CPU recovery chain:
   eight resumed from matching logged emergency-checkpoint steps and two
   started there from zero. Removing that entire task gives +1.8278, which is
   not a hardware effect estimate.
-- Fifteen of 18 frozen-critic runs have an eligible converged, projection-free
-  local point; every eligible run has maximum local discrepancy below `.027`.
+- The verified ReLU audit gives task-equal full-horizon residence
+  `.954/.911/.842/.748` at probe horizons `{.025,.05,.1,.2}`; at the `.2`
+  horizon the task range is `.310`--`.980`. It validates the prevalence and
+  heterogeneity of the local
+  affine scope, not a learned order slope or live-chain certificate.
 - The actor-path bundles are retained for provenance only. Their changing
   critics, scales, eligibility masks, and optimization histories prevent a
-  controlled semigroup-error interpretation. The replacement fixed-operator
-  order audit is specified in [`../../TODO.md`](../../TODO.md).
+  controlled semigroup-error interpretation. The fixed-operator scaffold is
+  also retired; ReLU-region residence is the replacement scope diagnostic.
 - In the restricted four-environment seed-2/3 geometry extension, own-critic
   gain is positive in 80/80 runs. Under the separate TD3+BC \(T=.05\)
   reference critic it is positive in 45/45 stable runs and negative in 35/35
@@ -95,6 +112,9 @@ From the repository root:
 python3 scripts/verify_release_results.py
 ```
 
+Use `--require-p2-compact` for a submission build that must fail unless the
+clean-source final-v2 compact archive is present and fully reconstructed.
+
 Pass `--manuscript-dir /path/to/aistats26_manuscript` to check the released
 score aggregates and archived manuscript claims. Pass `--mcep-source-root /path/to/MPI_sweep` on the source host to rehash
 all 180 MCEP-control configs, evaluations, final checkpoints, and available
@@ -106,7 +126,7 @@ their CSVs and manifests but are not all covered by this verifier.
 ## Provenance and exclusions
 
 Files were copied or derived from local audits completed on 2026-08-29 through
-2026-08-31. `matched_geometry/lin2_run_movement.csv` and
+2026-09-02. `matched_geometry/lin2_run_movement.csv` and
 `matched_geometry/hopper_lin_frontier.csv` are compact action-displacement
 summaries derived from the original per-state NPZ audits; formulas and source
 directories are recorded in `figure_inputs_MANIFEST.json`. Large checkpoints,

@@ -29,7 +29,7 @@
 \aistatstitle{Supplementary Material for ``BAR: Budgeted Actor Refinement Decouples Bootstrap Exposure from Policy Reach''}
 \appendix
 
-\section{PROOFS AND ADDITIONAL ANALYSIS}
+\section{FROM LOCAL WASSERSTEIN FLOW TO FINITE-STEP TRAINING}
 \label{app:proofs}
 
 \subsection{Behavior anchor and Proposition~\ref{prop:prox_equiv}}
@@ -43,11 +43,99 @@ proves Eq.~\eqref{eq:bc_decomposition} after averaging over states and dividing
 by $d$; its second term is independent of $\mu$. For deterministic policies,
 $W_2^2(\delta_{\mu(s)},\delta_{\nu(s)})=\|\mu(s)-\nu(s)\|_2^2$, so
 $\mathsf d_d^2$ is a fixed rescaling of integrated squared Wasserstein
-distance. Dividing the normalized anchored objective
+distance on conditional Dirac policy maps with the state marginal held fixed;
+it is not transport between full policy-induced occupancy measures. Dividing
+the normalized anchored objective
 $-\alpha\mathbb E_s\bar Q(s,\mu(s))+\mathsf d_d^2(\mu,\nu)$ by $\alpha$
 gives Eq.~\eqref{eq:prox_operator} with $h=\alpha/2$. More generally,
 $-\lambda\mathbb E_s\widehat Q$ gives $h=\lambda C/2$ because
 $\widehat Q=C\bar Q$.
+
+\subsection{Local explicit--implicit equivalence}
+Let $\beta=dh/C$, $g=\nabla_a\widehat Q(a_0)$, and suppose the action
+constraint is inactive. The action-metric-matched linearized update is
+$\Delta a_{\rm lin}=\beta g$. A statewise exact proximal solution satisfies
+\begin{equation}
+\Delta a_{\rm prox}
+=\beta\nabla_a\widehat Q(a_0+\Delta a_{\rm prox}).
+\end{equation}
+If the Hessian of $\widehat Q$ is locally Lipschitz near $a_0$,
+\begin{equation}
+\nabla_a\widehat Q(a_0+\Delta a)
+=g+H\Delta a+O(\|\Delta a\|^2).
+\end{equation}
+Thus
+\begin{equation}
+(I-\beta H)\Delta a_{\rm prox}
+=\beta g+O(\beta\|\Delta a_{\rm prox}\|^2).
+\end{equation}
+For $\beta\|H\|<1$ and sufficiently small $\beta$,
+\begin{equation}
+\Delta a_{\rm prox}=\beta g+\beta^2Hg+O(\beta^3),
+\end{equation}
+whereas $\Delta a_{\rm lin}=\beta g$. With only $C^2$ regularity, the safe
+remainder is $o(\beta^2)$ rather than $O(\beta^3)$. Both ideal updates are
+first-order schemes for fixed positive $C$, and changing a fixed $C$ only
+rescales time. A positive
+policy-dependent global $C$ preserves the raw-critic ascent direction under an
+adaptive time parameterization in the infinitesimal limit. This derivation is
+not a comparison of two maps with different finite-step normalizations, and is
+not applied to the large-budget regime with active projection, ReLU-region
+crossings, critic drift, or inaccurate actor solves.
+
+\subsection{Fixed-budget composition for an ideal consistent map}
+\begin{proposition}[Local fixed-budget composition]
+\label{prop:local_composition}
+Let a smooth one-step update in local coordinates satisfy
+$\Psi_h(x)=x+h f(x)+h^2p(x)+O(h^3)$. For fixed $K$ and $T\to0$,
+\begin{equation}
+\begin{aligned}
+\Psi_{T/K}^{K}(x_0)
+={}&x_0+Tf_0\\
+&+T^2\!\left[\frac{K-1}{2K}J_0f_0+\frac{1}{K}p_0\right]+O(T^3),
+\end{aligned}
+\label{eq:k_comp}
+\end{equation}
+where $f_0=f(x_0)$ and $J_0=Df(x_0)$. Coordinate explicit Euler has
+$p_0=0$, whereas exact backward Euler has $p_0=J_0f_0$. Hence both are
+first-order methods with leading fixed-$K$ flow bias proportional to $1/K$.
+\end{proposition}
+
+\paragraph{Proof.}
+Write $x_j=x_0+jhf_0+O(h^2)$ for fixed $K$, which follows inductively from the
+one-step consistency assumption. Smoothness then gives
+\begin{equation}
+f(x_j)=f_0+jhJ_0f_0+O(h^2).
+\end{equation}
+Summing the $K$ increments,
+\begin{equation}
+\begin{aligned}
+x_K-x_0
+={}&h\sum_{j=0}^{K-1}f(x_j)
++h^2\sum_{j=0}^{K-1}p(x_j)+O(Kh^3)\\
+={}&Khf_0+h^2\frac{K(K-1)}{2}J_0f_0\\
+&+Kh^2p_0+O(h^3).
+\end{aligned}
+\end{equation}
+where the final remainder uses fixed $K$. Substituting $h=T/K$ proves
+Eq.~\eqref{eq:k_comp}. The exact flow satisfies
+$x(T)=x_0+Tf_0+\tfrac12T^2J_0f_0+O(T^3)$. Thus explicit Euler has leading
+error $-T^2J_0f_0/(2K)$, while backward Euler has
+$+T^2J_0f_0/(2K)$. Both remain first-order methods.
+
+This proposition repeats one consistent near-identity map from its own output.
+It does not describe independently initialized persistent actors, whose
+parameter-gradient update can remain nonzero at $h=0$.
+
+The trained critic uses ReLU hidden units. At fixed state it is piecewise
+affine in action, so its action gradient is constant inside one activation
+region. Within such a region, the ideal explicit update and the same-region
+stationary backward-Euler branch coincide exactly; this does not assert that a
+global proximal minimizer cannot jump to another region. At the first
+activation boundary, the smooth-field assumptions used in the expansion above
+no longer apply. The learned-critic
+follow-up therefore audits activation-region residence and boundary incidence
+rather than fitting a nonzero $1/K$ error slope.
 
 \subsection{Inexact estimated-energy margin and critic-error transfer}
 By $\varepsilon_k$-optimality relative to the feasible comparator
@@ -100,85 +188,6 @@ Therefore,
 Squaring, averaging over dataset transitions, and taking the square root proves
 Eq.~\eqref{eq:exposure_bound}. Later actors do not occur because the TD target
 conditions only on $\mu_1$.
-
-\subsection{Local explicit--implicit equivalence}
-Let $\beta=dh/C$, $g=\nabla_a\widehat Q(a_0)$, and suppose the action
-constraint is inactive. The action-metric-matched linearized update is
-$\Delta a_{\rm lin}=\beta g$. A statewise exact proximal solution satisfies
-\begin{equation}
-\Delta a_{\rm prox}
-=\beta\nabla_a\widehat Q(a_0+\Delta a_{\rm prox}).
-\end{equation}
-If the Hessian of $\widehat Q$ is locally Lipschitz near $a_0$,
-\begin{equation}
-\nabla_a\widehat Q(a_0+\Delta a)
-=g+H\Delta a+O(\|\Delta a\|^2).
-\end{equation}
-Thus
-\begin{equation}
-(I-\beta H)\Delta a_{\rm prox}
-=\beta g+O(\beta\|\Delta a_{\rm prox}\|^2).
-\end{equation}
-For $\beta\|H\|<1$ and sufficiently small $\beta$,
-\begin{equation}
-\Delta a_{\rm prox}=\beta g+\beta^2Hg+O(\beta^3),
-\end{equation}
-whereas $\Delta a_{\rm lin}=\beta g$. With only $C^2$ regularity, the safe
-remainder is $o(\beta^2)$ rather than $O(\beta^3)$. Both ideal updates are
-first-order schemes for fixed positive $C$, and changing a fixed $C$ only
-rescales time. A positive
-policy-dependent global $C$ preserves the raw-critic ascent direction under an
-adaptive time parameterization in the infinitesimal limit. This derivation is
-not applied to the large-budget regime with active projection, ReLU-region
-crossings, critic drift, or inaccurate actor solves.
-
-\subsection{Fixed-budget composition for an ideal consistent map}
-\begin{proposition}[Local fixed-budget composition]
-\label{prop:local_composition}
-Let a smooth one-step update in local coordinates satisfy
-$\Psi_h(x)=x+h f(x)+h^2p(x)+O(h^3)$. For fixed $K$ and $T\to0$,
-\begin{equation}
-\begin{aligned}
-\Psi_{T/K}^{K}(x_0)
-={}&x_0+Tf_0\\
-&+T^2\!\left[\frac{K-1}{2K}J_0f_0+\frac{1}{K}p_0\right]+O(T^3),
-\end{aligned}
-\label{eq:k_comp}
-\end{equation}
-where $f_0=f(x_0)$ and $J_0=Df(x_0)$. Coordinate explicit Euler has
-$p_0=0$, whereas exact backward Euler has $p_0=J_0f_0$. Hence both are
-first-order methods with leading fixed-$K$ flow bias proportional to $1/K$.
-\end{proposition}
-
-\paragraph{Proof.}
-Write $x_j=x_0+jhf_0+O(h^2)$ for fixed $K$, which follows inductively from the
-one-step consistency assumption. Smoothness then gives
-\begin{equation}
-f(x_j)=f_0+jhJ_0f_0+O(h^2).
-\end{equation}
-Summing the $K$ increments,
-\begin{equation}
-\begin{aligned}
-x_K-x_0
-={}&h\sum_{j=0}^{K-1}f(x_j)
-+h^2\sum_{j=0}^{K-1}p(x_j)+O(Kh^3)\\
-={}&Khf_0+h^2\frac{K(K-1)}{2}J_0f_0\\
-&+Kh^2p_0+O(h^3).
-\end{aligned}
-\end{equation}
-where the final remainder uses fixed $K$. Substituting $h=T/K$ proves
-Eq.~\eqref{eq:k_comp}. The exact flow satisfies
-$x(T)=x_0+Tf_0+\tfrac12T^2J_0f_0+O(T^3)$. Thus explicit Euler has leading
-error $-T^2J_0f_0/(2K)$, while backward Euler has
-$+T^2J_0f_0/(2K)$. Both remain first-order methods.
-
-The trained critic uses ReLU hidden units. At fixed state it is piecewise
-affine in action, so its action gradient is constant inside one activation
-region. Within such a region, the ideal explicit and backward-Euler updates
-coincide exactly; at the first activation boundary, the smooth-field
-assumptions used in the expansion above no longer apply. The learned-critic
-follow-up therefore audits activation-region residence and boundary incidence
-rather than fitting a nonzero $1/K$ error slope.
 
 \section{EXPERIMENTAL DETAILS}
 \label{app:experiments}
@@ -265,16 +274,18 @@ bootstrapping.
 from post-hoc diagnostics and exploratory controls.}
 \centering
 \small
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}llll@{}}
 \toprule
 Evidence & Unit / scope & Seeds & Role\\
 \midrule
 Proximal and linearized scores & $9$ tasks $\times14$ budgets & 0--3 & Headline grids\\
 P3 target/final displacement & 270 checkpoints; 90 matched contrasts & 0--1 & Post-hoc full audit\\
-P4 target branch & 180 checkpoints; 90 contrasts & 0--3 / 0--1 & Post-hoc; no full final actor\\
-P4 final branch & 24 frontier cells & 0--1 & Post-hoc targeted panel\\
+P4 target branch & 180 checkpoints; 90 contrasts & 0--3 / 0--1 & Four-seed target archive\\
+P3/P4 value + geometry & 270 checkpoints; 90 per method & 0--1 & Post-hoc full audit\\
 P3 two-actor control & 90 pairs; 180 final scores & 0--1 & Exploratory mechanism control\\
+P4 two-actor scores & 90 pairs; two runtime stacks & 0--1 & Descriptive; inadmissible\\
+ReLU residence & 6 tasks; 6144 anchors & 0--1 & Prelocked scope audit\\
 Route and component controls & 8 selected runs & 0--1 & Post-hoc targeted controls\\
 Actor cost & $K=1$--4; H200 & init. 0 & Systems profile\\
 \bottomrule
@@ -311,6 +322,18 @@ this bootstrap-only sample. All target-exposure quantities remain squared
 displacement per action coordinate relative to the paired next dataset action. Thus absolute
 levels include conditional action variance, whereas paired differences use a
 common sampled anchor.
+For the operational value-space readout, a second protocol pairs all 90
+TD3+BC, P3, and P4 cells on the same next-state batch and clipped smoothing
+noise and records
+\[
+\Delta_y^{\rm RMS}=\gamma\sqrt{\mathbb E
+  \Bigl[\bigl(\min_j Q_j^-(s',\widetilde\mu_1(s'))
+  -\min_j Q_j^-(s',\widetilde a_{\mathcal D}')\bigr)^2\Bigr]}.
+\]
+The within-run target critic is the operational training object. A matched
+TD3+BC ($K=1$) target critic from the same task, $T$, and seed is also applied
+to all three actors to isolate the action-side contrast under one learned
+scorer. Neither critic is ground truth.
 For BAR-Lin, projection attenuation is the RMS norm ratio between the clipped
 and raw target displacements. If $\widetilde g$ is the normalized critic action
 gradient and $\Delta a$ is the learned actor displacement, define
@@ -352,7 +375,14 @@ critic trajectory. It is therefore an MCEP-inspired policy-separation
 mechanism control, not a published-MCEP reproduction, a compute-matched
 re-centering ablation, or an exact shared-trajectory comparison.
 
-The frozen-critic small-step audit uses the final TD3+BC $T=1$ critic for all nine environments and two seeds. At 512 interior dataset actions per run it compares the projected explicit step with a projected fixed-point solution of the implicit action equation for $h\in\{.001,.003,.01,.03,.1\}$. This is an action-level local-consistency test, not a return or coupled-training experiment.
+The ReLU residence audit freezes the final $T=1$ Q1 critics for the six Hopper
+and Walker2d tasks and seeds 0--1. For each run it deterministically selects
+512 previously unused dataset-action anchors satisfying
+$\max_j|a_j|\le .95$, after excluding every archived and development index.
+Along the normalized critic-gradient ray it solves the first ReLU activation
+or action-box intersection exactly. The sampled rows are fresh, but the
+critics and task families were studied previously; this is a prelocked
+fresh-index scope audit rather than a checkpoint-level holdout.
 
 \subsection{Estimands and uncertainty}
 The primary high-budget estimand uses the upper seven values of the ordered
@@ -381,8 +411,52 @@ across depth is not required for validity; common random numbers would reduce
 variance. Paired rescue counts remain descriptive under the realized seed
 coupling.
 
-\section{ADDITIONAL RESULTS}
+\section{REGIME-BASED ADDITIONAL RESULTS}
 \label{app:results}
+
+\subsection{Small-horizon flow scope on learned critics}
+
+The JKO/gradient-flow reading is local: it requires a fixed critic, a common
+frozen scale for the maps compared, an exact statewise update, inactive
+projection, and no activation-boundary crossing. The $T^2/K$ composition
+statement additionally repeats one consistent near-identity map.
+The following prelocked audit asks how often its sharpest learned-critic
+premise, residence in one ReLU region, holds along a critic-gradient ray. It
+does not use return to define success.
+
+\begin{table}[t]
+\caption{Task-level full-horizon ReLU-region residence. Each entry pools two
+seeds (1024 eligible interior anchors).}
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Task & $.025$ & $.05$ & $.1$ & $.2$\\
+\midrule
+Hopper medium &.985&.970&.950&.912\\
+Hopper replay &.946&.890&.793&.641\\
+Hopper expert &.997&.993&.990&.980\\
+Walker medium &.958&.924&.857&.751\\
+Walker replay &.850&.713&.516&.310\\
+Walker expert &.987&.975&.943&.896\\
+\midrule
+Task-equal &.954&.911&.842&.748\\
+\bottomrule
+\end{tabular}
+\label{tab:relu_residence}
+\end{table}
+
+The clean-source snapshot verifier independently reconstructs all 6144
+activation geometries and 27,648 finite-difference coordinates. At the longest
+probe horizon, $.2$, 1544 anchors first cross a ReLU boundary, three cross the
+action box, and none is nonfinite or boundary-ambiguous. The high
+small-horizon residence makes the exact local affine identity a relevant
+description, while the $.310$--$.980$ task range at the $.2$ horizon already
+warns against uniform extrapolation. The live training sweep below tests what
+happens after this local description ceases to organize the outcome.
+
+\subsection{Return phase diagram: plateau, transition, and large-budget tail}
 
 \begin{table*}[t]
 \caption{Mean score over nine tasks at each total budget. Every row uses four seeds.}
@@ -403,6 +477,20 @@ Lin-3&59.27&62.86&64.99&70.90&74.13&77.74&78.20&78.16&67.80&45.60&39.96&41.69&26
 \end{tabular}
 \label{tab:tau_means}
 \end{table*}
+
+The score grid gives a concrete regime boundary. At $T=.05,.1,.2$, the six
+procedures occupy a narrow band and their ordering changes with $T$; this is
+compatible with a shared local direction, not evidence that deeper
+discretization improves return. TD3+BC reaches its maximum at $T=1.5$, then
+drops from $67.41$ at $T=2.5$ to $45.93$ and $30.36$ at $T=4$ and $7$. P4
+instead gives $81.25,82.06,81.79$ on those three budgets. We use this
+$T=2.5$--$7$ region descriptively as the observed transition. For $T\ge10$,
+all methods degrade and the setting is plainly nonlocal; P4 remains strongest
+through $T=17$, but P3 and P4 are nearly tied at $T=20$. Thus depth delays the
+failure frontier rather than dominating at every budget.
+The residence audit stops at probe horizon $.2$, while the direct projection
+diagnostic is at $T=20$; they bracket rather than identify the mechanism of the
+observed $T=2.5$--$7$ transition.
 
 \paragraph{Practical budget summaries.}
 At TD3+BC's best shared grid budget, $T=1.5$, P3 and P4 score $78.95$ and
@@ -473,6 +561,15 @@ Walker2d-E&2.2&21.8&25.1&65.1&21.6&28.2\\
 \label{tab:env_high}
 \end{table}
 
+\subsection{What changes at the transition: lower-tail rescue and critic validity}
+
+The return separation could come from a uniform score lift or from preventing
+specific unstable trajectories. Collapse transitions and diagnostic medians
+favor the second explanation for proximal P4: its cellwise median gain over P3
+is small, while a few lower-tail rescues account for most of the aggregate
+improvement. The external score defines failure; critic quantities below are
+post-hoc signatures of the learned trajectory.
+
 \begin{table}[t]
 \caption{Core matched $K=2$ diagnostic medians over
 $T\in\{4,7,10,14,20\}$. Stable and collapsed groups are defined by external
@@ -533,6 +630,13 @@ Table~\ref{tab:depth_replication}. The linearized transition also repeats, with
 gains of $7.23$ ($[1.99,12.47]$) on seeds 0--1 and $8.80$
 ($[4.01,15.21]$) on seeds 2--3. These are seed replications of one
 implementation.
+
+\subsection{Which part of multi-hop matters?}
+
+BAR changes both how far the target-routed first branch moves and how a final
+policy is constructed. The controls below separate some alternatives, but no
+single one isolates every element of the persistent chain.
+
 \begin{table}[t]
 \caption{Targeted final-return controls on the same eight environment--budget--seed cells. The three $K=3$ rows are compute matched to three actor optimizer calls; the $K=1$ rows differ only in actor-target Polyak rate.}
 \centering
@@ -579,6 +683,16 @@ that sequential re-centering is not a prerequisite for those two aggregate
 outcomes on this grid. The bundled comparison establishes neither equivalence
 nor which simpler-procedure element is responsible.
 
+The matched P4 score experiment also completed 90 pairs across two hosts.
+The score-level BAR-minus-control task-equal mean is $-2.31$, its paired median
+is $+.68$, BAR wins 55 cells versus 34 control wins and one tie, and the
+task-resampling interval is $[-7.25,2.41]$, giving the predeclared numeric label
+\emph{unresolved}. We do not promote this as the locked P4 result: the two
+shards use materially different resolved Python/JAX/Flax/Optax stacks, five
+retained Walker2d-expert runs have nonfinite optimizer states, and the tail raw
+checkpoints are not in the release host. Keeping the finite final scores avoids
+post-hoc outcome filtering; the merge remains a descriptive sensitivity.
+
 The paired route-only study uses the same eight runs and aggregates four
 checkpoints per run. For critic route $r\in\{\mathrm{first},\mathrm{final}\}$
 and evaluation continuation $\rho$, define the checkpoint state-median
@@ -593,25 +707,20 @@ Because this native comparison changes both critic route and continuation, it is
 We therefore reran both critics under $\rho_1$. The common-continuation difference is positive in six of eight runs, with mean $.116$, median $.0022$, sign-flip $p=.164$, and bootstrap interval $[.0003,.317]$.
 The pre-specified support rule requires a positive mean and two-sided exact sign-flip $p<.05$; the common-continuation result fails the second condition. Neither comparison estimates a return effect because the shadows do not feed back into actor training.
 
-In the frozen-critic audit, 15 of 18 environment--seed runs have an eligible
-converged, projection-free point. Every eligible run has maximum local relative
-explicit--implicit discrepancy below $2.7\%$, with median run maximum $.55\%$.
-The remaining three have no eligible point. This supports local numerical
-agreement, not a universal convergence rate.
-
-\subsection{Direct target-action displacement and simulator-reference screening}
+\subsection{Direct exposure, reach, and critic-space response}
 
 The original direct audit covers 270 method checkpoints: TD3+BC, P2, and P3
-over nine environments, five budgets, and seeds 0--1. A second dump covers all
-180 P4 checkpoints over the same environments and budgets with seeds 0--3.
-P4 comparisons to TD3/P3 use the 90 matched seed-0/1 cells.
-Table~\ref{tab:direct_exposure} separates critic-target exposure from
-final-policy reach. Ratios are descriptive sample-anchored squared-displacement
-ratios, not conditional-mean policy distances.
+over nine environments, five budgets, and seeds 0--1. A four-seed dump covers
+all 180 P4 target branches. Protocol v2 additionally evaluates same-next-state
+target and final geometry for 90 matched TD3+BC, P3, and P4 checkpoints.
+Table~\ref{tab:direct_exposure} reports this latter audit. Ratios are
+descriptive ratios of sample-anchored squared displacement, not
+conditional-mean policy distances. The final-to-target ratios below are
+separately reported on the RMS scale.
 
 \begin{table}[t]
-\caption{Matched-cell audit of deterministic next-state Polyak-target action
-and current-state final-policy displacement. The Lower column counts runs in
+\caption{Matched-cell audit of deterministic next-state Polyak-target and
+final-policy displacement. The Lower column counts runs in
 which the left method has the smaller quantity.}
 \centering
 \small
@@ -619,32 +728,46 @@ which the left method has the smaller quantity.}
 \toprule
 Comparison & Quantity & Lower & Ratio\\
 \midrule
-P3 / TD3 & Target disp. & 88/90 & .658\\
-P3 / TD3 & Final disp. & 36/90 & 1.057\\
-P3 / P2 & Target disp. & 84/90 & .903\\
-\midrule
-P4 / TD3 & Target disp. & 89/90 & .568\\
-P4 / P3 & Target disp. & 85/90 & .950\\
+P3 / TD3 & Target disp. & 88/90 & .650\\
+P3 / TD3 & Final disp. & 37/90 & 1.060\\
+P4 / TD3 & Target disp. & 89/90 & .565\\
+P4 / TD3 & Final disp. & 44/90 & 1.025\\
 \bottomrule
 \end{tabular}
 \label{tab:direct_exposure}
 \end{table}
 
+The deployed actor lies farther from the paired dataset action than the Polyak
+first actor in all 90 P3 and all 90 P4 cells; median final-to-target RMS ratios
+are $1.297$ and $1.365$. Under the common TD3+BC target critic with identical
+smoothing noise, $\Delta_y^{\rm RMS}$ is lower than TD3+BC in 86/90 P3 cells
+(median ratio $.717$) and 88/90 P4 cells ($.617$). Every task median is below
+one; removing smoothing preserves the counts and gives ratios $.702$ and
+$.607$.
+
+Absolute task-equal RMS differences are not used as typical-effect summaries.
+Within-run TD3+BC critics have mean $|Q(s',a'_{\mathcal D})|>10^9$ in 31/90
+cells, all externally collapsed, and log critic scale correlates $.999$ with
+log $\Delta_y^{\rm RMS}$. These finite but extreme tails dominate arithmetic
+means. The common-critic paired ratios therefore support an action-side
+critic-space perturbation claim, not critic accuracy or return causality.
+
+The sampled feasible-comparator premise is also mixed: before one post-hoc
+Adam step, 85/180 P3 and 64/270 P4 later-hop rows need no positive slack; the
+remaining median slacks are $5.19\times10^{-4}$ and
+$1.46\times10^{-3}$ and decrease in 95/95 and 205/206 positive-slack rows.
+Because this does not replay the historical minibatch or live update, we do
+not interpret it as an $\varepsilon_k$ bound or implementation certificate.
+
 A restricted four-environment seed-2/3 extension reproduces the P3/P2
 target-action-displacement direction in 36/40 cells (median ratio $.905$). It is a post-hoc
 sensitivity check, not a new full-grid estimand.
 
-The full P4 dump records the target actor and a current-state first-branch
-proxy, not the final actor. On the 24 overlapping frontier cells with saved
-final-actor geometry, P4 has lower final displacement in 13/24 comparisons
-with TD3+BC (median ratio $.468$) and 5/24 with P3 ($1.062$). Across all 180
-P4 cells, target-displacement medians are $.051$ for 144 stable runs and $.130$
-for 36 collapsed runs. Thus the 90-cell target contraction does not establish
-universal final-policy contraction.
-
-For the final-policy proxy, the median P3/TD3 ratio is $1.057$, whereas the
-arithmetic mean difference is $-.104$ with task--seed-cluster interval
-$[-.194,-.026]$; a few large contractions dominate the mean.
+Across all 180 four-seed P4 target-branch cells, target-displacement medians
+are $.051$ for 144 stable runs and $.130$ for 36 collapsed runs. The full
+seed-0/1 final geometry shows no typical final contraction: its P4/TD3 median
+ratio is $1.025$. For P3 the corresponding median is $1.060$; a few large
+contractions can still make arithmetic mean differences negative.
 
 The current-state proxy and deterministic target exposure have Pearson
 correlation $.9999$ over all 270 cells; their median ratio is $.997$ and the

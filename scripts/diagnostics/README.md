@@ -9,6 +9,7 @@ Package root: `scripts/diagnostics/`
 | [P1_TARGET_VALUE_RUNBOOK.md](P1_TARGET_VALUE_RUNBOOK.md) | Exact 270-checkpoint P1 audit and verifier |
 | [P2_RELU_RESIDENCE_RUNBOOK.md](P2_RELU_RESIDENCE_RUNBOOK.md) | Development-only ReLU activation-region pilot and final-audit contract |
 | [ACTOR_COST_RUNBOOK.md](ACTOR_COST_RUNBOOK.md) | Released K=1--4 H200 timing/memory snapshot and rerun protocol |
+| `verify_p0_score_merge.py` | Independently rebuilds the 180-row/90-pair P0 compact merge and keeps integrity separate from scientific admissibility |
 | `run_host.sh` | One-shot wrapper for this host's seeds |
 | `dump_*.py` / `run_*.py` / `summarize_*.py` | Implementations |
 

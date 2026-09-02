@@ -1,0 +1,73 @@
+{
+  "artifact": "p2_relu_residence_final_compact",
+  "grid": {
+    "K": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "T": [
+      0.025,
+      0.05,
+      0.1,
+      0.2
+    ],
+    "anchors_total": 6144,
+    "cells_per_run": 20,
+    "environments": [
+      "hopper-medium-v2",
+      "hopper-medium-replay-v2",
+      "hopper-expert-v2",
+      "walker2d-medium-v2",
+      "walker2d-medium-replay-v2",
+      "walker2d-expert-v2"
+    ],
+    "runs": 12,
+    "seeds": [
+      0,
+      1
+    ],
+    "states_per_run": 512
+  },
+  "inventory": {
+    "FINAL_DESIGN_LOCK.json": "105cbe80c0ca5162a53f824eead3382df0ffe887e51d5c2af80cbaac13db10a8",
+    "MANIFEST.json": "6c5656016977979fff75ef2874f07e5ca7bdd2c78751e0704d8790d5c852cbf1",
+    "README.md": "e6820dae37d4e594cf4263fcf75c724211703b5d46cee3617ca456b04b1695da",
+    "STATUS.json": "c0a7f350dc3752651c8bb80986913d7ad99459915e8a9bcf941d7f102c01addc",
+    "SUMMARY.json": "cc6d138178f903ce71f323bd6450517b6aea62159e9d543adf49360ac0f8ec99",
+    "VERIFY.json": "ad761c17d63c4fae82965dca50d145a08829a005c1781d4afe74a40e34d5b995",
+    "hopper-expert-v2_seed0/residence_cells.csv": "16fd4aacc6268b2464ac791c92151d06fd0b746d3b2b4acf5e00c0183fa8db6b",
+    "hopper-expert-v2_seed1/residence_cells.csv": "89a1d5d0295f2879dcc52ee8293d93c58ea01e379de7e1c52e89ebf154134f9e",
+    "hopper-medium-replay-v2_seed0/residence_cells.csv": "b21871a355b86f87628ca8ceab4c21e084a9ec5ea31af20c79c624ae37b35581",
+    "hopper-medium-replay-v2_seed1/residence_cells.csv": "f26e29e3f3c7b224512fe1ded9422277db3967740d86ceb0a0865a266c2ff083",
+    "hopper-medium-v2_seed0/residence_cells.csv": "a1d2fa058dd0b80cd9c43cd1a578be9eabf99b421a06cf1e235faef3df327506",
+    "hopper-medium-v2_seed1/residence_cells.csv": "af5eb9ab5d4eae646bdff6b319ffa6a16a41f552a9e16e64f8484b62daeaad7e",
+    "walker2d-expert-v2_seed0/residence_cells.csv": "82519f18c5d79fa3aff868baa7124be04d34ff644d5f850244ed6f8547ffbda3",
+    "walker2d-expert-v2_seed1/residence_cells.csv": "ce286f269492ea3d6092687740fa2c6c175121c59425fe82e839481e584f2b26",
+    "walker2d-medium-replay-v2_seed0/residence_cells.csv": "42b5dee1883365787f62dd95e47019546cc992950caf961b388703979bd4e17a",
+    "walker2d-medium-replay-v2_seed1/residence_cells.csv": "92db2469fc4b0ee1ec63943223f8b5e01cbf1e8c294852ddd17bad72030f9c2f",
+    "walker2d-medium-v2_seed0/residence_cells.csv": "9ff8530747df853d6674d6170ec743a396b1d78f092ef96854a9df0ea02f7e47",
+    "walker2d-medium-v2_seed1/residence_cells.csv": "d6166f612d6f77af5d2c79f90d9ced3321d001de81d11d4c70195a2cffb2ac9f"
+  },
+  "payload_tree_sha256": "a6489ccb58adfdcf8058b7b9e87014b2ceb54c80ace1f6007adde348456701e1",
+  "protocol": "p2_relu_residence_final_v2",
+  "raw_verification": {
+    "design_sha256": "e6a193a9dc7c6e7331bfecc5673133a5c4122f50003fe97badc7d860514fd729",
+    "manifest_sha256": "6c5656016977979fff75ef2874f07e5ca7bdd2c78751e0704d8790d5c852cbf1",
+    "pass": true,
+    "scientific_admissible": true,
+    "status": "verified_complete",
+    "verifier_sha256": "59437de9fbe0ec16ebf7ab43cae4d64ac91f7662861cc02c5f52c9b927b9effe"
+  },
+  "schema_version": "p2-relu-residence-compact-v1",
+  "scientific_admissible": true,
+  "scope": "compact cell-table and aggregate release view; raw geometry and finite-difference replay remain bound by VERIFY.json",
+  "source_git": {
+    "origin_main_revision": "06d64b31dac9ef809aa0623df9b8bb1d08630d4f",
+    "recorded_clean": true,
+    "revision": "06d64b31dac9ef809aa0623df9b8bb1d08630d4f"
+  },
+  "status": "verified_compact"
+}

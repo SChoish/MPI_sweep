@@ -2,6 +2,9 @@
   "schema_version": 1,
   "experiment": "p0_bar_p4_vs_two_actor_p4",
   "archive_scope": "merged_180_score_level",
+  "compact_integrity_pass": true,
+  "scientific_admissible_under_frozen_p0_contract": false,
+  "manuscript_primary_promotion_allowed": false,
   "host": "ext_csv",
   "frozen_manifest_sha256": "3b3276f85f0b7398fd3b3240bcd49789e31250e02162479812b06a975df0b9ba",
   "source_revision_claimed": {
@@ -26,7 +29,7 @@
   "paired_cells_in_archive": 90,
   "second_90": "merged_from_ext_csh_p0_manifest_tail90",
   "decision_label": "unresolved",
-  "decision_note": "Score-level cross-host merge using locked summarize(); not ckpt-bound analyze/verify PASS.",
+  "decision_note": "Descriptive score-level cross-host merge only. The numeric label is unresolved, but the two shards use materially different resolved dependency stacks and five retained runs have nonfinite optimizer state; this is not an admissible frozen-P0 result or a ckpt-bound analyze/verify PASS.",
   "built_at": "2026-09-02T22:13:32+09:00",
   "raw_checkpoints": "not committed; hashed in SOURCE_MANIFEST.csv only",
   "updated_at": "2026-09-02T22:17:47+09:00",

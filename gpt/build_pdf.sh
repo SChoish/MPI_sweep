@@ -2,25 +2,25 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PYTHON_BIN="${PYTHON_BIN:-python3}"
 PDFLATEX_BIN="${PDFLATEX_BIN:-pdflatex}"
-RESULTS_DIR="${SWEEP_RESULTS_DIR:-$ROOT/../sweep_results}"
+BIBTEX_BIN="${BIBTEX_BIN:-bibtex}"
 
 cd "$ROOT"
-"$PYTHON_BIN" verify_bundle.py --results-dir "$RESULTS_DIR" --prebuild
-"$PYTHON_BIN" make_figures.py
 
-for source in paper supplement; do
-  "$PDFLATEX_BIN" -interaction=nonstopmode -halt-on-error "$source.tex" >"$source.build1.log"
-  "$PDFLATEX_BIN" -interaction=nonstopmode -halt-on-error "$source.tex" >"$source.build2.log"
-done
+build_one() {
+  local doc="$1"
+  "$PDFLATEX_BIN" -interaction=nonstopmode -halt-on-error "$doc.tex" >"$doc.build1.log"
+  "$BIBTEX_BIN" "$doc" >"$doc.bibtex.log" 2>&1 || true
+  "$PDFLATEX_BIN" -interaction=nonstopmode -halt-on-error "$doc.tex" >"$doc.build2.log"
+  "$PDFLATEX_BIN" -interaction=nonstopmode -halt-on-error "$doc.tex" >"$doc.build3.log"
+}
 
-cp paper.pdf gpt_aaai26_manuscript.pdf
-cp supplement.pdf gpt_aaai26_supplement.pdf
+build_one paper
+build_one supplement
 
-"$PYTHON_BIN" package_bundle.py
-"$PYTHON_BIN" verify_bundle.py --results-dir "$RESULTS_DIR" --postbuild
+cp paper.pdf gpt_aistats26_manuscript.pdf
+cp supplement.pdf gpt_aistats26_supplement.pdf
 
-echo "built: $ROOT/gpt_aaai26_manuscript.pdf"
-echo "built: $ROOT/gpt_aaai26_supplement.pdf"
-echo "built: $ROOT/gpt_aaai26_bundle.zip"
+echo "built: $ROOT/gpt_aistats26_manuscript.pdf"
+echo "built: $ROOT/gpt_aistats26_supplement.pdf"
+echo "note: aistats2026.sty and fancyhdr.sty are resolved from ../aistats26_manuscript via input@path"

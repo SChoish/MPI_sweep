@@ -12,17 +12,18 @@
 \usepackage{xr}
 \externaldocument{paper}
 \newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
 \newcommand{\E}{\mathbb E}
 \newcommand{\D}{\mathcal D}
 \newcommand{\sg}{\operatorname{sg}}
 
 \begin{document}
 \onecolumn
-\aistatstitle{Supplementary Material for ``BAR: Budgeted Actor Refinement Exposes Target--Deployment Decoupling in Offline RL''}
+\aistatstitle{Supplementary Material for ``BAR: From Wasserstein Refinement to Target--Deployment Decoupling in Offline RL''}
 \appendix
 
-\section{Proofs and Scope}
-\subsection{Behavior anchoring and Wasserstein interpretation}
+\section{Wasserstein Minimizing-Movement Origin and Scope}
+\subsection{Behavior anchoring as a deterministic Wasserstein movement cost}
 For a behavior distribution with conditional mean $b(s)=\E[a\mid s]$,
 \[
 \E[\|\mu(s)-a\|^2\mid s]=\|\mu(s)-b(s)\|^2+\E[\|a-b(s)\|^2\mid s].
@@ -31,8 +32,58 @@ After averaging over states and dividing by the action dimension $d$, the second
 \[
 W_2^2(\delta_{\mu(s)},\delta_{\nu(s)})=\|\mu(s)-\nu(s)\|_2^2,
 \]
-so the population squared behavior anchor is a rescaled integrated squared Wasserstein distance to the conditional-mean behavior map. This does not imply distance to the support of a multimodal behavior policy.
+so the population squared behavior anchor is a rescaled integrated squared Wasserstein distance to the conditional-mean behavior map. This identity is the geometric origin of BAR's $T/K$ construction. It does not imply distance to the support of a multimodal behavior policy.
 
+\subsection{Ideal JKO/minimizing-movement composition}
+Fix a normalized critic $\bar Q$ and define
+\[
+\mathcal P_h^{\bar Q}(\nu)\in\argmin_{\mu\in\mathcal M}
+\left\{-\E_s\bar Q(s,\mu(s))+\frac{1}{2h}\mathsf d_d^2(\mu,\nu)\right\}.
+\]
+The normalized TD3+BC actor objective is this variational problem up to positive scaling, with nominal step $h=\alpha/2$. If a total nominal improvement time $T$ is split into $K$ equal steps, the ideal fixed-critic composition is
+\[
+\mu_K^{\rm ideal}=\left(\mathcal P_{T/K}^{\bar Q}\right)^K(\mu_0).
+\]
+Under the usual consistency and local regularity assumptions for minimizing movements, this composition approaches the metric gradient flow over total time $T$ as $K\to\infty$ with $T$ fixed. BAR was motivated by this time-splitting picture.
+
+The live algorithm is not this exact JKO scheme. Each hop is represented by an independently initialized persistent neural actor, only one Adam step is taken per delayed update, the scale $C_k$ is recomputed, the critic moves across training iterations, and action projection/saturation can become active. In particular, for a later persistent actor the anchoring gradient need not vanish at $h=0$ when the actor differs from its predecessor. Thus the ideal composition motivates the construction but does not certify the learned chain.
+
+\subsection{Local explicit/implicit expansion}
+For a fixed smooth critic and inactive action constraints, write $g=\nabla_a\widehat Q(a_0)$, $H=\nabla_a^2\widehat Q(a_0)$, and $\beta=dh/C$. The action-metric linearized update is
+\[
+\Delta a_{\rm lin}=\beta g.
+\]
+An exact proximal stationary point satisfies
+\[
+\Delta a_{\rm prox}=\beta\nabla_a\widehat Q(a_0+\Delta a_{\rm prox})
+=\beta g+\beta H\Delta a_{\rm prox}+O(\beta\|\Delta a_{\rm prox}\|^2),
+\]
+so for sufficiently small $\beta$ and locally Lipschitz Hessian,
+\[
+\Delta a_{\rm prox}=\beta g+\beta^2Hg+O(\beta^3).
+\]
+Hence the ideal explicit and implicit maps share the same first-order vector field. More generally, for a consistent one-step map
+\[
+\Psi_h(x)=x+hF(x)+h^2P(x)+O(h^3),
+\]
+$K$ compositions with $h=T/K$ have a fixed-$T$ global first-order bias of order $T^2/K$ relative to the exact flow, under the corresponding smooth fixed-operator assumptions. This is a local numerical statement only; it is not an explanation of the large-$T$ BAR phase diagram.
+
+For the actual ReLU critics, the action gradient is piecewise constant inside an activation region. The final locked residence audit uses six Hopper/Walker tasks, seeds 0--1, and 512 fresh anchors per run, for 6144 anchors total. The verified pooled full-horizon residence probabilities are
+\[
+0.954,\quad0.911,\quad0.842,\quad0.748
+\]
+at $T=.025,.05,.1,.2$. These values delimit where a local affine interpretation is empirically plausible; they are not a learned convergence-order result.
+
+\subsection{The three regimes are interpretive, not sharp phase boundaries}
+The main text separates three regimes to organize the evidence:
+\begin{enumerate}
+\item \textbf{Local gradient-flow regime:} small nominal and realized steps, where the fixed-critic Wasserstein/JKO interpretation is locally meaningful.
+\item \textbf{Finite-step refinement regime:} the live neural chain departs from exact minimizing movements, but $T/K$ splitting still creates distinct target-facing and deployment branches.
+\item \textbf{Nonlocal stability regime:} projection, saturation, critic drift, fitting error, normalization, and optimizer history dominate, so depth is treated as a complete stability intervention.
+\end{enumerate}
+These are not mathematically identified thresholds in $T$. In particular, the residence values at $T\le.2$ provide local-scope evidence but do not define a universal cutoff separating the regimes across tasks or seeds.
+
+\section{Finite-Step Statements}
 \subsection{Inexact learned-critic margin}
 For hop $k\ge2$, suppose the predecessor $\mu_{k-1}$ is feasible and the realized actor satisfies
 \[
@@ -62,24 +113,6 @@ For $y_{\mu}=r+\gamma F_{s'}(\mu(s'))$,
 |y_{\mu_1}-y_{\mu_0}|\le\gamma L(s')\|\mu_1(s')-\mu_0(s')\|_2.
 \]
 Squaring and averaging proves the main-text bound. Under common TD3 target-smoothing noise, action clipping is nonexpansive and the same comparison holds. This bound does not include critic calibration error and does not imply stable fitted-Q iteration.
-
-\subsection{Local explicit/implicit scope}
-For a fixed smooth critic and inactive action constraints, write $g=\nabla_a\widehat Q(a_0)$, $H=\nabla_a^2\widehat Q(a_0)$, and $\beta=dh/C$. The action-metric linearized update is $\Delta a_{\rm lin}=\beta g$. An exact proximal stationary point satisfies
-\[
-\Delta a_{\rm prox}=\beta\nabla_a\widehat Q(a_0+\Delta a_{\rm prox})
-=\beta g+\beta H\Delta a_{\rm prox}+O(\beta\|\Delta a_{\rm prox}\|^2),
-\]
-so for sufficiently small $\beta$,
-\[
-\Delta a_{\rm prox}=\beta g+\beta^2Hg+O(\beta^3).
-\]
-This is a fixed-critic local statement. The live chain uses persistent independently initialized actors and one Adam step per hop, so later actors need not approach the identity as $h\to0$.
-
-For the actual ReLU critics, the action gradient is piecewise constant inside an activation region. The final locked residence audit uses six Hopper/Walker tasks, seeds 0--1, and 512 fresh anchors per run, for 6144 anchors total. The verified pooled full-horizon residence probabilities are
-\[
-0.954,\quad0.911,\quad0.842,\quad0.748
-\]
-at $T=.025,.05,.1,.2$. These values delimit the region in which a local affine interpretation can apply; they are not a learned convergence-order result.
 
 \section{Experimental Protocol}
 All headline score grids use the nine D4RL locomotion task variants and ten evaluation episodes at the final $10^6$-critic-update checkpoint. The proximal and projected-linearized headline grids use seeds 0--3. The proximal seed pairs 0--1 and 2--3 were executed on separate hosts.
@@ -157,24 +190,4 @@ A verified 270-checkpoint audit covers TD3+BC, BAR-P3, and BAR-P4 over nine task
 \]
 The same batch is used for deterministic target-branch displacement and final-actor displacement. The audit retains all finite values, including very large tails in critic-failure cells.
 
-The main qualitative conclusion is that action displacement and target-value perturbation are related but not interchangeable. In stable BAR-P3 and BAR-P4 cells, the correlation between final/target displacement ratio and within-run $\Delta_y^{\rm RMS}$ is positive (approximately $.735$ and $.707$ respectively), while collapsed cells exhibit different, often reversed structure. This supports treating the value metric as a critic-sensitive diagnostic rather than a monotone performance certificate.
-
-The audit also reconstructs a post-hoc feasible-comparator residual for re-centered hops using frozen final-checkpoint actor/optimizer states. This tests whether the conditional learned-objective comparison is locally plausible on the audit batch; it is not a global optimality gap and does not reconstruct the historical training minibatch.
-
-\section{Failure Diagnostics}
-Across the matched high-budget diagnostic panel, collapse is defined only from external normalized return. Collapsed proximal and linearized runs have much larger TD-error p99 values, larger critic magnitudes, and larger realized actor movement. Under a frozen TD3+BC common critic, median run-total actor gain is positive for stable runs and negative for collapsed runs. A separate seed-2/3 sensitivity on four environments preserves this sign split.
-
-A targeted simulator-reference screening compares critic predictions with discounted Monte Carlo continuations from cloned MuJoCo states. Across 55 stable and five collapsed checkpoints, the median checkpoint-level signed critic errors are approximately $-41.4$ and $+1.70\times10^{12}$. The ranking subset is sparse, so this is calibration evidence rather than a general policy-ranking theorem.
-
-\section{Additional Controls}
-A smaller eight-run compute-matched study compares sequential K3, fixed-reference K3, and direct-final refinement. Their means are 71.4, 70.0, and 59.4. Slowing the K1 actor-target Polyak rate by $3\times$ does not rescue the selected failures. These post-hoc controls rule out target lag alone and suggest that added actor calls alone are insufficient, but they do not isolate a sweep-wide causal component.
-
-Actor-detached route-shadow critics were also trained on eight selected runs. Native-continuation calibration favors the first route, but the common-continuation comparison fails its predeclared exact sign-flip criterion. Neither shadow changes actor training, so these results estimate calibration rather than return effects.
-
-\section{Compute and Reproducibility Notes}
-On one H200/JAX 0.10.2 stack, the compiled actor-phase timing/memory profiler gives 1.435 ms and 9.68 MB at $K=1$, versus 1.887 ms and 18.05 MB at $K=4$. These numbers include the profiler's scoped backend measurements and are not whole-training wall-clock or system-memory costs.
-
-Historical provenance is uneven. The four-seed headline score matrices and launch configuration are archived, but exact per-run manifests for proximal seeds 2--3 were not retained. The P3 two-actor control's exact historical Git revision was never persisted; local source-file digests are retained and the missing revision is explicitly unrecoverable. New P0--P3 audits use frozen manifests, source hashes, dataset/normalization hashes, and independent verifiers where stated.
-
-\bibliography{references}
-\end{document}
+The main qualitative conclusion is that action displacement and target-value perturbation are related but not interchangeable. In stable BAR

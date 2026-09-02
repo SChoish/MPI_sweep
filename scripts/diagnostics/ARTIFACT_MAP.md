@@ -10,6 +10,7 @@ Legend:
 - **retrain**: must launch control training, not dump-only
 - **aggregate**: derived from score tables / multiple dumps
 - **archive**: frozen manuscript snapshot; not the host-dump schema
+- **benchmark**: fresh measurement on one locked hardware/software stack
 
 “Partial” means the packaged script can regenerate the core measurements, but
 not necessarily the archive's curated summary, exact filenames, or frozen
@@ -26,12 +27,20 @@ selection of runs.
 | `route_shadow/` (top-level archive) | archive | partial | Use `run_route_shadow_mc.py` on `results_route_shadow` |
 | `route_shadow_k4/` | archive | partial | Compact copy of `audit_report_20260901/route_shadow_mc_k4`; excluded from manuscript |
 | `bar_mcep_p3_paired/` | aggregate/archive | partial | `audit_bar_mcep_p3_paired.py` regenerates `AUDIT.json` only; the paired CSV, summary, and source manifest are frozen and verifier-gated |
+| `p0_bar_p4_vs_two_actor_p4/` (future compact archive) | retrain + aggregate | harness only; **no result released** | P0 preview/freeze/launch/analyze/verify flow; see `../experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md` |
+| `p1_target_value_audit/` (future compact archive) | ckpt | harness only; **exact grid unresolved** | Strict 270-checkpoint post-hoc audit; see `P1_TARGET_VALUE_RUNBOOK.md` |
+| `actor_cost/` (future compact archive) | benchmark | profiler only; **not measured** | Fresh K=1--4 workers plus independent verifier; see `ACTOR_COST_RUNBOOK.md` |
 | `frozen_critic_small_step/` (top-level archive) | archive | partial | Use `run_frozen_critic_small_step.py` |
 | `actor_path_semigroup/` (top-level archive) | archive | **yes** | `run_actor_semigroup.py`; full local `mpi1/2/3/exp3` seeds 2/3 grid (incl. tau 0.7 and 12); provenance only, not manuscript error evidence |
 | `simulator_calibration/` | archive | **no in this package** | Exploratory screening; not wired here |
 | `control_final_scores.csv`, `control_summary.csv` | retrain | **no** | From compute-matched / target-lag **training** (`launch_causal_controls.py` in lab) |
 | `compute_matched_MANIFEST.json`, `target_lag_MANIFEST.json` | retrain | **no** | Launch manifests for those controls |
 | `environment_t_sensitivity.csv` | aggregate | **no** | Built from return tables, not raw ckpt dumps |
+
+The three future rows name possible reviewed compact archives, not current
+evidence. Run their tools in an external output directory. Raw checkpoint
+derivatives, common batches, per-state arrays, and benchmark work files are not
+release artifacts and must not be staged merely because a run completed.
 
 ## Recommended workflow
 

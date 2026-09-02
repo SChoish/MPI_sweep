@@ -1,17 +1,20 @@
-"""Multi-step policy improvement (MPI) on TD3+BC in Flax/JAX.
+"""Budgeted Actor Refinement (BAR) for TD3+BC in Flax/JAX.
 
 The actor objective is canonical scale-normalized TD3+BC, parameterized by
-tau = alpha / 2:
+tau = alpha / 2. The default ``bar`` method uses a sequentially re-centered
+actor chain. The legacy ``mcep`` CLI token selects a two-actor policy-separation
+control (not a published reproduction): independently initialized,
+dataset-anchored target (tau / K) and deployment (tau) actors.
 
   lambda = 2 * tau / mean(abs(Q1))
   L_pi = -lambda * mean(Q1) + MSE(π, a)
 
 ``--tau`` is alpha / 2, not the Polyak coefficient. With ``--mpi-steps K``,
-the actor performs K hops of size tau/K. ``--integrator implicit`` uses JKO
-updates. ``--integrator explicit`` regresses to a projected Euler target whose
-gradient coefficient includes the action dimension, matching the
-per-coordinate-mean transport metric used by the JKO loss. The final actor is
-evaluated at total time tau.
+the actor performs K hops of size tau/K. ``--integrator implicit`` optimizes a
+proximal-loss realization. ``--integrator explicit`` regresses to a
+projected Euler target whose gradient coefficient includes the action dimension,
+matching the per-coordinate-mean transport metric used by the proximal loss.
+The final actor is evaluated at total time tau.
 
 Other defaults: lr=3e-4, policy_noise=0.2*max_a, noise_clip=0.5*max_a,
 policy_freq=2, batch=256, 1M steps, state norm eps=1e-3, dataset terminals,
@@ -229,7 +232,24 @@ def normalized_q_weight(
 def update_first_actor(
     ts: TD3BCTrainState, batch: Transition, tau: float, polyak: float, scale_norm: bool
 ) -> tuple[TD3BCTrainState, jax.Array]:
+    ts, loss = update_dataset_actor(ts, batch, 0, tau, scale_norm)
     actor = ts.actors[0]
+    ts = ts._replace(
+        target_actor=target_update(actor, ts.target_actor, polyak),
+        target_critic=target_update(ts.critic, ts.target_critic, polyak),
+    )
+    return ts, loss
+
+
+def update_dataset_actor(
+    ts: TD3BCTrainState,
+    batch: Transition,
+    actor_index: int,
+    tau: float,
+    scale_norm: bool,
+) -> tuple[TD3BCTrainState, jax.Array]:
+    """Update one TD3+BC actor anchored directly to the dataset action."""
+    actor = ts.actors[actor_index]
 
     def loss_fn(params):
         pi = actor.apply_fn(params, batch.observations)
@@ -240,12 +260,8 @@ def update_first_actor(
 
     loss, grads = jax.value_and_grad(loss_fn)(actor.params)
     actor = actor.apply_gradients(grads=grads)
-    ts = ts._replace(actors=(actor, *ts.actors[1:]))
-    ts = ts._replace(
-        target_actor=target_update(actor, ts.target_actor, polyak),
-        target_critic=target_update(ts.critic, ts.target_critic, polyak),
-    )
-    return ts, loss
+    actors = (*ts.actors[:actor_index], actor, *ts.actors[actor_index + 1 :])
+    return ts._replace(actors=actors), loss
 
 
 def update_jko(
@@ -368,6 +384,16 @@ def update_actor_hop(
     return ts._replace(actors=actors), loss
 
 
+def mcep_actor_taus(tau: float, reference_depth: int) -> tuple[float, float]:
+    """Return target/deployment budgets for the two-actor policy-separation control."""
+    if reference_depth < 2:
+        raise ValueError(
+            "two-actor policy-separation control (legacy mcep token; not "
+            "published reproduction) requires reference_depth >= 2"
+        )
+    return tau / float(reference_depth), tau
+
+
 def update_n_times(
     ts: TD3BCTrainState,
     data: Transition,
@@ -381,10 +407,32 @@ def update_n_times(
     policy_freq: int,
     scale_norm: bool,
     integrator: str = "implicit",
+    method: str = "bar",
+    reference_depth: int | None = None,
 ) -> tuple[TD3BCTrainState, dict]:
     if integrator not in ("implicit", "explicit"):
         raise ValueError(f"unknown integrator: {integrator}")
-    tau_step = tau / float(len(ts.actors))
+    if method not in ("bar", "mcep"):
+        raise ValueError(f"unknown method: {method}")
+    if method == "mcep":
+        if integrator != "implicit":
+            raise ValueError(
+                "two-actor policy-separation control (legacy mcep token; not "
+                "published reproduction) supports only the implicit TD3+BC objective"
+            )
+        if len(ts.actors) != 2:
+            raise ValueError(
+                "two-actor policy-separation control (legacy mcep token; not "
+                "published reproduction) requires exactly two actors"
+            )
+        if reference_depth is None:
+            raise ValueError(
+                "two-actor policy-separation control (legacy mcep token; not "
+                "published reproduction) requires a BAR hop-count parameter"
+            )
+        target_tau, evaluation_tau = mcep_actor_taus(tau, reference_depth)
+    else:
+        tau_step = tau / float(len(ts.actors))
     initial_actor_losses = tuple(jnp.array(0.0) for _ in ts.actors)
 
     def body(i, carry):
@@ -396,7 +444,15 @@ def update_n_times(
 
         def do_actor(operands):
             ts, batch, _actor_losses = operands
-            if integrator == "implicit":
+            if method == "mcep":
+                ts, first_loss = update_first_actor(
+                    ts, batch, target_tau, polyak, scale_norm
+                )
+                ts, evaluation_loss = update_dataset_actor(
+                    ts, batch, 1, evaluation_tau, scale_norm
+                )
+                losses = [first_loss, evaluation_loss]
+            elif integrator == "implicit":
                 ts, first_loss = update_first_actor(
                     ts, batch, tau_step, polyak, scale_norm
                 )
@@ -459,6 +515,8 @@ def update_in_blocks(
     policy_freq: int,
     scale_norm: bool,
     integrator: str = "implicit",
+    method: str = "bar",
+    reference_depth: int | None = None,
 ) -> tuple[TD3BCTrainState, jax.Array, dict]:
     """Fuse host dispatches while preserving the original block-wise RNG stream."""
     initial_metrics = {
@@ -484,6 +542,8 @@ def update_in_blocks(
             policy_freq=policy_freq,
             scale_norm=scale_norm,
             integrator=integrator,
+            method=method,
+            reference_depth=reference_depth,
         )
         return ts, rng, metrics
 
@@ -528,6 +588,82 @@ def create_train_state(
         max_action=max_action,
         policy_noise=policy_noise,
         noise_clip=noise_clip,
+    )
+
+
+def create_mcep_train_state(
+    rng: jax.Array,
+    observations: jax.Array,
+    actions: jax.Array,
+    max_action: float,
+    lr: float,
+    policy_noise: float,
+    noise_clip: float,
+    reference_depth: int,
+) -> TD3BCTrainState:
+    """Create the two independently initialized dataset-anchored actors."""
+    if reference_depth < 2:
+        raise ValueError(
+            "two-actor policy-separation control (legacy mcep token; not "
+            "published reproduction) requires reference_depth >= 2"
+        )
+    actor_model = Actor(action_dim=actions.shape[-1], max_action=max_action)
+    critic_model = TwinCritic()
+    keys = jax.random.split(rng, reference_depth + 1)
+    actor_keys = (keys[0], keys[reference_depth - 1])
+    actors = tuple(
+        TrainState.create(
+            apply_fn=actor_model.apply,
+            params=actor_model.init(actor_rng, observations),
+            tx=optax.adam(lr),
+        )
+        for actor_rng in actor_keys
+    )
+    critic = TrainState.create(
+        apply_fn=critic_model.apply,
+        params=critic_model.init(keys[-1], observations, actions),
+        tx=optax.adam(lr),
+    )
+    target_actor = actors[0].replace(
+        params=jax.tree_util.tree_map(jnp.copy, actors[0].params)
+    )
+    target_critic = critic.replace(
+        params=jax.tree_util.tree_map(jnp.copy, critic.params)
+    )
+    return TD3BCTrainState(
+        actors=actors,
+        critic=critic,
+        target_actor=target_actor,
+        target_critic=target_critic,
+        max_action=max_action,
+        policy_noise=policy_noise,
+        noise_clip=noise_clip,
+    )
+
+
+class EvaluationContract(NamedTuple):
+    target_actor_index: int
+    deployment_actor_index: int | None
+    deployment_label: str | None
+    columns: tuple[str, ...]
+
+
+def evaluation_contract(method: str, mpi_steps: int) -> EvaluationContract:
+    """Return the frozen target/deployment eval-column contract."""
+    base = ("step", "return", "d4rl_score", "critic_loss", "actor_loss")
+    if method == "bar":
+        if mpi_steps == 1:
+            return EvaluationContract(0, None, None, base)
+        label = f"pi{mpi_steps}"
+    elif method == "mcep":
+        label = "eval"
+    else:
+        raise ValueError(f"unknown method: {method}")
+    return EvaluationContract(
+        0,
+        -1,
+        label,
+        (*base, f"return_{label}", f"d4rl_{label}", "final_actor_loss"),
     )
 
 
@@ -632,14 +768,27 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--mpi-steps",
         type=int,
         default=2,
-        help="Positive number K of policy-improvement hops; each uses tau / K",
+        help=(
+            "BAR hop count K. The two-actor policy-separation control "
+            "(legacy mcep token; not published reproduction) uses tau / K for "
+            "the target actor and tau for the deployment actor."
+        ),
+    )
+    parser.add_argument(
+        "--method",
+        choices=("bar", "mcep"),
+        default="bar",
+        help=(
+            "BAR chain or two-actor policy-separation control "
+            "(legacy mcep token; not published reproduction)"
+        ),
     )
     parser.add_argument(
         "--integrator",
         choices=("implicit", "explicit"),
         default="implicit",
         help=(
-            "implicit: JKO/proximal hops; explicit: matched-scale projected "
+            "implicit: JKO/proximal hops; explicit: action-metric-matched projected "
             "Euler-target regression"
         ),
     )
@@ -696,7 +845,7 @@ def restore_train_state(ts: TD3BCTrainState, payload: dict) -> TD3BCTrainState:
     actor_steps = payload["actors_steps"]
     if len(actor_params) != len(ts.actors):
         raise ValueError(
-            "checkpoint hop count does not match --mpi-steps: "
+            "checkpoint actor count does not match selected procedure: "
             f"{len(actor_params)} != {len(ts.actors)}"
         )
     actors = tuple(
@@ -754,6 +903,16 @@ def main(argv: list[str] | None = None) -> int:
         raise ValueError("tau must be positive (tau = alpha / 2)")
     if args.mpi_steps < 1:
         raise ValueError("mpi_steps must be positive")
+    if args.method == "mcep" and args.mpi_steps < 2:
+        raise ValueError(
+            "two-actor policy-separation control (legacy mcep token; not "
+            "published reproduction) requires --mpi-steps >= 2"
+        )
+    if args.method == "mcep" and args.integrator != "implicit":
+        raise ValueError(
+            "two-actor policy-separation control (legacy mcep token; not "
+            "published reproduction) supports only --integrator implicit"
+        )
     if not 0.0 < args.polyak <= 1.0:
         raise ValueError("polyak must lie in (0, 1]")
     if (
@@ -780,7 +939,11 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     mpi_steps = args.mpi_steps
-    method_tag = "mpi" if args.integrator == "implicit" else "exp"
+    method_tag = (
+        "mcep"
+        if args.method == "mcep"
+        else ("mpi" if args.integrator == "implicit" else "exp")
+    )
     run_name = (
         f"{args.env}_tau{args.tau:g}_{method_tag}{mpi_steps}_seed{args.seed}"
     )
@@ -798,7 +961,15 @@ def main(argv: list[str] | None = None) -> int:
 
     rng = jax.random.PRNGKey(args.seed)
     rng, init_rng = jax.random.split(rng)
-    ts = create_train_state(
+    state_factory = (
+        create_mcep_train_state if args.method == "mcep" else create_train_state
+    )
+    state_depth_arg = (
+        {"reference_depth": mpi_steps}
+        if args.method == "mcep"
+        else {"mpi_steps": mpi_steps}
+    )
+    ts = state_factory(
         init_rng,
         example.observations,
         example.actions,
@@ -806,7 +977,7 @@ def main(argv: list[str] | None = None) -> int:
         lr=args.lr,
         policy_noise=args.policy_noise * max_action,
         noise_clip=args.noise_clip * max_action,
-        mpi_steps=mpi_steps,
+        **state_depth_arg,
     )
 
     start_step = 0
@@ -815,6 +986,14 @@ def main(argv: list[str] | None = None) -> int:
         restore_path = latest_checkpoint(out_dir)
     if restore_path is not None:
         payload = load_checkpoint(restore_path)
+        checkpoint_config = payload.get("config", {})
+        checkpoint_method = checkpoint_config.get("method", "bar")
+        checkpoint_depth = int(checkpoint_config.get("mpi_steps", mpi_steps))
+        if checkpoint_method != args.method or checkpoint_depth != mpi_steps:
+            raise ValueError(
+                "checkpoint method/depth does not match requested run: "
+                f"{checkpoint_method}/{checkpoint_depth} != {args.method}/{mpi_steps}"
+            )
         ts = restore_train_state(ts, payload)
         rng = payload["rng"]
         mean = payload["mean"]
@@ -837,6 +1016,8 @@ def main(argv: list[str] | None = None) -> int:
                     policy_freq=args.policy_freq,
                     scale_norm=bool(args.q_scale_norm),
                     integrator=args.integrator,
+                    method=args.method,
+                    reference_depth=mpi_steps if args.method == "mcep" else None,
                 )
             )
         return update_fns[n_blocks]
@@ -854,6 +1035,9 @@ def main(argv: list[str] | None = None) -> int:
     act_fn = jax.jit(_act)
 
     eval_path = out_dir / "eval.csv"
+    eval_contract = evaluation_contract(args.method, mpi_steps)
+    has_distinct_evaluation_actor = eval_contract.deployment_actor_index is not None
+    final_label = eval_contract.deployment_label
     write_header = (
         start_step == 0
         or not eval_path.is_file()
@@ -861,11 +1045,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     eval_mode = "w" if start_step == 0 else "a"
     with eval_path.open(eval_mode, newline="", encoding="utf-8") as file:
-        fieldnames = ["step", "return", "d4rl_score", "critic_loss", "actor_loss"]
-        if mpi_steps > 1:
-            fieldnames.extend(
-                [f"return_pi{mpi_steps}", f"d4rl_pi{mpi_steps}", "final_actor_loss"]
-            )
+        fieldnames = list(eval_contract.columns)
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         if write_header:
             writer.writeheader()
@@ -903,7 +1083,10 @@ def main(argv: list[str] | None = None) -> int:
             step += dispatch_updates
             emergency_stop = bool(stop_requested["flag"])
             if step % args.eval_freq == 0 or step == args.max_timesteps:
-                policy = partial(act_fn, ts.actors[0].params)
+                # The primary column remains the conservative target branch.
+                policy = partial(
+                    act_fn, ts.actors[eval_contract.target_actor_index].params
+                )
                 avg_ret, score = evaluate(
                     policy, args.env, args.seed, mean, std, args.eval_episodes
                 )
@@ -915,8 +1098,10 @@ def main(argv: list[str] | None = None) -> int:
                     "actor_loss": float(metrics["actor_loss"]),
                 }
                 extra = ""
-                if mpi_steps > 1:
-                    final_policy = partial(act_fn, ts.actors[-1].params)
+                if has_distinct_evaluation_actor:
+                    final_policy = partial(
+                        act_fn, ts.actors[eval_contract.deployment_actor_index].params
+                    )
                     final_return, final_score = evaluate(
                         final_policy,
                         args.env,
@@ -925,10 +1110,10 @@ def main(argv: list[str] | None = None) -> int:
                         std,
                         args.eval_episodes,
                     )
-                    row[f"return_pi{mpi_steps}"] = final_return
-                    row[f"d4rl_pi{mpi_steps}"] = final_score
+                    row[f"return_{final_label}"] = final_return
+                    row[f"d4rl_{final_label}"] = final_score
                     row["final_actor_loss"] = float(metrics["final_actor_loss"])
-                    extra = f" d4rl_pi{mpi_steps}={final_score:.1f}"
+                    extra = f" d4rl_{final_label}={final_score:.1f}"
                 writer.writerow(row)
                 file.flush()
                 elapsed = time.time() - start

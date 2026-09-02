@@ -35,6 +35,12 @@ This table is illustrative, not an assignment. Only dump seeds that exist
 | `route` | `run_route_shadow_mc.py` | `results_route_shadow` runs; set `ROUTE_RESULTS_DIR` if needed |
 | `all` | ckpt + frozen + route | all of the above |
 
+The standalone [P1 target-value audit](P1_TARGET_VALUE_RUNBOOK.md) and
+[actor-cost profiler](ACTOR_COST_RUNBOOK.md) are deliberately absent from this
+table and from `--job all`. P1 has a stricter exact-270-checkpoint gate than
+the host-local exposure dump; actor cost is a fresh hardware benchmark rather
+than a checkpoint dump.
+
 ## Commands
 
 ```bash

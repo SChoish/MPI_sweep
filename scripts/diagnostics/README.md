@@ -6,6 +6,8 @@ Package root: `scripts/diagnostics/`
 | --- | --- |
 | [HOST_RUNBOOK.md](HOST_RUNBOOK.md) | How to run on each machine |
 | [ARTIFACT_MAP.md](ARTIFACT_MAP.md) | Maps `sweep_results/diagnostics/*` → scripts / status |
+| [P1_TARGET_VALUE_RUNBOOK.md](P1_TARGET_VALUE_RUNBOOK.md) | Exact 270-checkpoint P1 audit and verifier |
+| [ACTOR_COST_RUNBOOK.md](ACTOR_COST_RUNBOOK.md) | Fresh-process K=1--4 timing/memory profiler |
 | `run_host.sh` | One-shot wrapper for this host's seeds |
 | `dump_*.py` / `run_*.py` / `summarize_*.py` | Implementations |
 
@@ -55,3 +57,10 @@ ignored raw artifacts.
 
 `run_host.sh --job ckpt` does **not** recreate the entire archived
 `sweep_results/diagnostics/` tree. See [ARTIFACT_MAP.md](ARTIFACT_MAP.md).
+The P1 target-value audit and actor-cost profiler are standalone locked
+protocols and are not included in any `run_host.sh --job` choice, including
+`all`.
+
+The older target-policy exposure dump may operate on a host-local partial
+inventory. It does not satisfy P1's exact 270-checkpoint inclusion gate and
+must not be substituted for the standalone P1 audit.

@@ -66,6 +66,17 @@ def test_explicit_jobs_use_separate_tags_and_worker_mode(tmp_path: Path):
     assert command[command.index("--integrator") + 1] == "explicit"
 
 
+def test_two_actor_legacy_token_tag_and_worker_mode(tmp_path: Path):
+    args = small_args(tmp_path)
+    args.method = "mcep"
+    args.hops = 3
+    jobs = build_jobs(args)
+    assert jobs[0].tag == "hopper-medium-v2_tau0.1_mcep3_seed0"
+    command = worker_command(args, jobs[0], slot_index=0)
+    assert command[command.index("--method") + 1] == "mcep"
+    assert command[command.index("--mpi-steps") + 1] == "3"
+
+
 def test_dry_run_has_no_filesystem_side_effects(tmp_path: Path):
     args = small_args(tmp_path)
     args.dry_run = True

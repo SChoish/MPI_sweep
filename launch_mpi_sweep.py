@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run a resumable K-hop MPI sweep across one or more GPUs."""
+"""Run a resumable K-hop BAR sweep across one or more GPUs."""
 
 from __future__ import annotations
 
@@ -36,10 +36,19 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--hops", type=int, required=True)
     parser.add_argument(
+        "--method",
+        choices=("bar", "mcep"),
+        default="bar",
+        help=(
+            "BAR chain or two-actor policy-separation control "
+            "(legacy mcep token; not published reproduction)"
+        ),
+    )
+    parser.add_argument(
         "--integrator",
         choices=("implicit", "explicit"),
         default="implicit",
-        help="implicit JKO hops or matched-scale projected explicit hops",
+        help="proximal-loss hops or action-metric-matched projected-linearized hops",
     )
     parser.add_argument("--n-tau", type=int, default=len(MPI_TAU_GRID))
     parser.add_argument(
@@ -112,6 +121,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def validate_args(args: argparse.Namespace) -> None:
     if args.hops < 1:
         raise ValueError("--hops must be positive")
+    if args.method == "mcep" and args.hops < 2:
+        raise ValueError(
+            "two-actor policy-separation control (legacy mcep token; not "
+            "published reproduction) requires --hops >= 2"
+        )
+    if args.method == "mcep" and args.integrator != "implicit":
+        raise ValueError(
+            "two-actor policy-separation control (legacy mcep token; not "
+            "published reproduction) supports only --integrator implicit"
+        )
     if args.n_tau < 1:
         raise ValueError("--n-tau must be positive")
     if args.slots_per_gpu < 1:
@@ -161,7 +180,11 @@ def is_complete(save_dir: Path, tag: str, max_timesteps: int) -> bool:
 
 def build_jobs(args: argparse.Namespace) -> list[Job]:
     jobs: list[Job] = []
-    method_tag = "mpi" if args.integrator == "implicit" else "exp"
+    method_tag = (
+        "mcep"
+        if args.method == "mcep"
+        else ("mpi" if args.integrator == "implicit" else "exp")
+    )
     for env_name, tau, seed_text in product(
         selected_envs(args), selected_taus(args), _split(args.seeds)
     ):
@@ -202,6 +225,8 @@ def worker_command(
         job.tau,
         "--mpi-steps",
         str(args.hops),
+        "--method",
+        args.method,
         "--integrator",
         args.integrator,
         "--polyak",
@@ -252,7 +277,7 @@ def run(args: argparse.Namespace) -> int:
     gpus = _split(args.gpus)
     concurrency = len(gpus) * args.slots_per_gpu
     print(
-        f"[sweep] integrator={args.integrator} hops={args.hops} "
+        f"[sweep] method={args.method} integrator={args.integrator} hops={args.hops} "
         f"jobs={len(jobs)} gpus={gpus} "
         f"slots/gpu={args.slots_per_gpu} concurrency={concurrency}",
         flush=True,

@@ -242,7 +242,7 @@ mpi-train \
 Each run writes to:
 
 ```text
-<save-dir>/<env>_tau<tau>_<mpi|exp><hops>_seed<seed>/
+<save-dir>/<env>_tau<tau>_<mpi|exp|mcep><hops>_seed<seed>/
 ├── config.json
 ├── eval.csv
 └── params_<step>.pkl
@@ -257,6 +257,15 @@ Each run writes to:
 - Add `--cpu-affinity --cpus-per-job N` to pin workers with Linux `taskset`.
 
 Use `mpi-sweep --help` and `mpi-train --help` for all options.
+
+Locked submission follow-ups use separate, fail-closed entrypoints: the
+[P0 BAR-P4/two-actor-P4 harness](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md),
+the [P1 target-value audit](scripts/diagnostics/P1_TARGET_VALUE_RUNBOOK.md), and
+the [actor-cost profiler](scripts/diagnostics/ACTOR_COST_RUNBOOK.md).
+These tools are not part of the generic sweep or host-diagnostic wrappers.
+Preview or preflight is the safe default; their runbooks identify the explicit
+execution flag, exact input gate, external output directory, and verifier that
+must pass before any result is treated as evidence.
 
 ## Released results
 
@@ -299,16 +308,20 @@ collapse in 9/45 task--budget cells. Sequential re-centering is therefore not
 a prerequisite for the observed mean and seed-mean collapse outcomes on this
 grid. Because the control also changes actor work, anchoring, and the realized
 critic trajectory, it establishes neither superiority nor equivalence and does
-not isolate which element of the simpler procedure is responsible. The next
-decisive experiment is the matched two-actor P4 control specified in
-[TODO.md](TODO.md); no seeds 4--7 expansion is planned.
+not isolate which element of the simpler procedure is responsible. The matched
+P4 protocol and harness are packaged in the
+[P0 runbook](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md). No P4
+manifest has been frozen and no P4 result exists; no seeds 4--7 expansion is
+planned.
 
 The compact [paired archive](sweep_results/diagnostics/bar_mcep_p3_paired/)
 contains all final scores, independently checked aggregates, recovery
 classification, and a 180-row source manifest. Every row hashes its config,
 evaluation, and final checkpoint, plus available logs. Large raw artifacts are
 excluded. Exact local training-file digests are recorded because the run
-configs did not store a Git revision; releasing a clean runnable snapshot remains tracked in
+configs did not store a Git revision. A clean, compatible two-actor
+implementation is now released, but it cannot retroactively prove the exact
+historical training checkout. That remaining provenance gap is tracked in
 [TODO.md](TODO.md).
 
 ## Paper

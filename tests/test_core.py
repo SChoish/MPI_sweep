@@ -11,9 +11,12 @@ from tau_grids import MPI_TAU_GRID, mpi_tau_grid
 from train_td3bc import (
     Transition,
     create_train_state,
+    create_mcep_train_state,
+    evaluation_contract,
     latest_checkpoint,
     load_checkpoint,
     normalized_q_weight,
+    mcep_actor_taus,
     projected_explicit_target,
     qlearning_from_hdf5,
     restore_train_state,
@@ -37,6 +40,58 @@ def test_unnormalized_weight_is_two_tau():
     q = jnp.asarray([1.0, -3.0])
     assert float(normalized_q_weight(q, tau=1.25, scale_norm=False)) == pytest.approx(2.5)
 
+
+def test_two_actor_budget_mapping_uses_reference_hop_count():
+    target_tau, evaluation_tau = mcep_actor_taus(12.0, reference_depth=3)
+    assert target_tau == pytest.approx(4.0)
+    assert evaluation_tau == pytest.approx(12.0)
+    p4_target_tau, p4_evaluation_tau = mcep_actor_taus(20.0, reference_depth=4)
+    assert p4_target_tau == pytest.approx(5.0)
+    assert p4_evaluation_tau == pytest.approx(20.0)
+
+
+def test_bar_and_two_actor_eval_columns_keep_target_and_deployment_distinct():
+    bar = evaluation_contract("bar", mpi_steps=4)
+    control = evaluation_contract("mcep", mpi_steps=4)
+
+    assert bar.target_actor_index == control.target_actor_index == 0
+    assert bar.deployment_actor_index == control.deployment_actor_index == -1
+    assert bar.columns == (
+        "step", "return", "d4rl_score", "critic_loss", "actor_loss",
+        "return_pi4", "d4rl_pi4", "final_actor_loss",
+    )
+    assert control.columns == (
+        "step", "return", "d4rl_score", "critic_loss", "actor_loss",
+        "return_eval", "d4rl_eval", "final_actor_loss",
+    )
+
+def test_mcep_initialization_matches_bar_target_final_and_critic_keys():
+    observations = jnp.zeros((1, 3), dtype=jnp.float32)
+    actions = jnp.zeros((1, 2), dtype=jnp.float32)
+    kwargs = dict(
+        max_action=1.0,
+        lr=3e-4,
+        policy_noise=0.2,
+        noise_clip=0.5,
+    )
+    rng = jax.random.PRNGKey(7)
+    bar = create_train_state(rng, observations, actions, mpi_steps=3, **kwargs)
+    mcep = create_mcep_train_state(
+        rng, observations, actions, reference_depth=3, **kwargs
+    )
+
+    matched = (
+        (mcep.actors[0].params, bar.actors[0].params),
+        (mcep.actors[1].params, bar.actors[-1].params),
+        (mcep.critic.params, bar.critic.params),
+    )
+    for actual_tree, expected_tree in matched:
+        for actual, expected in zip(
+            jax.tree_util.tree_leaves(actual_tree),
+            jax.tree_util.tree_leaves(expected_tree),
+            strict=True,
+        ):
+            np.testing.assert_array_equal(actual, expected)
 
 def test_projected_explicit_target_matches_mean_action_metric_scale():
     observations = jnp.zeros((2, 1), dtype=jnp.float32)
@@ -151,6 +206,84 @@ def test_arbitrary_four_hop_update_and_checkpoint_smoke(
     restored = restore_train_state(state, load_checkpoint(checkpoint))
     assert len(restored.actors) == 4
     assert all(actor.step == 1 for actor in restored.actors)
+
+
+def test_mcep_two_actor_update_smoke():
+    observations = jnp.zeros((16, 3), dtype=jnp.float32)
+    actions = jnp.zeros((16, 2), dtype=jnp.float32)
+    data = Transition(
+        observations=observations,
+        actions=actions,
+        rewards=jnp.zeros((16, 1), dtype=jnp.float32),
+        next_observations=observations,
+        not_dones=jnp.ones((16, 1), dtype=jnp.float32),
+    )
+    state = create_mcep_train_state(
+        jax.random.PRNGKey(0),
+        observations[:1],
+        actions[:1],
+        max_action=1.0,
+        lr=3e-4,
+        policy_noise=0.2,
+        noise_clip=0.5,
+        reference_depth=3,
+    )
+    bar_state = create_train_state(
+        jax.random.PRNGKey(0),
+        observations[:1],
+        actions[:1],
+        max_action=1.0,
+        lr=3e-4,
+        policy_noise=0.2,
+        noise_clip=0.5,
+        mpi_steps=3,
+    )
+    updated, metrics = update_n_times(
+        state,
+        data,
+        jax.random.PRNGKey(1),
+        start_it=jnp.asarray(0),
+        n_updates=1,
+        batch_size=4,
+        discount=0.99,
+        tau=12.0,
+        polyak=0.005,
+        policy_freq=1,
+        scale_norm=True,
+        method="mcep",
+        reference_depth=3,
+    )
+
+    bar_updated, _ = update_n_times(
+        bar_state,
+        data,
+        jax.random.PRNGKey(1),
+        start_it=jnp.asarray(0),
+        n_updates=1,
+        batch_size=4,
+        discount=0.99,
+        tau=12.0,
+        polyak=0.005,
+        policy_freq=1,
+        scale_norm=True,
+    )
+    assert len(updated.actors) == 2
+    assert all(actor.step == 1 for actor in updated.actors)
+    assert set(metrics) == {"critic_loss", "actor_loss", "final_actor_loss"}
+
+    shared_trajectory = (
+        (updated.actors[0].params, bar_updated.actors[0].params),
+        (updated.critic.params, bar_updated.critic.params),
+        (updated.target_actor.params, bar_updated.target_actor.params),
+        (updated.target_critic.params, bar_updated.target_critic.params),
+    )
+    for actual_tree, expected_tree in shared_trajectory:
+        for actual, expected in zip(
+            jax.tree_util.tree_leaves(actual_tree),
+            jax.tree_util.tree_leaves(expected_tree),
+            strict=True,
+        ):
+            np.testing.assert_array_equal(actual, expected)
 
 
 def test_fused_dispatch_preserves_block_rng_and_updates():

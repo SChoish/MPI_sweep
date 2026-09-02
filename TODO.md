@@ -25,7 +25,13 @@ prerequisite for those aggregate outcomes.
 
 ### A. Two-actor P4 versus contemporaneous BAR-P4 (GPU, decisive)
 
-- [ ] Generalize the existing control to a target coefficient `T/4` and a
+Implementation status is tracked separately from experimental status. The
+preview/freeze/launch/analyze/verify harness is packaged in
+[`scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md`](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md),
+but no P4 manifest has been frozen and no P4 control or contemporaneous BAR
+job has been launched from it.
+
+- [x] Generalize the existing control to a target coefficient `T/4` and a
   directly data-anchored deployment coefficient `T`. Keep independent actors;
   route only the target actor into Bellman backups. Call it a two-actor
   policy-separation control, not a published-MCEP reproduction.
@@ -47,16 +53,20 @@ prerequisite for those aggregate outcomes.
   seed-mean collapse transitions at thresholds 0, 10, 20, 30, and 40.
 - [ ] Before launch, freeze an author-chosen minimum worthwhile difference of
   three normalized-return points. Classify the primary BAR-minus-control
-  contrast as chain-supporting only if its 95% task-resampling interval lies
-  above zero and its point estimate is at least +3; as control-supporting only
-  if the interval lies below zero and the estimate is at most -3; and as
-  practically comparable only if the full interval lies inside [-3,+3]. All
-  other outcomes are unresolved. Collapse transitions are secondary and
-  cannot override this label.
-- [ ] Treat the result as a full-procedure comparison. A chain-supporting
-  result supports incremental value for the four-actor chain bundle, not
-  re-centering alone. A control-supporting or practically comparable result
-  supports direct coefficient/routing separation as the simpler method.
+  contrast as four-actor-procedure-supporting only if its 95% task-resampling
+  interval lies above zero and its point estimate is at least +3; as
+  two-actor-procedure-supporting only if the interval lies below zero and the
+  estimate is at most -3; and as author-band-comparable only if the full
+  interval lies inside [-3,+3]. Apply these labels in the stated order and
+  take the first match. All other outcomes are unresolved. The three-point
+  band is an author-defined decision threshold, not an externally
+  validated equivalence margin. Collapse transitions are secondary and cannot
+  override this label.
+- [ ] Treat the result as a full-procedure comparison. A
+  four-actor-procedure-supporting result supports incremental value for the
+  four-actor chain bundle, not re-centering alone. A
+  two-actor-procedure-supporting or author-band-comparable result supports
+  direct coefficient/routing separation as the simpler method.
 
 ### B. Completed P3 control and optional exact causal isolation
 
@@ -84,6 +94,15 @@ not critic error, dataset support, or TD-target value perturbation. The current
 P3-control finals but no complete headline TD3/P4 inventory. Do not substitute
 those reruns for the released grid. Run this audit only after the exact matched
 headline checkpoints are resolved and fingerprinted.
+
+Implementation status is separate: the fail-closed runner and independent
+artifact verifier are packaged in
+[`scripts/diagnostics/P1_TARGET_VALUE_RUNBOOK.md`](scripts/diagnostics/P1_TARGET_VALUE_RUNBOOK.md).
+They require the exact 270-checkpoint grid before writing scientific outputs.
+No P1 audit has passed that inclusion gate on this host.
+
+- [x] Package and test the exact-grid runner, frozen protocol, and independent
+  verifier without substituting partial checkpoints.
 
 ### A. Direct TD-target-value perturbation
 
@@ -119,10 +138,14 @@ headline checkpoints are resolved and fingerprinted.
 
 ### C. Realized feasible-comparator residual
 
-- [ ] For re-centered hops $k\ge2$, use a held-out batch with the same frozen
-  critic, realized $C_k$, and predecessor reference to record
+- [ ] For re-centered hops $k\ge2$, use the frozen audit batch with the same
+  critic, realized $C_k$, and predecessor reference. Reconstruct one
+  post-hoc final-checkpoint Adam update from the stored actor parameters and
+  exact stored optimizer state and step, then record
   `r_k = L_h,k(mu_k | mu_(k-1)) - L_h,k(mu_(k-1) | mu_(k-1))` before and after
-  the live one-Adam-step update. Store `max(0,r_k)` as the smallest observed
+  that update. Stop rather than approximate if the stored optimizer state or
+  configuration is incompatible. This is not the historical live update or
+  its training minibatch. Store `max(0,r_k)` as the smallest observed
   comparator slack satisfying the conditional margin.
 - [ ] Report hop-, budget-, task-, and stability-stratified residuals with
   batch and checkpoint hashes. Do not call this a global optimality gap or a
@@ -309,13 +332,20 @@ actor-path bundle.
   budget-transfer, and task-then-independent-seed sensitivity summaries to the
   manuscript and verifier. They demonstrate a practical regime but do not
   create an offline `T,K` selection rule.
-- [ ] Release a clean runnable snapshot of the exact P3 control-mode training
-  changes. Existing configs omit the Git revision; file digests alone are not
-  runnable source. Preserve the BAR evaluation-column contract and strengthen
-  checkpoint config validation.
-- [ ] Record measured actor-update wall time and peak accelerator memory for
-  `K={1,2,3,4}` on one fixed hardware/software stack. Keep the analytical
-  `O(K)` actor work statement, but do not replace measurements with asymptotic
+- [x] Release a clean runnable implementation of the recovered two-actor
+  control mode. It preserves the BAR base evaluation columns for the target
+  actor, writes separate deployment-actor columns, and validates method and
+  depth on resume. This is a compatible recovered implementation, not proof of
+  the exact historical source revision.
+- [ ] Recover or otherwise verify the exact historical P3 control source
+  revision. Existing run configs omit the Git revision, so the released source
+  and recorded file digests cannot retroactively establish identity.
+- [x] Package the fail-closed actor-update timing and accelerator-memory
+  profiler plus an independently coded verifier. See
+  [`scripts/diagnostics/ACTOR_COST_RUNBOOK.md`](scripts/diagnostics/ACTOR_COST_RUNBOOK.md).
+- [ ] Execute that profiler for `K={1,2,3,4}` on one fixed hardware/software
+  stack and archive the verified measurements. Keep the analytical `O(K)`
+  actor-work statement, but do not replace measurements with asymptotic
   complexity.
 - [ ] For all new runs, retain resolved YAML/JSON, source revision, environment
   lock, dataset and normalization hashes, host/accelerator inventory, and a

@@ -424,7 +424,9 @@ def _worker_environment(
         environment["CUDA_VISIBLE_DEVICES"] = resolved_uuid
         environment["ROCR_VISIBLE_DEVICES"] = ""
         environment["HIP_VISIBLE_DEVICES"] = ""
-        environment["JAX_PLATFORMS"] = "gpu"
+        # JAX 0.10+ accepts cuda/cpu/tpu; the legacy alias "gpu" errors out and
+        # can spuriously attempt a missing ROCm backend on CUDA-only hosts.
+        environment["JAX_PLATFORMS"] = "cuda"
     return environment
 
 
@@ -914,7 +916,7 @@ def _worker_main(argv: Sequence[str]) -> int:
         environment = _environment_snapshot()
         if environment.get("CUDA_VISIBLE_DEVICES") != resolved_uuid:
             raise RuntimeError("GPU worker CUDA visibility is not bound to the resolved UUID")
-        if environment.get("JAX_PLATFORMS") != "gpu":
+        if environment.get("JAX_PLATFORMS") != "cuda":
             raise RuntimeError("GPU worker JAX platform selection is not fail-closed")
         if environment.get("XLA_PYTHON_CLIENT_PREALLOCATE") != "false":
             raise RuntimeError("GPU worker must disable JAX preallocation")

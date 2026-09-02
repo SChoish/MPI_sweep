@@ -145,7 +145,7 @@ def _worker_result(
         "CUDA_VISIBLE_DEVICES": "" if cpu else TEST_GPU_UUID,
         "ROCR_VISIBLE_DEVICES": "",
         "HIP_VISIBLE_DEVICES": "",
-        "JAX_PLATFORMS": "cpu" if cpu else "gpu",
+        "JAX_PLATFORMS": "cpu" if cpu else "cuda",
         "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
     }
     device = {

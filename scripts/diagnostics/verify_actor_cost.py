@@ -719,8 +719,8 @@ def verify_directory(
             "HIP_VISIBLE_DEVICES"
         ) != "":
             _fail("non-CUDA GPU visibility was not disabled for the resolved NVIDIA GPU")
-        if environment.get("JAX_PLATFORMS") != "gpu":
-            _fail("worker JAX platform selection is not GPU-only")
+        if environment.get("JAX_PLATFORMS") != "cuda":
+            _fail("worker JAX platform selection is not CUDA-only")
         if environment.get("XLA_PYTHON_CLIENT_PREALLOCATE") != "false":
             _fail("worker JAX GPU preallocation was not disabled")
         observed_uuid = device.get("uuid")

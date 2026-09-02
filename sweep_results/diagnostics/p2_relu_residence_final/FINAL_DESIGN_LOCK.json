@@ -1,0 +1,454 @@
+{
+  "coverage_gate": null,
+  "design_sha256": "b31756f7bc65a87cc57615422f20ba7b92d07aa7241bd67b8c63808e265cc5e4",
+  "environments": [
+    "hopper-medium-v2",
+    "hopper-medium-replay-v2",
+    "hopper-expert-v2",
+    "walker2d-medium-v2",
+    "walker2d-medium-replay-v2",
+    "walker2d-expert-v2"
+  ],
+  "estimand": {
+    "C_ref": "mean_i(abs(Q1(s_i,a0_i))) + 1e-6",
+    "boundary_rows": "retained scope diagnostics, never numerical errors",
+    "cell_dependence": "repeated (T,K) cells with the same horizon t=T or t=T/K are deterministic views, never independent evidence",
+    "direction": "v = action_dim * grad_a Q1(s,a0) / C_ref",
+    "first_step_residence": "T/K is strictly before first exit",
+    "full_residence": "T is strictly before first ReLU/action-box exit",
+    "global_proximal_claim": false,
+    "implicit_scope": "same-region local backward-Euler branch only",
+    "learned_primary": "relu_activation_region_residence",
+    "learned_slope": null,
+    "learned_support_gate": null,
+    "unique_horizon_estimand": "empirical survival curve P(t_exit > t)"
+  },
+  "exclude_all_archived_and_development_attempt_indices": true,
+  "excluded_family": "halfcheetah",
+  "exclusion_inventory": [
+    {
+      "basename": "halfcheetah-expert-v2_seed0.npy",
+      "env": "halfcheetah-expert-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-expert-v2_seed0.npy",
+      "role": "archived_fixed_operator",
+      "seed": 0,
+      "sha256": "54202d29eb48baf2daa1be3ad79d4398f78b431f3ed8e64a2b6a95efe25c4555"
+    },
+    {
+      "basename": "halfcheetah-expert-v2_seed1.npy",
+      "env": "halfcheetah-expert-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-expert-v2_seed1.npy",
+      "role": "archived_fixed_operator",
+      "seed": 1,
+      "sha256": "72bcfae0783abc2538672050042d066ac06c7f167e311ac1cf625a04103e22fc"
+    },
+    {
+      "basename": "halfcheetah-medium-replay-v2_seed0.npy",
+      "env": "halfcheetah-medium-replay-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-medium-replay-v2_seed0.npy",
+      "role": "archived_fixed_operator",
+      "seed": 0,
+      "sha256": "38c666c65a70b19a81658a5f82fb46f9f17ed9f4ed42aa2fe648ee6ec94a821d"
+    },
+    {
+      "basename": "halfcheetah-medium-replay-v2_seed1.npy",
+      "env": "halfcheetah-medium-replay-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-medium-replay-v2_seed1.npy",
+      "role": "archived_fixed_operator",
+      "seed": 1,
+      "sha256": "49815cbcedf93d1e67ebe464de46096570e0a65c499f79ca0cb1d9ea21d9dd92"
+    },
+    {
+      "basename": "halfcheetah-medium-v2_seed0.npy",
+      "env": "halfcheetah-medium-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-medium-v2_seed0.npy",
+      "role": "archived_fixed_operator",
+      "seed": 0,
+      "sha256": "ddc575b77e76797d7b021e8f122cb1345747c277b66f8a64e66ac334b1d397d0"
+    },
+    {
+      "basename": "halfcheetah-medium-v2_seed1.npy",
+      "env": "halfcheetah-medium-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/halfcheetah-medium-v2_seed1.npy",
+      "role": "archived_fixed_operator",
+      "seed": 1,
+      "sha256": "8e80d56920b1d4c1360ac408863024677a0027457361c4dacd6b3485f16414ae"
+    },
+    {
+      "basename": "hopper-expert-v2_seed0.npy",
+      "env": "hopper-expert-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-expert-v2_seed0.npy",
+      "role": "archived_fixed_operator",
+      "seed": 0,
+      "sha256": "570a3028cf91fa76b3acaf3e846bd80c40c5d1d9846d105b687b123cc90eb320"
+    },
+    {
+      "basename": "hopper-expert-v2_seed1.npy",
+      "env": "hopper-expert-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-expert-v2_seed1.npy",
+      "role": "archived_fixed_operator",
+      "seed": 1,
+      "sha256": "f86dcc17fa86247c78d28e6f0a8d51e30158e6e09719e07c12319a8df53c0a53"
+    },
+    {
+      "basename": "hopper-medium-replay-v2_seed0.npy",
+      "env": "hopper-medium-replay-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-medium-replay-v2_seed0.npy",
+      "role": "archived_fixed_operator",
+      "seed": 0,
+      "sha256": "81b1cc4ac473748159f9bac630a30fe82f482526503c85426e6d4b1e1178c506"
+    },
+    {
+      "basename": "hopper-medium-replay-v2_seed1.npy",
+      "env": "hopper-medium-replay-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-medium-replay-v2_seed1.npy",
+      "role": "archived_fixed_operator",
+      "seed": 1,
+      "sha256": "9d56cb7d1a8d86221e67ddf1ec368e9513d988a744aac2fb6f46effca152a55e"
+    },
+    {
+      "basename": "hopper-medium-v2_seed0.npy",
+      "env": "hopper-medium-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-medium-v2_seed0.npy",
+      "role": "archived_fixed_operator",
+      "seed": 0,
+      "sha256": "c88a71d73a689230a5c529dd5838f8a13d0c9c60eac6bb6907051430271f13ce"
+    },
+    {
+      "basename": "hopper-medium-v2_seed1.npy",
+      "env": "hopper-medium-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/hopper-medium-v2_seed1.npy",
+      "role": "archived_fixed_operator",
+      "seed": 1,
+      "sha256": "5b7e6ee83b5521033a3c82f2df96e233a849a6765ea80e7d87ffbf492a7ac421"
+    },
+    {
+      "basename": "walker2d-expert-v2_seed0.npy",
+      "env": "walker2d-expert-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-expert-v2_seed0.npy",
+      "role": "archived_fixed_operator",
+      "seed": 0,
+      "sha256": "60ac125a72e091a2d138e4bb4aefbd8a74a34fd70a620c955cef97927b49a0f8"
+    },
+    {
+      "basename": "walker2d-expert-v2_seed1.npy",
+      "env": "walker2d-expert-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-expert-v2_seed1.npy",
+      "role": "archived_fixed_operator",
+      "seed": 1,
+      "sha256": "dc766f92441ad1c59a9ccac1a3758b64b05e94e013db21590aabffa11a33e556"
+    },
+    {
+      "basename": "walker2d-medium-replay-v2_seed0.npy",
+      "env": "walker2d-medium-replay-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-medium-replay-v2_seed0.npy",
+      "role": "archived_fixed_operator",
+      "seed": 0,
+      "sha256": "9ab1f49f356ae165b48bcf701ac56075a2f08f9d3ef88f24e11e587384647e1a"
+    },
+    {
+      "basename": "walker2d-medium-replay-v2_seed1.npy",
+      "env": "walker2d-medium-replay-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-medium-replay-v2_seed1.npy",
+      "role": "archived_fixed_operator",
+      "seed": 1,
+      "sha256": "7a8e9562bc553e385094ce99cc464134d4851c220364e3b5baa6e0450264cb3e"
+    },
+    {
+      "basename": "walker2d-medium-v2_seed0.npy",
+      "env": "walker2d-medium-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-medium-v2_seed0.npy",
+      "role": "archived_fixed_operator",
+      "seed": 0,
+      "sha256": "eefb6332e0330a738776caea8bb03f23134c2c74cc932717bd71bcccf1dc0b26"
+    },
+    {
+      "basename": "walker2d-medium-v2_seed1.npy",
+      "env": "walker2d-medium-v2",
+      "n_indices": 512,
+      "path": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/fixed_operator_order/state_indices/walker2d-medium-v2_seed1.npy",
+      "role": "archived_fixed_operator",
+      "seed": 1,
+      "sha256": "af936bd4869c8c0d2520b15d5f5211f6dbbd0fd535b5698248bbacfc5c2d4322"
+    },
+    {
+      "basename": "p2_relu_residence_pilot.InTWgf/pilot_state_indices.npy",
+      "bundle_id": "InTWgf",
+      "env": "halfcheetah-medium-v2",
+      "n_indices": 64,
+      "path": "/home/ext_csv/mpi_sweep_lab/p2_relu_residence_pilot.InTWgf/pilot_state_indices.npy",
+      "role": "dev_pilot_bundle",
+      "sha256": "ba0abc43f28b7c4e3203560489440067f5c3a19ac2e4def853b782a97daaf782"
+    },
+    {
+      "basename": "p2_relu_residence_pilot.OLDBdx/pilot_state_indices.npy",
+      "bundle_id": "OLDBdx",
+      "env": "halfcheetah-medium-v2",
+      "n_indices": 64,
+      "path": "/home/ext_csv/mpi_sweep_lab/p2_relu_residence_pilot.OLDBdx/pilot_state_indices.npy",
+      "role": "dev_pilot_bundle",
+      "sha256": "1ea5e3dd552a18443c27913b8c0359fcad505eea2447c96b5b1310f361e7bb02"
+    },
+    {
+      "basename": "p2_relu_residence_pilot.VnOjA4/pilot_state_indices.npy",
+      "bundle_id": "VnOjA4",
+      "env": "halfcheetah-medium-v2",
+      "n_indices": 64,
+      "path": "/home/ext_csv/mpi_sweep_lab/p2_relu_residence_pilot.VnOjA4/pilot_state_indices.npy",
+      "role": "dev_pilot_bundle",
+      "sha256": "ba0abc43f28b7c4e3203560489440067f5c3a19ac2e4def853b782a97daaf782"
+    },
+    {
+      "basename": "p2_relu_residence_pilot.meAdJI/pilot_state_indices.npy",
+      "bundle_id": "meAdJI",
+      "env": "halfcheetah-medium-v2",
+      "n_indices": 64,
+      "path": "/home/ext_csv/mpi_sweep_lab/p2_relu_residence_pilot.meAdJI/pilot_state_indices.npy",
+      "role": "dev_pilot_bundle",
+      "sha256": "1ea5e3dd552a18443c27913b8c0359fcad505eea2447c96b5b1310f361e7bb02"
+    },
+    {
+      "basename": "p2_relu_residence_pilot.sqfIVj/pilot_state_indices.npy",
+      "bundle_id": "sqfIVj",
+      "env": "halfcheetah-medium-v2",
+      "n_indices": 64,
+      "path": "/home/ext_csv/mpi_sweep_lab/p2_relu_residence_pilot.sqfIVj/pilot_state_indices.npy",
+      "role": "dev_pilot_bundle",
+      "sha256": "1ea5e3dd552a18443c27913b8c0359fcad505eea2447c96b5b1310f361e7bb02"
+    },
+    {
+      "basename": "p2_relu_residence_pilot.xlMNfc/pilot_state_indices.npy",
+      "bundle_id": "xlMNfc",
+      "env": "halfcheetah-medium-v2",
+      "n_indices": 64,
+      "path": "/home/ext_csv/mpi_sweep_lab/p2_relu_residence_pilot.xlMNfc/pilot_state_indices.npy",
+      "role": "dev_pilot_bundle",
+      "sha256": "1ea5e3dd552a18443c27913b8c0359fcad505eea2447c96b5b1310f361e7bb02"
+    }
+  ],
+  "exclusion_inventory_n_files": 24,
+  "grid": {
+    "K": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "T": [
+      0.025,
+      0.05,
+      0.1,
+      0.2
+    ]
+  },
+  "indices_created_only_after_final_protocol_freeze": true,
+  "input_inventory": {
+    "checkpoints": [
+      {
+        "checkpoint": "/home/ext_csv/mpi_sweep_lab/results_qnorm/hopper-medium-v2_tau1_seed0/params_1000000.pkl",
+        "checkpoint_sha256": "fa10b5ed327b1d49846238cd88893d5ef6fcb34f30b3ebc3206d58aa37d8f416",
+        "config": "/home/ext_csv/mpi_sweep_lab/results_qnorm/hopper-medium-v2_tau1_seed0/config.json",
+        "config_sha256": "ed50a1cea758975a0dcbb3b55d962c2e1fa2cb433937582bf5192d9e3144a890",
+        "env": "hopper-medium-v2",
+        "seed": 0
+      },
+      {
+        "checkpoint": "/home/ext_csv/mpi_sweep_lab/results_qnorm/hopper-medium-v2_tau1_seed1/params_1000000.pkl",
+        "checkpoint_sha256": "59e9c478aa0f7d5f709f054007845c8e24152c765a6ba83991315d82b2ae3529",
+        "config": "/home/ext_csv/mpi_sweep_lab/results_qnorm/hopper-medium-v2_tau1_seed1/config.json",
+        "config_sha256": "baafe696def25361548c04be3b5bc60f58f2a795832fe958e18ef43db91e5cf0",
+        "env": "hopper-medium-v2",
+        "seed": 1
+      },
+      {
+        "checkpoint": "/home/ext_csv/mpi_sweep_lab/results_qnorm/hopper-medium-replay-v2_tau1_seed0/params_1000000.pkl",
+        "checkpoint_sha256": "bb2fde1fb2cf211bbe8abd5d2785d92ef2388609b4f0ca658bcc6dabaf8f220a",
+        "config": "/home/ext_csv/mpi_sweep_lab/results_qnorm/hopper-medium-replay-v2_tau1_seed0/config.json",
+        "config_sha256": "2751990bb0b77ee5fe73ad90da2369fae1ea78eff2b9c722dbe12b3300332b63",
+        "env": "hopper-medium-replay-v2",
+        "seed": 0
+      },
+      {
+        "checkpoint": "/home/ext_csv/mpi_sweep_lab/results_qnorm/hopper-medium-replay-v2_tau1_seed1/params_1000000.pkl",
+        "checkpoint_sha256": "8fc6663b311ab507a81a9e19801d272bf35e54bd659d9977b9360166b94a4db1",
+        "config": "/home/ext_csv/mpi_sweep_lab/results_qnorm/hopper-medium-replay-v2_tau1_seed1/config.json",
+        "config_sha256": "6f60d0b7d083122de53ff8b7687fc6a3a6cfbc33a9d64abf79842e814a43a239",
+        "env": "hopper-medium-replay-v2",
+        "seed": 1
+      },
+      {
+        "checkpoint": "/home/ext_csv/mpi_sweep_lab/results_qnorm/hopper-expert-v2_tau1_seed0/params_1000000.pkl",
+        "checkpoint_sha256": "ce68305167757bac801430cc7a262c1fc9d218222e18ef4befc181eaf5c2efbe",
+        "config": "/home/ext_csv/mpi_sweep_lab/results_qnorm/hopper-expert-v2_tau1_seed0/config.json",
+        "config_sha256": "b8e448f73ba570d30764a9cdbd61e7f09f824849bed0a477933ab45a90e2d184",
+        "env": "hopper-expert-v2",
+        "seed": 0
+      },
+      {
+        "checkpoint": "/home/ext_csv/mpi_sweep_lab/results_qnorm/hopper-expert-v2_tau1_seed1/params_1000000.pkl",
+        "checkpoint_sha256": "ebabfb30da648ded107dd48f8e16e1cbff60704f37b2a2ca32183ec2571e5da5",
+        "config": "/home/ext_csv/mpi_sweep_lab/results_qnorm/hopper-expert-v2_tau1_seed1/config.json",
+        "config_sha256": "57c5b45977675a0d766cc569f9878e2e4a107754821ea54ee47600574c8c349c",
+        "env": "hopper-expert-v2",
+        "seed": 1
+      },
+      {
+        "checkpoint": "/home/ext_csv/mpi_sweep_lab/results_qnorm/walker2d-medium-v2_tau1_seed0/params_1000000.pkl",
+        "checkpoint_sha256": "0ca3cb6b66da18143d473b5fe4e14bc1d02b864442bbb9b554715749e93450fc",
+        "config": "/home/ext_csv/mpi_sweep_lab/results_qnorm/walker2d-medium-v2_tau1_seed0/config.json",
+        "config_sha256": "1d01218ee695c5cc4d85154bdce4f65d9496eb9e9841617602648c184d74eb23",
+        "env": "walker2d-medium-v2",
+        "seed": 0
+      },
+      {
+        "checkpoint": "/home/ext_csv/mpi_sweep_lab/results_qnorm/walker2d-medium-v2_tau1_seed1/params_1000000.pkl",
+        "checkpoint_sha256": "2ccb8dc10ce52d5bb5131c92dd81495e19b155440e1d7c64f18a39101c8b5fed",
+        "config": "/home/ext_csv/mpi_sweep_lab/results_qnorm/walker2d-medium-v2_tau1_seed1/config.json",
+        "config_sha256": "86b085d9718289613190f9f21a0e94d0925392ec0b8561cdf068ceb7a50edd4c",
+        "env": "walker2d-medium-v2",
+        "seed": 1
+      },
+      {
+        "checkpoint": "/home/ext_csv/mpi_sweep_lab/results_qnorm/walker2d-medium-replay-v2_tau1_seed0/params_1000000.pkl",
+        "checkpoint_sha256": "61f53c739c6549744371b5fe304a1b282a066256edf35f56961f09df1684778c",
+        "config": "/home/ext_csv/mpi_sweep_lab/results_qnorm/walker2d-medium-replay-v2_tau1_seed0/config.json",
+        "config_sha256": "7a016040a399e22d76cd34e48a12eafefb5b39c7ee8fc54eefc2ff31bcbf6b83",
+        "env": "walker2d-medium-replay-v2",
+        "seed": 0
+      },
+      {
+        "checkpoint": "/home/ext_csv/mpi_sweep_lab/results_qnorm/walker2d-medium-replay-v2_tau1_seed1/params_1000000.pkl",
+        "checkpoint_sha256": "74813688bbc1c9ea4892879054d84e47589bea0c5f322487533e48ee0115fd18",
+        "config": "/home/ext_csv/mpi_sweep_lab/results_qnorm/walker2d-medium-replay-v2_tau1_seed1/config.json",
+        "config_sha256": "55400b051ca4f7df8ff28969d313a643ae072e6f92140d6365cd768647e5f166",
+        "env": "walker2d-medium-replay-v2",
+        "seed": 1
+      },
+      {
+        "checkpoint": "/home/ext_csv/mpi_sweep_lab/results_qnorm/walker2d-expert-v2_tau1_seed0/params_1000000.pkl",
+        "checkpoint_sha256": "42c27e1707d6e60e305eaa131c746010b014c8a970e170bfcf306ba4d8dde960",
+        "config": "/home/ext_csv/mpi_sweep_lab/results_qnorm/walker2d-expert-v2_tau1_seed0/config.json",
+        "config_sha256": "d28bd398a2877e6e9d069d0c1cd1bf5ac02b71a39f28b12bc4db945274353c51",
+        "env": "walker2d-expert-v2",
+        "seed": 0
+      },
+      {
+        "checkpoint": "/home/ext_csv/mpi_sweep_lab/results_qnorm/walker2d-expert-v2_tau1_seed1/params_1000000.pkl",
+        "checkpoint_sha256": "d4d4545478835a1a4122cce7897374cf3e74fdf78502448bffcb6731f92f4d8f",
+        "config": "/home/ext_csv/mpi_sweep_lab/results_qnorm/walker2d-expert-v2_tau1_seed1/config.json",
+        "config_sha256": "90c19d66f730067b41d7d23cc02933c3b9ecd810f01b1263eaad9a840bf0b19b",
+        "env": "walker2d-expert-v2",
+        "seed": 1
+      }
+    ],
+    "datasets": [
+      {
+        "dataset": "/raid/ext_csv/datasets/d4rl/hopper_medium-v2.hdf5",
+        "dataset_sha256": "5bdf1bc4a713c82941de44633df669b36c89850b652a25985166796d25cf71a0",
+        "env": "hopper-medium-v2"
+      },
+      {
+        "dataset": "/raid/ext_csv/datasets/d4rl/hopper_medium_replay-v2.hdf5",
+        "dataset_sha256": "e121c5f7c9857a307baa9edc6a2c3b48e85fedb9ac316ecddd0f48ca7ef4e39b",
+        "env": "hopper-medium-replay-v2"
+      },
+      {
+        "dataset": "/raid/ext_csv/datasets/d4rl/hopper_expert-v2.hdf5",
+        "dataset_sha256": "01aa219a5f8eea5e639eccdc636ec2bf40e317159a95cf4bf6e985f16909941b",
+        "env": "hopper-expert-v2"
+      },
+      {
+        "dataset": "/raid/ext_csv/datasets/d4rl/walker2d_medium-v2.hdf5",
+        "dataset_sha256": "cf00f43add04c17fdfc2958dd581dea0851b2e5bedbe6fda073758a8f841aeda",
+        "env": "walker2d-medium-v2"
+      },
+      {
+        "dataset": "/raid/ext_csv/datasets/d4rl/walker2d_medium_replay-v2.hdf5",
+        "dataset_sha256": "e75de96a4f77acf7d4e0d6fdf0d7ccb177c26c44bb4388e4fd99f543ccfa18db",
+        "env": "walker2d-medium-replay-v2"
+      },
+      {
+        "dataset": "/raid/ext_csv/datasets/d4rl/walker2d_expert-v2.hdf5",
+        "dataset_sha256": "2985dc3d436a8baa10e8f43f946fe1d7c6337a4e4fbc65def70618093b18c59a",
+        "env": "walker2d-expert-v2"
+      }
+    ]
+  },
+  "known_dev_bundle_ids": [
+    "VnOjA4",
+    "InTWgf",
+    "OLDBdx",
+    "xlMNfc",
+    "sqfIVj"
+  ],
+  "learned_slope": null,
+  "n_runs": 12,
+  "n_states_per_run": 512,
+  "numeric_contract": {
+    "action_box": [
+      -1.0,
+      1.0
+    ],
+    "action_eligibility": 0.95,
+    "categories": [
+      "resident",
+      "relu_cross",
+      "box_cross",
+      "tie_cross",
+      "boundary_ambiguous",
+      "boundary_touch",
+      "nonfinite"
+    ],
+    "denominator_rule": "all sampled anchors retained in exactly one category",
+    "precision": "float64"
+  },
+  "per_run_sample_seeds": {
+    "hopper-expert-v2_seed0": 20260923,
+    "hopper-expert-v2_seed1": 20260924,
+    "hopper-medium-replay-v2_seed0": 20260913,
+    "hopper-medium-replay-v2_seed1": 20260914,
+    "hopper-medium-v2_seed0": 20260903,
+    "hopper-medium-v2_seed1": 20260904,
+    "walker2d-expert-v2_seed0": 20260953,
+    "walker2d-expert-v2_seed1": 20260954,
+    "walker2d-medium-replay-v2_seed0": 20260943,
+    "walker2d-medium-replay-v2_seed1": 20260944,
+    "walker2d-medium-v2_seed0": 20260933,
+    "walker2d-medium-v2_seed1": 20260934
+  },
+  "primary_summary": "unique-horizon empirical survival curve P(t_exit > t)",
+  "protocol": "p2_relu_residence_final_v1",
+  "repeated_cell_policy": "collapse equal horizons; do not count as independent evidence",
+  "reuses_pilot_geometry_and_residence_math": true,
+  "sample_seed_base": 20260903,
+  "scientific_admissible_when_verified": true,
+  "seeds": [
+    0,
+    1
+  ],
+  "source_sha256": {
+    "run_p2_relu_residence.py": "c555b5e03918f8751696e808b2530d9f4a77f7d44b4b00e0427ef5af5b96f1a0",
+    "verify_p2_relu_residence.py": "fea7ebb13f5e359a04960d7e623cedfc4752491cf663aacd1b969907df651274",
+    "verify_p2_relu_residence_final.py": "df809ef138bd3041d3276cd31a3d14201f8bf63e968219ec16b4ebeea4693939"
+  },
+  "status": "final_protocol_frozen_before_sampling",
+  "written_at": "2026-09-02T13:05:51+00:00"
+}

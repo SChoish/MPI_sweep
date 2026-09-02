@@ -1,0 +1,2167 @@
+{
+  "coverage_gate": null,
+  "environments": [
+    "hopper-medium-v2",
+    "hopper-medium-replay-v2",
+    "hopper-expert-v2",
+    "walker2d-medium-v2",
+    "walker2d-medium-replay-v2",
+    "walker2d-expert-v2"
+  ],
+  "family_survival": {
+    "hopper": [
+      {
+        "horizon": 0.0015625,
+        "n_resident": 3065,
+        "n_total": 3072,
+        "resident_fraction": 0.9977213541666666
+      },
+      {
+        "horizon": 0.003125,
+        "n_resident": 3058,
+        "n_total": 3072,
+        "resident_fraction": 0.9954427083333334
+      },
+      {
+        "horizon": 0.00625,
+        "n_resident": 3053,
+        "n_total": 3072,
+        "resident_fraction": 0.9938151041666666
+      },
+      {
+        "horizon": 0.0125,
+        "n_resident": 3031,
+        "n_total": 3072,
+        "resident_fraction": 0.9866536458333334
+      },
+      {
+        "horizon": 0.025,
+        "n_resident": 2999,
+        "n_total": 3072,
+        "resident_fraction": 0.9762369791666666
+      },
+      {
+        "horizon": 0.05,
+        "n_resident": 2921,
+        "n_total": 3072,
+        "resident_fraction": 0.9508463541666666
+      },
+      {
+        "horizon": 0.1,
+        "n_resident": 2799,
+        "n_total": 3072,
+        "resident_fraction": 0.9111328125
+      },
+      {
+        "horizon": 0.2,
+        "n_resident": 2594,
+        "n_total": 3072,
+        "resident_fraction": 0.8444010416666666
+      }
+    ],
+    "walker2d": [
+      {
+        "horizon": 0.0015625,
+        "n_resident": 3053,
+        "n_total": 3072,
+        "resident_fraction": 0.9938151041666666
+      },
+      {
+        "horizon": 0.003125,
+        "n_resident": 3035,
+        "n_total": 3072,
+        "resident_fraction": 0.9879557291666666
+      },
+      {
+        "horizon": 0.00625,
+        "n_resident": 3005,
+        "n_total": 3072,
+        "resident_fraction": 0.9781901041666666
+      },
+      {
+        "horizon": 0.0125,
+        "n_resident": 2959,
+        "n_total": 3072,
+        "resident_fraction": 0.9632161458333334
+      },
+      {
+        "horizon": 0.025,
+        "n_resident": 2862,
+        "n_total": 3072,
+        "resident_fraction": 0.931640625
+      },
+      {
+        "horizon": 0.05,
+        "n_resident": 2674,
+        "n_total": 3072,
+        "resident_fraction": 0.8704427083333334
+      },
+      {
+        "horizon": 0.1,
+        "n_resident": 2372,
+        "n_total": 3072,
+        "resident_fraction": 0.7721354166666666
+      },
+      {
+        "horizon": 0.2,
+        "n_resident": 2003,
+        "n_total": 3072,
+        "resident_fraction": 0.6520182291666666
+      }
+    ]
+  },
+  "horizons": [
+    0.0015625,
+    0.003125,
+    0.00625,
+    0.0125,
+    0.025,
+    0.05,
+    0.1,
+    0.2
+  ],
+  "learned_slope": null,
+  "n_anchors_total": 6144,
+  "n_runs": 12,
+  "n_states_per_run": 512,
+  "per_run": [
+    {
+      "C_ref": 223.58379546117104,
+      "analytic_vs_jax_grad_max_abs": 0.0,
+      "environment": "hopper-medium-v2",
+      "full_category_counts_by_T": {
+        "0.025": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 4,
+          "resident": 508,
+          "tie_cross": 0
+        },
+        "0.05": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 14,
+          "resident": 498,
+          "tie_cross": 0
+        },
+        "0.1": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 24,
+          "resident": 488,
+          "tie_cross": 0
+        },
+        "0.2": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 43,
+          "resident": 469,
+          "tie_cross": 0
+        }
+      },
+      "n_cells": 20,
+      "n_eligible": 571217,
+      "n_states": 512,
+      "protocol": "p2_relu_residence_final_v1",
+      "sample_seed": 20260903,
+      "scientific_admissible": true,
+      "seed": 0,
+      "survival": [
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 0,
+            "resident": 512,
+            "tie_cross": 0
+          },
+          "horizon": 0.0015625,
+          "n_resident": 512,
+          "resident_fraction": 1.0
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 0,
+            "resident": 512,
+            "tie_cross": 0
+          },
+          "horizon": 0.003125,
+          "n_resident": 512,
+          "resident_fraction": 1.0
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 0,
+            "resident": 512,
+            "tie_cross": 0
+          },
+          "horizon": 0.00625,
+          "n_resident": 512,
+          "resident_fraction": 1.0
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 1,
+            "resident": 511,
+            "tie_cross": 0
+          },
+          "horizon": 0.0125,
+          "n_resident": 511,
+          "resident_fraction": 0.998046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 4,
+            "resident": 508,
+            "tie_cross": 0
+          },
+          "horizon": 0.025,
+          "n_resident": 508,
+          "resident_fraction": 0.9921875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 14,
+            "resident": 498,
+            "tie_cross": 0
+          },
+          "horizon": 0.05,
+          "n_resident": 498,
+          "resident_fraction": 0.97265625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 24,
+            "resident": 488,
+            "tie_cross": 0
+          },
+          "horizon": 0.1,
+          "n_resident": 488,
+          "resident_fraction": 0.953125
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 43,
+            "resident": 469,
+            "tie_cross": 0
+          },
+          "horizon": 0.2,
+          "n_resident": 469,
+          "resident_fraction": 0.916015625
+        }
+      ],
+      "written_at": "2026-09-02T13:05:52+00:00"
+    },
+    {
+      "C_ref": 225.83335451915423,
+      "analytic_vs_jax_grad_max_abs": 0.0,
+      "environment": "hopper-medium-v2",
+      "full_category_counts_by_T": {
+        "0.025": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 11,
+          "resident": 501,
+          "tie_cross": 0
+        },
+        "0.05": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 17,
+          "resident": 495,
+          "tie_cross": 0
+        },
+        "0.1": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 27,
+          "resident": 485,
+          "tie_cross": 0
+        },
+        "0.2": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 47,
+          "resident": 465,
+          "tie_cross": 0
+        }
+      },
+      "n_cells": 20,
+      "n_eligible": 571217,
+      "n_states": 512,
+      "protocol": "p2_relu_residence_final_v1",
+      "sample_seed": 20260904,
+      "scientific_admissible": true,
+      "seed": 1,
+      "survival": [
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 0,
+            "resident": 512,
+            "tie_cross": 0
+          },
+          "horizon": 0.0015625,
+          "n_resident": 512,
+          "resident_fraction": 1.0
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 2,
+            "resident": 510,
+            "tie_cross": 0
+          },
+          "horizon": 0.003125,
+          "n_resident": 510,
+          "resident_fraction": 0.99609375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 3,
+            "resident": 509,
+            "tie_cross": 0
+          },
+          "horizon": 0.00625,
+          "n_resident": 509,
+          "resident_fraction": 0.994140625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 5,
+            "resident": 507,
+            "tie_cross": 0
+          },
+          "horizon": 0.0125,
+          "n_resident": 507,
+          "resident_fraction": 0.990234375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 11,
+            "resident": 501,
+            "tie_cross": 0
+          },
+          "horizon": 0.025,
+          "n_resident": 501,
+          "resident_fraction": 0.978515625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 17,
+            "resident": 495,
+            "tie_cross": 0
+          },
+          "horizon": 0.05,
+          "n_resident": 495,
+          "resident_fraction": 0.966796875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 27,
+            "resident": 485,
+            "tie_cross": 0
+          },
+          "horizon": 0.1,
+          "n_resident": 485,
+          "resident_fraction": 0.947265625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 47,
+            "resident": 465,
+            "tie_cross": 0
+          },
+          "horizon": 0.2,
+          "n_resident": 465,
+          "resident_fraction": 0.908203125
+        }
+      ],
+      "written_at": "2026-09-02T13:05:53+00:00"
+    },
+    {
+      "C_ref": 162.08117313814287,
+      "analytic_vs_jax_grad_max_abs": 0.0,
+      "environment": "hopper-medium-replay-v2",
+      "full_category_counts_by_T": {
+        "0.025": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 35,
+          "resident": 477,
+          "tie_cross": 0
+        },
+        "0.05": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 62,
+          "resident": 450,
+          "tie_cross": 0
+        },
+        "0.1": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 106,
+          "resident": 406,
+          "tie_cross": 0
+        },
+        "0.2": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 180,
+          "resident": 332,
+          "tie_cross": 0
+        }
+      },
+      "n_cells": 20,
+      "n_eligible": 226983,
+      "n_states": 512,
+      "protocol": "p2_relu_residence_final_v1",
+      "sample_seed": 20260913,
+      "scientific_admissible": true,
+      "seed": 0,
+      "survival": [
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 5,
+            "resident": 507,
+            "tie_cross": 0
+          },
+          "horizon": 0.0015625,
+          "n_resident": 507,
+          "resident_fraction": 0.990234375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 9,
+            "resident": 503,
+            "tie_cross": 0
+          },
+          "horizon": 0.003125,
+          "n_resident": 503,
+          "resident_fraction": 0.982421875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 10,
+            "resident": 502,
+            "tie_cross": 0
+          },
+          "horizon": 0.00625,
+          "n_resident": 502,
+          "resident_fraction": 0.98046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 21,
+            "resident": 491,
+            "tie_cross": 0
+          },
+          "horizon": 0.0125,
+          "n_resident": 491,
+          "resident_fraction": 0.958984375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 35,
+            "resident": 477,
+            "tie_cross": 0
+          },
+          "horizon": 0.025,
+          "n_resident": 477,
+          "resident_fraction": 0.931640625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 62,
+            "resident": 450,
+            "tie_cross": 0
+          },
+          "horizon": 0.05,
+          "n_resident": 450,
+          "resident_fraction": 0.87890625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 106,
+            "resident": 406,
+            "tie_cross": 0
+          },
+          "horizon": 0.1,
+          "n_resident": 406,
+          "resident_fraction": 0.79296875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 180,
+            "resident": 332,
+            "tie_cross": 0
+          },
+          "horizon": 0.2,
+          "n_resident": 332,
+          "resident_fraction": 0.6484375
+        }
+      ],
+      "written_at": "2026-09-02T13:05:54+00:00"
+    },
+    {
+      "C_ref": 162.3023584240911,
+      "analytic_vs_jax_grad_max_abs": 0.0,
+      "environment": "hopper-medium-replay-v2",
+      "full_category_counts_by_T": {
+        "0.025": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 20,
+          "resident": 492,
+          "tie_cross": 0
+        },
+        "0.05": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 51,
+          "resident": 461,
+          "tie_cross": 0
+        },
+        "0.1": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 106,
+          "resident": 406,
+          "tie_cross": 0
+        },
+        "0.2": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 2,
+          "nonfinite": 0,
+          "relu_cross": 186,
+          "resident": 324,
+          "tie_cross": 0
+        }
+      },
+      "n_cells": 20,
+      "n_eligible": 226983,
+      "n_states": 512,
+      "protocol": "p2_relu_residence_final_v1",
+      "sample_seed": 20260914,
+      "scientific_admissible": true,
+      "seed": 1,
+      "survival": [
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 1,
+            "resident": 511,
+            "tie_cross": 0
+          },
+          "horizon": 0.0015625,
+          "n_resident": 511,
+          "resident_fraction": 0.998046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 2,
+            "resident": 510,
+            "tie_cross": 0
+          },
+          "horizon": 0.003125,
+          "n_resident": 510,
+          "resident_fraction": 0.99609375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 5,
+            "resident": 507,
+            "tie_cross": 0
+          },
+          "horizon": 0.00625,
+          "n_resident": 507,
+          "resident_fraction": 0.990234375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 12,
+            "resident": 500,
+            "tie_cross": 0
+          },
+          "horizon": 0.0125,
+          "n_resident": 500,
+          "resident_fraction": 0.9765625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 20,
+            "resident": 492,
+            "tie_cross": 0
+          },
+          "horizon": 0.025,
+          "n_resident": 492,
+          "resident_fraction": 0.9609375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 51,
+            "resident": 461,
+            "tie_cross": 0
+          },
+          "horizon": 0.05,
+          "n_resident": 461,
+          "resident_fraction": 0.900390625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 106,
+            "resident": 406,
+            "tie_cross": 0
+          },
+          "horizon": 0.1,
+          "n_resident": 406,
+          "resident_fraction": 0.79296875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 2,
+            "nonfinite": 0,
+            "relu_cross": 186,
+            "resident": 324,
+            "tie_cross": 0
+          },
+          "horizon": 0.2,
+          "n_resident": 324,
+          "resident_fraction": 0.6328125
+        }
+      ],
+      "written_at": "2026-09-02T13:05:54+00:00"
+    },
+    {
+      "C_ref": 347.014834938501,
+      "analytic_vs_jax_grad_max_abs": 0.0,
+      "environment": "hopper-expert-v2",
+      "full_category_counts_by_T": {
+        "0.025": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 1,
+          "resident": 511,
+          "tie_cross": 0
+        },
+        "0.05": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 3,
+          "resident": 509,
+          "tie_cross": 0
+        },
+        "0.1": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 5,
+          "resident": 507,
+          "tie_cross": 0
+        },
+        "0.2": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 11,
+          "resident": 501,
+          "tie_cross": 0
+        }
+      },
+      "n_cells": 20,
+      "n_eligible": 686139,
+      "n_states": 512,
+      "protocol": "p2_relu_residence_final_v1",
+      "sample_seed": 20260923,
+      "scientific_admissible": true,
+      "seed": 0,
+      "survival": [
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 1,
+            "resident": 511,
+            "tie_cross": 0
+          },
+          "horizon": 0.0015625,
+          "n_resident": 511,
+          "resident_fraction": 0.998046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 1,
+            "resident": 511,
+            "tie_cross": 0
+          },
+          "horizon": 0.003125,
+          "n_resident": 511,
+          "resident_fraction": 0.998046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 1,
+            "resident": 511,
+            "tie_cross": 0
+          },
+          "horizon": 0.00625,
+          "n_resident": 511,
+          "resident_fraction": 0.998046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 1,
+            "resident": 511,
+            "tie_cross": 0
+          },
+          "horizon": 0.0125,
+          "n_resident": 511,
+          "resident_fraction": 0.998046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 1,
+            "resident": 511,
+            "tie_cross": 0
+          },
+          "horizon": 0.025,
+          "n_resident": 511,
+          "resident_fraction": 0.998046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 3,
+            "resident": 509,
+            "tie_cross": 0
+          },
+          "horizon": 0.05,
+          "n_resident": 509,
+          "resident_fraction": 0.994140625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 5,
+            "resident": 507,
+            "tie_cross": 0
+          },
+          "horizon": 0.1,
+          "n_resident": 507,
+          "resident_fraction": 0.990234375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 11,
+            "resident": 501,
+            "tie_cross": 0
+          },
+          "horizon": 0.2,
+          "n_resident": 501,
+          "resident_fraction": 0.978515625
+        }
+      ],
+      "written_at": "2026-09-02T13:05:55+00:00"
+    },
+    {
+      "C_ref": 347.76969392534414,
+      "analytic_vs_jax_grad_max_abs": 0.0,
+      "environment": "hopper-expert-v2",
+      "full_category_counts_by_T": {
+        "0.025": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 2,
+          "resident": 510,
+          "tie_cross": 0
+        },
+        "0.05": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 4,
+          "resident": 508,
+          "tie_cross": 0
+        },
+        "0.1": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 5,
+          "resident": 507,
+          "tie_cross": 0
+        },
+        "0.2": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 9,
+          "resident": 503,
+          "tie_cross": 0
+        }
+      },
+      "n_cells": 20,
+      "n_eligible": 686139,
+      "n_states": 512,
+      "protocol": "p2_relu_residence_final_v1",
+      "sample_seed": 20260924,
+      "scientific_admissible": true,
+      "seed": 1,
+      "survival": [
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 0,
+            "resident": 512,
+            "tie_cross": 0
+          },
+          "horizon": 0.0015625,
+          "n_resident": 512,
+          "resident_fraction": 1.0
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 0,
+            "resident": 512,
+            "tie_cross": 0
+          },
+          "horizon": 0.003125,
+          "n_resident": 512,
+          "resident_fraction": 1.0
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 0,
+            "resident": 512,
+            "tie_cross": 0
+          },
+          "horizon": 0.00625,
+          "n_resident": 512,
+          "resident_fraction": 1.0
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 1,
+            "resident": 511,
+            "tie_cross": 0
+          },
+          "horizon": 0.0125,
+          "n_resident": 511,
+          "resident_fraction": 0.998046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 2,
+            "resident": 510,
+            "tie_cross": 0
+          },
+          "horizon": 0.025,
+          "n_resident": 510,
+          "resident_fraction": 0.99609375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 4,
+            "resident": 508,
+            "tie_cross": 0
+          },
+          "horizon": 0.05,
+          "n_resident": 508,
+          "resident_fraction": 0.9921875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 5,
+            "resident": 507,
+            "tie_cross": 0
+          },
+          "horizon": 0.1,
+          "n_resident": 507,
+          "resident_fraction": 0.990234375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 9,
+            "resident": 503,
+            "tie_cross": 0
+          },
+          "horizon": 0.2,
+          "n_resident": 503,
+          "resident_fraction": 0.982421875
+        }
+      ],
+      "written_at": "2026-09-02T13:05:56+00:00"
+    },
+    {
+      "C_ref": 249.69866601659027,
+      "analytic_vs_jax_grad_max_abs": 0.0,
+      "environment": "walker2d-medium-v2",
+      "full_category_counts_by_T": {
+        "0.025": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 24,
+          "resident": 488,
+          "tie_cross": 0
+        },
+        "0.05": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 43,
+          "resident": 469,
+          "tie_cross": 0
+        },
+        "0.1": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 75,
+          "resident": 437,
+          "tie_cross": 0
+        },
+        "0.2": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 130,
+          "resident": 382,
+          "tie_cross": 0
+        }
+      },
+      "n_cells": 20,
+      "n_eligible": 274304,
+      "n_states": 512,
+      "protocol": "p2_relu_residence_final_v1",
+      "sample_seed": 20260933,
+      "scientific_admissible": true,
+      "seed": 0,
+      "survival": [
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 2,
+            "resident": 510,
+            "tie_cross": 0
+          },
+          "horizon": 0.0015625,
+          "n_resident": 510,
+          "resident_fraction": 0.99609375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 3,
+            "resident": 509,
+            "tie_cross": 0
+          },
+          "horizon": 0.003125,
+          "n_resident": 509,
+          "resident_fraction": 0.994140625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 6,
+            "resident": 506,
+            "tie_cross": 0
+          },
+          "horizon": 0.00625,
+          "n_resident": 506,
+          "resident_fraction": 0.98828125
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 8,
+            "resident": 504,
+            "tie_cross": 0
+          },
+          "horizon": 0.0125,
+          "n_resident": 504,
+          "resident_fraction": 0.984375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 24,
+            "resident": 488,
+            "tie_cross": 0
+          },
+          "horizon": 0.025,
+          "n_resident": 488,
+          "resident_fraction": 0.953125
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 43,
+            "resident": 469,
+            "tie_cross": 0
+          },
+          "horizon": 0.05,
+          "n_resident": 469,
+          "resident_fraction": 0.916015625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 75,
+            "resident": 437,
+            "tie_cross": 0
+          },
+          "horizon": 0.1,
+          "n_resident": 437,
+          "resident_fraction": 0.853515625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 130,
+            "resident": 382,
+            "tie_cross": 0
+          },
+          "horizon": 0.2,
+          "n_resident": 382,
+          "resident_fraction": 0.74609375
+        }
+      ],
+      "written_at": "2026-09-02T13:05:57+00:00"
+    },
+    {
+      "C_ref": 247.68094407578954,
+      "analytic_vs_jax_grad_max_abs": 0.0,
+      "environment": "walker2d-medium-v2",
+      "full_category_counts_by_T": {
+        "0.025": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 19,
+          "resident": 493,
+          "tie_cross": 0
+        },
+        "0.05": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 35,
+          "resident": 477,
+          "tie_cross": 0
+        },
+        "0.1": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 71,
+          "resident": 441,
+          "tie_cross": 0
+        },
+        "0.2": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 125,
+          "resident": 387,
+          "tie_cross": 0
+        }
+      },
+      "n_cells": 20,
+      "n_eligible": 274304,
+      "n_states": 512,
+      "protocol": "p2_relu_residence_final_v1",
+      "sample_seed": 20260934,
+      "scientific_admissible": true,
+      "seed": 1,
+      "survival": [
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 0,
+            "resident": 512,
+            "tie_cross": 0
+          },
+          "horizon": 0.0015625,
+          "n_resident": 512,
+          "resident_fraction": 1.0
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 2,
+            "resident": 510,
+            "tie_cross": 0
+          },
+          "horizon": 0.003125,
+          "n_resident": 510,
+          "resident_fraction": 0.99609375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 5,
+            "resident": 507,
+            "tie_cross": 0
+          },
+          "horizon": 0.00625,
+          "n_resident": 507,
+          "resident_fraction": 0.990234375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 11,
+            "resident": 501,
+            "tie_cross": 0
+          },
+          "horizon": 0.0125,
+          "n_resident": 501,
+          "resident_fraction": 0.978515625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 19,
+            "resident": 493,
+            "tie_cross": 0
+          },
+          "horizon": 0.025,
+          "n_resident": 493,
+          "resident_fraction": 0.962890625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 35,
+            "resident": 477,
+            "tie_cross": 0
+          },
+          "horizon": 0.05,
+          "n_resident": 477,
+          "resident_fraction": 0.931640625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 71,
+            "resident": 441,
+            "tie_cross": 0
+          },
+          "horizon": 0.1,
+          "n_resident": 441,
+          "resident_fraction": 0.861328125
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 125,
+            "resident": 387,
+            "tie_cross": 0
+          },
+          "horizon": 0.2,
+          "n_resident": 387,
+          "resident_fraction": 0.755859375
+        }
+      ],
+      "written_at": "2026-09-02T13:05:58+00:00"
+    },
+    {
+      "C_ref": 190.92914819681204,
+      "analytic_vs_jax_grad_max_abs": 0.0,
+      "environment": "walker2d-medium-replay-v2",
+      "full_category_counts_by_T": {
+        "0.025": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 71,
+          "resident": 441,
+          "tie_cross": 0
+        },
+        "0.05": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 144,
+          "resident": 368,
+          "tie_cross": 0
+        },
+        "0.1": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 246,
+          "resident": 266,
+          "tie_cross": 0
+        },
+        "0.2": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 1,
+          "nonfinite": 0,
+          "relu_cross": 339,
+          "resident": 172,
+          "tie_cross": 0
+        }
+      },
+      "n_cells": 20,
+      "n_eligible": 113330,
+      "n_states": 512,
+      "protocol": "p2_relu_residence_final_v1",
+      "sample_seed": 20260943,
+      "scientific_admissible": true,
+      "seed": 0,
+      "survival": [
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 6,
+            "resident": 506,
+            "tie_cross": 0
+          },
+          "horizon": 0.0015625,
+          "n_resident": 506,
+          "resident_fraction": 0.98828125
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 14,
+            "resident": 498,
+            "tie_cross": 0
+          },
+          "horizon": 0.003125,
+          "n_resident": 498,
+          "resident_fraction": 0.97265625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 27,
+            "resident": 485,
+            "tie_cross": 0
+          },
+          "horizon": 0.00625,
+          "n_resident": 485,
+          "resident_fraction": 0.947265625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 40,
+            "resident": 472,
+            "tie_cross": 0
+          },
+          "horizon": 0.0125,
+          "n_resident": 472,
+          "resident_fraction": 0.921875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 71,
+            "resident": 441,
+            "tie_cross": 0
+          },
+          "horizon": 0.025,
+          "n_resident": 441,
+          "resident_fraction": 0.861328125
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 144,
+            "resident": 368,
+            "tie_cross": 0
+          },
+          "horizon": 0.05,
+          "n_resident": 368,
+          "resident_fraction": 0.71875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 246,
+            "resident": 266,
+            "tie_cross": 0
+          },
+          "horizon": 0.1,
+          "n_resident": 266,
+          "resident_fraction": 0.51953125
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 1,
+            "nonfinite": 0,
+            "relu_cross": 339,
+            "resident": 172,
+            "tie_cross": 0
+          },
+          "horizon": 0.2,
+          "n_resident": 172,
+          "resident_fraction": 0.3359375
+        }
+      ],
+      "written_at": "2026-09-02T13:05:59+00:00"
+    },
+    {
+      "C_ref": 186.70697941499776,
+      "analytic_vs_jax_grad_max_abs": 0.0,
+      "environment": "walker2d-medium-replay-v2",
+      "full_category_counts_by_T": {
+        "0.025": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 83,
+          "resident": 429,
+          "tie_cross": 0
+        },
+        "0.05": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 150,
+          "resident": 362,
+          "tie_cross": 0
+        },
+        "0.1": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 250,
+          "resident": 262,
+          "tie_cross": 0
+        },
+        "0.2": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 367,
+          "resident": 145,
+          "tie_cross": 0
+        }
+      },
+      "n_cells": 20,
+      "n_eligible": 113330,
+      "n_states": 512,
+      "protocol": "p2_relu_residence_final_v1",
+      "sample_seed": 20260944,
+      "scientific_admissible": true,
+      "seed": 1,
+      "survival": [
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 11,
+            "resident": 501,
+            "tie_cross": 0
+          },
+          "horizon": 0.0015625,
+          "n_resident": 501,
+          "resident_fraction": 0.978515625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 17,
+            "resident": 495,
+            "tie_cross": 0
+          },
+          "horizon": 0.003125,
+          "n_resident": 495,
+          "resident_fraction": 0.966796875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 28,
+            "resident": 484,
+            "tie_cross": 0
+          },
+          "horizon": 0.00625,
+          "n_resident": 484,
+          "resident_fraction": 0.9453125
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 49,
+            "resident": 463,
+            "tie_cross": 0
+          },
+          "horizon": 0.0125,
+          "n_resident": 463,
+          "resident_fraction": 0.904296875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 83,
+            "resident": 429,
+            "tie_cross": 0
+          },
+          "horizon": 0.025,
+          "n_resident": 429,
+          "resident_fraction": 0.837890625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 150,
+            "resident": 362,
+            "tie_cross": 0
+          },
+          "horizon": 0.05,
+          "n_resident": 362,
+          "resident_fraction": 0.70703125
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 250,
+            "resident": 262,
+            "tie_cross": 0
+          },
+          "horizon": 0.1,
+          "n_resident": 262,
+          "resident_fraction": 0.51171875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 367,
+            "resident": 145,
+            "tie_cross": 0
+          },
+          "horizon": 0.2,
+          "n_resident": 145,
+          "resident_fraction": 0.283203125
+        }
+      ],
+      "written_at": "2026-09-02T13:06:00+00:00"
+    },
+    {
+      "C_ref": 472.2640843219954,
+      "analytic_vs_jax_grad_max_abs": 0.0,
+      "environment": "walker2d-expert-v2",
+      "full_category_counts_by_T": {
+        "0.025": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 10,
+          "resident": 502,
+          "tie_cross": 0
+        },
+        "0.05": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 16,
+          "resident": 496,
+          "tie_cross": 0
+        },
+        "0.1": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 32,
+          "resident": 480,
+          "tie_cross": 0
+        },
+        "0.2": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 60,
+          "resident": 452,
+          "tie_cross": 0
+        }
+      },
+      "n_cells": 20,
+      "n_eligible": 269374,
+      "n_states": 512,
+      "protocol": "p2_relu_residence_final_v1",
+      "sample_seed": 20260953,
+      "scientific_admissible": true,
+      "seed": 0,
+      "survival": [
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 0,
+            "resident": 512,
+            "tie_cross": 0
+          },
+          "horizon": 0.0015625,
+          "n_resident": 512,
+          "resident_fraction": 1.0
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 0,
+            "resident": 512,
+            "tie_cross": 0
+          },
+          "horizon": 0.003125,
+          "n_resident": 512,
+          "resident_fraction": 1.0
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 0,
+            "resident": 512,
+            "tie_cross": 0
+          },
+          "horizon": 0.00625,
+          "n_resident": 512,
+          "resident_fraction": 1.0
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 4,
+            "resident": 508,
+            "tie_cross": 0
+          },
+          "horizon": 0.0125,
+          "n_resident": 508,
+          "resident_fraction": 0.9921875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 10,
+            "resident": 502,
+            "tie_cross": 0
+          },
+          "horizon": 0.025,
+          "n_resident": 502,
+          "resident_fraction": 0.98046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 16,
+            "resident": 496,
+            "tie_cross": 0
+          },
+          "horizon": 0.05,
+          "n_resident": 496,
+          "resident_fraction": 0.96875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 32,
+            "resident": 480,
+            "tie_cross": 0
+          },
+          "horizon": 0.1,
+          "n_resident": 480,
+          "resident_fraction": 0.9375
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 60,
+            "resident": 452,
+            "tie_cross": 0
+          },
+          "horizon": 0.2,
+          "n_resident": 452,
+          "resident_fraction": 0.8828125
+        }
+      ],
+      "written_at": "2026-09-02T13:06:01+00:00"
+    },
+    {
+      "C_ref": 473.31235139678574,
+      "analytic_vs_jax_grad_max_abs": 0.0,
+      "environment": "walker2d-expert-v2",
+      "full_category_counts_by_T": {
+        "0.025": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 3,
+          "resident": 509,
+          "tie_cross": 0
+        },
+        "0.05": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 10,
+          "resident": 502,
+          "tie_cross": 0
+        },
+        "0.1": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 26,
+          "resident": 486,
+          "tie_cross": 0
+        },
+        "0.2": {
+          "boundary_ambiguous": 0,
+          "boundary_touch": 0,
+          "box_cross": 0,
+          "nonfinite": 0,
+          "relu_cross": 47,
+          "resident": 465,
+          "tie_cross": 0
+        }
+      },
+      "n_cells": 20,
+      "n_eligible": 269374,
+      "n_states": 512,
+      "protocol": "p2_relu_residence_final_v1",
+      "sample_seed": 20260954,
+      "scientific_admissible": true,
+      "seed": 1,
+      "survival": [
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 0,
+            "resident": 512,
+            "tie_cross": 0
+          },
+          "horizon": 0.0015625,
+          "n_resident": 512,
+          "resident_fraction": 1.0
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 1,
+            "resident": 511,
+            "tie_cross": 0
+          },
+          "horizon": 0.003125,
+          "n_resident": 511,
+          "resident_fraction": 0.998046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 1,
+            "resident": 511,
+            "tie_cross": 0
+          },
+          "horizon": 0.00625,
+          "n_resident": 511,
+          "resident_fraction": 0.998046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 1,
+            "resident": 511,
+            "tie_cross": 0
+          },
+          "horizon": 0.0125,
+          "n_resident": 511,
+          "resident_fraction": 0.998046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 3,
+            "resident": 509,
+            "tie_cross": 0
+          },
+          "horizon": 0.025,
+          "n_resident": 509,
+          "resident_fraction": 0.994140625
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 10,
+            "resident": 502,
+            "tie_cross": 0
+          },
+          "horizon": 0.05,
+          "n_resident": 502,
+          "resident_fraction": 0.98046875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 26,
+            "resident": 486,
+            "tie_cross": 0
+          },
+          "horizon": 0.1,
+          "n_resident": 486,
+          "resident_fraction": 0.94921875
+        },
+        {
+          "categories": {
+            "boundary_ambiguous": 0,
+            "boundary_touch": 0,
+            "box_cross": 0,
+            "nonfinite": 0,
+            "relu_cross": 47,
+            "resident": 465,
+            "tie_cross": 0
+          },
+          "horizon": 0.2,
+          "n_resident": 465,
+          "resident_fraction": 0.908203125
+        }
+      ],
+      "written_at": "2026-09-02T13:06:02+00:00"
+    }
+  ],
+  "pooled_survival": [
+    {
+      "horizon": 0.0015625,
+      "n_resident": 6118,
+      "n_total": 6144,
+      "resident_fraction": 0.9957682291666666
+    },
+    {
+      "horizon": 0.003125,
+      "n_resident": 6093,
+      "n_total": 6144,
+      "resident_fraction": 0.99169921875
+    },
+    {
+      "horizon": 0.00625,
+      "n_resident": 6058,
+      "n_total": 6144,
+      "resident_fraction": 0.9860026041666666
+    },
+    {
+      "horizon": 0.0125,
+      "n_resident": 5990,
+      "n_total": 6144,
+      "resident_fraction": 0.9749348958333334
+    },
+    {
+      "horizon": 0.025,
+      "n_resident": 5861,
+      "n_total": 6144,
+      "resident_fraction": 0.9539388020833334
+    },
+    {
+      "horizon": 0.05,
+      "n_resident": 5595,
+      "n_total": 6144,
+      "resident_fraction": 0.91064453125
+    },
+    {
+      "horizon": 0.1,
+      "n_resident": 5171,
+      "n_total": 6144,
+      "resident_fraction": 0.8416341145833334
+    },
+    {
+      "horizon": 0.2,
+      "n_resident": 4597,
+      "n_total": 6144,
+      "resident_fraction": 0.7482096354166666
+    }
+  ],
+  "protocol": "p2_relu_residence_final_v1",
+  "scientific_admissible": true,
+  "seeds": [
+    0,
+    1
+  ],
+  "status": "final_complete",
+  "written_at": "2026-09-02T13:06:02+00:00"
+}

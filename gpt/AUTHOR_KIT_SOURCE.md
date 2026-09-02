@@ -1,14 +1,22 @@
-# AAAI-26 Author-Kit Provenance
+# AISTATS-26 Author-Kit Provenance
 
-The manuscript uses `aaai2026.sty` with the `submission` option and follows the AAAI-26 main-track layout.
+The current GPT manuscript uses the same AISTATS-26 LaTeX style files already tracked by the canonical sibling bundle:
 
-- Official author-kit endpoint: `https://aaai.org/authorkit26-1/`
-- Official submission instructions: `https://aaai.org/conference/aaai/aaai-26/submission-instructions/`
-- Official checklist source: `AuthorKit26/ReproducibilityChecklist/LaTeX/ReproducibilityChecklist.tex` inside `AuthorKit26-1.zip`; all 31 questions are unchanged and only response slots are filled.
-- Style source used for the bundle: `AuthorKit26/AnonymousSubmission/LaTeX/aaai2026.sty` from the official `AuthorKit26-1.zip`.
-- `aaai2026.sty` Git-blob SHA-1: `989b761198b6d142da3372a06e032fd8979972e3`
-- Package declaration: `\ProvidesPackage{aaai2026}[2026/06/17 AAAI 2026 Submission format]`
+- `../aistats26_manuscript/aistats2026.sty`
+- `../aistats26_manuscript/fancyhdr.sty`
 
-The style file is included without modification. The main source uses a manual `thebibliography` block, so the bundle does not depend on a separate `.bst` file. The structured citation ledger is retained in `references.bib` for future editing.
+`paper.tex` and `supplement.tex` add `../aistats26_manuscript/` to LaTeX's input path before loading `aistats2026`. The local legacy `aaai2026.sty` is not used by the current build.
 
-AAAI-26 regular papers permit seven technical-content pages plus references, and require the reproducibility-checklist answers after the references. The build script checks that the technical-content boundary is no later than page 7, that all 31 official checklist questions are answered, and that the checklist begins afterward.
+The main paper follows the canonical anonymous AISTATS title block used in `../aistats26_manuscript/paper.tex`:
+
+```tex
+\twocolumn[
+\aistatstitle{...}
+\aistatsauthor{Anonymous Authors}
+\aistatsaddress{Anonymous Institution}
+]
+```
+
+Bibliography entries are kept in `references.bib` and rendered with `apalike` through Natbib. The reproducibility checklist is included after the bibliography by `\input{ReproducibilityChecklist}`.
+
+This directory is intentionally repository-relative rather than a standalone author-kit mirror. For a standalone submission archive, copy the AISTATS style dependencies into the archive and remove or adjust the parent-directory input path before packaging.

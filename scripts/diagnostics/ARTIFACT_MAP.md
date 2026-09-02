@@ -27,7 +27,7 @@ selection of runs.
 | `route_shadow/` (top-level archive) | archive | partial | Use `run_route_shadow_mc.py` on `results_route_shadow` |
 | `route_shadow_k4/` | archive | partial | Compact copy of `audit_report_20260901/route_shadow_mc_k4`; excluded from manuscript |
 | `bar_mcep_p3_paired/` | aggregate/archive | partial | `audit_bar_mcep_p3_paired.py` regenerates `AUDIT.json` only; the paired CSV, summary, and source manifest are frozen and verifier-gated |
-| `p0_bar_p4_vs_two_actor_p4/` (future compact archive) | retrain + aggregate | harness + frozen 180-key manifest; **first 90 finals on ext_csv only; no contrast released** | P0 preview/freeze/launch/analyze/verify flow; see `../experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md` |
+| `p0_bar_p4_vs_two_actor_p4/` (future compact archive) | retrain + aggregate | first 90 on ext_csv + tail 90 on ext_csh; **no merged contrast released** | ext_csh shard under `hosts/ext_csh/p0_manifest_tail90/`; exact merge still required |
 | `p1_target_value_audit/` (future compact archive) | ckpt | harness + external preflight ready; **no scientific result released** | Strict 270-checkpoint post-hoc audit; see `P1_TARGET_VALUE_RUNBOOK.md` |
 | `actor_cost/` | benchmark/archive | **verified measured snapshot**; rerun needs local data/GPU | Hash-pinned K=1--4 H200 profile plus profiler and independent verifier; see `ACTOR_COST_RUNBOOK.md` |
 | `frozen_critic_small_step/` (top-level archive) | archive | partial | Use `run_frozen_critic_small_step.py` |

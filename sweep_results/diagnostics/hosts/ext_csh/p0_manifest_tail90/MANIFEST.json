@@ -1,0 +1,38 @@
+{
+  "artifact": "p0_manifest_tail90_host_shard",
+  "assignment": "manifest tail 90; head 90 assigned to another machine",
+  "checkpoint_tree_sha256": "816d1c8991cbc6b8389f1d5ae2dcbcf346fcad9053a763ab46f9b8cf13fde119",
+  "conditions": {
+    "bar_p4": 45,
+    "two_actor_p4": 45
+  },
+  "continuation_manifest_sha256": "7b2b2ff0eda87f53dee6df2b8b4e9b921959f3c29c8551ba232952cbae7b693b",
+  "files": {
+    "CHECKPOINTS.json": "d62977304c0213faf959c56eafc53297fd7d85e17c65f5abed0d499d95eb2788",
+    "scores.csv": "e62f635f24b17ea6731d409e06674a14b279fb00bcb25cd0b52dcfdbc7fb0b59"
+  },
+  "frozen_manifest_sha256": "fced784a486598753bf3e6da3dd302cd2f38ccb9242b7ffd491c0065c6f3339b",
+  "hardware_transition": {
+    "same_gpu_count": true,
+    "same_name_memory_driver_multiset": true,
+    "uuid_or_index_change_recorded": true
+  },
+  "host": "ext_csh",
+  "manifest_index_range_one_based": [
+    91,
+    180
+  ],
+  "optimizer_diverged_runs": [
+    "bar_p4|walker2d-expert-v2|T=14|seed=1",
+    "two_actor_p4|walker2d-expert-v2|T=14|seed=1",
+    "bar_p4|walker2d-expert-v2|T=20|seed=0",
+    "two_actor_p4|walker2d-expert-v2|T=20|seed=0",
+    "bar_p4|walker2d-expert-v2|T=20|seed=1"
+  ],
+  "optimizer_divergence_policy": "retain completed 1M evaluations whose critic optimizer diverged after finite weights; do not retrain",
+  "resume_registry_sha256": "1756678e75591a7abaa05a471cd563620b96b66c7002d0144b6c750ba248b975",
+  "runs": 90,
+  "schema_version": 1,
+  "source_revision": "29fea94bee9d9276ac463caa2b897e3474fe1b2b",
+  "status": "complete"
+}

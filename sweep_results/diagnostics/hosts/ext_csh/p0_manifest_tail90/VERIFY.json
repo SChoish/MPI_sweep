@@ -1,0 +1,6 @@
+{
+  "manifest_sha256": "87b110b43b24a75788b3070d31da4444e75470ed754ecf51accf549ef3f0c1b1",
+  "optimizer_diverged_runs": 5,
+  "pass": true,
+  "runs": 90
+}

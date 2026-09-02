@@ -29,9 +29,11 @@ Implementation status is tracked separately from experimental status. The
 preview/freeze/launch/analyze/verify harness is packaged in
 [`scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md`](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md).
 On `ext_csv`, a 180-cell manifest was frozen at `29fea94` and the first 90
-keys finished at 1M (`45` BAR-P4 + `45` two-actor-P4 `eval.csv`). The second
-90 were cancelled on this host and are not a released compact archive. No
-paired contrast, decision label, or manuscript promotion has passed yet.
+keys finished at 1M (`45` BAR-P4 + `45` two-actor-P4 `eval.csv`). On
+`ext_csh`, frozen-manifest entries 91--180 are complete as a compact shard,
+including five Walker2d-expert cells whose critic optimizer diverged after
+finite weights. No paired contrast, decision label, or manuscript promotion
+has passed yet.
 
 - [x] Generalize the existing control to a target coefficient `T/4` and a
   directly data-anchored deployment coefficient `T`. Keep independent actors;
@@ -43,12 +45,12 @@ paired contrast, decision label, or manuscript promotion has passed yet.
   from a checkpoint whose config and weights hashes match the manifest.
 - [ ] Run exactly nine paper tasks, `T={4,7,10,14,20}`, and seeds 0--1 to one
   million critic updates with ten final evaluation episodes: 90 control runs.
-  Host progress: `45/90` two-actor-P4 finals on `ext_csv` (first half of the
-  frozen 180-key order). Do not add seeds 4--7 and do not expand to a
+  Host progress: `45/90` two-actor-P4 finals on `ext_csv` (first half) and
+  `45/90` on `ext_csh` (entries 91--180). Do not add seeds 4--7 and do not expand to a
   P2/P3/P4 factorial before this comparison is read.
 - [ ] Rerun the same 90 BAR-P4 cells contemporaneously from the same clean code
-  snapshot and environment lock. Host progress: `45/90` BAR-P4 finals on
-  `ext_csv` paired with the first-half control keys. Historical P4 scores may
+  snapshot and environment lock. Host progress: `45/90` BAR-P4 finals on `ext_csv` (first half) and `45/90`
+  on `ext_csh` (entries 91--180). Historical P4 scores may
   be a marginal sensitivity, but cannot be spliced into cellwise pairing
   because individual collapse trajectories are unstable across reruns.
 - [ ] Primary signed contrast is BAR-P4 minus two-actor-P4. Report the

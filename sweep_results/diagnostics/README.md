@@ -40,6 +40,7 @@ folders below in place; see ARTIFACT_MAP.
 | `environment_t_sensitivity.csv` | Return versus realized first-hop displacement by environment |
 | `control_final_scores.csv`, `control_summary.csv` | Targeted compute-matched and actor-target-lag results |
 | `bar_mcep_p3_paired/` | 90-pair MCEP-inspired control: completeness audit, compact scores, summary, and raw-source hashes |
+| `hosts/ext_csh/p0_manifest_tail90/` | Frozen-manifest entries 91--180; five optimizer-diverged Walker2d-expert cells retained |
 | `*_MANIFEST.json` | Audit protocol and provenance; host manifests are not historical training launch files |
 
 ## Manuscript-facing checks

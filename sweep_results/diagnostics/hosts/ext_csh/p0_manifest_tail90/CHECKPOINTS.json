@@ -1,0 +1,822 @@
+{
+  "bar_p4|halfcheetah-expert-v2|T=10|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-expert-v2_tau10_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "5153bd3200cdf5b07b21d3d805814b6b2254b3f74fa8d0c003efb134a78feb02",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "bar_p4|halfcheetah-expert-v2|T=10|seed=0",
+    "scientific_config_sha256": "57992734ca0a3844535d1e8a9234bda1e5b4e42ff0e58d3ac4b7c9cd4e838039",
+    "step": 1000000,
+    "weights_sha256": "35b719efb23f5d05e278484bb1c2b769a8c4d1db9c17df571588a51d08e9ccc6"
+  },
+  "bar_p4|halfcheetah-expert-v2|T=10|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-expert-v2_tau10_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "fbb6cfc43fbd56fa4af6f74997f44f02ce2d5bd2189d5230963fffc8b118b61c",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "bar_p4|halfcheetah-expert-v2|T=10|seed=1",
+    "scientific_config_sha256": "a79bfe93fbfdb9cdac1811ae3a312a169fe6bc2f78278864577cd8e3ba1c2ca5",
+    "step": 1000000,
+    "weights_sha256": "dd9f9629c039d93293ddc62cd52f59cb4044954f9afc199ba6990567a1de1277"
+  },
+  "bar_p4|halfcheetah-expert-v2|T=14|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-expert-v2_tau14_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "27afb22361ed4f7ad0baba06eac47e60442970807ac940762b72444b5b563f0f",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "bar_p4|halfcheetah-expert-v2|T=14|seed=0",
+    "scientific_config_sha256": "a1ea978c417d3ef6a089559d4b9f23b4f2c1d1d690680d45829401691a609aab",
+    "step": 1000000,
+    "weights_sha256": "b77b4fc65e23353ccd5ca404d581185305130a379a2a85c7c8ba26a31f8634fd"
+  },
+  "bar_p4|halfcheetah-expert-v2|T=14|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-expert-v2_tau14_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "0a06319be4cc5c9c7cc744399057098f1016dfb9a53bc920602859c38c857f0d",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "bar_p4|halfcheetah-expert-v2|T=14|seed=1",
+    "scientific_config_sha256": "be55d7404e3d3682ea4e24c565a3b376bff42227dc85e5cb0fc6e9b3d993f11a",
+    "step": 1000000,
+    "weights_sha256": "6f51f8a217bd238dba1d9ddef716f04a73e115e5a3e5f5e6bfda040e319f1152"
+  },
+  "bar_p4|halfcheetah-expert-v2|T=20|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-expert-v2_tau20_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "b18808d7657b612d5e957418e5ab1f7026cca9068ac70ae6991112ccb3ed82f5",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "bar_p4|halfcheetah-expert-v2|T=20|seed=0",
+    "scientific_config_sha256": "1c853c7acd8f6b9a0540ecdd916f019b69a145d5bfa3814a65d7534fed00746f",
+    "step": 1000000,
+    "weights_sha256": "6678b77d4919b33738173bdf51321d74a94155e04eff7eca075470b218773ba8"
+  },
+  "bar_p4|halfcheetah-expert-v2|T=20|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-expert-v2_tau20_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "d7481160bfa23c7d913b9ec50bf971dc6a19eb24489b0274e1fb27a6a0b83078",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "bar_p4|halfcheetah-expert-v2|T=20|seed=1",
+    "scientific_config_sha256": "c4ed482d3dac50218f30a45832019fd6435fa85665351aa79b32addfcbf0721e",
+    "step": 1000000,
+    "weights_sha256": "bc52dcaf7a72fa36a02c3fba5b7756c227ecb178d4745ee95c51748ebe7883d4"
+  },
+  "bar_p4|halfcheetah-expert-v2|T=4|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-expert-v2_tau4_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "9ae1c39410bdc921644bad4f995267125947348b101ae40e324b1563d1bc22e3",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "bar_p4|halfcheetah-expert-v2|T=4|seed=0",
+    "scientific_config_sha256": "2c79628fa41821014df4f0ec331cf33dd7a7852454502d77f44a5f6c0952f4f0",
+    "step": 1000000,
+    "weights_sha256": "5da304c611b86471611cfed825b4d200318fd79b52be4d8bad230f5877a90076"
+  },
+  "bar_p4|halfcheetah-expert-v2|T=4|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-expert-v2_tau4_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "1ae6710a5883e1ea5b29e431591d29dcd1d8e4dfd79acd04e50a73feae8172ed",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "bar_p4|halfcheetah-expert-v2|T=4|seed=1",
+    "scientific_config_sha256": "72b730b54a7b8c849665b56376c9583b1d0e230ff00f686ef9470c0460916b07",
+    "step": 1000000,
+    "weights_sha256": "f3bfc14b268b6cddece4efd85ae7f1e3e87a2597d6186a50098a0f67234bd29d"
+  },
+  "bar_p4|halfcheetah-expert-v2|T=7|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-expert-v2_tau7_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "d75415d37c726b83ec1bacf40851c481ebb1acab22e053147f27c0673626c334",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "bar_p4|halfcheetah-expert-v2|T=7|seed=0",
+    "scientific_config_sha256": "b19c6210191dd68039d3989ef3d3aa38900636922bc837d15fd6f2df64d8071e",
+    "step": 1000000,
+    "weights_sha256": "8fe42b0d9bf5200a4619ab92eacba297eb17e4c12ccd457834be9a73df7c6174"
+  },
+  "bar_p4|halfcheetah-expert-v2|T=7|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-expert-v2_tau7_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "bdc4086d3c6e9990f8913a79335b1e03f628a6d5287850b0c319290f44e8df2a",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "bar_p4|halfcheetah-expert-v2|T=7|seed=1",
+    "scientific_config_sha256": "286d3324f437613a1aef2200ce4991787227f8d137b200ee3092b1e62f4c062d",
+    "step": 1000000,
+    "weights_sha256": "154e32c9d74521efb00d35c18430264e3e86b5f3191c4df1e3e7c2fcbd3cd3c1"
+  },
+  "bar_p4|halfcheetah-medium-replay-v2|T=10|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-medium-replay-v2_tau10_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "bca667ab6f2b67be782aba45da1a9af008203b631f16bc7bdfcaee6393d75052",
+    "normalization_sha256": "bf401106c1cefcd93a5a75cf13117b0cdd46eb3bab8cb311a9201c639f6d31ba",
+    "run_key": "bar_p4|halfcheetah-medium-replay-v2|T=10|seed=1",
+    "scientific_config_sha256": "72dfad017a565056eda0b418cea07dbc149e3bbc3178f0ac8fb9e2e296b20e0c",
+    "step": 1000000,
+    "weights_sha256": "5e9a87c2c87eb418e6f2eb6ebf564c50e9565047409ad0a30f35d2fdeb165929"
+  },
+  "bar_p4|halfcheetah-medium-replay-v2|T=14|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-medium-replay-v2_tau14_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "04e73a03d39cb49e80014985a51e01ac92b477c4a9bfb723ee7e922a1f016956",
+    "normalization_sha256": "bf401106c1cefcd93a5a75cf13117b0cdd46eb3bab8cb311a9201c639f6d31ba",
+    "run_key": "bar_p4|halfcheetah-medium-replay-v2|T=14|seed=0",
+    "scientific_config_sha256": "0371895375b36bd30046872d16696d653adba58dd7e425867259b806c5d1c037",
+    "step": 1000000,
+    "weights_sha256": "f61ba7103641bb3f7256a3bf3234cfcede3669e19767d46c3af38b1388abc948"
+  },
+  "bar_p4|halfcheetah-medium-replay-v2|T=14|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-medium-replay-v2_tau14_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "bd654a90de83eb4abd1cea2d05894d138f55d62951194f6887a2527be95fc3cc",
+    "normalization_sha256": "bf401106c1cefcd93a5a75cf13117b0cdd46eb3bab8cb311a9201c639f6d31ba",
+    "run_key": "bar_p4|halfcheetah-medium-replay-v2|T=14|seed=1",
+    "scientific_config_sha256": "e4cb3915bf3de9c64680c899c1c34acf6fa5b923c55dcc3960132ddf29c94981",
+    "step": 1000000,
+    "weights_sha256": "725ec68821e946bb1210ef850863f0b5dfb1b9d83298ac106161c6a111b7088b"
+  },
+  "bar_p4|halfcheetah-medium-replay-v2|T=20|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-medium-replay-v2_tau20_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "f51cf41b8ab9dbb2200bd8f6a9f53fa964c51759da54c8bf871ee9b71917eefb",
+    "normalization_sha256": "bf401106c1cefcd93a5a75cf13117b0cdd46eb3bab8cb311a9201c639f6d31ba",
+    "run_key": "bar_p4|halfcheetah-medium-replay-v2|T=20|seed=0",
+    "scientific_config_sha256": "d2dd3a05cbb6b5af4eeb6af9c4c2d679a26d35061cf3b63cefc52ccaf2fb48e2",
+    "step": 1000000,
+    "weights_sha256": "0ff1801a97b5451ee3d27544435d1374ea5a1ef7d21d6e1c03c8d7efa8ab27c1"
+  },
+  "bar_p4|halfcheetah-medium-replay-v2|T=20|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/halfcheetah-medium-replay-v2_tau20_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "9fc4da9029914b97a90bb0f861e196f2a2ae10b2daf775d27a41acd29bcb1a1a",
+    "normalization_sha256": "bf401106c1cefcd93a5a75cf13117b0cdd46eb3bab8cb311a9201c639f6d31ba",
+    "run_key": "bar_p4|halfcheetah-medium-replay-v2|T=20|seed=1",
+    "scientific_config_sha256": "7dca7367e949720c2869af2e6cebe917971b62fa7d4e3130632e9fccf4ff7312",
+    "step": 1000000,
+    "weights_sha256": "ed6031d575e032aad359c405f5678c41fbd74b6a281a368ef05a733e2a04e882"
+  },
+  "bar_p4|walker2d-expert-v2|T=10|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-expert-v2_tau10_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "69e68bdd417add8003e87ebbd773dd39f5ca05a7e66eecc8f7db900df1a8a342",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "bar_p4|walker2d-expert-v2|T=10|seed=0",
+    "scientific_config_sha256": "ff4e8a6c760c34a4ea67152bf0cb59ab4176c645934ff9b8c061f886469de54d",
+    "step": 1000000,
+    "weights_sha256": "e0909e9372f4eceaee9378481a0aa68d76fda1828343255e4f0b6c53610fc122"
+  },
+  "bar_p4|walker2d-expert-v2|T=10|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-expert-v2_tau10_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "748144c25b8d83415873a125502ce51780d2fb68d47848e8f71a34a0220e0e1e",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "bar_p4|walker2d-expert-v2|T=10|seed=1",
+    "scientific_config_sha256": "bba19a89f8851b06d382ef2be005c0e9065842dd7dec00626328e09566c8c472",
+    "step": 1000000,
+    "weights_sha256": "5b4e887084bad700019c489797fd948beedb301add13512c744d26e9440c6ff6"
+  },
+  "bar_p4|walker2d-expert-v2|T=14|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-expert-v2_tau14_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "fa8d3001104b33958328470c10c67467b87871ca510f9e19771dbb405b9ea05c",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "bar_p4|walker2d-expert-v2|T=14|seed=0",
+    "scientific_config_sha256": "e187ebe968d471676cbbe2018ca27e86e3ce43e72b94424d4a3e757b4f897066",
+    "step": 1000000,
+    "weights_sha256": "96b943457c64194b358c1ae50c0e996b0d28469ca865b91b801b71fd681ae16f"
+  },
+  "bar_p4|walker2d-expert-v2|T=14|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-expert-v2_tau14_mpi4_seed1/params_1000000.pkl",
+    "divergence_note": "critic optimizer state became nonfinite; weights and the 1M evaluation score remain finite and are retained as a completed diverged outcome",
+    "file_sha256": "05548ddf537dbd4c0ac3999ede24ebea28f3c875a16606625373c992c3ba519b",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "optimizer_diverged": true,
+    "run_key": "bar_p4|walker2d-expert-v2|T=14|seed=1",
+    "scientific_config_sha256": "2f37036c6b8b2bb08d97f94d94bd86b58886d219202f5f399f1ed0e195523472",
+    "step": 1000000,
+    "weights_sha256": "813b3f2f5e03bc8b9577f7c06f0bb2409204a69000e3b25584376c259fcf8112"
+  },
+  "bar_p4|walker2d-expert-v2|T=20|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-expert-v2_tau20_mpi4_seed0/params_1000000.pkl",
+    "divergence_note": "critic optimizer state became nonfinite; weights and the 1M evaluation score remain finite and are retained as a completed diverged outcome",
+    "file_sha256": "78e897cff881e4810c7201f4aa4595f2781601722fc896da4fb81d899b0f9efe",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "optimizer_diverged": true,
+    "run_key": "bar_p4|walker2d-expert-v2|T=20|seed=0",
+    "scientific_config_sha256": "2a692214398a2d14b1bef4614a99172745b873cbb8c0bc09573d5e5b275c9602",
+    "step": 1000000,
+    "weights_sha256": "c02118004a0b77d7bf1b8397146f8791f447d9ed3b14dfec8c95c2279bd8ab61"
+  },
+  "bar_p4|walker2d-expert-v2|T=20|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-expert-v2_tau20_mpi4_seed1/params_1000000.pkl",
+    "divergence_note": "critic optimizer state became nonfinite; weights and the 1M evaluation score remain finite and are retained as a completed diverged outcome",
+    "file_sha256": "89e47596d66426121f4dda1844ceb131dad0e4e85ade4558dd98493e8ada3b53",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "optimizer_diverged": true,
+    "run_key": "bar_p4|walker2d-expert-v2|T=20|seed=1",
+    "scientific_config_sha256": "0f22f88e5726e09731a7104c4113a352789fd4576d063fbfa82826f1e3b701c9",
+    "step": 1000000,
+    "weights_sha256": "bfe2b2ba79f17061b07c6fa7495b2dc9b9c8bc84f8161d0e9a66517d26024b81"
+  },
+  "bar_p4|walker2d-expert-v2|T=4|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-expert-v2_tau4_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "7ccee2610b47c0aa88a5a574bf2c2890750b3941ebba8296acbb3e43977a2264",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "bar_p4|walker2d-expert-v2|T=4|seed=0",
+    "scientific_config_sha256": "04cce1775b43e3ff7d0a7c26cc714c606b9966aca26cdde9ce6170bfb0eea5e9",
+    "step": 1000000,
+    "weights_sha256": "033c0f547774c219894c1bfbcd15debcc9dfae100037efffb67ddeb94c746a45"
+  },
+  "bar_p4|walker2d-expert-v2|T=4|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-expert-v2_tau4_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "9813f91468d4ed8007abfeb2fb0434bd99ab3d4bf41f76dc6b3a8043b54cc344",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "bar_p4|walker2d-expert-v2|T=4|seed=1",
+    "scientific_config_sha256": "cc8bb8b9400353a2f3b8baf11b4146daa161d4397452988753ee2cd921c3f90d",
+    "step": 1000000,
+    "weights_sha256": "0b6feed27709f6c66c556608e59ac914f1e31608ed05fc60d5d7831ffb2ca22a"
+  },
+  "bar_p4|walker2d-expert-v2|T=7|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-expert-v2_tau7_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "32cf61a6d6d2e72fb15cbb0d696c47b6900b1108fd5d11abd29d8296604c0967",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "bar_p4|walker2d-expert-v2|T=7|seed=0",
+    "scientific_config_sha256": "26da9c3cd66fec245baf4794d4af6de4b68849bfa26e464e6daee69152143f4b",
+    "step": 1000000,
+    "weights_sha256": "b02e0f7e1b672692368e1d7dae6df548f4437a841233aa32431d7839ff5d07ef"
+  },
+  "bar_p4|walker2d-expert-v2|T=7|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-expert-v2_tau7_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "ff1750beada8bb7446297f995d101a40c6a3778b781342369d15fd262c621e28",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "bar_p4|walker2d-expert-v2|T=7|seed=1",
+    "scientific_config_sha256": "f4da7e2489fe3c86cd411ae501e144a2061e1068e343eb22fb4ab8bb1614e577",
+    "step": 1000000,
+    "weights_sha256": "a886d24436ce3497afad522c423d4e4454c1a1b70f6d097473bc15981eed244b"
+  },
+  "bar_p4|walker2d-medium-replay-v2|T=10|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-replay-v2_tau10_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "74e91fd9d94413b765f91b4969808bfafa89b672600328e213ddcefd1ba3e929",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "bar_p4|walker2d-medium-replay-v2|T=10|seed=0",
+    "scientific_config_sha256": "71ac615325c571587864ef64943ff85679782237c30fdf771dc2fc934bbaeb2f",
+    "step": 1000000,
+    "weights_sha256": "e9a3edf83681d109d914d946a9583051d67d85cbe779ec54f821dc6114885c1e"
+  },
+  "bar_p4|walker2d-medium-replay-v2|T=10|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-replay-v2_tau10_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "7e9abcd33594746f4d4e40d93fe7ea56e48e73c99c9f97d7aafe2c4be99cea4b",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "bar_p4|walker2d-medium-replay-v2|T=10|seed=1",
+    "scientific_config_sha256": "819ea78ae2676af38ad039510548c652280989ee478235bbea3aa8a80842784e",
+    "step": 1000000,
+    "weights_sha256": "2bf09dbe5101bb7c14d1d0546158a0b311e583c24c1661f755c41d505bc40fed"
+  },
+  "bar_p4|walker2d-medium-replay-v2|T=14|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-replay-v2_tau14_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "d04a0aaf962dcb7e7c00e8930ec88fffd74bf3a44bb14530dbb5796a191a8083",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "bar_p4|walker2d-medium-replay-v2|T=14|seed=0",
+    "scientific_config_sha256": "e747eff069b4849fbaba21e245d528820da09c837262a08eef590c391d24bdf1",
+    "step": 1000000,
+    "weights_sha256": "b021e325bd6b0499e965277b5a5065f8ddd0770b059b6dbd72107b8c1057eb7b"
+  },
+  "bar_p4|walker2d-medium-replay-v2|T=14|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-replay-v2_tau14_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "48faf414ba3e880d1963f34b0cd7e6c5d7ce20686e607b2960fd7b16404aaa3c",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "bar_p4|walker2d-medium-replay-v2|T=14|seed=1",
+    "scientific_config_sha256": "7f5641dadcf5dfd9a95d48eef5de52c3faa9a3eecafc4312629e7936a64de173",
+    "step": 1000000,
+    "weights_sha256": "5e79ff65f85384bf45453e2963045cecaf84dd98432222e1a8fc97f05bd85aeb"
+  },
+  "bar_p4|walker2d-medium-replay-v2|T=20|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-replay-v2_tau20_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "1a3a975a51935fbfa418e9e9bc1cc7f65f3aee6d59dc5773b6985e6f7d3db713",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "bar_p4|walker2d-medium-replay-v2|T=20|seed=0",
+    "scientific_config_sha256": "3fb76ea56adde83e55304d91a55cf881ebb9038e1695d90a462100a5cd346fe0",
+    "step": 1000000,
+    "weights_sha256": "564916ac7be9bc284bb8f9fc608f0c3035ce52f6eac473d4e4212ddd208264a8"
+  },
+  "bar_p4|walker2d-medium-replay-v2|T=20|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-replay-v2_tau20_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "cbbdf11333b2c2cc863a6450f2dc6fcac81b5b589e2092bdec6459a7c7c4f497",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "bar_p4|walker2d-medium-replay-v2|T=20|seed=1",
+    "scientific_config_sha256": "2e5b7db699b68eb71380aebe1dc4c05419304f9809fdbe918a8f34b259eba3c0",
+    "step": 1000000,
+    "weights_sha256": "66d4a3c6b7f3816719b4f62a5f4fd419ea7eb131bde9bcb7c1d3d4a46efb3d3e"
+  },
+  "bar_p4|walker2d-medium-replay-v2|T=4|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-replay-v2_tau4_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "0626e2ac12244de41b6ca4e8abed98f7f2bd1be6c4f2ac1f8c59d2e668ab38f5",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "bar_p4|walker2d-medium-replay-v2|T=4|seed=0",
+    "scientific_config_sha256": "0f1d20d0e2b53f2691f50e28041db1b10ae00024a71f796fec5940e3c5d97a0a",
+    "step": 1000000,
+    "weights_sha256": "9e6fb93bdcc86f2c0a159e57d9a6cd36234d077c7a761ddd35644cddc9941602"
+  },
+  "bar_p4|walker2d-medium-replay-v2|T=4|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-replay-v2_tau4_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "8f7fb64540a1c48542b673b512d7dfaf477db1ca0b04c5e4da25c91039b9cbf7",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "bar_p4|walker2d-medium-replay-v2|T=4|seed=1",
+    "scientific_config_sha256": "5cefa5acbf9287dcbf7af61ccacfe2594bc81fb7296942e20c179b6b724cdd4c",
+    "step": 1000000,
+    "weights_sha256": "0afb88f0a0eda65b81049d3981ce91a65e5d7aa9171dd578f95b44b1176fbc20"
+  },
+  "bar_p4|walker2d-medium-replay-v2|T=7|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-replay-v2_tau7_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "adc669261e1ddcb99b84351f9427900d005a27550b67f7ea1dd352318c9e5f5f",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "bar_p4|walker2d-medium-replay-v2|T=7|seed=0",
+    "scientific_config_sha256": "94dca809748eacaac6831aa94f7757673c19cef0e7cbc3340aa02b956e9095c9",
+    "step": 1000000,
+    "weights_sha256": "8595d44e0f05a14b86d3055cbadbf20afc966d9aa8c4f9562bafed56ca981c10"
+  },
+  "bar_p4|walker2d-medium-replay-v2|T=7|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-replay-v2_tau7_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "de1e0aed507d8cbd5f6089ef094b9ddeefc122db523bcc24e0dacf328de47104",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "bar_p4|walker2d-medium-replay-v2|T=7|seed=1",
+    "scientific_config_sha256": "a7cc92f2328cde8b9dd692626a73f3fd8ac917ea01726f80f7927a15218176fe",
+    "step": 1000000,
+    "weights_sha256": "f838ceaed3a27923285505acdc49a24738469207cfcbdd8c9485e040a9c11368"
+  },
+  "bar_p4|walker2d-medium-v2|T=10|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-v2_tau10_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "5b6299735e20485ab56731ecace71aa4c67822f8c44027a4fe677fae4f9ac175",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "bar_p4|walker2d-medium-v2|T=10|seed=0",
+    "scientific_config_sha256": "af72eed36cad2a6e8843f5b8fe566603e43332f408a5e7cee36207c4b42a6bfc",
+    "step": 1000000,
+    "weights_sha256": "237f619b1383a5943fb5f2d5113a91ff3fafe3843c26cff71f5cd2415425b23d"
+  },
+  "bar_p4|walker2d-medium-v2|T=10|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-v2_tau10_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "2f926b9efd68b5830351b41a8020091fbd9375703c1c2669c31f589acc07d677",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "bar_p4|walker2d-medium-v2|T=10|seed=1",
+    "scientific_config_sha256": "3436096a2e5b3a2d6c530be50e06205e4da7c241e42e174f5a163fe6a016d82c",
+    "step": 1000000,
+    "weights_sha256": "aacacd4374eb2976e06b288e04f1445fa86769788d881f70015350a84c05af4d"
+  },
+  "bar_p4|walker2d-medium-v2|T=14|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-v2_tau14_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "c252659aad94084a3e39eda478adae59b251ff24e5115be5637be1c93b9979fe",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "bar_p4|walker2d-medium-v2|T=14|seed=0",
+    "scientific_config_sha256": "01a8e7fb34358d98f20a0c25962934352b875abf9f028d319b30341b5b09f763",
+    "step": 1000000,
+    "weights_sha256": "53c84843c8bd374b71d7d750f8d01e921654c7b1b3779624c02316ed00a2d3ce"
+  },
+  "bar_p4|walker2d-medium-v2|T=14|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-v2_tau14_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "c6b66a9dd884834b770901e4fa40486ba0db3ddbd377a947df852b60aa1a61df",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "bar_p4|walker2d-medium-v2|T=14|seed=1",
+    "scientific_config_sha256": "e872f1b17814e56c4ba63888b7c29d3d0b468bef8c8440a5a39e325754931f81",
+    "step": 1000000,
+    "weights_sha256": "622056749850ed8cbe62ebd2c19dc510e5f2c21d9204c45e038359da28b2f133"
+  },
+  "bar_p4|walker2d-medium-v2|T=20|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-v2_tau20_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "b4b797880ead7909ae76ecc56e48ad20eaa9c253ce63c609fce240a2ea7ea945",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "bar_p4|walker2d-medium-v2|T=20|seed=0",
+    "scientific_config_sha256": "7e63fc4cef8d6313e314867c094b4b5df8d21a8143a556fa5b4f5d7618f946b8",
+    "step": 1000000,
+    "weights_sha256": "0bf01da1a07973eff8e62228c6efd44ee274c42ae8b517174fcf6488a16e7b5c"
+  },
+  "bar_p4|walker2d-medium-v2|T=20|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-v2_tau20_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "9751d8ba3a4b296216a13443345c6dfacd4dc16500541ff3c13a32d7738a2f11",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "bar_p4|walker2d-medium-v2|T=20|seed=1",
+    "scientific_config_sha256": "6f7d0adea5f5a0b16beb605e3d3b42c2b5aee9ab95b99293cb71e591ef94452e",
+    "step": 1000000,
+    "weights_sha256": "8245cfe5ba27556ce1d994c59f165e707ad9aafa89bc524e758812f9483694e2"
+  },
+  "bar_p4|walker2d-medium-v2|T=4|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-v2_tau4_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "8523b2a186b0a1bbadea9e0f035295b94670721a9a0af3a170d8646a09d4e06f",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "bar_p4|walker2d-medium-v2|T=4|seed=0",
+    "scientific_config_sha256": "ed6ee87207b1fd57e4e6f388867f8beac6a827306f0a185e830ce87e094fc848",
+    "step": 1000000,
+    "weights_sha256": "3d9a867675194cfc1ee35c71f65cc24dafca18a931e5c0868e0057e9f56c6008"
+  },
+  "bar_p4|walker2d-medium-v2|T=4|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-v2_tau4_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "6549e517732e05ac4fbc976b9b8b385f924483f42115beb2dd735ae13bdb0a5c",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "bar_p4|walker2d-medium-v2|T=4|seed=1",
+    "scientific_config_sha256": "e8420472323343c1facd4c7743b6a5ea6c76a40adb67b74a1ec6afa495ed1347",
+    "step": 1000000,
+    "weights_sha256": "a5cfeb88bbfe64acaac727afb557127a185973b209576adb4cc48c1745a09dae"
+  },
+  "bar_p4|walker2d-medium-v2|T=7|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-v2_tau7_mpi4_seed0/params_1000000.pkl",
+    "file_sha256": "277dfffba5f78eea67749980556e705208711c94c2e53ec4bf07a0ddc8acccc2",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "bar_p4|walker2d-medium-v2|T=7|seed=0",
+    "scientific_config_sha256": "ea0811167dd6f0d57c4e557cdd23d6a840b758e912485b0e874afc0d702d20c7",
+    "step": 1000000,
+    "weights_sha256": "1259084d909b5ab1ffd24763af5709d0f0a3cf2424e185d2d5ed53dbfa8f613a"
+  },
+  "bar_p4|walker2d-medium-v2|T=7|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-v2_tau7_mpi4_seed1/params_1000000.pkl",
+    "file_sha256": "8cf3db36cdb70e0a651a1d4a13e7f965b8250d7b93d17d3f81cf913555e7b355",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "bar_p4|walker2d-medium-v2|T=7|seed=1",
+    "scientific_config_sha256": "c69ecbac6f38e3690ecc07d9985f11104f3366e50b8d4d46bcd317ccfcc31586",
+    "step": 1000000,
+    "weights_sha256": "16e11c37fe3afb01ec5d82154fb4c69c9fe9ebb52e574441c25d061fd3b1092c"
+  },
+  "two_actor_p4|halfcheetah-expert-v2|T=10|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-expert-v2_tau10_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "160707979c68fcac9ca1002b47c1e467e6877b7a7937e213584d16501c2db460",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "two_actor_p4|halfcheetah-expert-v2|T=10|seed=0",
+    "scientific_config_sha256": "f7499cd4a943cc18a204a479b49021df3041ce7992fd250be9b4f856da21716b",
+    "step": 1000000,
+    "weights_sha256": "ef81d87a7ec08ed137cedaf038842a344a1c9ad5986d981b880347b69659118c"
+  },
+  "two_actor_p4|halfcheetah-expert-v2|T=10|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-expert-v2_tau10_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "7c63a498f84ea35e044d27aa5eb661becd025d65665c8001c403d2dcb2aeebaa",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "two_actor_p4|halfcheetah-expert-v2|T=10|seed=1",
+    "scientific_config_sha256": "868d750472edaff3678a8e26c5fce90de2098837ac969f490d75ed76ecb7cc88",
+    "step": 1000000,
+    "weights_sha256": "4e8f123d67bfce93b90a6cdb96ef9279a3ef52459a27d4386e1970bc2788a6c7"
+  },
+  "two_actor_p4|halfcheetah-expert-v2|T=14|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-expert-v2_tau14_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "1bbac446e0c7db91ed701bad5cdf611db1b052613bddfb5f8edcb7bf6bb7d10a",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "two_actor_p4|halfcheetah-expert-v2|T=14|seed=0",
+    "scientific_config_sha256": "2d3e4eec13e44d88276011c7383bb1e46cc1ecf6997e60aa1e1da13be4d7721b",
+    "step": 1000000,
+    "weights_sha256": "48b3f9f64b79843ab198ceafbd51eb227c50e62a4bf14ec039f59b847954b18a"
+  },
+  "two_actor_p4|halfcheetah-expert-v2|T=14|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-expert-v2_tau14_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "926c8d7727f4638d30295b8f549255380ac9453fd3544b037b7d6ce2661e2bbc",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "two_actor_p4|halfcheetah-expert-v2|T=14|seed=1",
+    "scientific_config_sha256": "5e9f0c65fbe43462c22b4fb3139a48d9138f83da5cb936d61a2f7445c7674316",
+    "step": 1000000,
+    "weights_sha256": "fc46a672e23b09794414ff59b11cb2543ff811c97d4315d5d93cd04919f66abc"
+  },
+  "two_actor_p4|halfcheetah-expert-v2|T=20|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-expert-v2_tau20_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "df55f7933699f79d8cc0a49a45806e94d989cef9380ccada7dfb547cb10da2ab",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "two_actor_p4|halfcheetah-expert-v2|T=20|seed=0",
+    "scientific_config_sha256": "65d4c8c7e77b86af4dd898f2f480773036cf3bea514da7a24a516541c6a9101f",
+    "step": 1000000,
+    "weights_sha256": "2d3c80ea1b70900a281d8a8a6b118cba9cb36e054a23d798fab23fb066b872b3"
+  },
+  "two_actor_p4|halfcheetah-expert-v2|T=20|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-expert-v2_tau20_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "1334c1777744ee8dac270026f2b904e577f8caa43d1ea5b65af20b7bec2bdff6",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "two_actor_p4|halfcheetah-expert-v2|T=20|seed=1",
+    "scientific_config_sha256": "93a8a1cfd19d66b095466c57a3c3fe5ecef719def034f911d7ceb02038e13afc",
+    "step": 1000000,
+    "weights_sha256": "e39a41fb6654e442f82b996e5151a59feb7467c0a40ca500661de697a760a30a"
+  },
+  "two_actor_p4|halfcheetah-expert-v2|T=4|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-expert-v2_tau4_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "47f88dbc23dff0919b1d9821581554182c917c72a338fdd5cb8761d17deceaaa",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "two_actor_p4|halfcheetah-expert-v2|T=4|seed=0",
+    "scientific_config_sha256": "64f7fdfd4659d007eeeffa79de865bd909386f21c97ccfd05332a3955d526dcd",
+    "step": 1000000,
+    "weights_sha256": "301f514a60a0c164d0385c76daa2f68e15ab57c9ad8d6f01afe3ffc2406637de"
+  },
+  "two_actor_p4|halfcheetah-expert-v2|T=4|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-expert-v2_tau4_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "191e0196213c589599e51730fc79f5d2744ad616e5d2e1cc7d4e0e43f51b4de2",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "two_actor_p4|halfcheetah-expert-v2|T=4|seed=1",
+    "scientific_config_sha256": "25bca3cd29fd939091aa8f378f16c96491c6ec1b4be206d7e530a39dcfb5b5b7",
+    "step": 1000000,
+    "weights_sha256": "0e02b228bd95ec827b749a450931355a2975650bae742b510cb5ff3bfe32f978"
+  },
+  "two_actor_p4|halfcheetah-expert-v2|T=7|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-expert-v2_tau7_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "a0bef1d81781ee95c55118f261505889104efba13531d08ad24ab15b99084fb8",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "two_actor_p4|halfcheetah-expert-v2|T=7|seed=0",
+    "scientific_config_sha256": "5a09215481a654eac61de2837cd56fa007c0c42ca518d69ed9970b9f8b21e84e",
+    "step": 1000000,
+    "weights_sha256": "6fb27cfa5c592c8329958aeb571fdbe04f483946e1c7eec4e9887c7222b02e83"
+  },
+  "two_actor_p4|halfcheetah-expert-v2|T=7|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-expert-v2_tau7_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "5dda6f40b74b0a4ee65e4e38ed4c2be6c493de38ded8070255ad5912d3bc6ad3",
+    "normalization_sha256": "47033947b98d05bac56a2803c7ba28a7a57e08f60d90c6bf95a5cca0fd6d73bc",
+    "run_key": "two_actor_p4|halfcheetah-expert-v2|T=7|seed=1",
+    "scientific_config_sha256": "097eb769816685cd3997c55ef2135c556224e0ac3d14b4782fa20307100ee13b",
+    "step": 1000000,
+    "weights_sha256": "727d61168e203e21f061721d223d41bc45e61746b2eb2b1b2cc673221f1d1d78"
+  },
+  "two_actor_p4|halfcheetah-medium-replay-v2|T=10|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-medium-replay-v2_tau10_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "b9392b613cb6fda2eb9b9ce8236d8d314786461787430e87031bfb78c84fe268",
+    "normalization_sha256": "bf401106c1cefcd93a5a75cf13117b0cdd46eb3bab8cb311a9201c639f6d31ba",
+    "run_key": "two_actor_p4|halfcheetah-medium-replay-v2|T=10|seed=1",
+    "scientific_config_sha256": "f2224422705b9e853181dbcd16e00349738bbeccbb31cbda27cdb671b63e4840",
+    "step": 1000000,
+    "weights_sha256": "bcd665462d9a5b9d6bed36073d3ea7dfb9c14190aab14c7be046d0e81b1d4218"
+  },
+  "two_actor_p4|halfcheetah-medium-replay-v2|T=14|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-medium-replay-v2_tau14_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "83d4ce139849aa170f02429126343ab89f0838e53320823a7afc23c8d94f9eaa",
+    "normalization_sha256": "bf401106c1cefcd93a5a75cf13117b0cdd46eb3bab8cb311a9201c639f6d31ba",
+    "run_key": "two_actor_p4|halfcheetah-medium-replay-v2|T=14|seed=0",
+    "scientific_config_sha256": "db87c1775f0d1eb0e5df10760efaea5c6618e7868a133cb290518d79e312d94e",
+    "step": 1000000,
+    "weights_sha256": "30f819fb4f90358a0cba5624f6a14f21a884b66937eabab3c1c4cbb06bfce46e"
+  },
+  "two_actor_p4|halfcheetah-medium-replay-v2|T=14|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-medium-replay-v2_tau14_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "75e4677cb181d459c9f04c7dbfe8f99d47d94e80f5c1b055e8f271d75ffba0a4",
+    "normalization_sha256": "bf401106c1cefcd93a5a75cf13117b0cdd46eb3bab8cb311a9201c639f6d31ba",
+    "run_key": "two_actor_p4|halfcheetah-medium-replay-v2|T=14|seed=1",
+    "scientific_config_sha256": "c04d299b849efef181c70fa7bf603e2139fce9aa50c33db7101831423191ed6f",
+    "step": 1000000,
+    "weights_sha256": "53ca5ad9d221ac74aef55a7819b13ce26e756ff94e235e84f6cfe9c34d85d98d"
+  },
+  "two_actor_p4|halfcheetah-medium-replay-v2|T=20|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-medium-replay-v2_tau20_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "222d7bc64ac71aea9f58805e48a7411803ae0166129d00c924e762cd55a2b31a",
+    "normalization_sha256": "bf401106c1cefcd93a5a75cf13117b0cdd46eb3bab8cb311a9201c639f6d31ba",
+    "run_key": "two_actor_p4|halfcheetah-medium-replay-v2|T=20|seed=0",
+    "scientific_config_sha256": "06ed50736e9dc2ca5b4e32357f2db75c3e4279e304bf30d78d8734ee2b719540",
+    "step": 1000000,
+    "weights_sha256": "093f678e99a10527a7ae02c9fc38791868defa95d9ca43967409633cbafd90c2"
+  },
+  "two_actor_p4|halfcheetah-medium-replay-v2|T=20|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/halfcheetah-medium-replay-v2_tau20_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "bde1353f046a07e7ca4671483f755936d874483066b9c5d9765d2341a0f85339",
+    "normalization_sha256": "bf401106c1cefcd93a5a75cf13117b0cdd46eb3bab8cb311a9201c639f6d31ba",
+    "run_key": "two_actor_p4|halfcheetah-medium-replay-v2|T=20|seed=1",
+    "scientific_config_sha256": "6c916337846ac2148b45541859deea482eba710958d52c904bb55758ae629aff",
+    "step": 1000000,
+    "weights_sha256": "32128f5c931f26207188de24f747c9242bbde82db11a0e5719375edb8b4bd3d2"
+  },
+  "two_actor_p4|walker2d-expert-v2|T=10|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-expert-v2_tau10_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "52e4407f4e3655d555a343ef355e074a6f50a5fa7cccec2bd6f165328b313d99",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "two_actor_p4|walker2d-expert-v2|T=10|seed=0",
+    "scientific_config_sha256": "fd5e0820863bf6695c4660664a98078cfb3823b0d33679b8dbf19ce4b9665855",
+    "step": 1000000,
+    "weights_sha256": "784a3710f801901522623ce89696974f47e32fc8e4e33cce41aa1b0f38efcc90"
+  },
+  "two_actor_p4|walker2d-expert-v2|T=10|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-expert-v2_tau10_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "67c3bfa217596d9bba9d72b024162b6a88f68ce14ec75f3108965716c957d75a",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "two_actor_p4|walker2d-expert-v2|T=10|seed=1",
+    "scientific_config_sha256": "5149f9952b79d085abc868d3edf9086a1ee5c27af439c91854556095bd36a191",
+    "step": 1000000,
+    "weights_sha256": "08d8c26070ba3b9b348dacfcdee41df76f5087beb2b1e144144d599cc0b31c49"
+  },
+  "two_actor_p4|walker2d-expert-v2|T=14|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-expert-v2_tau14_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "49807c1642986029f90b1669e0c03d4c48feb331086052e05edabb8dc12f2472",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "two_actor_p4|walker2d-expert-v2|T=14|seed=0",
+    "scientific_config_sha256": "a27a8b4a50d084f2fd0b14583bc2aca69d7dc982668520c62c42168acac87d3c",
+    "step": 1000000,
+    "weights_sha256": "7a92a4cc2a3008d9e99aa7e3a72e353d4df402a3384d254f37fda915df224ad7"
+  },
+  "two_actor_p4|walker2d-expert-v2|T=14|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-expert-v2_tau14_mcep4_seed1/params_1000000.pkl",
+    "divergence_note": "critic optimizer state became nonfinite; weights and the 1M evaluation score remain finite and are retained as a completed diverged outcome",
+    "file_sha256": "7f27b3a3cd5028756d61d09557352def581bd5ad7f13cff84cb19f49100fea02",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "optimizer_diverged": true,
+    "run_key": "two_actor_p4|walker2d-expert-v2|T=14|seed=1",
+    "scientific_config_sha256": "282056ccfc60eb2dcbbf9a2d05c277d524ccac1030e3b476161e50d8909f8b68",
+    "step": 1000000,
+    "weights_sha256": "54a4f88a9362944b60f9627812ad8bb3580111321b8e3815b6b01630ec0f0b2d"
+  },
+  "two_actor_p4|walker2d-expert-v2|T=20|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-expert-v2_tau20_mcep4_seed0/params_1000000.pkl",
+    "divergence_note": "critic optimizer state became nonfinite; weights and the 1M evaluation score remain finite and are retained as a completed diverged outcome",
+    "file_sha256": "05a904e4bc37dcdd834eb64ffc9cb3dae0311e4cdc2249a905af16672f0c2867",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "optimizer_diverged": true,
+    "run_key": "two_actor_p4|walker2d-expert-v2|T=20|seed=0",
+    "scientific_config_sha256": "0a9d297c7b45e3139128106cf675f76b295bd1881672484f97393ac6e06674c1",
+    "step": 1000000,
+    "weights_sha256": "a8763753e2a2572404db5097645ded1d16f2aaaf0f2b8167ed8a08205bad5d82"
+  },
+  "two_actor_p4|walker2d-expert-v2|T=20|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-expert-v2_tau20_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "713f2b987dfa6f61297fb106e0abb866541bd2815002d1dccef715898d103a59",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "two_actor_p4|walker2d-expert-v2|T=20|seed=1",
+    "scientific_config_sha256": "3233c9ff4d887eea25f9bc97e88dd1c94427f9955f5a21c55ec922fe351df138",
+    "step": 1000000,
+    "weights_sha256": "8163f31ce84592730a6236a89a556b4b813752ea1660b70452edfaaa24290a30"
+  },
+  "two_actor_p4|walker2d-expert-v2|T=4|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-expert-v2_tau4_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "91395f6ffd1602b5c221775cb4d927d9d0a469b2d6a16eaf297cb12b73e78ff1",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "two_actor_p4|walker2d-expert-v2|T=4|seed=0",
+    "scientific_config_sha256": "819a8d227b2f0abefdc1ff00397f49037a19c29a3a42e60bc9d433dbb47076ca",
+    "step": 1000000,
+    "weights_sha256": "d743837099886e3a23074272d45c178910e5c624914600eee801348b0a595ec8"
+  },
+  "two_actor_p4|walker2d-expert-v2|T=4|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-expert-v2_tau4_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "ddeb2b884255efaef4963716efb8ab65ed57b96199deb57db59b0773010a303c",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "two_actor_p4|walker2d-expert-v2|T=4|seed=1",
+    "scientific_config_sha256": "5995eecbbc2781718b4660cdaa056d1d1adb8f8c2ea592d73929c7796c436d13",
+    "step": 1000000,
+    "weights_sha256": "b433dd7a5713a764cc414d3882875d81d69d704073d20a1c678bd5e080693e1d"
+  },
+  "two_actor_p4|walker2d-expert-v2|T=7|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-expert-v2_tau7_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "9f847276bbbaf6f537d5fe9eff8572cdcedfbe4b377925a51d9c6de84673830d",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "two_actor_p4|walker2d-expert-v2|T=7|seed=0",
+    "scientific_config_sha256": "28a1b266b76265c10894bf7ab6f1dfec868de4f9236c0eb2b9d05d3bd5051a37",
+    "step": 1000000,
+    "weights_sha256": "4a245b98e47240feed5dc50fcb2e49d6139395c6f23b046ee591b849b1e1fdc6"
+  },
+  "two_actor_p4|walker2d-expert-v2|T=7|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-expert-v2_tau7_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "7e711744242b40085f2aa21afe6fa77a5e8d4bc0285e5825c5a1dce22da059b3",
+    "normalization_sha256": "221b4708d1bc0781cf5e89c7cdb106871545612365063b2aabef9f0f4ce51d83",
+    "run_key": "two_actor_p4|walker2d-expert-v2|T=7|seed=1",
+    "scientific_config_sha256": "5d7cc30e5d39af19288510ff080c1fdc65550eb80a5d48581ebee9f3a950b351",
+    "step": 1000000,
+    "weights_sha256": "2ac00f1b72355e64d7af1f95d46255a624bc8d1a6f93a3a0bf1e0f2cab08b6b4"
+  },
+  "two_actor_p4|walker2d-medium-replay-v2|T=10|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-replay-v2_tau10_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "e91d6ca41ad353628ba45c81226ec6365e1ecb9fc026624b5c34f8215d0b70ce",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "two_actor_p4|walker2d-medium-replay-v2|T=10|seed=0",
+    "scientific_config_sha256": "6fab0f0416ddb2be04bf3b9e80090ffc4072b72ded4ea0779d2e40ae7f78572a",
+    "step": 1000000,
+    "weights_sha256": "764c543765963395c1c4d2914e3df7351a3842256da3e594eced380c2e95f972"
+  },
+  "two_actor_p4|walker2d-medium-replay-v2|T=10|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-replay-v2_tau10_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "06dfc21db546d1653eb20f0a4b3440a67dfc3d4d1dbd94c5ed7b332f1a817019",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "two_actor_p4|walker2d-medium-replay-v2|T=10|seed=1",
+    "scientific_config_sha256": "9d73a0bf58f4120fddad54049043d074b3f83e9d48d8966d880713253eedd6e1",
+    "step": 1000000,
+    "weights_sha256": "9b7cf0701c7cece5b900a19d60312f85ed99be4076f00cdf23c656869fb9dbc0"
+  },
+  "two_actor_p4|walker2d-medium-replay-v2|T=14|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-replay-v2_tau14_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "e3e7c054e07aeb33e36b6551a8bb230fe8cf416eea7b4add5d739a46ae6a57e4",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "two_actor_p4|walker2d-medium-replay-v2|T=14|seed=0",
+    "scientific_config_sha256": "c9d68f1469bb9ad6fed3b425cbbc28f677fb4d83ff9fe9672cabc9c722455b36",
+    "step": 1000000,
+    "weights_sha256": "26a40ba7b39704eb68e07ba4fa386d4fbeb5546288662433ef1f2d09178260d5"
+  },
+  "two_actor_p4|walker2d-medium-replay-v2|T=14|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-replay-v2_tau14_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "b4fe9ced16cf3c36f71342dde35a5b29ca524c93078975bf9ab4aa8eb0960578",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "two_actor_p4|walker2d-medium-replay-v2|T=14|seed=1",
+    "scientific_config_sha256": "140ec864c955206d4e6ae14fcb61345b758c8e18203006c99b44e0da07977a64",
+    "step": 1000000,
+    "weights_sha256": "9e1aec282d3d155a9fd7f1e126accd399ba2505948b32992bd9da967ffa4ac8f"
+  },
+  "two_actor_p4|walker2d-medium-replay-v2|T=20|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-replay-v2_tau20_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "c63c799ce7fdb80898438bfa134197bb13a9663902c4137134f58a53576b172c",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "two_actor_p4|walker2d-medium-replay-v2|T=20|seed=0",
+    "scientific_config_sha256": "2d17fe87ff40118fac0cd2b9d44f6cd79457551ebdacfea698613e0fe6c5ec3b",
+    "step": 1000000,
+    "weights_sha256": "24c79fcce125ba57487af4d1b3e5b6801109704c4b45a04d509e232ad4eca458"
+  },
+  "two_actor_p4|walker2d-medium-replay-v2|T=20|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-replay-v2_tau20_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "6a634e1f8a3c33a885dd2a5f629fccf9664aeb66ae94daf3417f7e751ae5232d",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "two_actor_p4|walker2d-medium-replay-v2|T=20|seed=1",
+    "scientific_config_sha256": "7ae631918bb0818a5c54f292b0c41339c979d6d7ebb751145e65ebf229dcb05b",
+    "step": 1000000,
+    "weights_sha256": "5cf6deac004f5367026986de7148187581bdeed01ff028acb9d91f161d0c28fe"
+  },
+  "two_actor_p4|walker2d-medium-replay-v2|T=4|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-replay-v2_tau4_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "93b50b52731a063f8c4ceb3a1cd49ac1f73e08d6e9120f5ca7f10fa5f384d1e7",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "two_actor_p4|walker2d-medium-replay-v2|T=4|seed=0",
+    "scientific_config_sha256": "42e9fbcb522505f7fcc5cfc5c17a5a988fc5b36806f4c36dae0c79733008c7f9",
+    "step": 1000000,
+    "weights_sha256": "6e32a876175df509a54758e83134003cdb2f083834f9c9a23e5babdbbcf02404"
+  },
+  "two_actor_p4|walker2d-medium-replay-v2|T=4|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-replay-v2_tau4_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "d0dee821b86c35a2cca0b71fdcb070cad0420a59fbdabbe9060bd6da6361b831",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "two_actor_p4|walker2d-medium-replay-v2|T=4|seed=1",
+    "scientific_config_sha256": "d27746942a212ddc028f50eee0ca04f585fe4a248c2be332d47bcdebb3f04f36",
+    "step": 1000000,
+    "weights_sha256": "4646e43cb364132c7f74ad836d9016409aacaa73f25af5ccc1cb34a14508156f"
+  },
+  "two_actor_p4|walker2d-medium-replay-v2|T=7|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-replay-v2_tau7_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "d86a1259df5447fc1fb1f72faccd76dc4e829dbd2eaa3853aa080e5eb1f6a68b",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "two_actor_p4|walker2d-medium-replay-v2|T=7|seed=0",
+    "scientific_config_sha256": "2e7de177809d983583086b1be0d7faa8af359c9f5f1a38877014740456ca23d7",
+    "step": 1000000,
+    "weights_sha256": "74eace1d382ead0dcdab379abc08184d2369254bb331fea93ea94509ea454763"
+  },
+  "two_actor_p4|walker2d-medium-replay-v2|T=7|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-replay-v2_tau7_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "ea1feb7e8013148cf7e3336ed792bb98d16e5f213376afd87c2ff11b39237477",
+    "normalization_sha256": "8522b486ae779b5f00e230ba41cd7fcf264a11b83e3207ebf4db21d53df96a5f",
+    "run_key": "two_actor_p4|walker2d-medium-replay-v2|T=7|seed=1",
+    "scientific_config_sha256": "a1969967f6478fd3110743035dc67a010d3570f3e5c2d699d1f6c7552baaa0e6",
+    "step": 1000000,
+    "weights_sha256": "78032e9720fd322c72cfe43395b4f7a67f0f1b35cc9d17f6d380f931a5de713b"
+  },
+  "two_actor_p4|walker2d-medium-v2|T=10|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-v2_tau10_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "18277f15988533eb590f56846056ec5ed7942fe035ba5ba0da2dfa598e9d8094",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "two_actor_p4|walker2d-medium-v2|T=10|seed=0",
+    "scientific_config_sha256": "c6ac8d07f8e5d25ce0312d9a598898a7e442403add00fae9145f484ccb1d1d51",
+    "step": 1000000,
+    "weights_sha256": "dd0f4f319019b0a086e4307c9d291dfe3e5f403d78d47ea2d2bc6c65239fa96e"
+  },
+  "two_actor_p4|walker2d-medium-v2|T=10|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-v2_tau10_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "48567adf890ec7ecbd733e6ad1f831d3f2e26bf26fa3a622a649792a797a1d9d",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "two_actor_p4|walker2d-medium-v2|T=10|seed=1",
+    "scientific_config_sha256": "0050da33e49e5636fc9c70e98f9a0fc10ac2f15c50a6985a7141399f1fbe8780",
+    "step": 1000000,
+    "weights_sha256": "059e99d88fb4724f85e81800954c59cd13f1f35f45153b6418ffdb9b2f0021ac"
+  },
+  "two_actor_p4|walker2d-medium-v2|T=14|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-v2_tau14_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "56c66216cf7fe68ba389c49b46ff00bd3c61b35d4268b28e58eb8d520abc0ff7",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "two_actor_p4|walker2d-medium-v2|T=14|seed=0",
+    "scientific_config_sha256": "befad90730f64fbf8c1a7ef12bf3fb4a7c852c415f5351693b00cabc3cdca789",
+    "step": 1000000,
+    "weights_sha256": "d433ad0319277ce837da7fa1133c0348d883a83ebc0696bd058f459988abc522"
+  },
+  "two_actor_p4|walker2d-medium-v2|T=14|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-v2_tau14_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "9c72f64e0949cd665c7ebf93b72e6d831aa5e67cf3c8a0646cfdf4b6021eed77",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "two_actor_p4|walker2d-medium-v2|T=14|seed=1",
+    "scientific_config_sha256": "c775b5450a166d3ae5097c46489eda103621495915cdc3e531eaf62b87b2d6d6",
+    "step": 1000000,
+    "weights_sha256": "a729e7d5cee86f641ca64259f4e8eeb5a7814a32699a23c2077bed645057310d"
+  },
+  "two_actor_p4|walker2d-medium-v2|T=20|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-v2_tau20_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "c4da38a9b2f8825acaee1e63a01a56bd681359b73b611527b7f426857cad09f2",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "two_actor_p4|walker2d-medium-v2|T=20|seed=0",
+    "scientific_config_sha256": "141563df88c8cc60eccfc573b1f1eb9a8aded62c2ec3499d1cdcdb78a9ca09b1",
+    "step": 1000000,
+    "weights_sha256": "737ec000e6260ca53d482947f73bd56911e0c0e969e19d29d541bccef1c12769"
+  },
+  "two_actor_p4|walker2d-medium-v2|T=20|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-v2_tau20_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "254679e281f95ea476ad8f714a54020233afbdad363b02ae86d588e594154a88",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "two_actor_p4|walker2d-medium-v2|T=20|seed=1",
+    "scientific_config_sha256": "0436282cba3433fdd4ba666471f1d4b193f80211914517797d635f21aab511b3",
+    "step": 1000000,
+    "weights_sha256": "69a9507bc2b9a2ccca93630b9c89dd2213d664572f45b101ac215380ad9724b3"
+  },
+  "two_actor_p4|walker2d-medium-v2|T=4|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-v2_tau4_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "f7371b17b7f4cbfe90144d363eda195a93cb9181f9edf559243ccfcf0e0df27f",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "two_actor_p4|walker2d-medium-v2|T=4|seed=0",
+    "scientific_config_sha256": "27249cf7709de4f3377af9173968da312bfa17cbf297ac1d98aada722c524f82",
+    "step": 1000000,
+    "weights_sha256": "868b7e2d5dea3123c3df1835a71e9ae49f5fb6f4544404dbe484871141c3a3ff"
+  },
+  "two_actor_p4|walker2d-medium-v2|T=4|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-v2_tau4_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "bf4038b00db746c7f23a6e1a18b13bbf85b1567f236993f4452d6cba6376470b",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "two_actor_p4|walker2d-medium-v2|T=4|seed=1",
+    "scientific_config_sha256": "75311ca7fdff909ac9aa77a7d1b54ff400b7b92a82b4a5a9c5c39a08940c6875",
+    "step": 1000000,
+    "weights_sha256": "825d66cc3f66e35b50f9a2969d5708b55c9446872fe98db8bc7b14336e2f9445"
+  },
+  "two_actor_p4|walker2d-medium-v2|T=7|seed=0": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-v2_tau7_mcep4_seed0/params_1000000.pkl",
+    "file_sha256": "47038683ee95b68bb592605ac13b402c98e527e93180fdba38bce254b6f48e54",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "two_actor_p4|walker2d-medium-v2|T=7|seed=0",
+    "scientific_config_sha256": "b20426d1e057d1b64064750f9318f38b760f77eb394f79f608afa5548c770f0b",
+    "step": 1000000,
+    "weights_sha256": "cd00acc2f96b77673563ad33e74ba527e53eed5fd66e285334ae6f068b1d2c48"
+  },
+  "two_actor_p4|walker2d-medium-v2|T=7|seed=1": {
+    "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-v2_tau7_mcep4_seed1/params_1000000.pkl",
+    "file_sha256": "4746813999922dd3c93ed8872591e2a32becfd40e3c24ba128f3fcffecb188a6",
+    "normalization_sha256": "96861b39a00800d6b9ffc9be1bc67ef91cd360f5a7dea9ae86c6b4aeaa264431",
+    "run_key": "two_actor_p4|walker2d-medium-v2|T=7|seed=1",
+    "scientific_config_sha256": "f8460866f8ef090641254fe59dace8a97e5037f97d82b8328585c47a14ba397d",
+    "step": 1000000,
+    "weights_sha256": "83f029df90fffc1ebcd131ba92280ae1fddbfa672c270354c4e628360b75ca19"
+  }
+}

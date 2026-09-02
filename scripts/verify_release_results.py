@@ -189,6 +189,28 @@ EXPECTED_CLAIMS = {
     },
 }
 
+ACTOR_COST_ARCHIVE_SHA256 = {
+    "K=1.json": "d520365702caa5bb05034a2da837306fd8f3de36006fba67647f52e3e1b243e8",
+    "K=2.json": "66bbe71b9e8f0553a1026fb17f2bff06ba756f7f34330043552568242155b79f",
+    "K=3.json": "20dcdc16d002bb9140aef352812f2778f8ab4cd51500db11a48e9df5b6bb77ac",
+    "K=4.json": "beb5ebd77808b147f9d556dab3aef8436baccd6c49903e663fec29cba91ec12a",
+    "MANIFEST.json": "edaa1efeff7ca037124af8a12f2ded88b424d6c76132a9e0ddfe94fcc41e203a",
+    "RUN_CONTEXT.json": "ca853bcda35732a00826149e3f74dcde68518ddee478f20a55d0f059eef833b0",
+}
+ACTOR_COST_EXPECTED = {
+    1: (1.4345667500000001, 1.0, 9_684_736, 1.0),
+    2: (1.5424702, 1.0752167509807402, 14_680_064, 1.5157939256165578),
+    3: (1.6856721499999998, 1.1750391886609666, 15_627_520, 1.6136237477201236),
+    4: (1.88734705, 1.3156216328030745, 18_045_440, 1.8632867225291427),
+}
+ACTOR_COST_SOURCE_REVISION = "481f7fe0786230db8b4106e44349be241a18414d"
+ACTOR_COST_DATASET_SHA256 = "5bdf1bc4a713c82941de44633df669b36c89850b652a25985166796d25cf71a0"
+ACTOR_COST_MEMORY_SCOPE = (
+    "fresh worker process-lifetime backend high-water mark through dataset/batch "
+    "transfer, actor/critic state initialization, lowering/compile, warmup, and "
+    "timed trials; not an isolated steady-state actor-call peak"
+)
+
 
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
@@ -1005,7 +1027,136 @@ def verify_mcep_control(diag: Path, source_root: Path | None = None) -> None:
     )
 
 
-def verify_fixed_operator_order(diag: Path) -> None:
+def verify_actor_cost_archive(diag: Path) -> None:
+    """Verify the compact, hash-pinned actor-cost release without raw dependencies."""
+    cost_dir = diag / "actor_cost"
+    expected_files = set(ACTOR_COST_ARCHIVE_SHA256)
+    actual_json = {path.name for path in cost_dir.glob("*.json")}
+    assert actual_json == expected_files
+    for name, expected_digest in ACTOR_COST_ARCHIVE_SHA256.items():
+        assert sha256_file(cost_dir / name) == expected_digest
+
+    context = json.loads((cost_dir / "RUN_CONTEXT.json").read_text())
+    manifest = json.loads((cost_dir / "MANIFEST.json").read_text())
+    assert context["schema_version"] == manifest["schema_version"] == "bar-actor-cost-v1"
+    assert manifest["artifact"] == "actor_cost_manifest"
+    assert manifest["status"] == "measured"
+    assert manifest["accelerator_evidence"] is True
+    assert manifest["exact_k_set"] == context["orchestrator"]["exact_k_set"] == [1, 2, 3, 4]
+    assert manifest["only_swept_field"] == "k"
+    assert context["orchestrator"]["fresh_process_per_k"] is True
+    assert context["orchestrator"]["sequential_workers"] is True
+    assert context["git"]["dirty"] is False
+    assert context["git"]["revision"] == ACTOR_COST_SOURCE_REVISION
+    assert manifest["git"] == context["git"]
+    assert context["dataset"]["sha256"] == ACTOR_COST_DATASET_SHA256
+    assert manifest["dataset"]["sha256"] == ACTOR_COST_DATASET_SHA256
+    assert manifest["run_context"]["sha256"] == ACTOR_COST_ARCHIVE_SHA256["RUN_CONTEXT.json"]
+    assert manifest["hashes"]["run_context_sha256"] == ACTOR_COST_ARCHIVE_SHA256["RUN_CONTEXT.json"]
+    assert manifest["memory_scope"] == ACTOR_COST_MEMORY_SCOPE
+    assert manifest["device"]["platform"] == "gpu"
+    assert manifest["device"]["device_kind"] == "NVIDIA H200"
+    assert manifest["selected_driver_record"]["name"] == "NVIDIA H200"
+    assert manifest["device_binding"]["method"] == "resolved_uuid_visibility"
+    assert manifest["worker_environment"]["JAX_PLATFORMS"] == "cuda"
+    assert manifest["worker_environment"]["XLA_PYTHON_CLIENT_PREALLOCATE"] == "false"
+    assert manifest["packages"]["jax"] == manifest["packages"]["jaxlib"] == "0.10.2"
+
+    common = context["common_config"]
+    assert manifest["common_config"] == common
+    assert common["platform"] == "gpu"
+    assert common["memory_fallback"] == "none"
+    assert common["batch_size"] == 256
+    assert common["tau"] == 12.0
+    assert common["trials"] == common["calls_per_trial"] == 10
+    assert common["warmup_calls"] == 3
+
+    rows = {int(row["k"]): row for row in manifest["results"]}
+    assert set(rows) == set(ACTOR_COST_EXPECTED)
+    pids: set[int] = set()
+    process_tokens: set[str] = set()
+    k1_time, _, k1_peak, _ = ACTOR_COST_EXPECTED[1]
+    invariant_hash = manifest["invariant_config_sha256"]
+    source_hash = manifest["source"]["sha256"]
+
+    for k, (expected_ms, expected_time_ratio, expected_peak, expected_peak_ratio) in (
+        ACTOR_COST_EXPECTED.items()
+    ):
+        result_path = cost_dir / f"K={k}.json"
+        raw = json.loads(result_path.read_text())
+        row = rows[k]
+        assert raw["schema_version"] == "bar-actor-cost-v1"
+        assert raw["artifact"] == "actor_cost_worker_result"
+        assert int(raw["k"]) == int(raw["config"]["k"]) == k
+        config_without_k = dict(raw["config"])
+        del config_without_k["k"]
+        assert config_without_k == common
+        assert raw["hashes"]["run_context_sha256"] == ACTOR_COST_ARCHIVE_SHA256["RUN_CONTEXT.json"]
+        assert raw["hashes"]["dataset_sha256"] == ACTOR_COST_DATASET_SHA256
+        assert raw["hashes"]["invariant_config_sha256"] == invariant_hash
+        assert raw["hashes"]["code_sha256"] == source_hash
+        assert raw["provenance"]["git"]["dirty"] is False
+        assert raw["provenance"]["git"]["revision"] == ACTOR_COST_SOURCE_REVISION
+        assert raw["provenance"]["visible_device_count"] == 1
+        assert raw["provenance"]["device"]["device_kind"] == "NVIDIA H200"
+        assert raw["actor_update"]["scope"] == "actor_only_no_critic_update"
+        assert raw["actor_update"]["fixed_input_state_each_call"] is True
+
+        call_rows = raw["timing"]["raw_call_ms"]
+        assert len(call_rows) == common["trials"]
+        assert all(len(calls) == common["calls_per_trial"] for calls in call_rows)
+        trial_means = [statistics.fmean(map(float, calls)) for calls in call_rows]
+        recorded_trials = list(map(float, raw["timing"]["raw_trial_ms"]))
+        assert len(recorded_trials) == len(trial_means)
+        assert all(
+            math.isclose(actual, expected, rel_tol=0.0, abs_tol=1e-12)
+            for actual, expected in zip(recorded_trials, trial_means, strict=True)
+        )
+        recomputed_median = statistics.median(trial_means)
+        assert math.isclose(
+            float(raw["timing"]["median_actor_update_ms"]),
+            recomputed_median,
+            rel_tol=0.0,
+            abs_tol=1e-12,
+        )
+
+        memory = raw["memory"]
+        assert memory["is_accelerator_memory"] is True
+        assert memory["fallback_selected"] == "none"
+        assert memory["source"] == "device.memory_stats"
+        assert memory["peak_counter_scope"] == ACTOR_COST_MEMORY_SCOPE
+        assert int(memory["baseline_adjusted_peak_bytes"]) == max(
+            0,
+            int(memory["absolute_peak_bytes"]) - int(memory["baseline_current_bytes"]),
+        )
+
+        assert row["result_file"] == result_path.name
+        assert row["result_sha256"] == ACTOR_COST_ARCHIVE_SHA256[result_path.name]
+        assert row["raw_trial_ms"] == raw["timing"]["raw_trial_ms"]
+        assert math.isclose(float(row["median_actor_update_ms"]), recomputed_median)
+        assert int(row["absolute_peak_bytes"]) == int(memory["absolute_peak_bytes"])
+        assert int(row["baseline_adjusted_peak_bytes"]) == int(
+            memory["baseline_adjusted_peak_bytes"]
+        )
+
+        close(recomputed_median, expected_ms, tol=1e-12)
+        close(float(row["time_ratio_to_k1"]), expected_time_ratio, tol=1e-12)
+        close(float(row["absolute_peak_ratio_to_k1"]), expected_peak_ratio, tol=1e-12)
+        assert int(row["absolute_peak_bytes"]) == expected_peak
+        close(recomputed_median / k1_time, expected_time_ratio, tol=1e-12)
+        close(int(row["absolute_peak_bytes"]) / k1_peak, expected_peak_ratio, tol=1e-12)
+
+        pids.add(int(raw["process"]["pid"]))
+        process_tokens.add(str(raw["process"]["process_token"]))
+
+    assert len(pids) == len(process_tokens) == 4
+    print(
+        "PASS actor cost: hash-pinned K=1..4 H200 archive, recomputed timing, "
+        "fresh workers, and scoped accelerator high-water memory"
+    )
+
+
+def verify_retired_fixed_operator_archive(diag: Path) -> None:
     order_dir = diag / "fixed_operator_order"
     status = json.loads((order_dir / "STATUS.json").read_text())
     harness = json.loads((order_dir / "HARNESS.json").read_text())
@@ -1049,8 +1200,8 @@ def verify_fixed_operator_order(diag: Path) -> None:
         ):
             assert not (order_dir / name).exists()
         print(
-            "PASS fixed-operator preflight: harness/protocol draft valid; "
-            f"checkpoints unresolved {status['n_resolved']}/18"
+            "PASS retired fixed-operator scaffold: archive integrity valid; "
+            f"snapshot resolved {status['n_resolved']}/18 and has no learned result"
         )
         return
 
@@ -1189,8 +1340,8 @@ def verify_fixed_operator_order(diag: Path) -> None:
     for name, expected_hash in result_manifest["artifacts"].items():
         assert sha256_file(order_dir / name) == expected_hash
     print(
-        "PASS fixed-operator order: exact grids/counts/fingerprints, "
-        "ratios, masks, diagnostics, and gates agree"
+        "PASS retired fixed-operator archive: exact grids/counts/fingerprints, "
+        "ratios, masks, diagnostics, and gates agree; provenance only"
     )
 
 
@@ -1812,10 +1963,24 @@ def verify_manuscript(path: Path) -> None:
         "live local-limit boundary": (
             "persistentlateractorsneednotapproachtheidentityashto0"
         ),
+        "ReLU region identity": (
+            "thetwoidealmapscoincideinsideoneactivationregion"
+        ),
+        "ReLU learned-audit boundary": (
+            "ratherthanfittinganonzero1/kerrorslope"
+        ),
         "calibrated abstract mechanism": (
             "resultssupporttarget/deploymentseparation"
         ),
         "evidence map": "evidencemap",
+        "actor-cost main endpoints": (
+            "compiledactor-phasetimerisesfrom1.435to1.887ms"
+        ),
+        "actor-cost K4 row": "4&1.887347&1.316&18,045,440&1.863",
+        "actor-cost evidence scope": "actorcost&k=1--4;h200",
+        "actor-cost interpretation boundary": (
+            "notanend-to-endtraining-timeorhardware-independentmemorylaw"
+        ),
         "evidence map P3 movement scope": (
             "p3target/finaldisplacement&270checkpoints;90matchedcontrasts"
         ),
@@ -1933,7 +2098,8 @@ def main() -> None:
         args.results_dir / "diagnostics",
         args.mcep_source_root,
     )
-    verify_fixed_operator_order(args.results_dir / "diagnostics")
+    verify_actor_cost_archive(args.results_dir / "diagnostics")
+    verify_retired_fixed_operator_archive(args.results_dir / "diagnostics")
     verify_diagnostics(args.results_dir / "diagnostics", claims)
     verify_figure_inputs(args.results_dir / "diagnostics")
     verify_k4(args.results_dir)

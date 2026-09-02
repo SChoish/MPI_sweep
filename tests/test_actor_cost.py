@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 from copy import deepcopy
@@ -12,6 +13,7 @@ import pytest
 
 from scripts.diagnostics import profile_actor_cost as profiler
 from scripts.diagnostics.verify_actor_cost import VerificationError, verify_directory
+from scripts.verify_release_results import verify_actor_cost_archive
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +23,7 @@ MEMORY_SCOPE = (
     "transfer, actor/critic state initialization, lowering/compile, warmup, and "
     "timed trials; not an isolated steady-state actor-call peak"
 )
+RELEASE_ARCHIVE = ROOT / "sweep_results" / "diagnostics" / "actor_cost"
 
 
 def _digest(value):
@@ -834,3 +837,15 @@ def test_verifier_rejects_gpu_environment_not_bound_to_resolved_uuid(tmp_path: P
     _reseal_bundle(directory)
     with pytest.raises(VerificationError, match="CUDA visibility"):
         _verify_bundle(directory)
+
+
+def test_release_actor_cost_archive_is_hash_pinned_and_recomputed(tmp_path: Path):
+    verify_actor_cost_archive(RELEASE_ARCHIVE.parent)
+
+    copied_diagnostics = tmp_path / "diagnostics"
+    copied_archive = copied_diagnostics / "actor_cost"
+    shutil.copytree(RELEASE_ARCHIVE, copied_archive)
+    with (copied_archive / "K=1.json").open("a", encoding="utf-8") as handle:
+        handle.write(" ")
+    with pytest.raises(AssertionError):
+        verify_actor_cost_archive(copied_diagnostics)

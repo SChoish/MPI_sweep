@@ -1,0 +1,121 @@
+{
+  "common_config": {
+    "allow_cpu_smoke": false,
+    "batch_size": 256,
+    "calls_per_trial": 10,
+    "dataset_path": "/raid/ext_csv/datasets/d4rl/hopper_medium-v2.hdf5",
+    "device_selector": "0",
+    "init_seed": 0,
+    "integrator": "implicit",
+    "learning_rate": 0.0003,
+    "memory_fallback": "none",
+    "method": "bar",
+    "normalization_epsilon": 0.001,
+    "platform": "gpu",
+    "polyak": 0.005,
+    "production_actor_functions": [
+      "train_td3bc.update_first_actor",
+      "train_td3bc.update_actor_hop"
+    ],
+    "sample_seed": 20260902,
+    "scale_norm": true,
+    "tau": 12.0,
+    "trials": 10,
+    "warmup_calls": 3
+  },
+  "created_utc": "2026-09-02T10:47:37.704464+00:00",
+  "dataset": {
+    "path": "/raid/ext_csv/datasets/d4rl/hopper_medium-v2.hdf5",
+    "sha256": "5bdf1bc4a713c82941de44633df669b36c89850b652a25985166796d25cf71a0"
+  },
+  "driver_inventory": {
+    "provider": "nvidia-smi",
+    "records": [
+      {
+        "driver_version": "580.173.02",
+        "index": "0",
+        "name": "NVIDIA H200",
+        "uuid": "GPU-d923851f-6b7d-1f56-043a-8d3519d6347e"
+      },
+      {
+        "driver_version": "580.173.02",
+        "index": "1",
+        "name": "NVIDIA H200",
+        "uuid": "GPU-24eb1ba2-7313-ff93-1435-748768ebdbdc"
+      }
+    ]
+  },
+  "exclusivity": {
+    "lock_path": "/tmp/bar-actor-cost-5feceb66ffc86f38d952.lock",
+    "operator_confirmed": true,
+    "scope": "operator attestation plus cross-run harness file lock"
+  },
+  "git": {
+    "available": true,
+    "dirty": false,
+    "revision": "481f7fe0786230db8b4106e44349be241a18414d",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "host": {
+    "hostname": "ext_csv-box",
+    "machine": "x86_64",
+    "system": "Linux-6.8.0-55-generic-x86_64-with-glibc2.39"
+  },
+  "orchestrator": {
+    "exact_k_set": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "fresh_process_per_k": true,
+    "invocation_id": "c6949fbe-8a74-4df4-8ef4-47aa7bde4ba9",
+    "pid": 3086,
+    "sequential_workers": true
+  },
+  "packages_before_worker": {
+    "flax": "0.12.7",
+    "jax": "0.10.2",
+    "jaxlib": "0.10.2",
+    "numpy": "2.5.0",
+    "optax": "0.2.8"
+  },
+  "parent_environment": {
+    "CUDA_VISIBLE_DEVICES": null,
+    "HIP_VISIBLE_DEVICES": null,
+    "JAX_ENABLE_X64": null,
+    "JAX_PLATFORMS": null,
+    "JAX_PLATFORM_NAME": null,
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONHASHSEED": null,
+    "ROCR_VISIBLE_DEVICES": null,
+    "XLA_FLAGS": "--xla_cpu_multi_thread_eigen=false --xla_gpu_force_compilation_parallelism=1 --xla_gpu_autotune_level=0 ",
+    "XLA_PYTHON_CLIENT_ALLOCATOR": null,
+    "XLA_PYTHON_CLIENT_MEM_FRACTION": null,
+    "XLA_PYTHON_CLIENT_PREALLOCATE": null
+  },
+  "python": {
+    "executable": "/home/ext_csv/miniconda3/envs/offrl/bin/python",
+    "implementation": "CPython",
+    "version": "3.12.13"
+  },
+  "schema_version": "bar-actor-cost-v1",
+  "selected_driver_record": {
+    "driver_version": "580.173.02",
+    "index": "0",
+    "name": "NVIDIA H200",
+    "uuid": "GPU-d923851f-6b7d-1f56-043a-8d3519d6347e"
+  },
+  "source": {
+    "files": {
+      "d4rl_data.py": "03688c0892f70da54c9db319c47f26c97f1505639403f8c8f55ba5e418795bc4",
+      "scripts/diagnostics/profile_actor_cost.py": "cfdeaa9a7443a31c1fd875b5a607fc88929772f20fb0523cc712db920c51855e",
+      "scripts/diagnostics/verify_actor_cost.py": "1b27ffc04d469816988183bc3c0cf1d4687704a3f60df77c4aac7b8cf748f386",
+      "train_td3bc.py": "8198b9f5ba3aca1e82a7b280bfc97f1d61cd60a9ad21a60f0e951a4cb18ebe1a"
+    },
+    "repository_path": "/home/ext_csv/MPI_sweep_actor_cost_fix",
+    "sha256": "642eaf9221331fc23679f745e2bed6896b72779004a60ed05f5cf5222556828b"
+  }
+}

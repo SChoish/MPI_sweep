@@ -7,7 +7,8 @@ Package root: `scripts/diagnostics/`
 | [HOST_RUNBOOK.md](HOST_RUNBOOK.md) | How to run on each machine |
 | [ARTIFACT_MAP.md](ARTIFACT_MAP.md) | Maps `sweep_results/diagnostics/*` → scripts / status |
 | [P1_TARGET_VALUE_RUNBOOK.md](P1_TARGET_VALUE_RUNBOOK.md) | Exact 270-checkpoint P1 audit and verifier |
-| [ACTOR_COST_RUNBOOK.md](ACTOR_COST_RUNBOOK.md) | Fresh-process K=1--4 timing/memory profiler |
+| [P2_RELU_RESIDENCE_RUNBOOK.md](P2_RELU_RESIDENCE_RUNBOOK.md) | Development-only ReLU activation-region pilot and final-audit contract |
+| [ACTOR_COST_RUNBOOK.md](ACTOR_COST_RUNBOOK.md) | Released K=1--4 H200 timing/memory snapshot and rerun protocol |
 | `run_host.sh` | One-shot wrapper for this host's seeds |
 | `dump_*.py` / `run_*.py` / `summarize_*.py` | Implementations |
 
@@ -60,6 +61,12 @@ ignored raw artifacts.
 The P1 target-value audit and actor-cost profiler are standalone locked
 protocols and are not included in any `run_host.sh --job` choice, including
 `all`.
+
+The compact `sweep_results/diagnostics/actor_cost/` archive is a measured,
+hash-pinned one-stack result, not a host checkpoint dump. The release verifier
+recomputes its timing and memory summaries without requiring the local dataset;
+the standalone verifier additionally rehashes the recorded source and dataset
+when those raw dependencies are available.
 
 The older target-policy exposure dump may operate on a host-local partial
 inventory. It does not satisfy P1's exact 270-checkpoint inclusion gate and

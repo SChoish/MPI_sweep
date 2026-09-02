@@ -27,26 +27,30 @@ prerequisite for those aggregate outcomes.
 
 Implementation status is tracked separately from experimental status. The
 preview/freeze/launch/analyze/verify harness is packaged in
-[`scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md`](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md),
-but no P4 manifest has been frozen and no P4 control or contemporaneous BAR
-job has been launched from it.
+[`scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md`](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md).
+On `ext_csv`, a 180-cell manifest was frozen at `29fea94` and the first 90
+keys finished at 1M (`45` BAR-P4 + `45` two-actor-P4 `eval.csv`). The second
+90 were cancelled on this host and are not a released compact archive. No
+paired contrast, decision label, or manuscript promotion has passed yet.
 
 - [x] Generalize the existing control to a target coefficient `T/4` and a
   directly data-anchored deployment coefficient `T`. Keep independent actors;
   route only the target actor into Bellman backups. Call it a two-actor
   policy-separation control, not a published-MCEP reproduction.
-- [ ] Run exactly nine paper tasks, `T={4,7,10,14,20}`, and seeds 0--1 to one
-  million critic updates with ten final evaluation episodes: 90 control runs.
-  Do not add seeds 4--7 and do not expand to a P2/P3/P4 factorial before this
-  comparison is read.
-- [ ] Rerun the same 90 BAR-P4 cells contemporaneously from the same clean code
-  snapshot and environment lock. Historical P4 scores may be a marginal
-  sensitivity, but cannot be spliced into cellwise pairing because individual
-  collapse trajectories are unstable across reruns.
-- [ ] Before launch, freeze a manifest with resolved configs, source revision
+- [x] Before launch, freeze a manifest with resolved configs, source revision
   and file hashes, dependency lock, dataset and normalization hashes, hardware,
   evaluation contract, output schema, and exact expected keys. Resume only
   from a checkpoint whose config and weights hashes match the manifest.
+- [ ] Run exactly nine paper tasks, `T={4,7,10,14,20}`, and seeds 0--1 to one
+  million critic updates with ten final evaluation episodes: 90 control runs.
+  Host progress: `45/90` two-actor-P4 finals on `ext_csv` (first half of the
+  frozen 180-key order). Do not add seeds 4--7 and do not expand to a
+  P2/P3/P4 factorial before this comparison is read.
+- [ ] Rerun the same 90 BAR-P4 cells contemporaneously from the same clean code
+  snapshot and environment lock. Host progress: `45/90` BAR-P4 finals on
+  `ext_csv` paired with the first-half control keys. Historical P4 scores may
+  be a marginal sensitivity, but cannot be spliced into cellwise pairing
+  because individual collapse trajectories are unstable across reruns.
 - [ ] Primary signed contrast is BAR-P4 minus two-actor-P4. Report the
   task-equal mean over the fixed 90-cell grid, paired median, wins/ties,
   nine task means, 100,000-draw task-resampling interval, and raw-run plus
@@ -89,26 +93,28 @@ job has been launched from it.
 ## P1: measure target-value perturbation and matched final reach (CPU)
 
 The existing headline diagnostic directly measures target-action displacement,
-not critic error, dataset support, or TD-target value perturbation. The current
-`ext_csv` checkpoint inventory contains the 90 contemporaneous BAR-P3 and 90
-P3-control finals but no complete headline TD3/P4 inventory. Do not substitute
-those reruns for the released grid. Run this audit only after the exact matched
-headline checkpoints are resolved and fingerprinted.
+not critic error, dataset support, or TD-target value perturbation. The exact
+270 candidate paths for headline TD3, BAR-P3, and BAR-P4 are now present on this
+host. Protocol-v2 preflight resolved and fingerprinted all 270 in an external
+bundle without writing scientific outputs. Path completeness and compatibility
+admission do not prove historical method identity or make the audit a result.
 
 Implementation status is separate: the fail-closed runner and independent
 artifact verifier are packaged in
 [`scripts/diagnostics/P1_TARGET_VALUE_RUNBOOK.md`](scripts/diagnostics/P1_TARGET_VALUE_RUNBOOK.md).
 They require the exact 270-checkpoint grid before writing scientific outputs.
-No P1 audit has passed that inclusion gate on this host.
+The input preflight has passed; no P1 scientific run or independent verification
+has passed the full inclusion gate on this host.
 
 - [x] Package and test the exact-grid runner, frozen protocol, and independent
   verifier without substituting partial checkpoints.
 
 ### A. Direct TD-target-value perturbation
 
-- [ ] Inventory matched TD3, P3, and P4 final checkpoints for all nine tasks,
-  `T={4,7,10,14,20}`, and seeds 0--1. Record weights, config, source, dataset,
-  normalization, and selected-transition hashes; stop on any missing cell.
+- [x] Inventory matched TD3, P3, and P4 final checkpoints for all nine tasks,
+  `T={4,7,10,14,20}`, and seeds 0--1. Protocol-v2 preflight resolved 270/270
+  and recorded weights, raw/effective configs, compatibility resolution, source,
+  dataset, normalization, and selected-transition hashes in an external bundle.
 - [ ] On one frozen next-state batch and the existing valid-transition mask,
   reuse identical clipped target-smoothing noise for the target actor and the
   recorded next dataset action. For each checkpoint compute
@@ -139,14 +145,16 @@ No P1 audit has passed that inclusion gate on this host.
 ### C. Realized feasible-comparator residual
 
 - [ ] For re-centered hops $k\ge2$, use the frozen audit batch with the same
-  critic, realized $C_k$, and predecessor reference. Reconstruct one
-  post-hoc final-checkpoint Adam update from the stored actor parameters and
-  exact stored optimizer state and step, then record
+  critic, realized $C_k$, and predecessor reference. Apply one post-hoc
+  final-checkpoint step with the frozen audit Adam transform to the stored actor
+  parameters and exact stored optimizer state, using the independent stored step
+  for the current layout or the unique stored Adam count for an admitted legacy
+  layout, then record
   `r_k = L_h,k(mu_k | mu_(k-1)) - L_h,k(mu_(k-1) | mu_(k-1))` before and after
   that update. Stop rather than approximate if the stored optimizer state or
-  configuration is incompatible. This is not the historical live update or
-  its training minibatch. Store `max(0,r_k)` as the smallest observed
-  comparator slack satisfying the conditional margin.
+  configuration is incompatible. Compatibility admission does not recover the
+  historical live update or its training minibatch. Store `max(0,r_k)` as the
+  smallest observed comparator slack satisfying the conditional margin.
 - [ ] Report hop-, budget-, task-, and stability-stratified residuals with
   batch and checkpoint hashes. Do not call this a global optimality gap or a
   bound on $\varepsilon_k$; it only tests the proposition's feasible-comparator
@@ -158,173 +166,63 @@ the checkpoint manifest, common batch/noise contract, exact grid, and verifier
 all pass. Null, reversed, or heterogeneous outcomes must be reported rather
 than filtered.
 
-## P2: validate the local theory with a fixed-operator error audit
+## P2: delimit the local theory on learned ReLU critics
 
-The archived actor-path analysis is no longer manuscript evidence for a
-semigroup or discretization-error claim. Its learned-endpoint comparisons use
-different critics at different budgets, recompute the Q scale across calls,
-retain unequal convergence/projection subsets, and include persistent actors
-with different optimization histories. Some cross-depth rows also mix
-normalization conventions and coverage. Exact semigroup equality is also the
-wrong null for first-order Euler maps: at fixed total time, expected global
-discretization error scales with substep size rather than vanishing exactly.
+The actor-path and fixed-operator-order archives remain provenance only. A
+learned ReLU critic is piecewise affine in action at a fixed state. Before the
+first activation or action-box boundary, its action gradient is constant, so
+the ideal explicit and same-region backward-Euler maps coincide exactly for
+any subdivision. At a boundary the smooth-field expansion stops applying.
+A nonzero learned `1/K` slope is therefore the wrong target; the replacement
+audit measures where the local affine scope ends. It does not test return,
+identify a global proximal solution, or certify the persistent Adam actor chain.
 
-Keep the archived CSVs for provenance, but do not cite their numerical defects
-as an error rate or depth trend.
+### Completed development gate (CPU; not manuscript evidence)
 
-Current implementation status: the CPU harness and 18 deterministic
-state-index files are archived in
-`sweep_results/diagnostics/fixed_operator_order/`; the analytic linear and
-quadratic checks pass. The numerical protocol file is a preflight scaffold, not
-a cleared frozen protocol. The local implementation now includes the required
-code/config hashes, output schemas, state/substep diagnostics, failure
-retention, error ratios, task aggregation, the 8192-microstep RK4 cap, and
-preflight/final verifier paths. These final-output paths are not marked
-complete until exercised on the canonical critics. No learned-critic order
-result exists because the checkpoint inventory resolves 0/18 canonical `T=1`
-critics. Resolve and fingerprint those exact critics before freezing the
-protocol; no learned aggregate has been read.
+- [x] Package a create-only activation-region runner, independent verifier,
+  exact smooth-quadratic oracle, and hand-derived synthetic ReLU cases. The
+  retired fixed-operator scaffold stays archived as a verified 0/18 provenance
+  snapshot and is not a learned result.
+- [x] Bind the exposed HalfCheetah-medium `T=1`, seed-0 checkpoint, config,
+  dataset, and both canonical seed-0/1 exclusion files by predeclared SHA-256
+  before semantic deserialization. Their 1,022-row union is excluded; the
+  bundle preserves executable source snapshots and dirty-worktree provenance.
+- [x] Independently recompute the critic geometry, 384 finite-difference
+  coordinates, every ReLU and action-box bracket, combined event ordering,
+  layer-2 propagated rounding bounds, every CSV/JSON cell, and same-region
+  affine residuals. Tampered summaries, snapshots, and provenance must fail.
+- [x] Run one 64-anchor development pilot and pass its snapshot verifier. Full
+  residence is 55/64, 49/64, 44/64, and 36/64 at
+  `T={.025,.05,.1,.2}`; the largest same-region affine residual is
+  `4.13e-13`. These are development readouts from an already exposed family:
+  `scientific_admissible=false`, no learned slope, and no coverage/support
+  threshold. They are not added to the manuscript.
 
-### A. Fixed-operator convergence order (CPU, primary)
+The implementation and exact local rerun command are documented in
+[`scripts/diagnostics/P2_RELU_RESIDENCE_RUNBOOK.md`](scripts/diagnostics/P2_RELU_RESIDENCE_RUNBOOK.md).
 
-#### Locked inputs and operator
+### Final scientific scope audit (CPU; pending)
 
-- [x] Create `sweep_results/diagnostics/fixed_operator_order/`; do not
-  overwrite the archived `actor_path_semigroup` or
-  `frozen_critic_small_step` bundles.
-- [ ] Reuse the 18 final TD3+BC `T=1` critics identified by
-  `frozen_critic_small_step/MANIFEST.json`: all nine paper environments and
-  seeds 0--1 at 1M critic updates. Its absolute paths are discovery hints, not
-  a sufficient checkpoint inventory.
-- [ ] Before freezing the protocol, write `CHECKPOINTS.json` with each exact
-  checkpoint path, environment, seed, update, config hash, weights SHA-256,
-  dataset identifier, dataset-file hash, and state-normalization-statistics
-  hash. Stop if any of the 18 critics or fingerprints cannot be resolved; do
-  not silently substitute another checkpoint.
-- [x] For environment index `j` (the zero-based position in the existing
-  manifest's `environments` list) and seed `z`, recreate the existing 512
-  reference pairs with `numpy.random.default_rng(20260829 + 100*j + z)`,
-  sampled without replacement from dataset rows satisfying
-  `max(abs(a_D)) <= .95`. The 18 selected-index files and SHA-256 values are
-  archived; recheck their dataset fingerprints when the critics are resolved.
-- [ ] Use normalized dataset state `s`, dataset action
-  `a(0)=a_D`, action dimension `d`, action box `[-1,1]^d`,
-  `epsilon=1e-6`, and x64 arithmetic for the numerical audit. Record
-  checkpoint, config, normalization, state-index, precision, and code hashes.
-- [ ] Freeze one critic `Q_ref` and one batch scale per environment--seed:
-  `C_ref = mean_i(abs(Q_ref(s_i,a_D_i))) + epsilon`. Define
-  `f_s(a)=d*grad_a Q_ref(s,a)/C_ref`. Recomputing `C` along a path is a
-  separately labeled sensitivity analysis, not part of the primary estimate.
-- [ ] Use total local times `T={0.025,0.05,0.1,0.2}` and
-  `K={1,2,4,8,16}`, with `dt=T/K`, for explicit Euler and backward Euler.
-  Hold critic, scale, states, anchors, precision, and action metric fixed as
-  `K` changes.
-
-#### Reference, solver, and independence checks
-
-- [ ] Implement the reference RK4 trajectory on a code path independent of the
-  tested Euler maps. For `N=256,512,...,4096`, compute both `N`- and
-  `2N`-microstep paths. Let `R_N` be their endpoint RMS difference and let
-  `M_2N` be the RMS movement of the `2N` endpoint from `a_D`. Accept the first
-  `2N` satisfying `R_N <= max(1e-10, 1e-6*M_2N)` and use that endpoint as the
-  reference. If none passes through 8192 microsteps, mark the cell
-  reference-unstable. This test must not use either Euler error.
-- [x] Validate the harness before using learned critics, with `d=2`, `C=1`,
-  `a(0)=(.2,-.3)`, and `T=.2`. For `Q(a)=b^T a`, `b=(.1,-.2)`, both schemes
-  must match `a(0)+2Tb` within `1e-10`. For
-  `Q(a)=a^T A a/2+b^T a`, `A=diag(-.25,-.5)`, `b=(.1,.05)`, compare with
-  `exp(2AT)a(0)+(2A)^{-1}(exp(2AT)-I)2b`; both fitted slopes over
-  `K={4,8,16}` must lie in `[.9,1.1]`.
-- [ ] Solve each backward-Euler equation
-  `a_next=a_prev+dt*f_s(a_next)` by fixed-point iteration initialized only at
-  `a_prev`, with x64 infinity-norm equation residual at most `1e-10`, delta at
-  most `1e-10`, and 1000 iterations maximum. Do not restart from alternative
-  guesses or choose among roots after seeing errors. Store residual, delta,
-  iterations, convergence, projection, and non-finite flags for every state
-  and substep.
-- [ ] Store the unprojected path. An out-of-box Euler candidate at any substep,
-  or any out-of-box stage or endpoint of the accepted RK4 path, makes that
-  state ineligible for the primary projection-free analysis; projected results
-  may be reported only as a sensitivity.
-
-#### Common mask, errors, and aggregation
-
-For each environment--seed--`T`, define one primary mask `I` as the
-intersection across all five `K` values, both Euler schemes, and the RK4
-reference. A state is eligible only if every value is finite, every implicit
-substep converges, and no path requires projection. The mask is shared by all
-curves for that cell, not recomputed by scheme or `K`.
-
-- [ ] Require `|I| >= 410` (80% of 512) for a primary cell. Report every
-  exclusion reason. Fewer than three eligible `T` cells for an
-  environment--seed makes that run incomplete for the order summary.
-- [ ] For scheme `m` and substep count `K`, compute
-  `E_abs(m,K)=sqrt(mean_{i in I}(||a_m,K,i(T)-a_ref,i(T)||_2^2/d))`.
-  Define
-  `M_ref=sqrt(mean_{i in I}(||a_ref,i(T)-a_D,i||_2^2/d))` and
-  `E_rel=E_abs/max(M_ref,1e-8)`.
-- [ ] Report `E_abs(K)/E_abs(2K)` for `K={1,2,4,8}` and fit
-  `log(E_abs)` against `log(T/K)` over `K={4,8,16}` separately for each
-  scheme and environment--seed--`T`. If any fitted error is below `1e-12`,
-  report a below-floor result instead of inventing a slope.
-- [ ] Take the median slope over eligible `T` values within each of the 18
-  environment--seed runs. States are not independent replicates. Report all 18
-  run summaries, the nine two-seed task means, and the task-equal aggregate.
-
-#### Integrity and scientific outcome gates
-
-- [ ] Before running learned critics, write `FROZEN_PROTOCOL.json` containing
-  the grid, equations, hashes, tolerances, mask definition, coverage rule,
-  formulas, output schema, and expected row counts. Do not change it after
-  reading aggregate errors. Write each realized mask and its SHA-256 only to
-  the result manifest after execution.
-- [ ] The compact endpoint table must contain exactly
-  `18*4*5*2=720` unique cells; the raw state table must contain
-  `720*512=368640` rows before masking. The local implicit-substep diagnostic
-  must contain `18*4*512*(1+2+4+8+16)=1142784` records; it may be stored as a
-  hashed compressed array rather than committed as CSV. Missing, duplicate,
-  schema, fingerprint, or analytic-harness failures stop the audit. Numerical
-  state/cell failures remain recorded, cannot be silently filtered, and count
-  against the coverage and completeness gates above.
-- [ ] Treat numerical order as a scientific outcome, not an integrity check.
-  Pre-specified support requires, for each scheme, an aggregate median run
-  slope in `[.75,1.25]`, at least 14/18 run slopes in `[.5,1.5]`, and at
-  least 15/18 complete runs. Otherwise report the result as failed or
-  inconclusive.
-- [ ] Add the exact grid, masks, fingerprints, expected counts, and recomputed
-  summary claims to `scripts/verify_release_results.py`.
-
-Expected interpretation: under this frozen, projection-free operator, both
-schemes should have first-order global error, approximately `O(1/K)`. This
-tests the local numerical proposition. It does not predict return or certify
-the live actor chain.
-
-### B. Live-path deviation (CPU, secondary and non-blocking)
-
-This diagnostic is optional for submission and may run after section A passes
-its integrity gates, regardless of whether the learned-critic order outcome is
-positive, null, or mixed.
-
-- [ ] Instrument a paired replay from one identical pre-update snapshot that
-  contains the distinct persistent actors and their histories, the critic and
-  targets, optimizer states, RNG, and minibatch. Do not compare independently
-  trained budget checkpoints as if they were one operator.
-- [ ] With the critic frozen, compare three paths: the ideal action-space map, a
-  predecessor-warm-start parametric actor chain, and the actual persistent
-  actor chain. Define one hop as one actor update with `dt=T/K`; reset every
-  branch from the same snapshot before replay.
-- [ ] Measure hop-wise absolute and movement-normalized deviations, the anchor
-  gradient at `dt=0`, projection, Q scale, optimizer-step norm, and implicit
-  residual. Use the same states and denominator floor as section A.
-- [ ] Keep a live-critic replay, if added, as a sensitivity analysis. It changes
-  the operator and cannot enter the fixed-operator convergence estimate.
-- [ ] Describe endpoint-versus-frozen-continuation distance as a bridge
-  residual, not a semigroup defect. Its purpose is to locate the gap between
-  ideal action-space geometry and the implemented one-Adam-step chain.
-
-The separate existing local-consistency result is the archive at
-`sweep_results/diagnostics/frozen_critic_small_step/`; it is not the retired
-actor-path bundle.
+- [ ] Freeze the final protocol, checkpoint/config/dataset fingerprints, and
+  full exclusion inventory before sampling. Use the six Hopper and Walker2d
+  paper tasks, seeds 0--1, and 512 new anchors per run: 12 bundles. Exclude the
+  entire HalfCheetah family, all archived index sets, and every failed,
+  superseded, or successful development-pilot index set.
+- [ ] Execute all 12 bundles from one clean `origin/main` source snapshot and
+  pass the snapshot verifier for each. Missing inputs, ambiguity, boundary
+  incidence, non-finite rows, and box exits are retained outcomes; there is no
+  minimum-residence inclusion gate.
+- [ ] Report the per-run empirical survival curve
+  `Pr(first activation/box exit > t)` on the unique horizons induced by
+  `T={.025,.05,.1,.2}` and `K={1,2,4,8,16}`. Full residence is
+  `K`-invariant and first-step residence depends only on `h=T/K`; repeated
+  `(T,K)` views are deterministic aliases, not independent evidence.
+- [ ] Report all 12 run curves, the two-seed task summaries, and the task-equal
+  aggregate with boundary-category counts. Do not fit a learned order slope or
+  turn residence into a return, global-proximal, semigroup, or live-chain claim.
+- [ ] Add a compact learned-critic scope result only if the complete frozen
+  grid and all independent verifiers pass. Null, low-residence, or mixed-family
+  results remain reportable outcomes rather than failed integrity checks.
 
 ## P3: release provenance and practical cost
 
@@ -343,10 +241,15 @@ actor-path bundle.
 - [x] Package the fail-closed actor-update timing and accelerator-memory
   profiler plus an independently coded verifier. See
   [`scripts/diagnostics/ACTOR_COST_RUNBOOK.md`](scripts/diagnostics/ACTOR_COST_RUNBOOK.md).
-- [ ] Execute that profiler for `K={1,2,3,4}` on one fixed hardware/software
-  stack and archive the verified measurements. Keep the analytical `O(K)`
-  actor-work statement, but do not replace measurements with asymptotic
-  complexity.
+- [x] Execute that profiler for `K={1,2,3,4}` on one fixed
+  hardware/software stack and archive the verified measurements under
+  `sweep_results/diagnostics/actor_cost/`. On one H200/JAX 0.10.2 stack,
+  compiled actor-phase dispatch rises from 1.435 ms at K=1 to 1.887 ms at
+  K=4 (1.316x), while the scoped fresh-worker backend high-water mark rises
+  from 9,684,736 to 18,045,440 bytes (1.863x). Timing excludes compilation
+  and warmup; memory includes initialization, compilation, warmup, and trials
+  and is not an isolated steady-state actor-call peak. Keep the analytical
+  `O(K)` actor-work statement separate from this one-stack measurement.
 - [ ] For all new runs, retain resolved YAML/JSON, source revision, environment
   lock, dataset and normalization hashes, host/accelerator inventory, and a
   compact final-checkpoint manifest. Historical seeds 2--3 limitations remain
@@ -364,11 +267,12 @@ actor-path bundle.
 
 ## Manuscript gate
 
-- [ ] Add operator-order results only after the fixed-operator bundle and
-  verifier pass from a clean `origin/main` checkout using
-  `aistats26_manuscript/build_pdf.sh`. Until then, the paper should claim local
-  explicit--implicit agreement from the existing frozen-critic audit and keep
-  the live-chain boundary qualitative.
+- [ ] Add learned activation-region rates only after the complete 12-run
+  Hopper/Walker bundle and every snapshot verifier pass from a clean
+  `origin/main` checkout using `aistats26_manuscript/build_pdf.sh`. Until then,
+  the paper states only the mathematical ReLU-region boundary, the existing
+  frozen-critic local consistency, and a qualitative live-chain boundary.
+- Decision lock: never restore a nonzero learned `1/K` order slope.
 - Decision lock: do not restore the archived actor-path defect values or
   mixed-normalization K8 comparisons, promote the MCEP-inspired control to an
   exact re-centering or equivalence result, or add the inconclusive K4 route

@@ -1,10 +1,31 @@
 # Actor-update cost protocol
 
-This is the execution protocol for the remaining measured-complexity item in
-[`TODO.md`](../../TODO.md). The profiler code is available, but no timing or
-accelerator-memory result is released yet. A plan-only invocation is the safe
-default and does not import JAX, open a dataset, create an output directory, or
-start a worker.
+This is the execution and reverification protocol for the released
+measured-complexity item in [`TODO.md`](../../TODO.md). The compact snapshot is
+under `sweep_results/diagnostics/actor_cost/`; the commands below reproduce the
+measurement on a fresh stack. A plan-only invocation is the safe default and
+does not import JAX, open a dataset, create an output directory, or start a
+worker.
+
+## Released measurement
+
+The archived run fixed an NVIDIA H200, JAX/JAXlib 0.10.2,
+`hopper-medium-v2`, batch size 256, and `T=12`. The independent verifier
+reported `evidence_status: measured`.
+
+| K | Compiled actor-phase dispatch (ms) | K=1 ratio | Backend peak (bytes) | K=1 ratio |
+| ---: | ---: | ---: | ---: | ---: |
+| 1 | 1.434567 | 1.000 | 9,684,736 | 1.000 |
+| 2 | 1.542470 | 1.075 | 14,680,064 | 1.516 |
+| 3 | 1.685672 | 1.175 | 15,627,520 | 1.614 |
+| 4 | 1.887347 | 1.316 | 18,045,440 | 1.863 |
+
+The timed dispatch contains the full K-actor production phase and excludes
+lowering, compilation, warmup, and critic optimization. The memory column is
+the fresh worker's process-lifetime backend high-water mark through data
+transfer, initialization, compilation, warmup, and trials, not an isolated
+steady-state actor-call peak. These are one-stack measurements, not a
+hardware-independent scaling law.
 
 ## What is measured
 

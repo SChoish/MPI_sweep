@@ -1,0 +1,395 @@
+{
+  "actor_update": {
+    "fixed_input_state_each_call": true,
+    "production_functions": [
+      "train_td3bc.update_first_actor",
+      "train_td3bc.update_actor_hop"
+    ],
+    "scope": "actor_only_no_critic_update",
+    "synchronization": "every call blocks every JAX array leaf",
+    "tau_step": 6.0
+  },
+  "artifact": "actor_cost_worker_result",
+  "config": {
+    "allow_cpu_smoke": false,
+    "batch_size": 256,
+    "calls_per_trial": 10,
+    "dataset_path": "/raid/ext_csv/datasets/d4rl/hopper_medium-v2.hdf5",
+    "device_selector": "0",
+    "init_seed": 0,
+    "integrator": "implicit",
+    "k": 2,
+    "learning_rate": 0.0003,
+    "memory_fallback": "none",
+    "method": "bar",
+    "normalization_epsilon": 0.001,
+    "platform": "gpu",
+    "polyak": 0.005,
+    "production_actor_functions": [
+      "train_td3bc.update_first_actor",
+      "train_td3bc.update_actor_hop"
+    ],
+    "sample_seed": 20260902,
+    "scale_norm": true,
+    "tau": 12.0,
+    "trials": 10,
+    "warmup_calls": 3
+  },
+  "dataset_batch": {
+    "action_shape": [
+      999998,
+      3
+    ],
+    "batch_size": 256,
+    "dataset_path": "/raid/ext_csv/datasets/d4rl/hopper_medium-v2.hdf5",
+    "dataset_rows_after_transition_filter": 999998,
+    "indices_sha256": "6e0a7754a94c39dbe99183b663ed58fc6ec5a28e40ed9bf07bbe7231585f8359",
+    "normalization": "full filtered dataset mean/std plus epsilon",
+    "observation_shape": [
+      999998,
+      11
+    ],
+    "sample_rng": {
+      "algorithm": "numpy.PCG64",
+      "seed": 20260902
+    }
+  },
+  "hashes": {
+    "batch_sha256": "e4d69019e4bbd0fb15311b06a6e69b0ee5b0fc19157c553aec198f7e0dea0051",
+    "code_sha256": "642eaf9221331fc23679f745e2bed6896b72779004a60ed05f5cf5222556828b",
+    "config_sha256": "56b17f1def811b4750a202325e092ef304701189cd5af34820fb795729cc2222",
+    "dataset_sha256": "5bdf1bc4a713c82941de44633df669b36c89850b652a25985166796d25cf71a0",
+    "invariant_config_sha256": "674e37b91ea16cb11163ba4d7db167f7bb975067c1d2144f6b37c6e15b37a310",
+    "normalization_sha256": "10e21a9d11a28efcb897acfcf2af66fec411d4230de97e4ce0a4ede6ade3ca3c",
+    "run_context_sha256": "ca853bcda35732a00826149e3f74dcde68518ddee478f20a55d0f059eef833b0",
+    "source_files": {
+      "d4rl_data.py": "03688c0892f70da54c9db319c47f26c97f1505639403f8c8f55ba5e418795bc4",
+      "scripts/diagnostics/profile_actor_cost.py": "cfdeaa9a7443a31c1fd875b5a607fc88929772f20fb0523cc712db920c51855e",
+      "scripts/diagnostics/verify_actor_cost.py": "1b27ffc04d469816988183bc3c0cf1d4687704a3f60df77c4aac7b8cf748f386",
+      "train_td3bc.py": "8198b9f5ba3aca1e82a7b280bfc97f1d61cd60a9ad21a60f0e951a4cb18ebe1a"
+    }
+  },
+  "k": 2,
+  "memory": {
+    "absolute_peak_bytes": 14680064,
+    "after_trials_resident_bytes": 4429056,
+    "after_warmup_resident_bytes": 4429056,
+    "baseline_adjusted_formula": "max(0, absolute_peak_bytes - baseline_current_bytes)",
+    "baseline_adjusted_peak_bytes": 14680064,
+    "baseline_current_bytes": 0,
+    "baseline_phase": "runtime_baseline",
+    "before_compile_resident_bytes": 4429056,
+    "fallback_selected": "none",
+    "is_accelerator_memory": true,
+    "peak_counter_scope": "fresh worker process-lifetime backend high-water mark through dataset/batch transfer, actor/critic state initialization, lowering/compile, warmup, and timed trials; not an isolated steady-state actor-call peak",
+    "phase_order": [
+      "runtime_baseline",
+      "before_compile",
+      "after_compile",
+      "after_warmup",
+      "after_trials"
+    ],
+    "phases": {
+      "after_compile": {
+        "current_bytes": 4429056,
+        "peak_bytes": 4430080,
+        "raw_stats": {
+          "bytes_in_use": 4429056,
+          "bytes_limit": 112583507968,
+          "bytes_reserved": 0,
+          "largest_alloc_size": 467968,
+          "largest_free_block_bytes": 0,
+          "num_allocs": 477,
+          "peak_bytes_in_use": 4430080,
+          "peak_bytes_reserved": 0,
+          "peak_pool_bytes": 6291456,
+          "pool_bytes": 6291456
+        },
+        "source": "device.memory_stats"
+      },
+      "after_trials": {
+        "current_bytes": 4429056,
+        "peak_bytes": 14680064,
+        "raw_stats": {
+          "bytes_in_use": 4429056,
+          "bytes_limit": 112583507968,
+          "bytes_reserved": 0,
+          "largest_alloc_size": 4366080,
+          "largest_free_block_bytes": 0,
+          "num_allocs": 16030,
+          "peak_bytes_in_use": 14680064,
+          "peak_bytes_reserved": 0,
+          "peak_pool_bytes": 14680064,
+          "pool_bytes": 14680064
+        },
+        "source": "device.memory_stats"
+      },
+      "after_warmup": {
+        "current_bytes": 4429056,
+        "peak_bytes": 14680064,
+        "raw_stats": {
+          "bytes_in_use": 4429056,
+          "bytes_limit": 112583507968,
+          "bytes_reserved": 0,
+          "largest_alloc_size": 4366080,
+          "largest_free_block_bytes": 0,
+          "num_allocs": 930,
+          "peak_bytes_in_use": 14680064,
+          "peak_bytes_reserved": 0,
+          "peak_pool_bytes": 14680064,
+          "pool_bytes": 14680064
+        },
+        "source": "device.memory_stats"
+      },
+      "before_compile": {
+        "current_bytes": 4429056,
+        "peak_bytes": 4430080,
+        "raw_stats": {
+          "bytes_in_use": 4429056,
+          "bytes_limit": 112583507968,
+          "bytes_reserved": 0,
+          "largest_alloc_size": 467968,
+          "largest_free_block_bytes": 0,
+          "num_allocs": 477,
+          "peak_bytes_in_use": 4430080,
+          "peak_bytes_reserved": 0,
+          "peak_pool_bytes": 6291456,
+          "pool_bytes": 6291456
+        },
+        "source": "device.memory_stats"
+      },
+      "runtime_baseline": {
+        "current_bytes": 0,
+        "peak_bytes": 0,
+        "raw_stats": {
+          "bytes_in_use": 0,
+          "bytes_limit": 112583507968,
+          "bytes_reserved": 0,
+          "largest_alloc_size": 0,
+          "largest_free_block_bytes": 0,
+          "num_allocs": 0,
+          "peak_bytes_in_use": 0,
+          "peak_bytes_reserved": 0,
+          "peak_pool_bytes": 0,
+          "pool_bytes": 0
+        },
+        "source": "device.memory_stats"
+      }
+    },
+    "source": "device.memory_stats"
+  },
+  "process": {
+    "parent_pid": 3086,
+    "pid": 3316,
+    "process_token": "666cd58b-af95-4ac8-88d7-8b7abd5a5dff",
+    "started_utc": "2026-09-02T10:47:57.532094+00:00"
+  },
+  "provenance": {
+    "backend_platform_version": "PJRT C API\ncuda 12090",
+    "device": {
+      "device_kind": "NVIDIA H200",
+      "id": 0,
+      "local_hardware_id": 0,
+      "platform": "gpu",
+      "process_index": 0,
+      "selector": "0",
+      "uuid": null,
+      "uuid_source": null
+    },
+    "device_binding": {
+      "cuda_visible_devices": "GPU-d923851f-6b7d-1f56-043a-8d3519d6347e",
+      "jax_device_uuid": null,
+      "jax_device_uuid_source": null,
+      "method": "resolved_uuid_visibility",
+      "resolved_uuid": "GPU-d923851f-6b7d-1f56-043a-8d3519d6347e"
+    },
+    "environment": {
+      "CUDA_VISIBLE_DEVICES": "GPU-d923851f-6b7d-1f56-043a-8d3519d6347e",
+      "HIP_VISIBLE_DEVICES": "",
+      "JAX_ENABLE_X64": null,
+      "JAX_PLATFORMS": "cuda",
+      "JAX_PLATFORM_NAME": null,
+      "MKL_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "PYTHONHASHSEED": "0",
+      "ROCR_VISIBLE_DEVICES": "",
+      "XLA_FLAGS": "--xla_cpu_multi_thread_eigen=false --xla_gpu_force_compilation_parallelism=1 --xla_gpu_autotune_level=0 ",
+      "XLA_PYTHON_CLIENT_ALLOCATOR": null,
+      "XLA_PYTHON_CLIENT_MEM_FRACTION": null,
+      "XLA_PYTHON_CLIENT_PREALLOCATE": "false"
+    },
+    "git": {
+      "available": true,
+      "dirty": false,
+      "revision": "481f7fe0786230db8b4106e44349be241a18414d",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "packages": {
+      "flax": "0.12.7",
+      "jax": "0.10.2",
+      "jaxlib": "0.10.2",
+      "numpy": "2.5.0",
+      "optax": "0.2.8"
+    },
+    "python": {
+      "executable": "/home/ext_csv/miniconda3/envs/offrl/bin/python",
+      "implementation": "CPython",
+      "version": "3.12.13"
+    },
+    "selected_driver_record": {
+      "driver_version": "580.173.02",
+      "index": "0",
+      "name": "NVIDIA H200",
+      "uuid": "GPU-d923851f-6b7d-1f56-043a-8d3519d6347e"
+    },
+    "visible_device_count": 1
+  },
+  "schema_version": "bar-actor-cost-v1",
+  "timing": {
+    "clock": "time.perf_counter_ns",
+    "compile_ms": 2909.691185,
+    "lowering_ms": 126.377189,
+    "median_actor_update_ms": 1.5424702,
+    "raw_call_ms": [
+      [
+        1.674087,
+        1.452679,
+        1.611468,
+        1.740356,
+        1.816643,
+        1.464912,
+        1.374281,
+        1.748596,
+        1.789702,
+        1.456665
+      ],
+      [
+        1.59421,
+        1.525507,
+        1.533348,
+        1.53377,
+        1.481029,
+        1.887266,
+        2.095326,
+        1.615062,
+        1.752348,
+        1.709426
+      ],
+      [
+        1.411786,
+        1.652746,
+        1.425693,
+        1.385854,
+        1.377111,
+        1.492762,
+        1.63333,
+        1.625203,
+        1.794517,
+        1.618847
+      ],
+      [
+        1.393713,
+        1.52024,
+        1.70418,
+        1.650166,
+        1.84376,
+        1.924754,
+        1.564777,
+        1.676426,
+        1.211375,
+        1.125722
+      ],
+      [
+        1.289779,
+        1.345876,
+        1.307463,
+        1.355664,
+        1.27823,
+        1.265253,
+        1.748025,
+        1.988262,
+        1.415709,
+        1.182543
+      ],
+      [
+        1.119049,
+        1.593186,
+        1.578277,
+        1.277743,
+        1.165335,
+        1.208886,
+        1.196144,
+        1.422279,
+        1.359874,
+        1.057081
+      ],
+      [
+        0.975255,
+        1.236476,
+        1.44052,
+        1.494137,
+        1.154815,
+        1.183259,
+        1.178724,
+        1.263811,
+        1.210796,
+        1.20179
+      ],
+      [
+        1.3629,
+        1.289995,
+        1.581633,
+        1.622838,
+        1.787266,
+        1.3603,
+        1.334806,
+        1.290775,
+        1.378971,
+        1.350032
+      ],
+      [
+        1.908006,
+        1.456151,
+        1.748226,
+        1.536302,
+        1.212101,
+        1.2556,
+        1.255587,
+        1.787547,
+        1.637185,
+        1.63485
+      ],
+      [
+        2.021306,
+        1.66836,
+        1.471089,
+        1.810732,
+        1.980772,
+        1.820741,
+        1.66075,
+        1.366781,
+        1.707809,
+        1.777638
+      ]
+    ],
+    "raw_trial_ms": [
+      1.6129389,
+      1.6727291999999998,
+      1.5417849000000001,
+      1.5615113,
+      1.4176804,
+      1.2977854,
+      1.2339582999999998,
+      1.4359515999999999,
+      1.5431555,
+      1.7285978
+    ],
+    "trial_statistic": "arithmetic mean of synchronized calls in that trial",
+    "warmup_ms": [
+      6.877094,
+      4.461169,
+      1.57738
+    ]
+  }
+}

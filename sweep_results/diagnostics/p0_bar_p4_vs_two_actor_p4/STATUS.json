@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "experiment": "p0_bar_p4_vs_two_actor_p4",
+  "archive_scope": "first_90_of_180",
+  "host": "ext_csv",
+  "frozen_manifest_sha256": "3b3276f85f0b7398fd3b3240bcd49789e31250e02162479812b06a975df0b9ba",
+  "source_revision_claimed": {
+    "files": {
+      "d4rl_data.py": "03688c0892f70da54c9db319c47f26c97f1505639403f8c8f55ba5e418795bc4",
+      "launch_mpi_sweep.py": "7f6a75c76ac66eddf11a3002c87b972008305260b2627f73ff9c6e7f0a886500",
+      "requirements.txt": "cb7f89a89b63873f843fb1b6d603b4449380d172bb09f3c1d69b62499ae7bce7",
+      "scripts/diagnostics/analyze_p0_bar_two_actor_p4.py": "a083ff2823bce64de0d7b684d3bad96fdb3925a61a51cf6ecb91a046cbe4d00b",
+      "scripts/diagnostics/verify_p0_bar_two_actor_p4.py": "c3e7d1b550ffba8970fd3432a395b6fd963a4c6afe514c0421db0d92db175e87",
+      "scripts/experiments/run_p0_bar_two_actor_p4.py": "b446ac82f94837feb67332c3b3ca7e49440c39ba8d56eee0200717a5e8c4e6ca",
+      "tau_grids.py": "5d5a5ee435008fa87367d24dd9713603523018d7a5a68079fa63db29b73eef74",
+      "train_td3bc.py": "8198b9f5ba3aca1e82a7b280bfc97f1d61cd60a9ad21a60f0e951a4cb18ebe1a"
+    },
+    "git_revision": "29fea94bee9d9276ac463caa2b897e3474fe1b2b",
+    "tracked_worktree_clean": true
+  },
+  "completed_finals": 90,
+  "completed_by_condition": {
+    "bar_p4": 45,
+    "two_actor_p4": 45
+  },
+  "paired_cells_in_archive": 45,
+  "second_90": "hosted_on_ext_csh_as_p0_manifest_tail90_not_merged_here",
+  "decision_label": null,
+  "decision_note": "Full 180-cell analyze/verify gate not satisfied on this archive alone; ext_csh holds the tail-90 shard. No author decision label released.",
+  "built_at": "2026-09-02T22:13:32+09:00",
+  "raw_checkpoints": "not committed; hashed in SOURCE_MANIFEST.csv only",
+  "updated_at": "2026-09-02T22:14:48+09:00"
+}

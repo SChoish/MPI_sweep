@@ -27,11 +27,12 @@ selection of runs.
 | `route_shadow/` (top-level archive) | archive | partial | Use `run_route_shadow_mc.py` on `results_route_shadow` |
 | `route_shadow_k4/` | archive | partial | Compact copy of `audit_report_20260901/route_shadow_mc_k4`; excluded from manuscript |
 | `bar_mcep_p3_paired/` | aggregate/archive | partial | `audit_bar_mcep_p3_paired.py` regenerates `AUDIT.json` only; the paired CSV, summary, and source manifest are frozen and verifier-gated |
-| `p0_bar_p4_vs_two_actor_p4/` (future compact archive) | retrain + aggregate | first 90 on ext_csv + tail 90 on ext_csh; **no merged contrast released** | ext_csh shard under `hosts/ext_csh/p0_manifest_tail90/`; exact merge still required |
+| `p0_bar_p4_vs_two_actor_p4/` | retrain + aggregate | **ext_csv first-90 compact archive** + `hosts/ext_csh/p0_manifest_tail90/`; **no merged contrast / decision label yet** | Head scores under this path; tail shard on ext_csh; exact merge still required |
 | `p1_target_value_audit/` (future compact archive) | ckpt | harness + external preflight ready; **no scientific result released** | Strict 270-checkpoint post-hoc audit; see `P1_TARGET_VALUE_RUNBOOK.md` |
 | `actor_cost/` | benchmark/archive | **verified measured snapshot**; rerun needs local data/GPU | Hash-pinned K=1--4 H200 profile plus profiler and independent verifier; see `ACTOR_COST_RUNBOOK.md` |
 | `frozen_critic_small_step/` (top-level archive) | archive | partial | Use `run_frozen_critic_small_step.py` |
 | `fixed_operator_order/` | archive | retired preflight scaffold; **no learned result** | Frozen 0/18 snapshot retained as verifier-gated provenance; superseded by `P2_RELU_RESIDENCE_RUNBOOK.md` |
+| `p2_relu_residence_final/` | archive | **verified scientific residence**; raw NPZ stay external | Compact 12-run Hopper/Walker summary + cell tables; full bundle under external `p2-relu-final-*`; see `P2_RELU_RESIDENCE_RUNBOOK.md` |
 | `actor_path_semigroup/` (top-level archive) | archive | **yes** | `run_actor_semigroup.py`; full local `mpi1/2/3/exp3` seeds 2/3 grid (incl. tau 0.7 and 12); provenance only, not manuscript error evidence |
 | `simulator_calibration/` | archive | **no in this package** | Exploratory screening; not wired here |
 | `control_final_scores.csv`, `control_summary.csv` | retrain | **no** | From compute-matched / target-lag **training** (`launch_causal_controls.py` in lab) |
@@ -62,3 +63,11 @@ release artifacts and must not be staged merely because a run completed.
 | `compare_mpi_geometry_sets.py` | Compare two geometry dump directories |
 
 These are not in `run_host.sh --job ckpt`; call them manually when needed.
+
+## Per-run / per-sweep provenance (new runs)
+
+New training runs write `PROVENANCE.json` next to `config.json`, and sweeps
+write `SWEEP_PROVENANCE.json` into the log-dir (git revision + dirty flag,
+source/dataset/normalization digests, package versions, host/accelerator
+inventory, final-checkpoint hash). See [`../PROVENANCE.md`](../PROVENANCE.md)
+for the full contract. Historical runs are not backfilled.

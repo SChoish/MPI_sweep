@@ -56,8 +56,8 @@ cd "$MANUSCRIPT_DIR"
 "$TECTONIC_CMD" paper.tex --keep-logs --keep-intermediates
 "$TECTONIC_CMD" supplement.tex --keep-logs --keep-intermediates
 
-cp paper.pdf bar_aistats26_manuscript.pdf
-cp supplement.pdf bar_aistats26_supplement.pdf
+cp paper.pdf part_aistats26_manuscript.pdf
+cp supplement.pdf part_aistats26_supplement.pdf
 
 for log_file in paper.log supplement.log; do
   blocking="$(grep -En 'Overfull \[hv]box|Undefined control sequence|There were undefined references|Citation .* undefined|Emergency stop|Fatal error' "$log_file" \
@@ -75,5 +75,5 @@ if [[ -z "$conclusion_page" || "$conclusion_page" -gt 8 ]]; then
   exit 1
 fi
 
-echo "built: $MANUSCRIPT_DIR/bar_aistats26_manuscript.pdf"
-echo "built: $MANUSCRIPT_DIR/bar_aistats26_supplement.pdf"
+echo "built: $MANUSCRIPT_DIR/part_aistats26_manuscript.pdf"
+echo "built: $MANUSCRIPT_DIR/part_aistats26_supplement.pdf"

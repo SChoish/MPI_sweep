@@ -29,72 +29,53 @@
 
 \begin{document}
 \twocolumn[
-\aistatstitle{BAR: Budgeted Actor Refinement Decouples Bootstrap Exposure from Policy Reach}
+\aistatstitle{PART: Proximal Actor Refinement through Target Routing in Offline Reinforcement Learning}
 \aistatsauthor{Anonymous Authors}
 \aistatsaddress{Anonymous Institution}
 ]
 
 \begin{abstract}
-TD3+BC uses one actor branch for both Bellman targets and deployment, tying
-target-action movement to policy reach. In the ideal small-step limit with a
-fixed critic and scale, its squared anchor is a Dirac-policy Wasserstein--2
-movement cost and proximal and explicit updates follow the same critic-induced
-gradient flow. That picture
-does not predict the finite-step transition at which TD3+BC becomes unstable.
-Budgeted actor refinement (BAR) splits a total coefficient $T$ across $K$
-persistent actors, routes only the first into TD targets, and deploys the last.
-Across nine D4RL tasks, fourteen budgets, and four seeds, the methods are close
-at small $T$, but at $T=4,7$ TD3+BC falls to $45.93,30.36$ while BAR-P4 remains
-at $82.06,81.79$. Over $T\ge4$, increasing $K$ from one to four raises the
-task-equal mean from $25.38$ to $63.97$ and cuts score-$<20$ cells from $34/63$
-to $8/63$; both disjoint seed pairs reproduce the ordering. Matched audits show
-that P3/P4 reduce first-branch action and target-value perturbation without
-typical final-policy contraction. A two-actor P3 control reaches the same
-seed-mean collapse count without sequential re-centering. Thus BAR shifts the
-finite-step stability boundary; matched evidence is consistent with
-exposure--reach separation, while the chain's benefit beyond that separation
-remains open.
+The squared TD3+BC anchor admits a JKO-style Wasserstein--2 interpretation:
+under a fixed critic and exact near-identity updates, splitting nominal time
+$T$ across $K$ hops discretizes one local gradient flow. We study the
+finite-$T$ regime where this picture fails. Proximal actor refinement through
+target routing (PART) routes only the first of $K$ persistent actors into TD
+targets and deploys the last. Across nine D4RL tasks, fourteen budgets, and
+four seeds, the procedures are close at small $T$, but at $T=4,7$ TD3+BC falls
+to $45.93,30.36$ while PART-P4 remains at $82.06,81.79$. Over $T\ge4$,
+increasing $K$ from one to four raises the task-equal mean from $25.38$ to
+$63.97$ and cuts score-$<20$ cells from $34/63$ to $8/63$; both disjoint seed
+pairs reproduce the ordering. Matched audits show that P3/P4 reduce
+first-branch action and target-value perturbation without typical final-policy
+contraction. A two-actor P3 control reaches the same seed-mean collapse count
+without sequential re-centering. In a completed 90-pair P4 comparison, PART
+minus control has mean $-2.31$ and interval $[-7.25,2.41]$; the predeclared
+outcome is unresolved. Thus PART shifts the finite-step stability boundary;
+matched evidence is consistent with exposure--reach separation, while the
+chain's incremental return benefit is not established.
 \end{abstract}
 
 \section{INTRODUCTION}
 \label{sec:introduction}
 
-Offline reinforcement learning (RL) seeks a policy from a fixed dataset without additional environment interaction. Its central difficulty is not merely to select a high-value action, but to determine how far policy improvement can proceed before the learned critic becomes unreliable. TD3+BC regularizes a deterministic actor toward dataset actions while using a Polyak copy of that actor in bootstrapped critic targets \citep{fujimoto2021minimalist}. The same policy branch therefore determines both the action shift entering critic training and the reach of the evaluated policy. Aggressive improvement can move target actions into regions where critic error is amplified, whereas conservative improvement can leave useful policy improvement unrealized.
+Behavior-regularized offline RL admits a Jordan--Kinderlehrer--Otto (JKO) minimizing-movement view \citep{jordan1998variational}. For deterministic policies, the squared TD3+BC anchor is a state-averaged Wasserstein--2 movement cost and its normalized coefficient defines nominal time $T=\alpha/2$. With a fixed critic, exact optimization, inactive projection, and $T\to0$, explicit and implicit updates follow the same local action-space flow to first order.
 
-We study this coupling through \emph{budgeted actor refinement} (BAR), a re-centered actor architecture for TD3+BC. BAR represents a nominal improvement budget with $K$ sequential actor updates. The first actor is anchored to dataset actions, and each later actor is anchored to the stop-gradient output of its predecessor. A target copy of the first refined actor supplies the next actions in TD targets, while the final actor is used for evaluation. The architecture thus assigns critic-target construction and deployment to distinct policy branches without changing the critic update rule.
+Our question begins where this local picture breaks. Offline RL fits the critic to policy-generated target actions, so increasing $T$ changes the bootstrapping distribution as well as a numerical step. Projection activates, neural actors amortize rather than solve subproblems, persistent actors retain distinct histories, and the critic moves. TD3+BC further uses a Polyak copy of the deployed actor in Bellman targets \citep{fujimoto2021minimalist}, coupling deployment reach to critic-facing movement and enabling critic error to feed back into policy improvement.
 
-Let $D_{\mathrm{critic}}$ denote the squared displacement of the critic-coupled first-hop branch and let $D_{\mathrm{final}}$ denote that of the evaluated final policy. A one-hop actor identifies these quantities; BAR assigns them to $\mu_1$ and $\mu_K$, respectively. Throughout, \emph{bootstrap exposure} denotes this target-action-displacement proxy, not distance to dataset support, critic error, or Bellman-target error. This separation can increase final-policy reach at comparable first-hop movement or contract both movements near an unstable training outcome. It also introduces a countervailing mismatch because the critic target follows the $\mu_1$ branch while evaluation follows $\mu_K$. The method therefore exposes a design axis between target-policy displacement and deployment reach rather than guaranteeing that either quantity is independently optimal.
+Proximal actor refinement through target routing (PART) allocates $T$ across $K$ sequential actors. The first is data anchored, later actors are anchored to stop-gradient predecessor outputs, a Polyak target copy of the first supplies TD-target actions, and the last is deployed. Let $D_{\mathrm{critic}}$ and $D_{\mathrm{final}}$ denote first- and final-branch displacement. A one-hop actor identifies them; PART separates them. PART is one structured realization of this target/deployment separation, not evidence by definition that sequential re-centering is necessary. We write PART-P$k$ (P$k$ for short) for the proximal $K=k$ condition and PART-L$k$ (L$k$) for its projected-linearized analogue. Released artifact paths retain the historical Budgeted Actor Refinement (\texttt{BAR}) identifier; the paper uses PART throughout.
 
-For deterministic actors, the squared TD3+BC anchor is a Wasserstein--2
-movement cost in the Dirac-policy limit. This yields a regime hypothesis. At
-small realized steps, ideal JKO/proximal and explicit updates with a common
-frozen scale discretize the same fixed-critic flow. In the transition regime, a single large actor step can
-move the Bellman target beyond a critic-valid neighborhood; splitting $T$ lets
-the target-routed first branch move by a smaller nominal coefficient while
-later branches retain deployment reach. At still larger $T$, projection,
-amortized actor fitting, critic drift, saturation, and optimizer history break
-the local interpretation, so depth can only shift, not remove, the failure
-boundary.
+This yields three interpretive regimes. The \emph{local regime} is the asymptotic fixed-critic limit. In the finite-step \emph{transition regime}, a single large actor step can move the Bellman target beyond a critic-valid neighborhood, whereas routing a smaller first hop into backups leaves later branches for deployment refinement. In the \emph{large-budget stress regime}, projection, amortized fitting, critic drift, and optimizer history dominate; depth can shift but not remove the failure boundary. These are descriptive empirical regimes, not universal theorem boundaries.
 
-The measured phase diagram follows this pattern. There is no strict depth
-ordering at the smallest budgets. The advantage opens as TD3+BC leaves its
-high-return plateau: BAR-P4 stays above $81$ at $T=4,7$, where TD3+BC falls to
-$45.93,30.36$. Across the full $T\ge4$ tail, means rise
-$25.38\to41.20\to51.92\to63.97$ for $K=1,2,3,4$ and low-return counts fall
-$34\to22\to16\to8$. Direct audits show reduced first-branch exposure without
-typical final-policy contraction; failed runs show critic-dependent gain
-reversal. A P3 two-actor control establishes target/deployment separation as a
-sufficient candidate mechanism, leaving the sequential chain's incremental
-contribution as an explicit question.
+The phase diagram follows this pattern. At $T=.05,.1,.2$, depth has no consistent return ordering. TD3+BC then falls to $67.41,45.93,30.36$ at $T=2.5,4,7$, while P4 gives $81.25,82.06,81.79$. Across $T\ge4$, means rise $25.38\to41.20\to51.92\to63.97$ for $K=1,2,3,4$ and low-return cells fall $34\to22\to16\to8$. Matched P3/P4 audits find lower first-branch displacement in 88/90 and 89/90 cells and lower common-critic target-value perturbation in 86/90 and 88/90 cells, without typical final-policy contraction. A P3 two-actor control reproduces the aggregate regime without sequential re-centering; the completed P4 comparison is unresolved. Thus policy separation is the simplest compatible mechanism, while the sequential chain's incremental return benefit is not established.
 
 Our contributions are as follows.
 \begin{itemize}
-    \item We formulate BAR for TD3+BC as a re-centered actor composition that assigns target-policy displacement and final-policy reach to distinct branches.
+    \item We formulate PART for TD3+BC as a re-centered actor composition that assigns target-policy displacement and final-policy reach to distinct branches.
     \item We connect the anchored update to an ideal Wasserstein/JKO flow,
     derive finite-step critic-error and target-perturbation statements, and
     identify where projection, ReLU boundaries, and live optimization end the
     small-step interpretation.
-    \item Four-seed phase diagrams and matched audits show that multi-hop BAR
+    \item Four-seed phase diagrams and matched audits show that multi-hop PART
     becomes useful as TD3+BC exits its small-budget plateau: it reduces the
     target-coupled first movement, preserves deployment reach, and shifts the
     large-budget collapse boundary, chiefly through lower-tail rescue.
@@ -114,7 +95,7 @@ squared cloning term anchors its actions to the dataset
 \citep{fujimoto2021minimalist}. We keep this critic update and actor family
 fixed and study which refined actor branch supplies the TD target.
 One-step offline RL instead limits repeated policy optimization against an
-off-policy value estimate \citep{brandfonbrener2021offline}. BAR retains
+off-policy value estimate \citep{brandfonbrener2021offline}. PART retains
 iterative actor--critic training but distributes a nominal improvement
 coefficient across a routed actor chain.
 
@@ -139,13 +120,13 @@ Bootstrapping error can feed critic extrapolation back into actor updates
 feedback but ordinarily copies the same actor branch that will be deployed.
 MCEP instead pairs a conservative target policy for value learning with a
 mildly constrained evaluation policy excluded from Bellman backups
-\citep{xu2024mcep}. BAR shares this routing principle but uses a persistent,
+\citep{xu2024mcep}. PART shares this routing principle but uses a persistent,
 predecessor-recentered chain and varies depth under a fixed nominal budget;
 MCEP keeps both actors directly data-anchored with separately chosen strengths
-and is not a $K=2$ instance of BAR. Our contribution concerns this depth-indexed
+and is not a $K=2$ instance of PART. Our contribution concerns this depth-indexed
 routing operator rather than a new critic objective.
 
-\section{PRELIMINARIES}
+\section{JKO VIEW OF TD3+BC}
 \label{sec:background}
 
 We consider a discounted Markov decision process
@@ -189,10 +170,10 @@ Thus the TD3+BC anchor is a Wasserstein--2 movement cost up to fixed scaling.
 We distinguish its finite-step variational meaning from the small-step,
 fixed-critic gradient-flow limit and from large-budget coupled training.
 
-\section{BUDGETED ACTOR REFINEMENT}
+\section{FROM LOCAL FLOW TO PART}
 \label{sec:method}
 
-BAR maintains $K$ independently initialized, persistent deterministic
+PART maintains $K$ independently initialized, persistent deterministic
 actors with separate optimizer states. At each delayed update they take one
 Adam step in chain order on the same minibatch; Figure~\ref{fig:algorithm} gives
 the exact live ordering. The online critic is fixed within the actor chain; we
@@ -293,7 +274,7 @@ critic; true-return improvement lies outside the scope of this certificate.
 \subsection{Re-centered composition and actor--critic dataflow}
 
 For population analysis, let $\mu_0:=b$ denote the conditional-mean behavior
-map and let $h_{1:K}$ be positive step sizes. The idealized BAR chain is
+map and let $h_{1:K}$ be positive step sizes. The idealized PART chain is
 \begin{equation}
  \mu_k\in\mathcal P_{h_k}^{\bar Q_k}
  (\operatorname{sg}\mu_{k-1}),
@@ -313,7 +294,7 @@ therefore motivates, but does not certify, the live one-Adam-step chain.
 \centering
 \small
 \fbox{\begin{minipage}{.94\columnwidth}
-\textbf{One BAR training iteration.} The $K$ actors are persistent,
+\textbf{One PART training iteration.} The $K$ actors are persistent,
 independently initialized, and have separate Adam states.
 \vspace{2pt}
 \begin{tabular}{@{}rp{.82\linewidth}@{}}
@@ -348,7 +329,7 @@ D_{\rm final}&:=\mathsf d_{d,\rho_{\mathcal D}'}^2(\mu_K,\mu_0).
 \end{aligned}
 \label{eq:displacements}
 \end{equation}
-A one-step actor has $D_{\rm critic}=D_{\rm final}$; BAR assigns the two
+A one-step actor has $D_{\rm critic}=D_{\rm final}$; PART assigns the two
 population quantities to distinct policy branches. On fixed validation batches, we measure the sample-anchored online branches
 and the deterministic next-state Polyak target branch:
 \begin{equation}
@@ -424,7 +405,7 @@ factor or the resulting change in critic value.
 The separation introduces a complementary evaluation-policy mismatch: critic
 targets follow the $\mu_1$ branch, whereas evaluation follows $\mu_K$.
 Increasing $D_{\rm final}$ at fixed $D_{\rm critic}$ can therefore make the
-critic less representative of the evaluated policy. We interpret BAR as
+critic less representative of the evaluated policy. We interpret PART as
 exposing a measurable target/deployment trade-off; its empirical return
 captures the net effect of target movement, evaluation mismatch, actor compute,
 and the coupled optimization trajectory.
@@ -450,7 +431,7 @@ without asserting a return effect, global certificate, or learned $1/K$ slope.
 \section{EXPERIMENTS}
 \label{sec:experiments}
 
-We evaluate BAR on the nine D4RL locomotion tasks formed by HalfCheetah,
+We evaluate PART on the nine D4RL locomotion tasks formed by HalfCheetah,
 Hopper, and Walker2d with medium, medium-replay, and expert datasets
 \citep{fu2020d4rl}. These tasks directly exercise deterministic continuous
 control and provide distinct behavior-data regimes for a target-routing stress
@@ -468,15 +449,15 @@ T\in\{&0.05,0.1,0.2,0.4,0.7,1.5,2.5,\\
       &4,7,10,12,14,17,20\}.
 \end{split}
 \end{equation*}
-over all nine tasks. Both grids use seeds 0--3, for
+over all nine tasks. The proximal and projected-linearized grids use seeds 0--3, for
 $9\times14\times4=504$ runs per depth.
 Proximal seeds 0--1 and 2--3 were executed on separate hosts and form disjoint
 replication pairs. The grid is a high-resolution stability phase diagram rather
 than a final benchmark alone. For $K=1$, Proposition~\ref{prop:prox_equiv}
 maps $T$ to the normalized TD3+BC coefficient $\alpha=2T$.
 
-We compare TD3+BC ($K=1$), proximal BAR with $K\in\{2,3,4\}$ (BAR-Prox), and an
-action-metric-matched projected linearized target with $K\in\{2,3\}$ (BAR-Lin):
+We compare TD3+BC ($K=1$), proximal PART with $K\in\{2,3,4\}$ (PART-Prox), and an
+action-metric-matched projected linearized target with $K\in\{2,3\}$ (PART-Lin):
 \begin{equation}
 \begin{aligned}
  a_k^{\rm tar}
@@ -487,7 +468,7 @@ action-metric-matched projected linearized target with $K\in\{2,3\}$ (BAR-Lin):
 \end{aligned}
  \label{eq:linearized_target}
 \end{equation}
-At each hop, BAR-Lin detaches the reference, recomputes the $\widehat Q$
+At each hop, PART-Lin detaches the reference, recomputes the $\widehat Q$
 gradient and scale, clips the target to the action box, and takes one
 mean-squared-error optimizer step with
 the corresponding persistent actor. Its first-hop scale is
@@ -497,8 +478,8 @@ C_{1,t}^{\rm L}=\sg\!\left(
 \end{equation*}
 whereas $C_{k,t}^{\rm L}=C_{k,t}^{\rm P}$ for $k\ge2$. Thus the factor $d$
 matches the action metric, but the first-hop normalization point differs from
-BAR-Prox; the comparison does not match the complete scale schedule. It uses the same
-first-hop target and final-hop evaluation routing. All conditions match
+PART-Prox; the comparison does not match the complete scale schedule. It uses the same
+first-actor Bellman-target and final-actor evaluation routing. All conditions match
 datasets, critic updates, and the $10^6$-update horizon; every headline score is
 the ten-episode D4RL normalized mean at the final checkpoint. Intermediate
 evaluation cadence varies by run family and does not enter this estimand. A
@@ -530,7 +511,7 @@ rises $25.38\to41.20\to51.92\to63.97$ while collapsed cells fall
 $34\to22\to16\to8$ of 63. $K=4$ gains $12.06$ over $K=3$ with task-resampling
 interval $[3.84,21.11]$ and seven of nine positive task means, yet its cellwise
 median is only $+.34$: eight rescues, no reversals, contribute $54.7\%$ of the
-gain. The $T\ge10$ means are $20.27,31.01,42.23,56.79$. BAR-Lin $K=3$ raises
+gain. The $T\ge10$ means are $20.27,31.01,42.23,56.79$. PART-Lin $K=3$ raises
 the high-budget mean from $38.43$ to $46.44$ and reduces collapsed cells from
 25 to 21; its $+1.37$ cellwise median indicates a broader shift. Multi-hop thus
 shifts the transition chiefly by rescuing the lower tail, not by uniformly
@@ -558,20 +539,20 @@ $T\ge4$. Collapse entries are seed-mean cells / raw seeded runs.}
 Method & $T=1.5$ & Best ($T$) & High & Collapse\\
 \midrule
 TD3+BC & 74.79 & 74.79 (1.5) & 25.38 & 34 / 142\\
-BAR-P2 & 78.05 & 80.66 (2.5) & 41.20 & 22 / 111\\
-BAR-P3 & \textbf{78.95} & 81.41 (2.5) & 51.92 & 16 / 84\\
-BAR-P4 & 77.70 & \textbf{82.06 (4)} & \textbf{63.97} & \textbf{8 / 54}\\
-BAR-L2 & 75.13 & 78.43 (2.5) & 38.43 & 25 / 112\\
-BAR-L3 & 77.74 & 78.20 (2.5) & 46.44 & 21 / 95\\
+PART-P2 & 78.05 & 80.66 (2.5) & 41.20 & 22 / 111\\
+PART-P3 & \textbf{78.95} & 81.41 (2.5) & 51.92 & 16 / 84\\
+PART-P4 & 77.70 & \textbf{82.06 (4)} & \textbf{63.97} & \textbf{8 / 54}\\
+PART-L2 & 75.13 & 78.43 (2.5) & 38.43 & 25 / 112\\
+PART-L3 & 77.74 & 78.20 (2.5) & 46.44 & 21 / 95\\
 \bottomrule
 \end{tabular}
 \label{tab:stability}
 \end{table}
 
 The high-budget aggregate is a robustness estimand, not a deployment rule.
-At TD3+BC's grid-best shared budget, $T=1.5$, BAR-P3 and P4 score $78.95$
+At TD3+BC's grid-best shared budget, $T=1.5$, PART-P3 and P4 score $78.95$
 and $77.70$ versus $74.79$. Allowing one globally shared grid value per
-method, BAR-P4 reaches $82.06$ at $T=4$. In a post-hoc tuning-transfer
+method, PART-P4 reaches $82.06$ at $T=4$. In a post-hoc tuning-transfer
 sensitivity that selects each method's $T$ on two dynamics families and tests
 on the third, P4 averages $78.44$ versus $74.79$ for TD3+BC ($+3.65$; 7/9
 task differences positive). Family gains vary, so these summaries demonstrate
@@ -589,17 +570,17 @@ $25.97,42.02,52.78,63.61$ and $24.79,40.38,51.05,64.33$. These are disjoint-seed
 replications of one implementation.
 
 The linearized sweep shows that the gain is not unique to the proximal loss.
-At high budgets, BAR-Lin with $K=3$ gains $8.01$ points over $K=2$
+At high budgets, PART-Lin with $K=3$ gains $8.01$ points over $K=2$
 (95\% task-resampling interval $[3.56,13.53]$; eight of nine positive task means)
 and reduces collapse cells from $25$ to $21$. Both disjoint seed pairs reproduce
-the direction, with gains of $7.23$ and $8.80$. BAR-Prox remains stronger overall, so these
+the direction, with gains of $7.23$ and $8.80$. PART-Prox remains stronger overall, so these
 are comparisons of complete training procedures rather than isolated
 integrator effects.
 
 \subsection{Transition and large-budget failure are nonlocal}
 
 
-At $T=20$, the projected BAR-Lin $K=2$ target is clipped at an action bound in
+At $T=20$, the projected PART-Lin $K=2$ target is clipped at an action bound in
 $94$--$95\%$ of states, and the effective action-step coefficient
 $h_{\rm eff}$ is only $14\%$ and $9\%$ of the nominal $dT/K$ coefficient in
 the two hops. These are medians over 18 environment--seed runs per hop. The
@@ -613,9 +594,9 @@ runs have orders-of-magnitude larger TD-error tails, larger critic magnitudes,
 and larger realized movements. The controlled common critic is the frozen
 final TD3+BC $T=1$ critic matched by environment and seed. A run-total gain
 sums the mean $Q$ change across actor hops on the shared state batch. For
-collapsed BAR-Lin runs, its median under the jointly trained critic is
+collapsed PART-Lin runs, its median under the jointly trained critic is
 $3.33\times10^{11}$; under the common critic it is $-1.42$, compared with
-$+2.11$ for stable runs. For BAR-Prox, the common-critic gain changes from
+$+2.11$ for stable runs. For PART-Prox, the common-critic gain changes from
 $+2.51$ in stable runs to $-1.06$ in collapsed runs. This sign reversal
 diagnoses cross-critic disagreement consistent with
 Eq.~\eqref{eq:critic_error_margin}. A separate four-environment seed-2/3
@@ -646,7 +627,7 @@ cross-critic disagreement.}
 \subsection{How multi-hop helps: exposure versus reach}
 
 The phase diagram points to an exposure--reach mechanism rather than a
-small-step accuracy effect. For fixed $T$, only BAR's first $T/K$ branch enters
+small-step accuracy effect. For fixed $T$, only PART's first $T/K$ branch enters
 the Bellman target, while the later branches can extend the deployed policy.
 
 On identical next-state batches, P3/P4 first-actor displacement is below
@@ -662,7 +643,10 @@ readouts establish asymmetric movement and reduced critic-space perturbation,
 not critic accuracy or return causality. Seed-2/3 and lower-exposure return
 counterexamples are reported in the Supplement.
 
-BAR-Prox also realizes a smaller first-hop proxy than BAR-Lin once $T\ge7$.
+Bootstrap exposure denotes this target-action-displacement proxy, not distance
+to dataset support, critic error, or Bellman-target error.
+
+PART-Prox also realizes a smaller first-hop proxy than PART-Lin once $T\ge7$.
 Exactly one realization collapses in 11/90 matched cells; in every case the
 stable run has smaller first and final movement. This associates controlled
 movement with stability without isolating a causal route.
@@ -671,7 +655,7 @@ movement with stability without isolating a causal route.
 
 We test sequential re-centering with a two-seed control whose directly
 data-anchored target/deployed actors use $T/3$ and $T$, compared only with a
-contemporaneous BAR-P3 rerun.
+contemporaneous PART-P3 rerun.
 \begin{table}[t]
 \caption{P3 policy-separation control over 90 matched task--budget--seed pairs.
 Collapse is the descriptive score-20 count before / after seed averaging.}
@@ -682,20 +666,25 @@ Collapse is the descriptive score-20 count before / after seed averaging.}
 \toprule
 Condition & Mean & Raw $<20$ & Cell $<20$\\
 \midrule
-BAR-P3 rerun &57.67&23/90&9/45\\
+PART-P3 rerun &57.67&23/90&9/45\\
 Two-actor control &59.22&21/90&9/45\\
 \bottomrule
 \end{tabular}
 \label{tab:policy_separation}
 \end{table}
-Control minus BAR is $+1.56$ with task-resampling interval $[-1.52,5.44]$,
-while its paired median is $-.42$ and BAR wins 52/90 pairs; only 2/9 task
+Control minus PART is $+1.56$ with task-resampling interval $[-1.52,5.44]$,
+while its paired median is $-.42$ and PART wins 52/90 pairs; only 2/9 task
 means favor the control. Thus policy separation attains the observed P3
 aggregate regime without sequential re-centering. This is a bundled,
 non-compute-matched comparison that also changes anchoring and critic
-trajectory, not an equivalence or re-centering-only effect. A completed P4
-score merge is unresolved but cross-stack, so it fails the locked protocol
-(Supplement).
+trajectory, not an equivalence or re-centering-only effect. The completed P4
+control uses directly data-anchored actors with coefficients $T/4$ and $T$.
+Across 90 matched pairs, PART-P4 minus control has task-equal mean $-2.31$,
+task-resampling interval $[-7.25,2.41]$, paired median $+.68$, and
+wins/ties/losses $55/1/34$. The predeclared outcome is \emph{unresolved},
+not equivalence or superiority. Every pair is within one host stack; the two
+45-pair host blocks use different resolved stacks, which we disclose without
+discarding the author-verified finite scores (Supplement).
 
 Eight-run controls give $71.4,70.0,59.4$ for compute-matched sequential,
 fixed-reference, and direct-final refinement; slower target averaging does not
@@ -707,7 +696,7 @@ The results support one regime-based reading. At small horizons, the
 Wasserstein/JKO view explains the common local direction, and ReLU residence
 makes the exact affine identity empirically relevant. It does not predict a
 return ordering. As $T$ leaves the small-budget plateau, TD3+BC couples a large
-policy move directly into bootstrapping; BAR reduces that first-branch exposure
+policy move directly into bootstrapping; PART reduces that first-branch exposure
 while retaining final reach, and the stability advantage opens. In the extreme
 tail, all procedures become nonlocal and degrade, but added depth moves the
 collapse boundary and rescues its lower tail. Policy separation is sufficient
@@ -723,10 +712,12 @@ provenance consists of the archived launch configuration and score matrices;
 exact per-run manifests were not retained, and post-hoc P4 manifests do not
 reconstruct them. The protocol-v2 full P4 final-displacement audit is limited
 to seeds 0--1. The tasks span three dynamics families, collapse is descriptive, and controls
-are post hoc. The 90-pair policy-separation control uses seeds 0--1, is not
-compute matched, and includes ten Walker2d-expert cells completed through a
-documented CPU recovery chain (eight resumed and two CPU-only). We provide no
-offline rule for choosing $T$ or $K$. BAR makes $K$ actor optimizer calls per
+are post hoc. The P3 and P4 two-actor controls use seeds 0--1 and are not compute matched.
+The P3 control includes ten Walker2d-expert cells completed through a
+documented CPU recovery chain (eight resumed and two CPU-only); the P4
+comparison forms two 45-pair host blocks with different disclosed runtime
+stacks. We provide no
+offline rule for choosing $T$ or $K$. PART makes $K$ actor optimizer calls per
 delayed update and stores $K$ persistent actors, so actor work and persistent
 actor state scale as $O(K)$. On one H200/JAX 0.10.2 stack, compiled actor-phase
 time rises from $1.435$ to $1.887$ ms and scoped backend high-water memory from
@@ -737,20 +728,21 @@ analysis motivates but does not certify the live chain.
 \section{CONCLUSION}
 \label{sec:conclusion}
 
-BAR turns the JKO motivation into a finite-step stability intervention. The
+PART turns the JKO motivation into a finite-step stability intervention. The
 small-$T$ limit explains why ideal refinements share a local flow, but the
 empirical advantage appears when TD3+BC leaves that regime. Across four seeds,
 the $T\ge4$ mean rises from $25.38$ at $K=1$ to $63.97$ at $K=4$ as low-return
 cells fall from $34/63$ to $8/63$; both disjoint seed pairs reproduce the
 ordering. Matched audits reveal the corresponding signature: added depth
-contracts the target-coupled first branch without typically contracting the deployed policy, while most of
-the P4 gain comes from lower-tail rescue. At extreme budgets the local theory
-is inapplicable and every method degrades, so depth shifts rather than removes
-the failure boundary. Within BAR, $K$ is therefore a useful finite-step
-procedure control, not merely a discretization-accuracy knob. The two-actor
-result identifies policy separation as the simpler sufficient mechanism
-hypothesis; a protocol-admissible P4 control remains needed to isolate the
-sequential chain's incremental value.
+contracts the target-coupled first branch and its critic-space perturbation
+without typically contracting the deployed policy, while most of the P4 gain
+comes from lower-tail rescue. At extreme budgets the local theory is
+inapplicable and every method degrades, so depth shifts rather than removes the
+failure boundary. The P3 control identifies policy separation as a simpler
+sufficient mechanism hypothesis, while the completed P4 comparison is
+unresolved. The data therefore establish PART's procedure-level robustness in
+the mid/large-$T$ stress region, but not an incremental return benefit from
+sequential re-centering itself.
 
 \bibliography{references}
 \input{reproducibility_checklist}

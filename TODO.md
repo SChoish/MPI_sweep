@@ -5,8 +5,9 @@ Last audited: 2026-09-03.
 This file tracks work that can change a manuscript claim. A completed run is
 not included automatically; it must identify the intended quantity, pass its
 pre-specified integrity checks, and add evidence not already carried by a
-stronger result. Method names follow [README.md](README.md); P2, P3, and P4
-mean BAR-Prox with `K=2,3,4`.
+stronger result. Method names follow [README.md](README.md); P2, P3, and P4 mean PART-Prox
+with `K=2,3,4`. Archived paths and configuration fields retain the historical
+`PART` identifier.
 
 Priority follows the claim dependency: identify what the method adds, measure
 the proposed mechanism, validate the local numerical interpretation, then
@@ -18,83 +19,55 @@ does not displace a higher-priority unresolved claim.
 The completed P3 two-actor control changes the paper's mechanism claim. Its
 conservative target actor uses `T/3`, its data-anchored deployment actor uses
 `T`, and only the target branch enters Bellman backups. Across 90 cells it
-reaches the same 9/45 seed-mean collapse count as contemporaneous BAR-P3 and
+reaches the same 9/45 seed-mean collapse count as contemporaneous PART-P3 and
 has no resolved aggregate difference. Thus target/deployment separation is a
 sufficient candidate mechanism at P3; sequential re-centering is not a
 prerequisite for those aggregate outcomes.
 
-### A. Two-actor P4 versus contemporaneous BAR-P4 (execution complete; locked gate failed)
+### A. Two-actor P4 versus contemporaneous PART-P4 (complete; outcome unresolved)
 
-Implementation status is tracked separately from experimental status. The
-preview/freeze/launch/analyze/verify harness is packaged in
-[`scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md`](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md).
-On `ext_csv`, a 180-cell manifest was frozen at `29fea94` and the first 90
-keys finished at 1M (`45` BAR-P4 + `45` two-actor-P4 `eval.csv`). On
-`ext_csh`, frozen-manifest entries 91--180 are complete as a compact shard,
-including five Walker2d-expert cells whose critic optimizer diverged after
-finite weights. The two shards are merged at score level under
-`sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/` (`SUMMARY.json` /
-`MERGE_MANIFEST.json`): task-equal mean ≈ −2.31, 95% task-bootstrap interval
-≈ [−7.25, 2.41], outcome_label=`unresolved`. Compact score integrity passes,
-but scientific admissibility under the frozen P0 contract does not: the two
-shards use Python 3.12/JAX 0.10/Flax 0.12 versus Python 3.10/JAX 0.4/Flax 0.10
-stacks, five retained runs have nonfinite optimizer states, and tail raw
-checkpoints are not local. This is not a create-only ckpt-bound analyze/verify
-receipt over all 180 runs; only the descriptive score sensitivity is reported.
+The full grid is complete at source revision `29fea94`: nine tasks,
+`T={4,7,10,14,20}`, seeds 0--1, and two procedures give 180 final
+evaluations and 90 matched pairs. The merged archive is
+`sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/`. PART-P4 minus
+two-actor-P4 has task-equal mean `-2.3076`, 95% task-bootstrap interval
+`[-7.2476,2.4118]`, paired median `+0.6811`, and PART/control/tie counts
+`55/34/1`. The predeclared `outcome_label=unresolved`.
 
-- [x] Generalize the existing control to a target coefficient `T/4` and a
-  directly data-anchored deployment coefficient `T`. Keep independent actors;
-  route only the target actor into Bellman backups. Call it a two-actor
-  policy-separation control, not a published-MCEP reproduction.
-- [x] Before launch, freeze a manifest with resolved configs, source revision
-  and file hashes, dependency lock, dataset and normalization hashes, hardware,
-  evaluation contract, output schema, and exact expected keys. Resume only
-  from a checkpoint whose config and weights hashes match the manifest.
-- [x] Run exactly nine paper tasks, `T={4,7,10,14,20}`, and seeds 0--1 to one
-  million critic updates with ten final evaluation episodes: 90 control runs.
-  Completed as `45/90` on `ext_csv` (first half) and `45/90` on `ext_csh`
-  (entries 91--180). Do not add seeds 4--7 and do not expand to a
-  P2/P3/P4 factorial before this comparison is read.
-- [ ] Optional, only if a protocol-admissible P4 mechanism claim is required:
-  rerun both 90-cell arms under one clean code snapshot and one resolved
-  environment lock. All 180 current scores are complete, but the two host
-  shards use different dependency stacks, so this cannot be repaired by
-  rerunning only one arm. Historical P4 scores remain a marginal sensitivity
-  and cannot be spliced into cellwise pairing because individual collapse
-  trajectories are unstable across reruns.
-- [x] Primary signed contrast is BAR-P4 minus two-actor-P4. Report the
-  task-equal mean over the fixed 90-cell grid, paired median, wins/ties,
-  nine task means, 100,000-draw task-resampling interval, and raw-run plus
-  seed-mean collapse transitions at thresholds 0, 10, 20, 30, and 40.
-  Score-level merge archived in `p0_bar_p4_vs_two_actor_p4/SUMMARY.json`
-  (not ckpt-bound verify).
-- [x] Before launch, freeze an author-chosen minimum worthwhile difference of
-  three normalized-return points. Classify the primary BAR-minus-control
-  contrast as four-actor-procedure-supporting only if its 95% task-resampling
-  interval lies above zero and its point estimate is at least +3; as
-  two-actor-procedure-supporting only if the interval lies below zero and the
-  estimate is at most -3; and as author-band-comparable only if the full
-  interval lies inside [-3,+3]. Apply these labels in the stated order and
-  take the first match. All other outcomes are unresolved. The three-point
-  band is an author-defined decision threshold, not an externally
-  validated equivalence margin. Collapse transitions are secondary and cannot
-  override this label. Applied on the merged score table: `unresolved`.
-- [x] Treat the score-level result as a descriptive full-procedure sensitivity.
-  A
-  four-actor-procedure-supporting result supports incremental value for the
-  four-actor chain bundle, not re-centering alone. A
-  two-actor-procedure-supporting or author-band-comparable result supports
-  direct coefficient/routing separation as the simpler method. The present
-  cross-stack result is `unresolved` and appears only with its failed locked
-  gate disclosed; it does not settle the incremental-value claim.
+This label is a scientific decision, not a data-validity flag. The runs use
+one git revision with matching source hashes, resolved configs, normalization,
+and run keys, and the authors manually verified all completed evaluations.
+The 90 matched pairs are split across two host blocks with different resolved
+JAX/Flax stacks. That runtime variation is disclosed, but the completed scores
+are retained as valid experimental data. Five Walker2d-expert checkpoints have
+nonfinite critic-optimizer states after finite weights; their final weights and
+evaluations are finite, and retaining them avoids outcome-selective deletion.
+
+- [x] Run 90 two-actor-P4 and 90 contemporaneous PART-P4 cells to one million
+  updates with ten final evaluation episodes.
+- [x] Freeze the source revision, configs, expected keys, and per-host
+  manifests; merge all 180 final scores into 90 matched pairs.
+- [x] Use PART-P4 minus two-actor-P4 as the primary signed contrast and report
+  the task-equal mean, paired median, wins/ties, task means, 100,000-draw
+  task-resampling interval, and collapse transitions.
+- [x] Apply the predeclared three-point decision rule. The result is
+  `unresolved`; it is neither equivalence nor superiority for either
+  procedure.
+- [x] Treat the result as a valid full-procedure comparison. It does not
+  isolate re-centering alone because actor work, anchoring, and critic
+  trajectory also differ.
+- [ ] Optional only if a single-runtime-stack sensitivity or a unified
+  checkpoint-bound receipt is desired: repeat the same 180 cells on one
+  resolved stack. This is not required to regard the completed experiment as
+  valid and is not a prerequisite for reporting the current unresolved result.
 
 ### B. Completed P3 control and optional exact causal isolation
 
-- [x] Complete BAR-P3 and the MCEP-inspired P3 control at 90/90 final
+- [x] Complete PART-P3 and the MCEP-inspired P3 control at 90/90 final
   checkpoints and archive the exact matched intersection in
   `sweep_results/diagnostics/bar_mcep_p3_paired/`.
-- [x] Verify control minus BAR as `+1.56`, task-resampling interval
-  `[-1.52,5.44]`, paired median `-.42`, 52/90 BAR wins, raw collapse 21/90
+- [x] Verify control minus PART as `+1.56`, task-resampling interval
+  `[-1.52,5.44]`, paired median `-.42`, 52/90 PART wins, raw collapse 21/90
   versus 23/90, and seed-mean collapse 9/45 for both. Keep this as an
   exploratory final-score/config-level control, not an equivalence result.
 - [x] Preserve CPU recovery provenance: eight Walker2d-expert cells resumed
@@ -256,7 +229,7 @@ Task-equal residence on 6144 eligible interior anchors is
   manuscript and verifier. They demonstrate a practical regime but do not
   create an offline `T,K` selection rule.
 - [x] Release a clean runnable implementation of the recovered two-actor
-  control mode. It preserves the BAR base evaluation columns for the target
+  control mode. It preserves the PART base evaluation columns for the target
   actor, writes separate deployment-actor columns, and validates method and
   depth on resume. This is a compatible recovered implementation, not proof of
   the exact historical source revision.

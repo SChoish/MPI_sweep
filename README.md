@@ -1,8 +1,10 @@
-# Budgeted Actor Refinement Sweep
+# PART: Proximal Actor Refinement through Target Routing
 
-Reproducible Budgeted Actor Refinement (BAR) sweeps for offline
-TD3+BC, with proximal-loss and action-metric-matched projected-linearized realizations
-implemented in JAX/Flax. The release supports the
+Reproducible PART sweeps for offline TD3+BC, with proximal-loss and
+action-metric-matched projected-linearized realizations implemented in
+JAX/Flax. Released paths, configuration keys, and scripts retain the
+historical Budgeted Actor Refinement (`BAR`) identifier so existing results
+remain traceable. The release supports the
 nine D4RL MuJoCo locomotion datasets built from Hopper, HalfCheetah, and
 Walker2d with the `medium`, `medium-replay`, and `expert` splits.
 
@@ -46,7 +48,7 @@ Select it with `--integrator explicit`. The factor `d` is required because the
 implicit transport cost is a mean over action coordinates. Omitting `d` gives
 an explicit target that is `d` times smaller and does not represent the same
 nominal flow time. Because the target is clipped and fitted by a neural actor,
-this BAR-Lin variant is a projected-and-regressed Euler approximation rather
+this PART-Lin variant is a projected-and-regressed Euler approximation rather
 than an exact unconstrained Euler trajectory.
 
 ### Wasserstein-2 gradient-flow interpretation
@@ -219,7 +221,7 @@ mpi-sweep \
   --log-dir ./logs/exp4
 ```
 
-`--hops K` accepts any positive integer; BAR creates exactly `K` actors and
+`--hops K` accepts any positive integer; PART creates exactly `K` actors and
 uses `tau / K` at each hop. A custom grid can be passed with
 `--taus "0.1 0.4 1.5"`. Domains, dataset splits, and seeds accept either spaces
 or commas.
@@ -259,7 +261,7 @@ Each run writes to:
 Use `mpi-sweep --help` and `mpi-train --help` for all options.
 
 Locked submission follow-ups use separate, fail-closed entrypoints: the
-[P0 BAR-P4/two-actor-P4 harness](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md),
+[P0 PART-P4/two-actor-P4 harness](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md),
 the [P1 target-value audit](scripts/diagnostics/P1_TARGET_VALUE_RUNBOOK.md),
 the [P2 ReLU residence audit](scripts/diagnostics/P2_RELU_RESIDENCE_RUNBOOK.md), and
 the [actor-cost profiler](scripts/diagnostics/ACTOR_COST_RUNBOOK.md).
@@ -277,15 +279,15 @@ seeds 0--3 each complete the same nine-task, fourteen-budget grid. The intended
 reading is regime based. At `T={.05,.1,.2}`, depth has no consistent return
 ordering, matching the role of JKO as a local geometric interpretation rather
 than a performance theorem. TD3+BC peaks at `T=1.5` and then drops to
-67.41/45.93/30.36 at `T=2.5/4/7`, while BAR-P4 remains at
-81.25/82.06/81.79. At `T>=10` every method degrades, but deeper BAR shifts the
+67.41/45.93/30.36 at `T=2.5/4/7`, while PART-P4 remains at
+81.25/82.06/81.79. At `T>=10` every method degrades, but deeper PART shifts the
 failure frontier: its task-equal tail remains depth ordered through `K=4`, not
 uniformly superior at every extreme cell. In that high-budget region, the
 four-seed projected-linearized mean rises from 38.43 at `K=2` to 46.44 at
 `K=3`, with score-below-20 cells falling from 25/63 to 21/63. The practical
 summaries are not confined to that stress tail: at
-TD3+BC's grid-best shared budget `T=1.5`, BAR-P3 and P4 score 78.95 and 77.70
-versus 74.79, while BAR-P4's descriptive grid maximum is 82.06 at `T=4`.
+TD3+BC's grid-best shared budget `T=1.5`, PART-P3 and P4 score 78.95 and 77.70
+versus 74.79, while PART-P4's descriptive grid maximum is 82.06 at `T=4`.
 A leave-one-dynamics-family-out tuning-transfer sensitivity gives 78.44 for
 P4 versus 74.79 for TD3+BC; it is descriptive and does not provide an offline
 budget-selection rule. Large training checkpoints are not committed. The
@@ -305,7 +307,7 @@ steady-state actor-call peak.
 The completed protocol-v2 target-value audit is released under
 [`sweep_results/diagnostics/p1_target_value_audit/`](sweep_results/diagnostics/p1_target_value_audit/).
 On identical next-state batches, a common TD3+BC target critic, and identical
-smoothing noise, BAR-P3 and BAR-P4 have lower operational TD-target
+smoothing noise, PART-P3 and PART-P4 have lower operational TD-target
 perturbation in 86/90 and 88/90 matched cells, with median RMS ratios .717 and
 .617 and a below-one median in every task. The same audit supplies full
 seed-0/1 final-actor geometry for P4. Absolute means are not promoted because
@@ -328,28 +330,31 @@ Per-state simulator rollouts and other large intermediates are excluded.
 ### MCEP-inspired policy-separation control
 
 A completed two-seed control tests whether separate conservative target and
-full-budget deployment actors reproduce key BAR-P3 aggregate outcomes without
+full-budget deployment actors reproduce key PART-P3 aggregate outcomes without
 sequential re-centering. It is inspired by
-[MCEP](https://openreview.net/forum?id=imAROs79Pb), but uses BAR's normalization
+[MCEP](https://openreview.net/forum?id=imAROs79Pb), but uses PART's normalization
 and fixed tau/3 versus tau mapping; it is neither a reproduction of the
 published method nor a compute-matched re-centering ablation.
 
 Across 90 matched task--budget--seed cells, the control scores 59.22 versus
-57.67 for a contemporaneous BAR-P3 rerun. Control minus BAR is +1.56 with a
+57.67 for a contemporaneous PART-P3 rerun. Control minus PART is +1.56 with a
 95% task-resampling interval of [-1.52, 5.44], while the paired median is
--0.42 and BAR wins 52/90 cells; after averaging the two seeds, both procedures
+-0.42 and PART wins 52/90 cells; after averaging the two seeds, both procedures
 collapse in 9/45 task--budget cells. Sequential re-centering is therefore not
 a prerequisite for the observed mean and seed-mean collapse outcomes on this
 grid. Because the control also changes actor work, anchoring, and the realized
 critic trajectory, it establishes neither superiority nor equivalence and does
-not isolate which element of the simpler procedure is responsible. The matched
-P4 protocol and harness are packaged in the
-[P0 runbook](scripts/experiments/P0_BAR_TWO_ACTOR_P4_RUNBOOK.md). Its two-host
-90-pair score merge is complete and numerically unresolved (BAR minus control
-$-2.31$, task-bootstrap interval $[-7.25,2.41]$), but the shards use materially
-different resolved dependency stacks and five retained runs have nonfinite
-optimizer states. It is therefore a descriptive sensitivity, not an admissible
-locked-P0 result. No seeds 4--7 expansion is planned.
+not isolate which element of the simpler procedure is responsible. The matched P4 grid is also complete: 180 final evaluations form 90 pairs in
+the [P0 archive](sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/).
+PART-P4 minus two-actor-P4 has task-equal mean -2.31, 95% task-resampling
+interval [-7.25, 2.41], paired median +0.68, and predeclared outcome
+`unresolved`. The same git revision, source hashes, configs, normalization,
+and run keys were used and the authors manually verified the completed
+outputs. Every matched pair was trained and evaluated within one host stack;
+the two 45-pair host blocks used different resolved JAX/Flax stacks. This is
+disclosed runtime variation, not a reason to discard the data. Neither the
+P3 nor P4 comparison proves equivalence or isolates re-centering from actor
+work, anchoring, and the realized critic trajectory.
 
 The compact [paired archive](sweep_results/diagnostics/bar_mcep_p3_paired/)
 contains all final scores, independently checked aggregates, recovery

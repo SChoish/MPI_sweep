@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify released BAR results and the manuscript-facing numerical claims."""
+"""Verify released PART results and the manuscript-facing numerical claims."""
 
 from __future__ import annotations
 
@@ -2521,10 +2521,10 @@ def verify_manuscript(path: Path) -> None:
         "rescued-cell gain share": "54.7%",
         "four-seed collapse-risk interval": "-.119([-.218,-.024])",
         "four-seed linearized interval": "[3.56,13.53]",
-        "four-seed linearized L2 row": "bar-l2&75.13&78.43(2.5)&38.43&25/112",
-        "four-seed linearized L3 row": "bar-l3&77.74&78.20(2.5)&46.44&21/95",
-        "fixed-budget practical contrast": "bar-p3andp4score78.95and77.70versus74.79",
-        "descriptive grid maxima": "bar-p4reaches82.06att=4",
+        "four-seed linearized L2 row": "part-l2&75.13&78.43(2.5)&38.43&25/112",
+        "four-seed linearized L3 row": "part-l3&77.74&78.20(2.5)&46.44&21/95",
+        "fixed-budget practical contrast": "part-p3andp4score78.95and77.70versus74.79",
+        "descriptive grid maxima": "part-p4reaches82.06att=4",
         "family-transfer summary": "p4averages78.44versus74.79fortd3+bc(+3.65;7/9",
         "hierarchical P4-P3 sensitivity": "intervals[3.04,22.73]and[2.90,14.07]",
         "hierarchical fixed-budget sensitivity": "interval[-.20,8.46]",
@@ -2561,7 +2561,8 @@ def verify_manuscript(path: Path) -> None:
             "thislimitdoesnotexplainthecoupledlarge-tchain"
         ),
         "ReLU region identity": (
-            "thetwoidealmapsexactlyequalinsideoneactivationregion"
+            "withinsucharegion,theidealexplicitupdateandthesame-region"
+            "stationarybackward-eulerbranchcoincideexactly"
         ),
         "ReLU learned-audit boundary": (
             "ratherthanfittinganonzero1/kerrorslope"
@@ -2607,18 +2608,31 @@ def verify_manuscript(path: Path) -> None:
             "policyseparationattainstheobservedp3aggregateregimewithout"
             "sequentialre-centering"
         ),
-        "MCEP main table BAR row": "bar-p3rerun&57.67&23/90&9/45",
+        "MCEP main table PART row": "part-p3rerun&57.67&23/90&9/45",
         "MCEP main table control row": "two-actorcontrol&59.22&21/90&9/45",
-        "P4 control boundary": "p4scoremergeisunresolvedbutcross-stack",
-        "P0 descriptive interval": "task-resamplingintervalis[-7.25,2.41]",
-        "P0 runtime-stack boundary": (
-            "twoshardsusemateriallydifferentresolvedpython/jax/flax/optaxstacks"
+        "PART title": (
+            "part:proximalactorrefinementthroughtargetroutinginoffline"
+            "reinforcementlearning"
+        ),
+        "P4 control evidence scope": (
+            "p4two-actorscores&90pairs;180finalscores&0--1"
+        ),
+        "completed P4 control contrast": (
+            "part-p4minuscontrolhastask-equalmean-2.31"
+        ),
+        "completed P4 control interval": "task-resamplinginterval[-7.25,2.41]",
+        "completed P4 outcome": "thepredeclaredoutcomeisunresolved",
+        "P0 within-pair stack boundary": (
+            "everymatchedpairwastrainedandevaluatedwithinonehoststack"
+        ),
+        "P0 data-validity statement": (
+            "theexistingscoresarenottreatedasabsentorinvalid"
         ),
         "MCEP control contrast": (
-            "controlminusbaris+1.56withtask-resamplinginterval[-1.52,5.44]"
+            "controlminuspartis+1.56withtask-resamplinginterval[-1.52,5.44]"
         ),
-        "MCEP paired median and wins": "pairedmedianis-.42andbarwins52/90pairs",
-        "MCEP scope boundary": "notapublished-mcepreproduction",
+        "MCEP paired median and wins": "pairedmedianis-.42andpartwins52/90pairs",
+        "MCEP scope boundary": "notpublished-mcepreproductions",
         "MCEP recovery": (
             "eightwalker2d-expertcellsresumedfromthematchinglogged"
             "emergency-checkpointsteps"
@@ -2645,8 +2659,8 @@ def verify_manuscript(path: Path) -> None:
         "obsolete linearized denominator": "126forlinearized",
         "obsolete two-seed linearized estimand": "two-seedhigh-budgetmean",
         "obsolete linearized limitation": "linearizedgridandk=3movementauditusetwo",
-        "old BAR-L2 aggregate row": "bar-l2&2&69.02&36.68&27.44&29/58",
-        "old BAR-L3 aggregate row": "bar-l3&2&68.54&43.91&33.12&24/53",
+        "old PART-L2 aggregate row": "part-l2&2&69.02&36.68&27.44&29/58",
+        "old PART-L3 aggregate row": "part-l3&2&68.54&43.91&33.12&24/53",
         "obsolete precision caveat": "limitedseed-levelprecision",
         "ambiguous audit scope": "270-checkpointk=3",
         "overclaimed target measurement": "directlymeasuredtarget-policy",
@@ -2667,6 +2681,11 @@ def verify_manuscript(path: Path) -> None:
         "old P4 missing-final boundary": "archiveomitsp4final-actorgeometry",
         "old missing P4 control": "nocorrespondingp4controlhasyettested",
         "retired frozen-critic result": "15of18environment--seedruns",
+        "stale P4 invalidity claim": "failsthelockedprotocol",
+        "stale P4 inadmissible label": "descriptive;inadmissible",
+        "stale P4 rerun prerequisite": (
+            "protocol-admissiblep4controlremainsneeded"
+        ),
     }
     stale = [label for label, token in stale_tokens.items() if token in text]
     if re.search(r"35/63.{0,80}9/63", text):

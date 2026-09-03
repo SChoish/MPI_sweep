@@ -26,7 +26,7 @@
 
 \begin{document}
 \onecolumn
-\aistatstitle{Supplementary Material for ``BAR: Budgeted Actor Refinement Decouples Bootstrap Exposure from Policy Reach''}
+\aistatstitle{Supplementary Material for ``PART: Proximal Actor Refinement through Target Routing in Offline Reinforcement Learning''}
 \appendix
 
 \section{FROM LOCAL WASSERSTEIN FLOW TO FINITE-STEP TRAINING}
@@ -195,8 +195,8 @@ conditions only on $\mu_1$.
 \subsection{Algorithms and schedules}
 The implementation parameter is $T=\tau=\alpha/2$, and the normalized
 budget is split as $h=T/K$. Thus $K=1$ recovers TD3+BC with coefficient
-$\alpha=2T$. BAR-Prox uses Eq.~\eqref{eq:actorloss} with a moving reference;
-BAR-Lin constructs Eq.~\eqref{eq:linearized_target} and uses MSE regression.
+$\alpha=2T$. PART-Prox uses Eq.~\eqref{eq:actorloss} with a moving reference;
+PART-Lin constructs Eq.~\eqref{eq:linearized_target} and uses MSE regression.
 The $K$ actor networks are independently initialized persistent networks with
 separate Adam states. Each iteration first updates the online critic. On every second iteration,
 one optimizer step is then performed per actor in chain order on the same
@@ -284,7 +284,7 @@ P3 target/final displacement & 270 checkpoints; 90 matched contrasts & 0--1 & Po
 P4 target branch & 180 checkpoints; 90 contrasts & 0--3 / 0--1 & Four-seed target archive\\
 P3/P4 value + geometry & 270 checkpoints; 90 per method & 0--1 & Post-hoc full audit\\
 P3 two-actor control & 90 pairs; 180 final scores & 0--1 & Exploratory mechanism control\\
-P4 two-actor scores & 90 pairs; two runtime stacks & 0--1 & Descriptive; inadmissible\\
+P4 two-actor scores & 90 pairs; 180 final scores & 0--1 & Full-grid comparison; unresolved\\
 ReLU residence & 6 tasks; 6144 anchors & 0--1 & Prelocked scope audit\\
 Route and component controls & 8 selected runs & 0--1 & Post-hoc targeted controls\\
 Actor cost & $K=1$--4; H200 & init. 0 & Systems profile\\
@@ -334,7 +334,7 @@ The within-run target critic is the operational training object. A matched
 TD3+BC ($K=1$) target critic from the same task, $T$, and seed is also applied
 to all three actors to isolate the action-side contrast under one learned
 scorer. Neither critic is ground truth.
-For BAR-Lin, projection attenuation is the RMS norm ratio between the clipped
+For PART-Lin, projection attenuation is the RMS norm ratio between the clipped
 and raw target displacements. If $\widetilde g$ is the normalized critic action
 gradient and $\Delta a$ is the learned actor displacement, define
 \[
@@ -364,16 +364,17 @@ For route-native evaluation, $\rho_1$ and $\rho_K$ are respectively the Polyak f
 
 The compute-matched study uses the same eight final cells. Sequential $K=3$ performs actor updates anchored at $\mu_0,\mu_1,$ and $\mu_2$; the fixed-reference control anchors both later actors at $\mu_1$; the direct-final control applies two optimizer calls to one $2T/3$ objective anchored at $\mu_1$. Every condition performs three actor optimizer calls per delayed update. The target-lag control instead keeps $K=1$ and changes only the actor-target Polyak rate from $.005$ to $.005/3$, leaving the critic-target rate unchanged.
 
-The broader policy-separation control covers all nine tasks,
-$T\in\{4,7,10,14,20\}$, and seeds 0--1 at one million updates. Its independently
-initialized target and evaluation actors are both anchored directly to dataset
-actions. The target actor uses coefficient $T/3$ and alone supplies Bellman
-targets; the deployed actor uses $T$. We pair it by task, budget, and seed with
-a contemporaneous BAR-P3 rerun under the same evaluation protocol. It performs
-two rather than three actor optimizer calls and follows a separately realized
-critic trajectory. It is therefore an MCEP-inspired policy-separation
-mechanism control, not a published-MCEP reproduction, a compute-matched
-re-centering ablation, or an exact shared-trajectory comparison.
+The broader policy-separation controls cover all nine tasks,
+$T\in\{4,7,10,14,20\}$, and seeds 0--1 at one million updates. Their
+independently initialized target and evaluation actors are both anchored
+directly to dataset actions. The P3 target actor uses coefficient $T/3$ and is
+paired with a contemporaneous PART-P3 rerun; the P4 target actor uses $T/4$ and
+is paired with PART-P4. In both controls only the target actor supplies Bellman
+targets, while the deployed actor uses coefficient $T$. Each control performs
+two rather than $K$ actor optimizer calls and follows a separately realized
+critic trajectory. These are policy-separation mechanism controls, not
+published-MCEP reproductions, compute-matched re-centering ablations, or exact
+shared-trajectory comparisons.
 
 The ReLU residence audit freezes the final $T=1$ Q1 critics for the six Hopper
 and Walker2d tasks and seeds 0--1. For each run it deterministically selects
@@ -534,7 +535,7 @@ Beyond the main-text P4--P3 contrast, P4 minus TD3+BC gains $38.59$ points
 with task-resampling interval $[21.39,54.63]$ and eight of nine positive task
 means. At the score-20 threshold, the P4--P3 and L3--L2 raw collapse-risk
 differences are $-.119$ ($[-.218,-.024]$) and $-.067$ ($[-.131,-.004]$).
-BAR-Lin is positive in $45/63$ continuous cell contrasts (median $+1.37$);
+PART-Lin is positive in $45/63$ continuous cell contrasts (median $+1.37$);
 its five rescues and one reversal account for $42.8\%$ of the total gain.
 Thresholded transitions remain descriptive.
 
@@ -633,7 +634,7 @@ implementation.
 
 \subsection{Which part of multi-hop matters?}
 
-BAR changes both how far the target-routed first branch moves and how a final
+PART changes both how far the target-routed first branch moves and how a final
 policy is constructed. The controls below separate some alternatives, but no
 single one isolates every element of the persistent chain.
 
@@ -657,16 +658,16 @@ $3\times$ target lag, $K=1$ &12.0&1.5&7/8\\
 \end{table}
 
 Across the 90 matched task--budget--seed cells, the two-actor control scores
-$59.22$ versus $57.67$ for the contemporaneous BAR-P3 rerun; raw collapse
+$59.22$ versus $57.67$ for the contemporaneous PART-P3 rerun; raw collapse
 counts are 21/90 and 23/90, and both have 9/45 seed-mean collapsed cells. The
-control-minus-BAR task-equal mean is $+1.56$, with a 95\% task-resampling
+control-minus-PART task-equal mean is $+1.56$, with a 95\% task-resampling
 interval $[-1.52,5.44]$; only 2/9 task means favor the control.
-At the run level the control wins 34 cells, BAR wins 52, and four tie. The
+At the run level the control wins 34 cells, PART wins 52, and four tie. The
 positive mean but negative paired median reflects tail redistribution rather
 than a broad cellwise shift: the mean differences are $+5.53$ for seed 0 and
 $-2.42$ for seed 1, and the two seeds have opposite signs in 30/45
 task--budget pairs. Using normalized return below 20 as collapse, the control
-rescues five BAR collapses and introduces three at the run level. After
+rescues five PART collapses and introduces three at the run level. After
 averaging the two seeds first, both procedures collapse in 9/45 cells, and
 none of the 45 paired classifications changes.
 
@@ -675,7 +676,7 @@ emergency-checkpoint steps on the CPU recovery path, and the two $T=20$ cells
 began there from zero. Removing the entire ten-cell task changes the mean
 difference to $+1.83$; because this also
 removes a task, it is not a hardware-effect estimate. The contemporaneous
-BAR-P3 aggregate is only $.14$ above the released P3 aggregate on these cells,
+PART-P3 aggregate is only $.14$ above the released P3 aggregate on these cells,
 but their cellwise differences have RMSE $24.03$ and range from $-99.50$ to
 $+98.63$. We therefore pair the control only with the contemporaneous rerun.
 The higher observed control mean and identical seed-mean collapse count show
@@ -683,15 +684,55 @@ that sequential re-centering is not a prerequisite for those two aggregate
 outcomes on this grid. The bundled comparison establishes neither equivalence
 nor which simpler-procedure element is responsible.
 
-The matched P4 score experiment also completed 90 pairs across two hosts.
-The score-level BAR-minus-control task-equal mean is $-2.31$, its paired median
-is $+.68$, BAR wins 55 cells versus 34 control wins and one tie, and the
-task-resampling interval is $[-7.25,2.41]$, giving the predeclared numeric label
-\emph{unresolved}. We do not promote this as the locked P4 result: the two
-shards use materially different resolved Python/JAX/Flax/Optax stacks, five
-retained Walker2d-expert runs have nonfinite optimizer states, and the tail raw
-checkpoints are not in the release host. Keeping the finite final scores avoids
-post-hoc outcome filtering; the merge remains a descriptive sensitivity.
+For P4, the full grid contains 180 completed final evaluations and 90 matched
+pairs. PART-P4 minus two-actor-P4 has task-equal mean $-2.3076$, paired median
+$+0.6811$, 55 PART wins, one tie, and 34 control wins. The 100,000-draw
+task-resampling interval is $[-7.2476,2.4118]$, so the predeclared outcome is
+\emph{unresolved}.
+
+\begin{table}[t]
+\caption{P4 control task means: PART-P4 minus two-actor-P4.}
+\centering
+\small
+\begin{tabular}{lr}
+\toprule
+Task & Mean difference\\
+\midrule
+Hopper-medium & +1.64\\
+Hopper-medium-replay & +0.74\\
+Hopper-expert & -12.41\\
+HalfCheetah-medium & -0.05\\
+HalfCheetah-medium-replay & +1.85\\
+HalfCheetah-expert & -10.11\\
+Walker2d-medium & -13.45\\
+Walker2d-medium-replay & +9.88\\
+Walker2d-expert & +1.14\\
+\bottomrule
+\end{tabular}
+\label{tab:p4_separation_control}
+\end{table}
+
+The opposite signs of the mean and median reflect heterogeneous tail failures,
+not a uniform ordering. At score threshold 20, raw collapse counts are 12/90
+for PART and 11/90 for the two-actor procedure; after averaging seeds within
+task--budget cells they are 5/45 and 3/45. Three cells collapse under both and
+two only under PART. These secondary counts do not override the continuous
+outcome. The result supports neither equivalence nor superiority in either
+direction.
+
+All 180 finite final evaluations were produced from source revision
+\texttt{29fea94}, with matching source-file hashes, resolved configs, dataset
+normalization, and run keys, and were manually checked by the authors. Every
+matched pair was trained and evaluated within one host stack. The two host
+blocks each contain 45 pairs but use different resolved JAX/Flax stacks:
+the first has mean $-2.07$, median $+.65$, and PART/control/tie counts
+$29/16/0$; the second has mean $-2.55$, median $+.73$, and counts $26/18/1$.
+We retain the complete paired evidence and disclose this blocked runtime
+variation; an optional same-stack rerun would strengthen environment control,
+but the existing scores are not treated as absent or invalid. Five
+Walker2d-expert checkpoints have nonfinite critic-optimizer states after finite
+weights; their final weights and evaluations are finite, and retaining them
+avoids outcome-selective deletion.
 
 The paired route-only study uses the same eight runs and aggregates four
 checkpoints per run. For critic route $r\in\{\mathrm{first},\mathrm{final}\}$

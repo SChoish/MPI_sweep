@@ -44,8 +44,8 @@ python3 make_figures.py --results-dir /path/to/sweep_results
 A successful build refreshes:
 
 ```text
-bar_aistats26_manuscript.pdf
-bar_aistats26_supplement.pdf
+part_aistats26_manuscript.pdf
+part_aistats26_supplement.pdf
 ```
 
 Intermediate `paper.pdf` and `supplement.pdf` files are retained for debugging.

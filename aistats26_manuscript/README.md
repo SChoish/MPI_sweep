@@ -1,25 +1,25 @@
-# BAR — AISTATS 2026 Submission Package
+# PART - AISTATS 2026 Submission Package
 
 This directory contains the anonymous submission package for:
 
-> **BAR: Budgeted Actor Refinement Decouples Bootstrap Exposure from Policy Reach**
+> **PART: Proximal Actor Refinement through Target Routing in Offline Reinforcement Learning**
 
-Budgeted Actor Refinement (BAR) splits a nominal actor-improvement coefficient
-across a persistent TD3+BC actor chain. The paper follows one regime-based
-argument: ideal JKO steps explain the common small-$T$ flow; as TD3+BC leaves
-its high-return plateau, BAR limits the target-routed first hop while retaining
-final-policy reach; at extreme $T$, all methods are nonlocal and multi-hop
-shifts rather than removes the collapse boundary. At $T=4,7$, TD3+BC scores
-45.93/30.36 while BAR-P4 remains at 82.06/81.79. Across four proximal seeds,
-the equally weighted high-budget aggregate is strictly ordered by depth, and
-two disjoint host-separated seed pairs reproduce that ordering. Targeted
-controls probe routing, optimizer-count, target-lag, and critic-calibration. A
-90-pair MCEP-inspired two-actor control shows that sequential re-centering is
-not a prerequisite for the observed P3 mean and seed-mean collapse outcomes.
-As a bundled procedure comparison, it does not isolate the chain's incremental
-value. A completed P4 cross-host score sensitivity is numerically unresolved
-but fails the locked same-runtime-stack gate, so a protocol-admissible P4
-comparison remains open.
+PART splits a nominal actor-improvement coefficient across a persistent
+TD3+BC actor chain, routes the first branch into Bellman targets, and deploys
+the last. The paper follows one regime-based argument: ideal JKO steps
+explain the common small-$T$ flow; as TD3+BC leaves that region, PART limits
+the target-routed first hop while retaining final-policy reach; at extreme
+$T$, all methods are nonlocal and depth shifts rather than removes the
+collapse boundary. Matched action- and critic-space audits support this
+exposure--reach reading without identifying return causality.
+
+The P3 two-actor control reproduces its aggregate regime without sequential
+re-centering. The completed 90-pair P4 comparison has PART-minus-control
+mean -2.31, interval [-7.25, 2.41], and predeclared outcome `unresolved`.
+It is valid full-grid evidence; the different stacks of its two host blocks
+are disclosed rather than used to discard the data. Released paths and
+configuration keys retain the historical Budgeted Actor Refinement (`BAR`)
+identifier for traceability; the manuscript and figures use PART.
 
 ## Files
 
@@ -36,8 +36,8 @@ tracked in [`../TODO.md`](../TODO.md).
 
 The build produces:
 
-- `bar_aistats26_manuscript.pdf`
-- `bar_aistats26_supplement.pdf`
+- `part_aistats26_manuscript.pdf`
+- `part_aistats26_supplement.pdf`
 
 ## Build
 
@@ -71,9 +71,9 @@ checklist. The optional supplement uses the required single-column format.
 - Route shadows, compute-matched refinement, actor-target lag, simulator
   screening, and a clean-source six-task ReLU-region residence audit
 - A 90-pair, two-seed MCEP-inspired policy-separation control with a
-  contemporaneous BAR-P3 rerun and documented CPU-recovery sensitivity
-- A completed 90-pair P4 two-actor score sensitivity retained only as
-  protocol-inadmissible descriptive evidence because its host stacks differ
+  contemporaneous PART-P3 rerun and documented CPU-recovery sensitivity
+- A completed 90-pair P4 two-actor comparison with an unresolved primary
+  contrast; matched pairs are within host stack and the two host blocks are disclosed
 - A verified K=1--4 H200/JAX actor-phase profile with hash-pinned raw timing
   and scoped backend-memory records
 - Task-resampling uncertainty, dynamics-family sensitivity, collapse-risk sensitivity, and rescued-cell gain attribution

@@ -56,6 +56,13 @@ checkpoint verifier.
 | `SUMMARY.json` | Locked primary/collapse summary + merge caveats |
 | `MERGE_MANIFEST.json` | Head/tail hashes and scientific-identity checks |
 | `first90_*` | Original ext_csv head-only compact shard |
+| `tail90_final_scores.csv` | ext_csh first-actor + endpoint recovery from local `eval.csv` |
+| `all180_first_endpoint_scores.csv` | first90 + tail90, same first90 schema |
+| `FIRST_ENDPOINT_RECOVERY.json` | CPU recovery receipt; does not repair the primary gate |
 | `STATUS.json` | Completeness + decision label snapshot |
 
 Built: `2026-09-02T22:17:47+09:00`
+
+First-actor recovery (`2026-09-05`, CPU, no re-evaluation): `d4rl_score` was already
+in every tail90 `eval.csv`. The published compact shard had stored endpoint only.
+Regenerate with `python scripts/diagnostics/recover_p0_tail90_first_actor.py`.

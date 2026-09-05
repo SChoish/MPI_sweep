@@ -19,11 +19,11 @@ the proposed mechanism, validate the local numerical interpretation, then
 harden release provenance and cost reporting. A lower-priority completed run
 does not displace a higher-priority unresolved claim.
 
-Next action: freeze the shared-driver protocol and exact deployment-branch
-objectives in P0.B before launching new training. This directly addresses the
-remaining path-specific question. P0.C/D recover missing comparisons from
-existing outputs first; P0.A's clean repeat is conditional on promoting a new
-P4 comparison to primary evidence. The original P4
+Next action: keep P0.B unlaunched. The shared-driver protocol and driver are
+frozen; do not start training until a later host writes an environment-locked
+manifest. P0.C still needs the missing K1 `h` grid after that freeze. P0.A's
+clean repeat is conditional on promoting a new P4 comparison to primary
+evidence. The original P4
 [frozen manifest](sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/FROZEN_MANIFEST.json)
 records the decision rule and integrity contract for that archive.
 
@@ -91,17 +91,19 @@ override the failed inclusion gate.
 - [x] Preserve CPU recovery provenance: eight Walker2d-expert cells resumed
   from matching logged emergency checkpoints and two `T=20` cells began on
   CPU. The task-removal sensitivity is not a hardware-effect estimate.
-- [ ] Recommended experiment for a path-specific claim: implement one joint
-  driver sharing the first actor, critic, target networks, minibatches, and
-  RNG, branching only deployment-policy construction. Compare predecessor
-  re-centering with direct data anchoring and a fixed-reference refinement.
-  Keep downstream actors out of every Bellman backup; match actor optimizer
-  calls in a separate compute-controlled contrast. Predeclare the primary
-  endpoint-return contrast, task aggregation, seeds, and failure handling.
-  Record first-actor returns for every branch and verify that the shared
-  first-actor/critic states remain identical. Existing independent controls
-  cannot isolate re-centering because their realized training trajectories
-  also differ.
+- [x] Freeze the shared-driver protocol and implement the joint driver without
+  launching. Protocol:
+  [`scripts/experiments/P0_SHARED_DRIVER_PROTOCOL.json`](scripts/experiments/P0_SHARED_DRIVER_PROTOCOL.json).
+  CLI: `--method shared --deployment-branch {recenter,data_anchor,fixed_ref,data_anchor_matched}`.
+  Identity tests: `tests/test_shared_driver.py`. `recenter` reproduces BAR;
+  `data_anchor` reproduces the two-actor control; `fixed_ref` proximal-updates
+  hops `k>=2` toward the shared first actor; `data_anchor_matched` is the
+  compute-controlled extra-update contrast. Do not splice historical BAR/mcep
+  scores into future shared pairs.
+- [ ] Launch the frozen shared-driver grid only after one resolved-stack
+  `FROZEN_MANIFEST.json`. Primary contrast is shared-`recenter` minus
+  shared-`data_anchor` endpoint return on nine tasks, `T={4,7,10,14,20}`,
+  `K=4`, seeds 0--1. Record first-actor returns on every branch.
 
 ### C. Match the first actor's local budget (partial coverage; reanalysis complete)
 
@@ -112,14 +114,19 @@ override the failed inclusion gate.
   `[1.58,18.09]`; I4 at `T=10` versus `h=2.5` gives `+6.94`
   `[-14.65,27.24]`. I2 at `T=14` gives `-.81`. Matching the coefficient does
   not make independently trained critics or RNG trajectories identical.
+- [x] Inventory local K1 before any new training. ext_csh `results/mpi1_s23`
+  has seeds 2--3 on the 14-tau I4 *total-budget* grid (252/252, `d4rl_score`
+  only). None of the requested local budgets
+  `h={.625,1,1.75,3,3.5,4.25,5}` are present. Receipt:
+  [`sweep_results/diagnostics/i234_first_endpoint/K1_INVENTORY.json`](sweep_results/diagnostics/i234_first_endpoint/K1_INVENTORY.json).
 - [ ] Fill the missing K1 baseline budgets for the I4 plateau and tail:
   `h={.625,1,1.75,3,3.5,4.25,5}`, corresponding to
-  `T={2.5,4,7,12,14,17,20}`. First inventory existing evaluations and
-  source/config provenance; recover compatible runs before training missing
-  cells. Require all nine tasks and four seeds for a headline contrast;
-  existing seed-0/1-only extra budgets cannot substitute for that grid.
-  Use contemporaneous I4 comparisons when historical protocols cannot be
-  matched. Freeze the complete requested grid and report every result.
+  `T={2.5,4,7,12,14,17,20}`. Require all nine tasks and four seeds for a
+  headline contrast; existing seed-0/1-only extra budgets and the s23
+  total-budget K1 grid cannot substitute. Do not launch these cells before
+  the P0.B host manifest exists. Use contemporaneous I4 comparisons when
+  historical protocols cannot be matched. Freeze the complete requested grid
+  and report every result.
 
 ### D. Evaluate first-actor versus endpoint return (available subset recovered)
 
@@ -137,20 +144,19 @@ override the failed inclusion gate.
   continuation-value diagnostic: I2 `+16.13`, 22/30 positive; I3 `+24.70`,
   25/30 positive. These use raw discounted reward on cloned states, not D4RL
   episode scores or an initial-state-return estimate.
-- [ ] Recover the remaining host's first-actor evaluation logs or checkpoints
-  for the other 45 I4 and 45 control runs. The merged final-score CSV and
-  tail-host compact CSV contain endpoint scores only. If re-evaluation is
-  needed, evaluate both policies at the same final checkpoint with identical
-  episode seeds and record source/config/checkpoint hashes. Retain the
-  original archive's secondary status; recovered columns alone do not repair
-  its failed primary inclusion gate.
-- [ ] Extend paired online-first/endpoint evaluation to the complete nine-task
-  I2/I3/I4 grid with available final checkpoints, prioritizing the plateau and
-  transition budgets before the far tail. Keep historical score-grid runs,
-  contemporaneous control reruns, and clean new runs separate. Freeze the
-  inclusion grid before evaluating, report task-level differences and all
-  reversals, and distinguish extraction gain from superiority over a direct
-  deployment actor.
+- [x] Recover the ext_csh tail90 first-actor columns from local `eval.csv`
+  without re-evaluation. Compact tables:
+  `tail90_final_scores.csv` and `all180_first_endpoint_scores.csv`. Endpoint
+  values and eval SHA-256 match the published tail shard. Recovered columns
+  do not repair the failed primary inclusion gate.
+- [x] Recover the locally available I2/I3/I4 first/endpoint subset and freeze
+  its inclusion grid. ext_csh has implicit I2 and I3 seeds 2--3 at 252/252,
+  plus P0 BAR-P4 I4 seeds 0--1 at 90/90. Seeds 0--1 I2/I3 and historical I4
+  504 are not on this host. Explicit I3 s23 is stored separately. Archive:
+  [`sweep_results/diagnostics/i234_first_endpoint/`](sweep_results/diagnostics/i234_first_endpoint/).
+- [ ] Recover ext_csv I2/I3 seeds 0--1 and historical I4 504 first/endpoint
+  columns the same way, without mixing families. Do not treat the s23-only
+  or P0-only subsets as a four-seed headline grid.
 
 ## P1: measure target-value perturbation and matched final reach (CPU)
 

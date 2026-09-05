@@ -1,0 +1,48 @@
+{
+  "local_family": "historical_k1_s23",
+  "n_present": 252,
+  "seeds_present": [
+    2,
+    3
+  ],
+  "seeds_absent": [
+    0,
+    1
+  ],
+  "present_taus": [
+    0.05,
+    0.1,
+    0.2,
+    0.4,
+    0.7,
+    1.5,
+    2.5,
+    4.0,
+    7.0,
+    10.0,
+    12.0,
+    14.0,
+    17.0,
+    20.0
+  ],
+  "p0c_requested_h": [
+    0.625,
+    1.0,
+    1.75,
+    3.0,
+    3.5,
+    4.25,
+    5.0
+  ],
+  "p0c_requested_present": [],
+  "p0c_requested_missing": [
+    0.625,
+    1.0,
+    1.75,
+    3.0,
+    3.5,
+    4.25,
+    5.0
+  ],
+  "note": "K1 first actor is the deployment actor; eval.csv has d4rl_score only. Present s23 taus are the I4 total-budget grid, not the I4 h=T/4 grid."
+}

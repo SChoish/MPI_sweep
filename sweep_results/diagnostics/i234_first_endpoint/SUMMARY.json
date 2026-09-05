@@ -1,0 +1,641 @@
+{
+  "built_at": "2026-09-05T18:56:36+09:00",
+  "method": "cpu_eval_csv_recovery",
+  "evaluation_contract": {
+    "target_d4rl": "d4rl_score (online first actor)",
+    "i2_deployment": "d4rl_pi2",
+    "i3_deployment": "d4rl_pi3",
+    "i4_p0_deployment": "d4rl_pi4"
+  },
+  "inclusion": {
+    "frozen_at": "2026-09-05T18:56:36+09:00",
+    "no_reevaluation": true,
+    "no_training": true,
+    "included": {
+      "i2_historical_s23": "9 task x 14 T x seeds {2,3} = 252",
+      "i3_historical_s23": "9 task x 14 T x seeds {2,3} = 252",
+      "i4_p0_contemporaneous": "9 task x {4,7,10,14,20} x seeds {0,1} = 90 BAR-P4 only"
+    },
+    "excluded_or_separate": {
+      "i2_i3_seeds_0_1": "not on ext_csh; live on ext_csv",
+      "i4_historical_504": "no mpi4_s23 tree on this host",
+      "explicit_i3_s23": "available 252, stored separately, not mixed into implicit I3",
+      "two_actor_p4": "P0 control, not I-MART"
+    },
+    "priority_regions": {
+      "plateau": [
+        0.05,
+        0.1,
+        0.2,
+        0.4
+      ],
+      "transition": [
+        0.7,
+        1.5,
+        2.5,
+        4.0,
+        7.0
+      ],
+      "tail": [
+        10.0,
+        12.0,
+        14.0,
+        17.0,
+        20.0
+      ]
+    }
+  },
+  "k1_inventory": {
+    "local_family": "historical_k1_s23",
+    "n_present": 252,
+    "seeds_present": [
+      2,
+      3
+    ],
+    "seeds_absent": [
+      0,
+      1
+    ],
+    "present_taus": [
+      0.05,
+      0.1,
+      0.2,
+      0.4,
+      0.7,
+      1.5,
+      2.5,
+      4.0,
+      7.0,
+      10.0,
+      12.0,
+      14.0,
+      17.0,
+      20.0
+    ],
+    "p0c_requested_h": [
+      0.625,
+      1.0,
+      1.75,
+      3.0,
+      3.5,
+      4.25,
+      5.0
+    ],
+    "p0c_requested_present": [],
+    "p0c_requested_missing": [
+      0.625,
+      1.0,
+      1.75,
+      3.0,
+      3.5,
+      4.25,
+      5.0
+    ],
+    "note": "K1 first actor is the deployment actor; eval.csv has d4rl_score only. Present s23 taus are the I4 total-budget grid, not the I4 h=T/4 grid."
+  },
+  "i2": {
+    "n": 252,
+    "mean_endpoint_minus_first": 2.978151336953073,
+    "n_positive": 155,
+    "n_negative": 82,
+    "n_zero": 15
+  },
+  "i3": {
+    "n": 252,
+    "mean_endpoint_minus_first": 4.263967153590576,
+    "n_positive": 161,
+    "n_negative": 86,
+    "n_zero": 5
+  },
+  "explicit_i3": {
+    "n": 252,
+    "mean_endpoint_minus_first": 6.885301072926959,
+    "n_positive": 165,
+    "n_negative": 86,
+    "n_zero": 1
+  },
+  "i4_p0": {
+    "n": 90,
+    "mean_endpoint_minus_first": 2.1785575517102513,
+    "n_positive": 61,
+    "n_negative": 29,
+    "n_zero": 0
+  },
+  "i2_by_task_region": [
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 0.07619006005121953,
+      "n_positive": 4
+    },
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -13.264166504371406,
+      "n_positive": 0
+    },
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": -9.604211872230783,
+      "n_positive": 2
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 1.104877907911117,
+      "n_positive": 7
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 0.6935626967468338,
+      "n_positive": 6
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 3.042996136520935,
+      "n_positive": 10
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 0.9034201750375619,
+      "n_positive": 8
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 3.8989339980447055,
+      "n_positive": 10
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 3.2239302899196844,
+      "n_positive": 10
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": -0.9778532178964401,
+      "n_positive": 5
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -1.5767921781523242,
+      "n_positive": 0
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": -0.8529032722424585,
+      "n_positive": 6
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 2.5134268502562596,
+      "n_positive": 5
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 32.8638431979312,
+      "n_positive": 8
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 36.92474465056993,
+      "n_positive": 10
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 3.0232999710564714,
+      "n_positive": 5
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -2.3776194499948518,
+      "n_positive": 1
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 12.915138320986362,
+      "n_positive": 9
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 0.49624939597174134,
+      "n_positive": 6
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -0.6620988495991059,
+      "n_positive": 2
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 0.8628188632476922,
+      "n_positive": 9
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 6.464606778066962,
+      "n_positive": 7
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -10.00982182896842,
+      "n_positive": 3
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 1.825493917457108,
+      "n_positive": 6
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 3.0459182600412307,
+      "n_positive": 6
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 0.44241095840126576,
+      "n_positive": 1
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 3.3830456725541627,
+      "n_positive": 9
+    }
+  ],
+  "i3_by_task_region": [
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": -0.49651941029075886,
+      "n_positive": 3
+    },
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -37.743932917146424,
+      "n_positive": 0
+    },
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": -13.057888526475557,
+      "n_positive": 1
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 3.1683266464880493,
+      "n_positive": 8
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 3.487489846601779,
+      "n_positive": 8
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 4.470582045060796,
+      "n_positive": 10
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 1.3490493134705819,
+      "n_positive": 8
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 6.738357961352564,
+      "n_positive": 10
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 4.345492887520369,
+      "n_positive": 10
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 0.22273077343142056,
+      "n_positive": 4
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -4.737877339410269,
+      "n_positive": 0
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": -0.9403712493948191,
+      "n_positive": 6
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 3.4929118450161294,
+      "n_positive": 4
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 56.31251033290001,
+      "n_positive": 10
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 49.0466403641541,
+      "n_positive": 10
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 1.1056541207689312,
+      "n_positive": 4
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 9.345810190569358,
+      "n_positive": 5
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 12.748948529639668,
+      "n_positive": 8
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 0.5751126210296711,
+      "n_positive": 6
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -3.5415154319141964,
+      "n_positive": 4
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 1.4974809388546222,
+      "n_positive": 9
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 14.570789039560232,
+      "n_positive": 5
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -5.003639705039058,
+      "n_positive": 3
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 11.033029950070539,
+      "n_positive": 9
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 4.41853239173853,
+      "n_positive": 6
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -12.310115733869784,
+      "n_positive": 1
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 3.0357002540385833,
+      "n_positive": 9
+    }
+  ],
+  "i4_p0_by_task_region": [
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "tail",
+      "n": 6,
+      "mean_endpoint_minus_first": -54.33919859076466,
+      "n_positive": 0
+    },
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "transition",
+      "n": 4,
+      "mean_endpoint_minus_first": -37.64441142350934,
+      "n_positive": 0
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "tail",
+      "n": 6,
+      "mean_endpoint_minus_first": 6.7302838907376215,
+      "n_positive": 6
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "transition",
+      "n": 4,
+      "mean_endpoint_minus_first": 6.503445210529625,
+      "n_positive": 4
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "tail",
+      "n": 6,
+      "mean_endpoint_minus_first": 6.79288668081249,
+      "n_positive": 6
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "transition",
+      "n": 4,
+      "mean_endpoint_minus_first": 6.429002499149798,
+      "n_positive": 4
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "tail",
+      "n": 6,
+      "mean_endpoint_minus_first": -25.74337446978843,
+      "n_positive": 0
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "transition",
+      "n": 4,
+      "mean_endpoint_minus_first": -14.091506941761303,
+      "n_positive": 2
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "tail",
+      "n": 6,
+      "mean_endpoint_minus_first": 38.12810174649596,
+      "n_positive": 6
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "transition",
+      "n": 4,
+      "mean_endpoint_minus_first": 48.539686666864476,
+      "n_positive": 4
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "tail",
+      "n": 6,
+      "mean_endpoint_minus_first": 33.71479487465359,
+      "n_positive": 5
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "transition",
+      "n": 4,
+      "mean_endpoint_minus_first": 26.917267606210427,
+      "n_positive": 4
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "tail",
+      "n": 6,
+      "mean_endpoint_minus_first": -0.515599288062064,
+      "n_positive": 3
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "transition",
+      "n": 4,
+      "mean_endpoint_minus_first": 3.314694495765387,
+      "n_positive": 4
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "tail",
+      "n": 6,
+      "mean_endpoint_minus_first": 8.782933988614708,
+      "n_positive": 3
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "transition",
+      "n": 4,
+      "mean_endpoint_minus_first": 15.008722261838516,
+      "n_positive": 3
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "tail",
+      "n": 6,
+      "mean_endpoint_minus_first": -20.975674162615032,
+      "n_positive": 3
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "transition",
+      "n": 4,
+      "mean_endpoint_minus_first": 5.177912533266806,
+      "n_positive": 4
+    }
+  ],
+  "hashes": {
+    "i2": "6b877a0e15fe1e3d062d411df23dfdffff76255a525a8fabdc7919fa9d757fa2",
+    "i3": "cdcc28b32516b8e0adec7664424848a30d3e0488b631133b93f900d8272a3141",
+    "explicit_i3": "7421a495274eddbbc2cdeca7db18ac6b96db636783486bdb52b32fcfcceae4b9",
+    "i4_p0": "423607a29b47d52f4449402f688fd394e863b8383528b27fd68b6842bba69c7c"
+  },
+  "note": "Extraction gain is within-run endpoint minus first actor. It is not superiority over an independently trained deployment actor."
+}

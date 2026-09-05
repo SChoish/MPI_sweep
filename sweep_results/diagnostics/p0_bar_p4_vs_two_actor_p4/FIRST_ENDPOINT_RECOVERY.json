@@ -1,0 +1,264 @@
+{
+  "built_at": "2026-09-05T18:51:27+09:00",
+  "method": "cpu_eval_csv_recovery",
+  "no_reevaluation": true,
+  "no_training": true,
+  "evaluation_contract": {
+    "target_d4rl": "d4rl_score (online first / target actor)",
+    "bar_p4_deployment": "d4rl_pi4",
+    "two_actor_p4_deployment": "d4rl_eval"
+  },
+  "inputs": {
+    "runs_root": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs",
+    "compact_tail_scores": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/hosts/ext_csh/p0_manifest_tail90/scores.csv",
+    "first90_scores": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/first90_final_scores.csv"
+  },
+  "outputs": {
+    "tail90_final_scores": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/tail90_final_scores.csv",
+    "all180_first_endpoint_scores": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/all180_first_endpoint_scores.csv"
+  },
+  "integrity": {
+    "tail90_rows": 90,
+    "all180_rows": 180,
+    "endpoint_matches_compact_tail": true,
+    "eval_sha256_matches_compact_tail": true,
+    "manuscript_primary_promotion_allowed": false,
+    "note": "Recovers missing first-actor columns for the ext_csh shard. Does not repair the failed frozen P0 primary inclusion gate."
+  },
+  "tail90": {
+    "bar_p4": {
+      "n": 45,
+      "mean_endpoint_minus_first": -9.48389278309336,
+      "n_positive": 25,
+      "n_negative": 20,
+      "n_zero": 0
+    },
+    "two_actor_p4": {
+      "n": 45,
+      "mean_endpoint_minus_first": -7.214081492177901,
+      "n_positive": 27,
+      "n_negative": 18,
+      "n_zero": 0
+    }
+  },
+  "all180": {
+    "bar_p4": {
+      "n": 90,
+      "mean_endpoint_minus_first": 2.1785575517102513,
+      "n_positive": 61,
+      "n_negative": 29,
+      "n_zero": 0
+    },
+    "two_actor_p4": {
+      "n": 90,
+      "mean_endpoint_minus_first": 4.189085456537781,
+      "n_positive": 63,
+      "n_negative": 26,
+      "n_zero": 1
+    }
+  },
+  "tail90_by_task": [
+    {
+      "condition": "bar_p4",
+      "environment": "halfcheetah-expert-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": -47.66128372386253,
+      "n_positive": 0
+    },
+    {
+      "condition": "bar_p4",
+      "environment": "halfcheetah-medium-replay-v2",
+      "n": 5,
+      "mean_endpoint_minus_first": 6.4164763216631275,
+      "n_positive": 5
+    },
+    {
+      "condition": "bar_p4",
+      "environment": "walker2d-expert-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 1.0165182254689165,
+      "n_positive": 7
+    },
+    {
+      "condition": "bar_p4",
+      "environment": "walker2d-medium-replay-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 11.273249297904231,
+      "n_positive": 6
+    },
+    {
+      "condition": "bar_p4",
+      "environment": "walker2d-medium-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": -10.514239484262296,
+      "n_positive": 7
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "halfcheetah-expert-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": -33.91739093892768,
+      "n_positive": 0
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "halfcheetah-medium-replay-v2",
+      "n": 5,
+      "mean_endpoint_minus_first": 4.4323496293924665,
+      "n_positive": 5
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "walker2d-expert-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 1.1237336970740512,
+      "n_positive": 8
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "walker2d-medium-replay-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": -3.438226051213947,
+      "n_positive": 6
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "walker2d-medium-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 1.5523417635707886,
+      "n_positive": 8
+    }
+  ],
+  "all180_by_task": [
+    {
+      "condition": "bar_p4",
+      "environment": "halfcheetah-expert-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": -47.66128372386253,
+      "n_positive": 0
+    },
+    {
+      "condition": "bar_p4",
+      "environment": "halfcheetah-medium-replay-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 6.639548418654423,
+      "n_positive": 10
+    },
+    {
+      "condition": "bar_p4",
+      "environment": "halfcheetah-medium-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 6.647333008147413,
+      "n_positive": 10
+    },
+    {
+      "condition": "bar_p4",
+      "environment": "hopper-expert-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": -21.08262745857758,
+      "n_positive": 2
+    },
+    {
+      "condition": "bar_p4",
+      "environment": "hopper-medium-replay-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 42.292735714643364,
+      "n_positive": 10
+    },
+    {
+      "condition": "bar_p4",
+      "environment": "hopper-medium-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 30.995783967276324,
+      "n_positive": 9
+    },
+    {
+      "condition": "bar_p4",
+      "environment": "walker2d-expert-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 1.0165182254689165,
+      "n_positive": 7
+    },
+    {
+      "condition": "bar_p4",
+      "environment": "walker2d-medium-replay-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 11.273249297904231,
+      "n_positive": 6
+    },
+    {
+      "condition": "bar_p4",
+      "environment": "walker2d-medium-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": -10.514239484262296,
+      "n_positive": 7
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "halfcheetah-expert-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": -33.91739093892768,
+      "n_positive": 0
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "halfcheetah-medium-replay-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 4.904014339836384,
+      "n_positive": 10
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "halfcheetah-medium-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 6.690804444778741,
+      "n_positive": 10
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "hopper-expert-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": -7.800680017781046,
+      "n_positive": 2
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "hopper-medium-replay-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 39.22010800711182,
+      "n_positive": 10
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "hopper-medium-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 29.367063864390925,
+      "n_positive": 9
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "walker2d-expert-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 1.1237336970740512,
+      "n_positive": 8
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "walker2d-medium-replay-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": -3.438226051213947,
+      "n_positive": 6
+    },
+    {
+      "condition": "two_actor_p4",
+      "environment": "walker2d-medium-v2",
+      "n": 10,
+      "mean_endpoint_minus_first": 1.5523417635707886,
+      "n_positive": 8
+    }
+  ],
+  "hashes": {
+    "tail90_final_scores_sha256": "1feb0c15e2b3bc2953c0eb4ffb88a7e90699cdd7b3a5f2ac8d3018d82eed6446",
+    "all180_first_endpoint_scores_sha256": "55fc004210325496ef0ebbe39c3fe3dd4c1749c888f751dede8c1190cb9d6283"
+  }
+}

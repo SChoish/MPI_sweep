@@ -16,6 +16,11 @@ projected Euler target whose gradient coefficient includes the action dimension,
 matching the per-coordinate-mean transport metric used by the proximal loss.
 The final actor is evaluated at total time tau.
 
+``--method shared`` keeps one first actor, critic, target networks, minibatch,
+and RNG, and branches only deployment-policy construction
+(``--deployment-branch``). Downstream actors never enter Bellman backups.
+This isolates re-centering from independently trained two-actor controls.
+
 Other defaults: lr=3e-4, policy_noise=0.2*max_a, noise_clip=0.5*max_a,
 policy_freq=2, batch=256, 1M steps, state norm eps=1e-3, dataset terminals,
 no critic LayerNorm.
@@ -397,6 +402,53 @@ def mcep_actor_taus(tau: float, reference_depth: int) -> tuple[float, float]:
     return tau / float(reference_depth), tau
 
 
+DEPLOYMENT_BRANCHES = (
+    "recenter",
+    "data_anchor",
+    "fixed_ref",
+    "data_anchor_matched",
+)
+
+
+def apply_deployment_branch(
+    ts: TD3BCTrainState,
+    batch: Transition,
+    branch: str,
+    tau_step: float,
+    tau_total: float,
+    scale_norm: bool,
+    hop_count: int,
+) -> tuple[TD3BCTrainState, jax.Array]:
+    """Update only deployment actors. Shared first/critic/targets stay untouched."""
+    if branch == "recenter":
+        loss = jnp.asarray(0.0)
+        for actor_index in range(1, len(ts.actors)):
+            ts, loss = update_actor_hop(ts, batch, actor_index, tau_step, scale_norm)
+        return ts, loss
+    if branch == "data_anchor":
+        return update_dataset_actor(ts, batch, 1, tau_total, scale_norm)
+    if branch == "data_anchor_matched":
+        if hop_count < 2:
+            raise ValueError("data_anchor_matched requires hop_count >= 2")
+        loss = jnp.asarray(0.0)
+        for _ in range(hop_count - 1):
+            ts, loss = update_dataset_actor(ts, batch, 1, tau_total, scale_norm)
+        return ts, loss
+    if branch == "fixed_ref":
+        first = ts.actors[0]
+        ref = first.apply_fn(first.params, batch.observations)
+        loss = jnp.asarray(0.0)
+        for actor_index in range(1, len(ts.actors)):
+            actor = ts.actors[actor_index]
+            actor, loss = update_jko(
+                actor, actor.apply_fn, ts.critic, batch, ref, tau_step, scale_norm
+            )
+            actors = (*ts.actors[:actor_index], actor, *ts.actors[actor_index + 1 :])
+            ts = ts._replace(actors=actors)
+        return ts, loss
+    raise ValueError(f"unknown deployment branch: {branch}")
+
+
 def update_n_times(
     ts: TD3BCTrainState,
     data: Transition,
@@ -412,10 +464,11 @@ def update_n_times(
     integrator: str = "implicit",
     method: str = "bar",
     reference_depth: int | None = None,
+    deployment_branch: str | None = None,
 ) -> tuple[TD3BCTrainState, dict]:
     if integrator not in ("implicit", "explicit"):
         raise ValueError(f"unknown integrator: {integrator}")
-    if method not in ("bar", "mcep"):
+    if method not in ("bar", "mcep", "shared"):
         raise ValueError(f"unknown method: {method}")
     if method == "mcep":
         if integrator != "implicit":
@@ -434,9 +487,28 @@ def update_n_times(
                 "published reproduction) requires a BAR hop-count parameter"
             )
         target_tau, evaluation_tau = mcep_actor_taus(tau, reference_depth)
+    elif method == "shared":
+        if integrator != "implicit":
+            raise ValueError("shared driver supports only the implicit objective")
+        if reference_depth is None or reference_depth < 2:
+            raise ValueError("shared driver requires reference_depth >= 2")
+        if deployment_branch not in DEPLOYMENT_BRANCHES:
+            raise ValueError(f"shared driver requires a frozen deployment branch")
+        if deployment_branch in ("data_anchor", "data_anchor_matched"):
+            if len(ts.actors) != 2:
+                raise ValueError("data-anchor branches require exactly two actors")
+        elif len(ts.actors) != reference_depth:
+            raise ValueError(
+                "re-centering branches require one actor per hop "
+                f"({len(ts.actors)} != {reference_depth})"
+            )
+        target_tau, evaluation_tau = mcep_actor_taus(tau, reference_depth)
     else:
         tau_step = tau / float(len(ts.actors))
-    initial_actor_losses = tuple(jnp.array(0.0) for _ in ts.actors)
+    if method in ("mcep", "shared"):
+        initial_actor_losses = (jnp.array(0.0), jnp.array(0.0))
+    else:
+        initial_actor_losses = tuple(jnp.array(0.0) for _ in ts.actors)
 
     def body(i, carry):
         ts, rng, critic_loss, actor_losses = carry
@@ -453,6 +525,20 @@ def update_n_times(
                 )
                 ts, evaluation_loss = update_dataset_actor(
                     ts, batch, 1, evaluation_tau, scale_norm
+                )
+                losses = [first_loss, evaluation_loss]
+            elif method == "shared":
+                ts, first_loss = update_first_actor(
+                    ts, batch, target_tau, polyak, scale_norm
+                )
+                ts, evaluation_loss = apply_deployment_branch(
+                    ts,
+                    batch,
+                    deployment_branch,
+                    target_tau,
+                    evaluation_tau,
+                    scale_norm,
+                    reference_depth,
                 )
                 losses = [first_loss, evaluation_loss]
             elif integrator == "implicit":
@@ -520,6 +606,7 @@ def update_in_blocks(
     integrator: str = "implicit",
     method: str = "bar",
     reference_depth: int | None = None,
+    deployment_branch: str | None = None,
 ) -> tuple[TD3BCTrainState, jax.Array, dict]:
     """Fuse host dispatches while preserving the original block-wise RNG stream."""
     initial_metrics = {
@@ -547,6 +634,7 @@ def update_in_blocks(
             integrator=integrator,
             method=method,
             reference_depth=reference_depth,
+            deployment_branch=deployment_branch,
         )
         return ts, rng, metrics
 
@@ -651,9 +739,18 @@ class EvaluationContract(NamedTuple):
     columns: tuple[str, ...]
 
 
-def evaluation_contract(method: str, mpi_steps: int) -> EvaluationContract:
+def evaluation_contract(
+    method: str, mpi_steps: int, deployment_branch: str | None = None
+) -> EvaluationContract:
     """Return the frozen target/deployment eval-column contract."""
     base = ("step", "return", "d4rl_score", "critic_loss", "actor_loss")
+    if method == "shared":
+        if deployment_branch in ("data_anchor", "data_anchor_matched"):
+            method = "mcep"
+        elif deployment_branch in ("recenter", "fixed_ref"):
+            method = "bar"
+        else:
+            raise ValueError("shared evaluation requires a frozen deployment branch")
     if method == "bar":
         if mpi_steps == 1:
             return EvaluationContract(0, None, None, base)
@@ -779,12 +876,19 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--method",
-        choices=("bar", "mcep"),
+        choices=("bar", "mcep", "shared"),
         default="bar",
         help=(
-            "BAR chain or two-actor policy-separation control "
-            "(legacy mcep token; not published reproduction)"
+            "BAR chain, two-actor policy-separation control "
+            "(legacy mcep token; not published reproduction), or the shared "
+            "first-actor driver that branches only deployment construction"
         ),
+    )
+    parser.add_argument(
+        "--deployment-branch",
+        choices=DEPLOYMENT_BRANCHES,
+        default=None,
+        help="Required with --method shared. Ignored for bar/mcep.",
     )
     parser.add_argument(
         "--integrator",
@@ -990,6 +1094,15 @@ def main(argv: list[str] | None = None) -> int:
             "two-actor policy-separation control (legacy mcep token; not "
             "published reproduction) supports only --integrator implicit"
         )
+    if args.method == "shared":
+        if args.deployment_branch is None:
+            raise ValueError("--method shared requires --deployment-branch")
+        if args.mpi_steps < 2:
+            raise ValueError("shared driver requires --mpi-steps >= 2")
+        if args.integrator != "implicit":
+            raise ValueError("shared driver supports only --integrator implicit")
+    elif args.deployment_branch is not None:
+        raise ValueError("--deployment-branch is only valid with --method shared")
     if not 0.0 < args.polyak <= 1.0:
         raise ValueError("polyak must lie in (0, 1]")
     if (
@@ -1016,11 +1129,12 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     mpi_steps = args.mpi_steps
-    method_tag = (
-        "mcep"
-        if args.method == "mcep"
-        else ("mpi" if args.integrator == "implicit" else "exp")
-    )
+    if args.method == "mcep":
+        method_tag = "mcep"
+    elif args.method == "shared":
+        method_tag = f"shared_{args.deployment_branch}"
+    else:
+        method_tag = "mpi" if args.integrator == "implicit" else "exp"
     run_name = (
         f"{args.env}_tau{args.tau:g}_{method_tag}{mpi_steps}_seed{args.seed}"
     )
@@ -1040,12 +1154,16 @@ def main(argv: list[str] | None = None) -> int:
 
     rng = jax.random.PRNGKey(args.seed)
     rng, init_rng = jax.random.split(rng)
+    use_two_actor_state = args.method == "mcep" or (
+        args.method == "shared"
+        and args.deployment_branch in ("data_anchor", "data_anchor_matched")
+    )
     state_factory = (
-        create_mcep_train_state if args.method == "mcep" else create_train_state
+        create_mcep_train_state if use_two_actor_state else create_train_state
     )
     state_depth_arg = (
         {"reference_depth": mpi_steps}
-        if args.method == "mcep"
+        if use_two_actor_state
         else {"mpi_steps": mpi_steps}
     )
     ts = state_factory(
@@ -1068,10 +1186,16 @@ def main(argv: list[str] | None = None) -> int:
         checkpoint_config = payload.get("config", {})
         checkpoint_method = checkpoint_config.get("method", "bar")
         checkpoint_depth = int(checkpoint_config.get("mpi_steps", mpi_steps))
-        if checkpoint_method != args.method or checkpoint_depth != mpi_steps:
+        checkpoint_branch = checkpoint_config.get("deployment_branch")
+        if (
+            checkpoint_method != args.method
+            or checkpoint_depth != mpi_steps
+            or checkpoint_branch != args.deployment_branch
+        ):
             raise ValueError(
-                "checkpoint method/depth does not match requested run: "
-                f"{checkpoint_method}/{checkpoint_depth} != {args.method}/{mpi_steps}"
+                "checkpoint method/depth/branch does not match requested run: "
+                f"{checkpoint_method}/{checkpoint_depth}/{checkpoint_branch} != "
+                f"{args.method}/{mpi_steps}/{args.deployment_branch}"
             )
         ts = restore_train_state(ts, payload)
         rng = payload["rng"]
@@ -1096,7 +1220,10 @@ def main(argv: list[str] | None = None) -> int:
                     scale_norm=bool(args.q_scale_norm),
                     integrator=args.integrator,
                     method=args.method,
-                    reference_depth=mpi_steps if args.method == "mcep" else None,
+                    reference_depth=(
+                        mpi_steps if args.method in ("mcep", "shared") else None
+                    ),
+                    deployment_branch=args.deployment_branch,
                 )
             )
         return update_fns[n_blocks]
@@ -1114,7 +1241,9 @@ def main(argv: list[str] | None = None) -> int:
     act_fn = jax.jit(_act)
 
     eval_path = out_dir / "eval.csv"
-    eval_contract = evaluation_contract(args.method, mpi_steps)
+    eval_contract = evaluation_contract(
+        args.method, mpi_steps, args.deployment_branch
+    )
     has_distinct_evaluation_actor = eval_contract.deployment_actor_index is not None
     final_label = eval_contract.deployment_label
     write_header = (

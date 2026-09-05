@@ -1,0 +1,38 @@
+{
+  "frozen_at": "2026-09-05T18:56:36+09:00",
+  "no_reevaluation": true,
+  "no_training": true,
+  "included": {
+    "i2_historical_s23": "9 task x 14 T x seeds {2,3} = 252",
+    "i3_historical_s23": "9 task x 14 T x seeds {2,3} = 252",
+    "i4_p0_contemporaneous": "9 task x {4,7,10,14,20} x seeds {0,1} = 90 BAR-P4 only"
+  },
+  "excluded_or_separate": {
+    "i2_i3_seeds_0_1": "not on ext_csh; live on ext_csv",
+    "i4_historical_504": "no mpi4_s23 tree on this host",
+    "explicit_i3_s23": "available 252, stored separately, not mixed into implicit I3",
+    "two_actor_p4": "P0 control, not I-MART"
+  },
+  "priority_regions": {
+    "plateau": [
+      0.05,
+      0.1,
+      0.2,
+      0.4
+    ],
+    "transition": [
+      0.7,
+      1.5,
+      2.5,
+      4.0,
+      7.0
+    ],
+    "tail": [
+      10.0,
+      12.0,
+      14.0,
+      17.0,
+      20.0
+    ]
+  }
+}

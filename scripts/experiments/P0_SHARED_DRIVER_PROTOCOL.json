@@ -1,0 +1,91 @@
+{
+  "experiment": "p0_shared_driver",
+  "status": "protocol_frozen_no_launch",
+  "frozen_at": "2026-09-05T18:55:00+09:00",
+  "purpose": "Isolate deployment-policy construction after a shared first-actor/critic trajectory.",
+  "do_not_launch_until": [
+    "this protocol remains unchanged",
+    "tests/test_shared_driver.py passes on the launch interpreter",
+    "a later host freeze writes an environment-locked FROZEN_MANIFEST.json"
+  ],
+  "shared_state": [
+    "actors[0]",
+    "critic",
+    "target_actor",
+    "target_critic",
+    "minibatch",
+    "RNG stream"
+  ],
+  "bellman_rule": "only the Polyak first actor supplies next-action targets; downstream actors never enter backups",
+  "first_actor_budget": "T / K",
+  "deployment_branches": {
+    "recenter": "hop k>=2 is W2-proximal to stop-grad(actor_{k-1}); K actors; current implicit BAR",
+    "data_anchor": "one extra actor is dataset-anchored TD3+BC at coefficient T; two actors; current mcep control",
+    "fixed_ref": "hop k>=2 is W2-proximal to stop-grad(actor_1) from the same update; K actors",
+    "data_anchor_matched": "secondary compute-controlled contrast; repeat the dataset-anchored update K-1 times"
+  },
+  "primary_contrast": {
+    "signed_difference": "shared recenter endpoint minus shared data_anchor endpoint",
+    "estimator": "mean of nine fixed task means",
+    "grid": {
+      "environments": [
+        "hopper-medium-v2",
+        "hopper-medium-replay-v2",
+        "hopper-expert-v2",
+        "halfcheetah-medium-v2",
+        "halfcheetah-medium-replay-v2",
+        "halfcheetah-expert-v2",
+        "walker2d-medium-v2",
+        "walker2d-medium-replay-v2",
+        "walker2d-expert-v2"
+      ],
+      "T": [4, 7, 10, 14, 20],
+      "K": 4,
+      "seeds": [0, 1],
+      "n_cells_per_branch": 90,
+      "n_primary_pairs": 90
+    },
+    "bootstrap": {
+      "resampling_unit": "fixed task variant",
+      "draws": 100000,
+      "seed": 20260905,
+      "interval": "percentile 95%; numpy.quantile linear"
+    },
+    "author_mwd": 3.0,
+    "decision_precedence": [
+      "recenter_supporting: interval lower > 0 and point >= +3",
+      "data_anchor_supporting: interval upper < 0 and point <= -3",
+      "author_band_comparable: full interval inside [-3,+3]",
+      "unresolved: all other outcomes"
+    ]
+  },
+  "secondary_readouts": [
+    "first-actor D4RL return on every branch; shared first-actor scores must match across branches cellwise",
+    "fixed_ref minus data_anchor, same aggregation",
+    "data_anchor_matched minus data_anchor as a compute-control sensitivity, not the primary label"
+  ],
+  "evaluation_contract": {
+    "critic_updates": 1000000,
+    "final_evaluation_episodes": 10,
+    "shared_episode_seeds": true,
+    "target_score_column": "d4rl_score",
+    "recenter_or_fixed_ref_deployment": "d4rl_pi4",
+    "data_anchor_deployment": "d4rl_eval"
+  },
+  "identity_gate": {
+    "required": true,
+    "check": "after every compared update, actors[0], critic, target_actor, and target_critic are bitwise identical across branches that consumed the same RNG and batch",
+    "tests": "tests/test_shared_driver.py"
+  },
+  "failure_handling": {
+    "retain_finite_final_scores": true,
+    "do_not_filter_nonfinite_optimizer_if_weights_and_eval_are_finite": true,
+    "do_not_splice_historical_bar_or_mcep_scores_into_shared_pairs": true,
+    "dirty_worktree_or_cross_stack_merge": "not primary-admissible"
+  },
+  "not_this_experiment": [
+    "P0.A clean 180-cell P4 rerun",
+    "P0.C missing K1 h-grid training",
+    "offline (T,K) selection"
+  ]
+}

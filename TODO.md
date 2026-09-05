@@ -1,18 +1,31 @@
 # Submission TODO
 
-Last audited: 2026-09-03.
+Last audited: 2026-09-05.
 
 This file tracks work that can change a manuscript claim. A completed run is
 not included automatically; it must identify the intended quantity, pass its
 pre-specified integrity checks, and add evidence not already carried by a
-stronger result. Method names follow [README.md](README.md); P2, P3, and P4 mean PART-Prox
-with `K=2,3,4`. Archived paths and configuration fields retain the historical
-`PART` identifier.
+stronger result. The manuscript now uses MART / I-MART; P2, P3, and P4 below
+retain the archive's PART-Prox names for `K=2,3,4`. Archived paths and
+configuration fields retain historical `PART` / `BAR` identifiers.
+
+The September 5 manuscript revision reanalyzes existing CSVs at revision
+`2fe4b8f`; it does not launch training or re-evaluate checkpoints. Reproducible
+inputs, aggregation code, and tables are in the manuscript repository's
+[analysis directory](https://github.com/SChoish/PART/tree/main/analysis).
 
 Priority follows the claim dependency: identify what the method adds, measure
 the proposed mechanism, validate the local numerical interpretation, then
 harden release provenance and cost reporting. A lower-priority completed run
 does not displace a higher-priority unresolved claim.
+
+Next action: freeze the shared-driver protocol and exact deployment-branch
+objectives in P0.B before launching new training. This directly addresses the
+remaining path-specific question. P0.C/D recover missing comparisons from
+existing outputs first; P0.A's clean repeat is conditional on promoting a new
+P4 comparison to primary evidence. The original P4
+[frozen manifest](sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/FROZEN_MANIFEST.json)
+records the decision rule and integrity contract for that archive.
 
 ## P0: identify what the sequential chain adds beyond policy separation
 
@@ -24,7 +37,7 @@ has no resolved aggregate difference. Thus target/deployment separation is a
 sufficient candidate mechanism at P3; sequential re-centering is not a
 prerequisite for those aggregate outcomes.
 
-### A. Two-actor P4 versus contemporaneous PART-P4 (complete; outcome unresolved)
+### A. Two-actor P4 versus contemporaneous PART-P4 (scores complete; secondary evidence)
 
 The full grid is complete at source revision `29fea94`: nine tasks,
 `T={4,7,10,14,20}`, seeds 0--1, and two procedures give 180 final
@@ -34,32 +47,37 @@ two-actor-P4 has task-equal mean `-2.3076`, 95% task-bootstrap interval
 `[-7.2476,2.4118]`, paired median `+0.6811`, and PART/control/tie counts
 `55/34/1`. The predeclared `outcome_label=unresolved`.
 
-This label is a scientific decision, not a data-validity flag. The runs use
-one git revision with matching source hashes, resolved configs, normalization,
-and run keys, and the authors manually verified all completed evaluations.
-The 90 matched pairs are split across two host blocks with different resolved
-JAX/Flax stacks. That runtime variation is disclosed, but the completed scores
-are retained as valid experimental data. Five Walker2d-expert checkpoints have
-nonfinite critic-optimizer states after finite weights; their final weights and
-evaluations are finite, and retaining them avoids outcome-selective deletion.
+`unresolved` describes the score contrast. Separately, the archived
+`SUMMARY.json` records `scientific_admissible_under_frozen_p0_contract=false`
+and `manuscript_primary_promotion_allowed=false`. Source hashes, resolved
+configs, normalization, and run keys match within the recorded source revision,
+but the two 45-pair host blocks use different resolved JAX/Flax stacks and the
+merged archive does not meet the frozen checkpoint/receipt requirements.
+Five Walker2d-expert checkpoints have nonfinite critic-optimizer states after
+finite weights. All 180 final evaluations remain finite and are retained in
+the descriptive comparison. Score completeness and finite evaluation do not
+override the failed inclusion gate.
 
 - [x] Run 90 two-actor-P4 and 90 contemporaneous PART-P4 cells to one million
   updates with ten final evaluation episodes.
 - [x] Freeze the source revision, configs, expected keys, and per-host
   manifests; merge all 180 final scores into 90 matched pairs.
-- [x] Use PART-P4 minus two-actor-P4 as the primary signed contrast and report
+- [x] Use PART-P4 minus two-actor-P4 as the predeclared signed contrast and report
   the task-equal mean, paired median, wins/ties, task means, 100,000-draw
   task-resampling interval, and collapse transitions.
 - [x] Apply the predeclared three-point decision rule. The result is
   `unresolved`; it is neither equivalence nor superiority for either
   procedure.
-- [x] Treat the result as a valid full-procedure comparison. It does not
+- [x] Retain all finite scores as a secondary full-procedure comparison. It does not
   isolate re-centering alone because actor work, anchoring, and critic
   trajectory also differ.
-- [ ] Optional only if a single-runtime-stack sensitivity or a unified
-  checkpoint-bound receipt is desired: repeat the same 180 cells on one
-  resolved stack. This is not required to regard the completed experiment as
-  valid and is not a prerequisite for reporting the current unresolved result.
+- [ ] Before promoting a new P4 comparison to primary evidence, repeat the
+  same 180 cells on one frozen resolved stack with checkpoint-bound receipts,
+  finite model and optimizer states, and an independent verifier. Retain and
+  report failures under the frozen handling rule. Archive both online-first
+  and endpoint evaluations with paired episode seeds. This clean repeat is
+  required for renewed primary promotion, not for reporting the existing
+  finite-score sensitivity.
 
 ### B. Completed P3 control and optional exact causal isolation
 
@@ -73,11 +91,66 @@ evaluations are finite, and retaining them avoids outcome-selective deletion.
 - [x] Preserve CPU recovery provenance: eight Walker2d-expert cells resumed
   from matching logged emergency checkpoints and two `T=20` cells began on
   CPU. The task-removal sensitivity is not a hardware-effect estimate.
-- [ ] Only if a re-centering-only causal claim is still required after P4,
-  implement one joint driver sharing the target actor, critic, target networks,
-  minibatches, and RNG, branching only the evaluation-policy construction.
-  The current separately trained controls also change actor work, anchoring,
-  and critic trajectory.
+- [ ] Recommended experiment for a path-specific claim: implement one joint
+  driver sharing the first actor, critic, target networks, minibatches, and
+  RNG, branching only deployment-policy construction. Compare predecessor
+  re-centering with direct data anchoring and a fixed-reference refinement.
+  Keep downstream actors out of every Bellman backup; match actor optimizer
+  calls in a separate compute-controlled contrast. Predeclare the primary
+  endpoint-return contrast, task aggregation, seeds, and failure handling.
+  Record first-actor returns for every branch and verify that the shared
+  first-actor/critic states remain identical. Existing independent controls
+  cannot isolate re-centering because their realized training trajectories
+  also differ.
+
+### C. Match the first actor's local budget (partial coverage; reanalysis complete)
+
+- [x] Reindex the complete four-seed I-MART/TD3+BC grid by `h=T/K` and report
+  all nine exact intersections, without interpolation or outcome filtering.
+  Eight have positive task-equal differences; four task-resampling intervals
+  lie above zero. I4 at `T=.4` versus TD3 at `h=.1` gives `+8.69`
+  `[1.58,18.09]`; I4 at `T=10` versus `h=2.5` gives `+6.94`
+  `[-14.65,27.24]`. I2 at `T=14` gives `-.81`. Matching the coefficient does
+  not make independently trained critics or RNG trajectories identical.
+- [ ] Fill the missing K1 baseline budgets for the I4 plateau and tail:
+  `h={.625,1,1.75,3,3.5,4.25,5}`, corresponding to
+  `T={2.5,4,7,12,14,17,20}`. First inventory existing evaluations and
+  source/config provenance; recover compatible runs before training missing
+  cells. Require all nine tasks and four seeds for a headline contrast;
+  existing seed-0/1-only extra budgets cannot substitute for that grid.
+  Use contemporaneous I4 comparisons when historical protocols cannot be
+  matched. Freeze the complete requested grid and report every result.
+
+### D. Evaluate first-actor versus endpoint return (available subset recovered)
+
+- [x] Recover `target_d4rl` and `deployment_d4rl` from
+  `sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/first90_final_scores.csv`.
+  The evaluation contract maps `target_d4rl` to the online first actor, not
+  its Polyak copy; both policies use the same ten episode seeds. Validate
+  every endpoint against the merged table. The 45 runs per procedure have
+  mean endpoint-minus-first scores `+13.84` for I4 and `+15.59` for the
+  control, with 36/45 positive in each. The four fully covered tasks give
+  `+14.71/+16.87` over 40 runs. Report the Hopper-expert reversal
+  `-21.08/-7.80` and the incomplete five-task scope.
+- [x] Use the simulator archive's complete 60-cell
+  `actual_policy_value_difference_mean` as a separately labeled sampled-state
+  continuation-value diagnostic: I2 `+16.13`, 22/30 positive; I3 `+24.70`,
+  25/30 positive. These use raw discounted reward on cloned states, not D4RL
+  episode scores or an initial-state-return estimate.
+- [ ] Recover the remaining host's first-actor evaluation logs or checkpoints
+  for the other 45 I4 and 45 control runs. The merged final-score CSV and
+  tail-host compact CSV contain endpoint scores only. If re-evaluation is
+  needed, evaluate both policies at the same final checkpoint with identical
+  episode seeds and record source/config/checkpoint hashes. Retain the
+  original archive's secondary status; recovered columns alone do not repair
+  its failed primary inclusion gate.
+- [ ] Extend paired online-first/endpoint evaluation to the complete nine-task
+  I2/I3/I4 grid with available final checkpoints, prioritizing the plateau and
+  transition budgets before the far tail. Keep historical score-grid runs,
+  contemporaneous control reruns, and clean new runs separate. Freeze the
+  inclusion grid before evaluating, report task-level differences and all
+  reversals, and distinguish extraction gain from superiority over a direct
+  deployment actor.
 
 ## P1: measure target-value perturbation and matched final reach (CPU)
 
@@ -224,6 +297,14 @@ Task-equal residence on 6144 eligible interior anchors is
 
 ## P3: release provenance and practical cost
 
+- [ ] Recommended practical follow-up after the extraction comparisons:
+  predeclare an offline-only `(T,K)` selection rule and evaluate it on held-out
+  dynamics families, with equal tuning and compute allowances for TD3+BC and
+  the two-actor control. Select without access to held-out environment return;
+  use simulator scores only for final assessment. Compare against fixed-budget
+  choices and report every family. The existing post-hoc family transfer
+  analysis is a useful sensitivity, not validation of such a selection rule.
+
 - [x] Add fixed-budget, descriptive grid-best, leave-one-dynamics-family-out
   budget-transfer, and task-then-independent-seed sensitivity summaries to the
   manuscript and verifier. They demonstrate a practical regime but do not
@@ -272,6 +353,14 @@ Task-equal residence on 6144 eligible interior anchors is
   merely because it exists.
 
 ## Manuscript gate
+
+- [x] Add the total-budget / first-actor-budget figure, all nine exact budget
+  matches, available within-run I4 branch returns, and the separately labeled
+  simulator continuation-value summary. Preserve negative task results and
+  the partial archive's secondary scope. Keep the JKO interpretation tied to
+  ideal fixed-critic operators and simplify repeated qualification in prose.
+  Clarify that E-MART's population regression averages sampled first-hop
+  targets and need not equal an Euler step from the mean behavior action.
 
 - [x] Organize the main paper and supplement around one regime narrative:
   ideal JKO/gradient-flow behavior at small horizons, the observed

@@ -352,9 +352,21 @@ interval [-7.25, 2.41], paired median +0.68, and predeclared outcome
 and run keys were used and the authors manually verified the completed
 outputs. Every matched pair was trained and evaluated within one host stack;
 the two 45-pair host blocks used different resolved JAX/Flax stacks. This is
-disclosed runtime variation, not a reason to discard the data. Neither the
+disclosed runtime variation. The frozen P4 primary-inclusion gate remains
+false because runtime and checkpoint/optimizer-state requirements were not
+met. All finite evaluations are retained as a secondary descriptive comparison;
+reporting them does not promote the archive to primary evidence. Neither the
 P3 nor P4 comparison proves equivalence or isolates re-centering from actor
 work, anchoring, and the realized critic trajectory.
+
+The P4 archive also preserves online-first and endpoint returns for 45 runs
+per procedure in `first90_final_scores.csv`. Mean endpoint-minus-first scores
+are +13.84 for P4 and +15.59 for the control, with 36/45 positive runs each.
+This incomplete five-task subset includes the Hopper-expert reversal
+(-21.08/-7.80) and inherits the archive's secondary status. The active
+manuscript's [reanalysis](https://github.com/SChoish/PART/tree/main/analysis)
+reports the full available subset and all nine exact first-actor-budget
+intersections from the four-seed sweep.
 
 The compact [paired archive](sweep_results/diagnostics/bar_mcep_p3_paired/)
 contains all final scores, independently checked aggregates, recovery
@@ -368,8 +380,10 @@ rather than reconstructed.
 
 ## Paper
 
-The anonymous AISTATS 2026 sources, official style files, build instructions,
-and generated PDFs are in [aistats26_manuscript/](aistats26_manuscript/).
+The active MART manuscript, supplement, figures, and reproducible analysis are
+maintained in [SChoish/PART](https://github.com/SChoish/PART).
+The [aistats26_manuscript/](aistats26_manuscript/) directory retains the earlier
+manuscript snapshot.
 Submission-facing experiment decisions, including the ReLU activation-region
 scope audit, are tracked in [TODO.md](TODO.md).
 

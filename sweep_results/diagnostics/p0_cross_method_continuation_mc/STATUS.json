@@ -1,0 +1,30 @@
+{
+  "T": 20,
+  "discount": 0.99,
+  "environment": "walker2d-medium-v2",
+  "eval_seeds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009
+  ],
+  "jax_backend": "cpu",
+  "mart_checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-v2_tau20_mpi4_seed0/params_1000000.pkl",
+  "mart_run_key": "bar_p4|walker2d-medium-v2|T=20|seed=0",
+  "mart_sha256": "b4b797880ead7909ae76ecc56e48ad20eaa9c253ce63c609fce240a2ea7ea945",
+  "n_episodes": 10,
+  "n_protocols": 11,
+  "pair_key": "walker2d-medium-v2|T=20|seed=0",
+  "q_convention": "continuation critic at s0",
+  "seed": 0,
+  "shard": "ext_csh_tail90",
+  "two_actor_checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/two_actor_p4/walker2d-medium-v2_tau20_mcep4_seed0/params_1000000.pkl",
+  "two_actor_run_key": "two_actor_p4|walker2d-medium-v2|T=20|seed=0",
+  "two_actor_sha256": "c4da38a9b2f8825acaee1e63a01a56bd681359b73b611527b7f426857cad09f2"
+}

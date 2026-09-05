@@ -1,0 +1,3 @@
+environment,T,seed,condition,run_key,hop_index,ref_id,new_id,full_score_delta,hybrid_score_delta,q_s0_delta,discounted_delta,discounted_bootstrapped_delta,full_length_delta,hybrid_length_delta
+walker2d-medium-v2,20,0,bar_p4,bar_p4|walker2d-medium-v2|T=20|seed=0,2,mart_mu1,mart_mu2,-15.857870410215142,0.4966914595785141,0.6517425537109602,-0.0034401920469235847,-0.0053396217938086465,-189.9000000000001,0.0
+walker2d-medium-v2,20,0,bar_p4,bar_p4|walker2d-medium-v2|T=20|seed=0,3,mart_mu2,mart_mu3,-9.38610586809753,-1.2101791399627473,0.5405609130859261,-3.7658414856110483,-3.764071358545749,-72.69999999999993,0.0

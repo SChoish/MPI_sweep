@@ -1,0 +1,37 @@
+{
+  "backend": "gpu",
+  "gpu": "1",
+  "missing": [
+    {
+      "cache_path": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/p0_frozen_hop_extra_opt/source_ckpts/hopper-medium-v2_tau10_mpi4_seed0/params_1000000.pkl",
+      "environment": "hopper-medium-v2",
+      "expected_sha256": "c18b5784bbb5ff656afb5d80ca61d1b5a828853cc6108b710ad009500f1d0f3d",
+      "inventory_path": "/home/ext_csv/mpi_sweep_lab/p0_bar_two_actor_p4_29fea94/runs/bar_p4/hopper-medium-v2_tau10_mpi4_seed0/params_1000000.pkl",
+      "seed": 0
+    },
+    {
+      "cache_path": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/p0_frozen_hop_extra_opt/source_ckpts/hopper-medium-v2_tau10_mpi4_seed1/params_1000000.pkl",
+      "environment": "hopper-medium-v2",
+      "expected_sha256": "6aa372aefdb40f3dac09e1f026d781d3bab7e63f4735743c358c1bda69a1acc3",
+      "inventory_path": "/home/ext_csv/mpi_sweep_lab/p0_bar_two_actor_p4_29fea94/runs/bar_p4/hopper-medium-v2_tau10_mpi4_seed1/params_1000000.pkl",
+      "seed": 1
+    },
+    {
+      "cache_path": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/p0_frozen_hop_extra_opt/source_ckpts/hopper-expert-v2_tau10_mpi4_seed0/params_1000000.pkl",
+      "environment": "hopper-expert-v2",
+      "expected_sha256": "51f81441d59524dce5138520603a366434d87fa32a2e61090c2a9f51d6dcee11",
+      "inventory_path": "/home/ext_csv/mpi_sweep_lab/p0_bar_two_actor_p4_29fea94_cont2_gpu_d923/runs/bar_p4/hopper-expert-v2_tau10_mpi4_seed0/params_1000000.pkl",
+      "seed": 0
+    },
+    {
+      "cache_path": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/p0_frozen_hop_extra_opt/source_ckpts/hopper-expert-v2_tau10_mpi4_seed1/params_1000000.pkl",
+      "environment": "hopper-expert-v2",
+      "expected_sha256": "7fb0cd4a9b7259187baae09587141fe05649f34ca4769f34127c62dbe9245319",
+      "inventory_path": "/home/ext_csv/mpi_sweep_lab/p0_bar_two_actor_p4_29fea94_cont2_gpu_d923/runs/bar_p4/hopper-expert-v2_tau10_mpi4_seed1/params_1000000.pkl",
+      "seed": 1
+    }
+  ],
+  "n_jobs": 12,
+  "started_at": "2026-09-06T01:08:16+09:00",
+  "status": "blocked_missing_first90_ckpts"
+}

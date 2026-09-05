@@ -32,6 +32,8 @@ Default `--workers 4`. Do not raise this while a GPU trainer is live.
 "$PY" -u scripts/diagnostics/run_p0_intermediate_actors.py objectives
 "$PY" -u scripts/diagnostics/analyze_p0_intermediate_actors.py
 PYTHONPATH=/home/ext_csh/MPI_sweep "$PY" -u scripts/diagnostics/analyze_p0_episode_survival.py
+PYTHONPATH=/home/ext_csh/MPI_sweep "$PY" -u scripts/diagnostics/run_p0_hop_continuation_mc.py
+PYTHONPATH=/home/ext_csh/MPI_sweep "$PY" -u scripts/diagnostics/run_p0_cross_method_continuation_mc.py
 ```
 
 `all` runs inventory, eval, then actions (not objectives). Eval and actions resume from existing

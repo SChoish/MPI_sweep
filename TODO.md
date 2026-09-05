@@ -303,13 +303,24 @@ failures on Hopper/Walker, or reward-rate collapse on HalfCheetah-expert.
 
 Follow-up priority (do not auto-start training):
 
-1. Hopper first90 hop ΔL is done on ext_csv: expert hops are
-   objective-not-up / return-down; medium is objective-not-up / return-up.
-   This frozen critic does not separate helpful from harmful hops.
-2. Survival-conditioned MC continuation only where ΔL improved **and**
-   lifetime collapsed (walker-medium T=20 seed 0 hops 2–3). Do **not** start
-   with walker-medium T=14 seed 0 hop 4 (ΔL did not improve) or
-   HalfCheetah-expert (no early termination).
+1. Hopper-medium/expert frozen-critic extra hop-actor steps (case A:
+   proximal objective not improved). GPU runner:
+   `scripts/diagnostics/run_p0_frozen_hop_extra_opt.py`. Needs the first90
+   MART 1M pickles (hashed in `p0_hop_actor_audit/INVENTORY.json`); this host
+   does not have them. Do not substitute local `params_3904.pkl` or mpi1/exp3.
+2. [x] Walker-medium T=20 seed 0 hops 2–3 continuation MC (case B), including
+   the two-actor 2×2. MART-only archive:
+   [`p0_hop_continuation_mc/`](sweep_results/diagnostics/p0_hop_continuation_mc/).
+   Cross-method archive:
+   [`p0_cross_method_continuation_mc/`](sweep_results/diagnostics/p0_cross_method_continuation_mc/).
+   Hop 2: full ΔJ=−15.86, hybrid ΔJ=+0.50, 10/10 hybrid timeouts; the first
+   μ2 action is not the failure. Hop 3: full ΔJ=−9.39, hybrid ΔJ=−1.21 still
+   at 1000 steps. Same-discount start-state ΔQ=+0.54 (se 0.018, 10/10 up)
+   vs discounted ΔG=−3.77 (se 1.52, 3+/7-). Under both Polyak continuations,
+   swapping only the first action (MART hop vs two-actor deployment) does
+   not reproduce full-rollout early termination; continuation identity moves
+   J by ~6–7 points and G by ~65–84. Start-state only; not a percent
+   decomposition. Most harm is from rolling out the later actor.
 3. Shared-driver P0.B: implemented, frozen, **deprioritized**.
 4. Frozen-critic extra extraction: only if later hops show tiny movement and
    leftover objective slack.

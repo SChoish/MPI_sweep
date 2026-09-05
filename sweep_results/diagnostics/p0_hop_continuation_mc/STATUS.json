@@ -1,0 +1,29 @@
+{
+  "T": 20,
+  "checkpoint": "/home/ext_csh/p0_bar_p4_two_actor_p4_29fea94_gpu_v2/runs/bar_p4/walker2d-medium-v2_tau20_mpi4_seed0/params_1000000.pkl",
+  "checkpoint_sha256": "b4b797880ead7909ae76ecc56e48ad20eaa9c253ce63c609fce240a2ea7ea945",
+  "condition": "bar_p4",
+  "continuation": "target_actor_params (Polyak \u03bc1)",
+  "discount": 0.99,
+  "environment": "walker2d-medium-v2",
+  "eval_seeds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009
+  ],
+  "hops": [
+    2,
+    3
+  ],
+  "n_episodes": 10,
+  "recorded_file_sha256": "b4b797880ead7909ae76ecc56e48ad20eaa9c253ce63c609fce240a2ea7ea945",
+  "run_key": "bar_p4|walker2d-medium-v2|T=20|seed=0",
+  "seed": 0
+}

@@ -1,6 +1,9 @@
 source_ckpts/
 *.pkl
 *.pkl.tmp
+logs/
+*.lock
+*.pid
 extra_opt.log
 extra_opt.pid
 metrics.jsonl

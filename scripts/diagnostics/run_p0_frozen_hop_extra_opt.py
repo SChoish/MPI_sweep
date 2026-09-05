@@ -1,49 +1,29 @@
 #!/usr/bin/env python3
-"""GPU extra-opt: freeze 1M critic + μ_{k-1}, optimize only hop actor k.
+"""Frozen-critic extra JKO steps on Hopper-medium/expert hop actors.
 
-Hopper-medium/expert T=10 seeds {0,1} hops {2,3,4}. Uses current JKO loss
-(train_td3bc.update_jko). Readout is dataset ΔL vs staying at μ_{k-1}, same
-formula as the first90 hop-actor audit.
-
-Hops are independent: hop 3 still references the original 1M μ2, not an
-extra-opted μ2. Does not launch shared-driver. Does not mix first90/tail90.
+Understood as: on existing 1M MART snapshots, freeze the critic and μ_{k-1},
+run additional Adam steps on μ_k only, and test whether snapshot ΔL>0 shrinks.
+Not a new training grid. Not a shared-driver run. Device comes from the caller.
 """
-
 from __future__ import annotations
 
 import argparse
 import csv
 import json
 import os
-import pickle
-import sys
-from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Callable, Mapping
+from types import SimpleNamespace
+from typing import Any
 
-# Limit JAX memory so this diagnostic can share the box with the live AMO pack.
-# Do not force CPU. Do not preallocate a large GPU slice.
-os.environ.setdefault("XLA_PYTHON_CLIENT_PREALLOCATE", "false")
-os.environ.setdefault("XLA_PYTHON_CLIENT_ALLOCATOR", "platform")
-os.environ.pop("JAX_PLATFORMS", None)
-os.environ.pop("JAX_PLATFORM_NAME", None)
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+os.environ.setdefault("EIGEN_NUM_THREADS", "1")
+os.environ.setdefault("NUMEXPR_NUM_THREADS", "1")
 
-
-def _early_gpu() -> None:
-    parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument("--gpu", default=os.environ.get("CUDA_VISIBLE_DEVICES", "1"))
-    args, _ = parser.parse_known_args()
-    gpu = str(args.gpu).strip()
-    if gpu:
-        os.environ["CUDA_VISIBLE_DEVICES"] = gpu
-
-
-_early_gpu()
-
-from _lab_import import REPO_ROOT as _ROOT, ensure_train_import_path  # noqa: E402
+from _lab_import import REPO_ROOT as ROOT, ensure_train_import_path  # noqa: E402
 
 ensure_train_import_path()
-sys.path.insert(0, str(_ROOT))
 
 import jax  # noqa: E402
 import jax.numpy as jnp  # noqa: E402
@@ -51,565 +31,518 @@ import numpy as np  # noqa: E402
 import optax  # noqa: E402
 from flax.training.train_state import TrainState  # noqa: E402
 
+from _p0_hop_common import ARCHIVE, DATA_DIR, now_kst  # noqa: E402
 from _p0_hop_metrics import hop_objective_delta  # noqa: E402
-from p0_frozen_hop_extra_opt import (  # noqa: E402
-    BATCH_SIZE,
-    DATASET_N,
-    DATASET_SAMPLE_SEED,
-    DEFAULT_CACHE,
-    EVAL_SEED_BASE,
-    FIRST90_CELLS,
-    HOPS,
-    LR,
-    SEEDS,
-    TASKS,
-    T_VALUE,
-    cache_ckpt_path,
-    copy_instructions,
-    planned_jobs,
-    resolve_all,
-    sha256_file,
-    tau_step,
+from diagnose_p0_hop_actions import (  # noqa: E402
+    act_on_raw,
+    dataset_raw,
+    hop_tau,
+    load_policies,
 )
+from diagnose_p0_hop_objective import q1_on_actions  # noqa: E402
 from train_td3bc import (  # noqa: E402
-    EVAL_ENV,
     Actor,
-    Transition,
-    TwinCritic,
-    _domain,
-    d4rl_normalized_score,
-    install_stop_handler,
-    load_checkpoint,
+    download_dataset,
+    normalized_q_weight,
     qlearning_from_hdf5,
-    sample_batch,
-    update_jko,
 )
-from d4rl_data import dataset_path  # noqa: E402
 
-KST = timezone(timedelta(hours=9))
-OUT_DEFAULT = _ROOT / "sweep_results/diagnostics/p0_frozen_hop_extra_opt"
-
-
-def now_kst() -> str:
-    return datetime.now(KST).isoformat(timespec="seconds")
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--gpu", default=os.environ.get("CUDA_VISIBLE_DEVICES", "1"))
-    parser.add_argument("--allow-cpu", action="store_true")
-    parser.add_argument("--data-dir", type=Path, default=_ROOT / "data")
-    parser.add_argument("--out-dir", type=Path, default=OUT_DEFAULT)
-    parser.add_argument("--ckpt-root", type=Path, default=_ROOT / DEFAULT_CACHE)
-    parser.add_argument("--tasks", nargs="+", default=list(TASKS))
-    parser.add_argument("--seeds", type=int, nargs="+", default=list(SEEDS))
-    parser.add_argument("--hops", type=int, nargs="+", default=list(HOPS))
-    parser.add_argument("--extra-steps", type=int, default=20_000)
-    parser.add_argument("--log-every", type=int, default=500)
-    parser.add_argument("--save-every", type=int, default=5_000)
-    parser.add_argument("--updates-per-dispatch", type=int, default=64)
-    parser.add_argument("--batch-size", type=int, default=BATCH_SIZE)
-    parser.add_argument("--lr", type=float, default=LR)
-    parser.add_argument("--eval-episodes", type=int, default=10)
-    parser.add_argument("--require-gpu", action=argparse.BooleanOptionalAction, default=True)
-    return parser.parse_args()
+OUT = ROOT / "sweep_results/diagnostics/p0_frozen_hop_extra_opt"
+SOURCE_CKPTS = OUT / "source_ckpts"
+TASKS = ("hopper-medium-v2", "hopper-expert-v2")
+HOPS = (("mu1", "mu2", 2), ("mu2", "mu3", 3), ("mu3", "mu4", 4))
+DEFAULT_LOG_STEPS = (0, 500, 2000, 10000)
+_OBS_CACHE: dict[tuple[str, bytes, bytes], np.ndarray] = {}
 
 
-def _write_json(path: Path, payload: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(json.dumps(payload, indent=2, sort_keys=True, default=str) + "\n")
-    tmp.replace(path)
+def _tree_l2(tree) -> float:
+    leaves = jax.tree_util.tree_leaves(tree)
+    total = sum(jnp.sum(jnp.square(leaf)) for leaf in leaves)
+    return float(jnp.sqrt(total))
 
 
-def _actor_list(payload: Mapping[str, Any]) -> list[Any]:
-    if "actors_params" in payload:
-        return list(payload["actors_params"])
-    keys = ["actor_params", "actor2_params", "actor3_params", "actor4_params"]
-    params = [payload[key] for key in keys if key in payload]
-    if len(params) < 4:
-        raise KeyError("MART K=4 checkpoint must carry four hop actors")
-    return params
+def full_dataset_normed(env_name: str, mean: np.ndarray, std: np.ndarray) -> np.ndarray:
+    key = (env_name, mean.tobytes(), std.tobytes())
+    cached = _OBS_CACHE.get(key)
+    if cached is not None:
+        return cached
+    raw = qlearning_from_hdf5(download_dataset(env_name, DATA_DIR))["observations"]
+    out = np.asarray((raw - mean) / std, dtype=np.float32)
+    _OBS_CACHE[key] = out
+    return out
 
 
-def _probe_raw(env_name: str, data_dir: Path) -> np.ndarray:
-    raw = qlearning_from_hdf5(dataset_path(env_name, data_dir))["observations"]
-    rng = np.random.default_rng(DATASET_SAMPLE_SEED)
-    index = rng.choice(raw.shape[0], size=min(DATASET_N, raw.shape[0]), replace=False)
-    index.sort()
-    return np.asarray(raw[index], dtype=np.float32)
+def resolve_checkpoint(record: dict[str, Any]) -> dict[str, Any]:
+    row = dict(record)
+    name = Path(row.get("host_run_dir") or row.get("checkpoint_path") or "").name
+    if name == "params_1000000.pkl":
+        name = Path(row.get("host_run_dir") or "").name
+    staged = SOURCE_CKPTS / name / "params_1000000.pkl"
+    if staged.is_file():
+        row["checkpoint_path"] = str(staged)
+    path = Path(row.get("checkpoint_path") or "")
+    if not path.is_file():
+        raise FileNotFoundError(f"missing 1M checkpoint for {row.get('key')}: {path}")
+    return row
 
 
-def _transition(env_name: str, data_dir: Path, mean: np.ndarray, std: np.ndarray) -> Transition:
-    raw = qlearning_from_hdf5(dataset_path(env_name, data_dir))
-    obs = (raw["observations"] - mean) / std
-    next_obs = (raw["next_observations"] - mean) / std
-    return Transition(
-        observations=jnp.asarray(obs, dtype=jnp.float32),
-        actions=jnp.asarray(raw["actions"], dtype=jnp.float32),
-        rewards=jnp.asarray(raw["rewards"], dtype=jnp.float32),
-        next_observations=jnp.asarray(next_obs, dtype=jnp.float32),
-        not_dones=jnp.asarray(raw["not_dones"], dtype=jnp.float32),
-    )
-
-
-def _save_extra(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    with tmp.open("wb") as handle:
-        pickle.dump(payload, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    tmp.replace(path)
-
-
-def _latest_extra(run_dir: Path) -> Path | None:
-    files = [
-        path
-        for path in run_dir.glob("params_extra_*.pkl")
-        if path.stem.split("_")[-1].isdigit()
-    ]
-    if not files:
-        return None
-    return max(files, key=lambda path: int(path.stem.split("_")[-1]))
-
-
-def _eval_episodes(
-    policy: Callable[[np.ndarray], np.ndarray],
-    env_name: str,
-    mean: np.ndarray,
-    std: np.ndarray,
-    n_episodes: int,
-) -> dict[str, float]:
-    if n_episodes <= 0:
-        return {
-            "n_episodes": 0,
-            "mean_normalized": float("nan"),
-            "mean_raw": float("nan"),
-            "mean_length": float("nan"),
-        }
-    import gymnasium as gym
-
-    env = gym.make(EVAL_ENV[_domain(env_name)])
-    raws = []
-    lengths = []
-    for ep in range(n_episodes):
-        obs, _ = env.reset(seed=EVAL_SEED_BASE + ep)
-        done = False
-        ep_ret = 0.0
-        length = 0
-        while not done:
-            state = (np.asarray(obs, dtype=np.float32) - mean) / std
-            action = np.asarray(policy(state), dtype=np.float32)
-            obs, reward, terminated, truncated, _ = env.step(action)
-            done = bool(terminated or truncated)
-            ep_ret += float(reward)
-            length += 1
-        raws.append(ep_ret)
-        lengths.append(length)
-    env.close()
-    mean_raw = float(np.mean(raws))
-    return {
-        "n_episodes": n_episodes,
-        "mean_normalized": float(d4rl_normalized_score(env_name, mean_raw)),
-        "mean_raw": mean_raw,
-        "mean_length": float(np.mean(lengths)),
-    }
-
-
-def _probe_terms(
-    actor_apply,
-    critic_apply,
-    hop_params,
-    ref_params,
-    critic_params,
-    states: jax.Array,
-    hop_tau: float,
-    scale_norm: bool,
-) -> dict[str, float]:
-    pi = actor_apply(hop_params, states)
-    ref = actor_apply(ref_params, states)
-    q_k, _ = critic_apply(critic_params, states, pi)
-    q_ref, _ = critic_apply(critic_params, states, ref)
-    return hop_objective_delta(
-        np.asarray(q_k).reshape(-1),
-        np.asarray(q_ref).reshape(-1),
-        np.asarray(pi),
-        np.asarray(ref),
-        tau_step=hop_tau,
-        scale_norm=scale_norm,
-    )
-
-
-def extra_opt_one_job(
-    job: Mapping[str, Any],
-    ckpt: Path,
-    *,
-    data_dir: Path,
-    out_dir: Path,
-    extra_steps: int,
-    log_every: int,
-    save_every: int,
-    updates_per_dispatch: int,
-    batch_size: int,
-    lr: float,
-    eval_episodes: int,
-) -> dict[str, Any]:
-    payload = load_checkpoint(ckpt)
-    actors = _actor_list(payload)
-    hop = int(job["hop"])
-    mean = np.asarray(payload["mean"], dtype=np.float32)
-    std = np.asarray(payload["std"], dtype=np.float32)
-    max_action = float(payload.get("max_action", 1.0))
-    cfg = payload.get("config") or {}
-    scale_norm = bool(cfg.get("q_scale_norm", True))
-    hop_tau = tau_step(float(job["T"]), 4)
-    parent_sha = sha256_file(ckpt)
-
-    run_dir = (
-        out_dir
-        / f"{job['environment']}_tau{int(job['T'])}_seed{int(job['seed'])}_hop{hop}"
-    )
-    run_dir.mkdir(parents=True, exist_ok=True)
-    stop = install_stop_handler(run_dir)
-
-    action_dim = int(np.asarray(actors[0]["params"]["Dense_2"]["kernel"]).shape[-1])
-    actor_model = Actor(action_dim=action_dim, max_action=max_action)
-    critic_model = TwinCritic()
-    hop_actor = TrainState.create(
-        apply_fn=actor_model.apply,
-        params=actors[hop - 1],
+def make_actor_state(params, lr: float) -> TrainState:
+    return TrainState.create(
+        apply_fn=lambda p, x: None,
+        params=params,
         tx=optax.adam(lr),
     )
-    critic = TrainState.create(
-        apply_fn=critic_model.apply,
-        params=payload["critic_params"],
-        tx=optax.set_to_zero(),
-    )
-    ref_params = actors[hop - 2]
-    start_step = 0
-    resume = _latest_extra(run_dir)
-    if resume is not None:
-        extra = load_checkpoint(resume)
-        if extra.get("parent_sha256") != parent_sha:
-            raise ValueError(f"extra-opt resume parent hash mismatch: {resume}")
-        if int(extra["hop"]) != hop:
-            raise ValueError(f"extra-opt resume hop mismatch: {resume}")
-        hop_actor = hop_actor.replace(
-            params=extra["actor_params"],
-            opt_state=extra["actor_opt_state"],
-            step=extra.get("actor_opt_step", hop_actor.step),
-        )
-        start_step = int(extra["step"])
-        print(f"[resume] {resume} step={start_step}", flush=True)
 
-    data = _transition(job["environment"], data_dir, mean, std)
-    probe_raw = _probe_raw(job["environment"], data_dir)
-    probe_states = jnp.asarray((probe_raw - mean) / std, dtype=jnp.float32)
-    rng = jax.random.PRNGKey(int(job["seed"]) * 1000 + hop + start_step)
+
+def make_update(
+    apply,
+    critic_apply,
+    critic_params,
+    ref_params,
+    tau_step: float,
+    scale_norm: bool,
+    data_obs: jax.Array,
+    batch_size: int,
+):
+    critic = SimpleNamespace(apply_fn=critic_apply, params=critic_params)
 
     @jax.jit
-    def dispatch(hop_actor, rng, start_it, n_updates):
-        def body(i, carry):
-            hop_actor, rng, last_loss = carry
-            rng, b_rng = jax.random.split(rng)
-            batch = sample_batch(data, b_rng, batch_size)
-            ref = hop_actor.apply_fn(ref_params, batch.observations)
-            hop_actor, loss = update_jko(
-                hop_actor,
-                hop_actor.apply_fn,
-                critic,
-                batch,
-                ref,
-                hop_tau,
-                scale_norm,
-            )
-            return hop_actor, rng, loss
+    def block(actor: TrainState, rng: jax.Array, n_steps: int) -> tuple[TrainState, jax.Array]:
+        def body(_i, carry):
+            actor, rng = carry
+            rng, key = jax.random.split(rng)
+            idx = jax.random.randint(key, (batch_size,), 0, data_obs.shape[0])
+            obs = data_obs[idx]
+            ref = jax.lax.stop_gradient(apply(ref_params, obs))
+            q_ref, _ = critic.apply_fn(critic.params, obs, ref)
+            q_weight = normalized_q_weight(q_ref, tau_step, scale_norm=scale_norm)
 
-        return jax.lax.fori_loop(
-            0, n_updates, body, (hop_actor, rng, jnp.asarray(0.0))
+            def loss_fn(params):
+                pi = apply(params, obs)
+                q1, _ = critic.apply_fn(critic.params, obs, pi)
+                return -q_weight * jnp.mean(q1) + jnp.mean(jnp.square(pi - ref))
+
+            loss, grads = jax.value_and_grad(loss_fn)(actor.params)
+            actor = actor.apply_gradients(grads=grads)
+            return actor, rng
+
+        actor, rng = jax.lax.fori_loop(0, n_steps, body, (actor, rng))
+        return actor, rng
+
+    return block
+
+
+def eval_hop(
+    apply,
+    q_apply,
+    critic_params,
+    hop_params,
+    ref_params,
+    raw_eval: np.ndarray,
+    mean: np.ndarray,
+    std: np.ndarray,
+    tau_step: float,
+    scale_norm: bool,
+) -> dict[str, float]:
+    act_k = act_on_raw(apply, hop_params, raw_eval, mean, std)
+    act_ref = act_on_raw(apply, ref_params, raw_eval, mean, std)
+    q_k = q1_on_actions(q_apply, critic_params, raw_eval, mean, std, act_k)
+    q_ref = q1_on_actions(q_apply, critic_params, raw_eval, mean, std, act_ref)
+    terms = hop_objective_delta(
+        q_k, q_ref, act_k, act_ref, tau_step=tau_step, scale_norm=scale_norm
+    )
+    normed = (raw_eval - mean) / std
+    ref_a = apply(ref_params, jnp.asarray(normed, dtype=jnp.float32))
+    q_ref_j, _ = q_apply(
+        critic_params,
+        jnp.asarray(normed, dtype=jnp.float32),
+        ref_a,
+    )
+    q_weight = normalized_q_weight(jnp.squeeze(q_ref_j, -1), tau_step, scale_norm=scale_norm)
+
+    def loss_fn(params):
+        pi = apply(params, jnp.asarray(normed, dtype=jnp.float32))
+        q1, _ = q_apply(
+            critic_params,
+            jnp.asarray(normed, dtype=jnp.float32),
+            pi,
         )
+        return -q_weight * jnp.mean(q1) + jnp.mean(jnp.square(pi - jax.lax.stop_gradient(ref_a)))
 
-    actor_apply = jax.jit(actor_model.apply)
-    critic_apply = jax.jit(critic_model.apply)
+    grads = jax.grad(loss_fn)(hop_params)
+    terms["grad_l2"] = _tree_l2(grads)
+    terms["action_rms_from_snapshot"] = float(
+        np.sqrt(np.mean(np.square(act_k - act_on_raw(apply, hop_params, raw_eval, mean, std))))
+    )
+    return terms
 
-    def policy_fn(state: np.ndarray) -> np.ndarray:
-        return np.asarray(
-            actor_apply(hop_actor.params, jnp.asarray(state, dtype=jnp.float32)),
-            dtype=np.float32,
-        )
 
-    def snapshot(step: int, train_loss: float) -> dict[str, Any]:
-        terms = _probe_terms(
-            actor_apply,
-            critic_apply,
-            hop_actor.params,
+def snapshot_action_rms(apply, params_a, params_b, raw, mean, std) -> float:
+    a = act_on_raw(apply, params_a, raw, mean, std)
+    b = act_on_raw(apply, params_b, raw, mean, std)
+    return float(np.sqrt(np.mean(np.square(a - b))))
+
+
+def process_hop(
+    record: dict[str, Any],
+    prev_role: str,
+    role: str,
+    hop: int,
+    extra_steps: int,
+    log_steps: tuple[int, ...],
+    batch_size: int,
+    lr: float,
+    rng_seed: int,
+) -> list[dict[str, Any]]:
+    payload, mean, std, _max_a, packed, q_apply = load_policies(record)
+    named_params = {spec["actor_role"]: params for spec, params, _apply in packed}
+    apply = packed[0][2]
+    spec = next(s for s, _, _ in packed if s["actor_role"] == role)
+    tau_step = float(hop_tau(record, spec))
+    scale_norm = bool(record.get("checkpoint", {}).get("q_scale_norm", True))
+    raw_eval = dataset_raw(record["environment"])
+    data_obs = jnp.asarray(full_dataset_normed(record["environment"], mean, std))
+    hop_params0 = named_params[role]
+    ref_params = named_params[prev_role]
+    actor = make_actor_state(hop_params0, lr)
+    block = make_update(
+        apply,
+        q_apply,
+        payload["critic_params"],
+        ref_params,
+        tau_step,
+        scale_norm,
+        data_obs,
+        batch_size,
+    )
+    rng = jax.random.PRNGKey(rng_seed)
+    rows = []
+    done = 0
+    for target in log_steps:
+        if target > extra_steps:
+            break
+        n = target - done
+        if n > 0:
+            actor, rng = block(actor, rng, n)
+            done = target
+        terms = eval_hop(
+            apply,
+            q_apply,
+            payload["critic_params"],
+            actor.params,
             ref_params,
-            critic.params,
-            probe_states,
-            hop_tau,
+            raw_eval,
+            mean,
+            std,
+            tau_step,
             scale_norm,
         )
-        row = {
-            "environment": job["environment"],
-            "T": int(job["T"]),
-            "seed": int(job["seed"]),
-            "hop": hop,
-            "step": int(step),
-            "train_loss": float(train_loss),
-            "checkpoint_sha256": parent_sha,
-            **terms,
-        }
-        return row
-
-    def persist(step: int, *, reason: str) -> None:
-        _save_extra(
-            run_dir / f"params_extra_{int(step)}.pkl",
-            {
-                "step": int(step),
-                "hop": hop,
-                "environment": job["environment"],
-                "seed": int(job["seed"]),
-                "T": int(job["T"]),
-                "parent_sha256": parent_sha,
-                "parent_checkpoint": str(ckpt),
-                "actor_params": jax.device_get(hop_actor.params),
-                "actor_opt_state": jax.device_get(hop_actor.opt_state),
-                "actor_opt_step": jax.device_get(hop_actor.step),
-                "critic_params": jax.device_get(critic.params),
-                "ref_actor_params": jax.device_get(ref_params),
-                "reason": reason,
-            },
+        terms["action_rms_from_snapshot"] = snapshot_action_rms(
+            apply, hop_params0, actor.params, raw_eval, mean, std
         )
-
-    metrics_path = run_dir / "metrics.jsonl"
-    rows: list[dict[str, Any]] = []
-    if start_step == 0 or not metrics_path.is_file():
-        row0 = snapshot(start_step, train_loss=float("nan"))
-        rows.append(row0)
-        with metrics_path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(row0, sort_keys=True, default=str) + "\n")
+        rows.append(
+            {
+                "task": record["environment"],
+                "T": record["T"],
+                "training_seed": record["seed"],
+                "hop": hop,
+                "actor_a": prev_role,
+                "actor_b": role,
+                "extra_steps": target,
+                "batch_size": batch_size,
+                "lr": lr,
+                "tau_step": tau_step,
+                "n_eval": int(raw_eval.shape[0]),
+                "checkpoint_hash": record.get("checkpoint_hash"),
+                **{k: terms[k] for k in (
+                    "q_weight",
+                    "mean_q_k",
+                    "mean_q_prev",
+                    "delta_q",
+                    "w2",
+                    "delta_L",
+                    "q_term",
+                    "q_gain_move_ratio",
+                    "objective_improved",
+                    "grad_l2",
+                    "action_rms_from_snapshot",
+                )},
+            }
+        )
         print(
-            f"[probe] {job['environment']} seed={job['seed']} hop={hop} "
-            f"step={start_step} delta_L={row0['delta_L']:.6g} "
-            f"obj_up={row0['objective_improved']}",
+            f"{record['environment']} T={record['T']} seed={record['seed']} "
+            f"{prev_role}->{role} step={target} dL={terms['delta_L']:+.4g} "
+            f"ratio={terms['q_gain_move_ratio']:.3f} grad={terms['grad_l2']:.3g}",
             flush=True,
         )
-
-    eval_start = _eval_episodes(
-        policy_fn, job["environment"], mean, std, eval_episodes
-    )
-    step = start_step
-    last_loss = 0.0
-    while step < extra_steps:
-        if stop["flag"]:
-            persist(step, reason="signal")
-            print(f"[signal] emergency save at step={step}", flush=True)
-            break
-        n = min(updates_per_dispatch, extra_steps - step)
-        hop_actor, rng, loss = dispatch(hop_actor, rng, step, n)
-        last_loss = float(loss)
-        step += n
-        on_schedule = step % log_every == 0 or step >= extra_steps
-        if on_schedule:
-            row = snapshot(step, last_loss)
-            rows.append(row)
-            with metrics_path.open("a", encoding="utf-8") as handle:
-                handle.write(json.dumps(row, sort_keys=True, default=str) + "\n")
-            print(
-                f"[opt] {job['environment']} seed={job['seed']} hop={hop} "
-                f"step={step} train_L={last_loss:.6g} delta_L={row['delta_L']:.6g} "
-                f"obj_up={row['objective_improved']}",
-                flush=True,
-            )
-        if save_every and step % save_every == 0:
-            persist(step, reason="schedule")
-    else:
-        persist(step, reason="final")
-
-    eval_end = _eval_episodes(policy_fn, job["environment"], mean, std, eval_episodes)
-    summary = {
-        "environment": job["environment"],
-        "T": int(job["T"]),
-        "seed": int(job["seed"]),
-        "hop": hop,
-        "parent_checkpoint": str(ckpt),
-        "parent_sha256": parent_sha,
-        "extra_steps_requested": extra_steps,
-        "extra_steps_done": step,
-        "stopped_by_signal": bool(stop["flag"]),
-        "delta_L_start": rows[0]["delta_L"] if rows else None,
-        "delta_L_end": rows[-1]["delta_L"] if rows else None,
-        "objective_improved_start": rows[0]["objective_improved"] if rows else None,
-        "objective_improved_end": rows[-1]["objective_improved"] if rows else None,
-        "eval_start": eval_start,
-        "eval_end": eval_end,
-        "run_dir": str(run_dir),
-        "finished_at": now_kst(),
-    }
-    _write_json(run_dir / "SUMMARY.json", summary)
-    return summary
+    return rows
 
 
-def write_report(out_dir: Path, summaries: list[dict[str, Any]], meta: dict[str, Any]) -> None:
+def plot_curves(rows: list[dict[str, Any]]) -> str:
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, axes = plt.subplots(1, 2, figsize=(10.2, 4.2), sharey=True)
+    for ax, task in zip(axes, TASKS):
+        for seed in (0, 1):
+            for hop, color in ((2, "#2c7fb8"), (3, "#fdae61"), (4, "#d73027")):
+                sub = [
+                    r
+                    for r in rows
+                    if r["task"] == task
+                    and int(r["training_seed"]) == seed
+                    and int(r["hop"]) == hop
+                ]
+                if not sub:
+                    continue
+                sub = sorted(sub, key=lambda r: int(r["extra_steps"]))
+                ax.plot(
+                    [int(r["extra_steps"]) for r in sub],
+                    [float(r["delta_L"]) for r in sub],
+                    marker="o",
+                    color=color,
+                    linestyle="-" if seed == 0 else "--",
+                    linewidth=1.4,
+                    label=f"hop{hop} seed{seed}",
+                )
+        ax.axhline(0.0, color="black", linewidth=0.8)
+        ax.set_title(task.replace("-v2", ""))
+        ax.set_xlabel("extra Adam steps (frozen Q, frozen ref)")
+        ax.set_ylabel("ΔL on diagnostic dataset states")
+        ax.grid(True, alpha=0.3)
+    axes[0].legend(fontsize=7, ncol=2)
+    fig.suptitle("Hopper T=10: extra hop-actor steps vs frozen-critic ΔL")
+    fig.tight_layout()
+    OUT.mkdir(parents=True, exist_ok=True)
+    path = OUT / "fig_deltaL_vs_extra_steps.png"
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    return str(path)
+
+
+def write_report(rows: list[dict[str, Any]], extra_steps: int, figure: str) -> None:
+    last = [r for r in rows if int(r["extra_steps"]) == extra_steps]
+    start = [r for r in rows if int(r["extra_steps"]) == 0]
     lines = [
-        "# P0 frozen-critic hop extra-opt (Hopper first90)",
+        "# Frozen-critic extra hop-actor optimization",
         "",
-        f"Finished: {now_kst()}",
+        f"Built: {now_kst()}",
         "",
-        "Freeze the 1M critic and μ_{k-1}. Extra-optimize only μ_k on the current",
-        "JKO loss. Hops are independent (hop 3 still uses original μ2).",
+        "Understood as: freeze the 1M critic and μ_{k-1} on Hopper-medium/expert",
+        "T=10 MART snapshots, extra-optimize μ_k with the JKO loss, and test",
+        "whether snapshot ΔL>0 shrinks. Not a return experiment.",
         "",
-        f"Backend: `{meta.get('backend')}`  GPU: `{meta.get('gpu')}`",
-        f"Extra steps: {meta.get('extra_steps')}",
+        "## Protocol",
         "",
-        "| task | seed | hop | ΔL start | ΔL end | obj_up start | obj_up end | J start | J end |",
-        "| --- | ---: | ---: | ---: | ---: | --- | --- | ---: | ---: |",
+        f"- Extra Adam steps: {extra_steps} at lr=3e-4, batch 256, fresh optimizer.",
+        "- Critic and previous actor are not updated.",
+        "- ΔL is measured on the same 4096 diagnostic dataset states as hop_objective.csv.",
+        "- Optimization samples the full D4RL observations, checkpoint-normalized.",
+        "- One JAX process per GPU when launched via launch_p0_frozen_hop_extra_opt.sh.",
+        "",
+        "## Snapshot vs extra-opt",
+        "",
     ]
-    for row in summaries:
-        j0 = row["eval_start"].get("mean_normalized")
-        j1 = row["eval_end"].get("mean_normalized")
-        lines.append(
-            f"| {row['environment']} | {row['seed']} | {row['hop']} | "
-            f"{row['delta_L_start']:.6g} | {row['delta_L_end']:.6g} | "
-            f"{row['objective_improved_start']} | {row['objective_improved_end']} | "
-            f"{j0:.3f} | {j1:.3f} |"
+    by_task: dict[str, list] = {}
+    for row in last:
+        by_task.setdefault(row["task"], []).append(row)
+    for task, group in by_task.items():
+        n_start_pos = sum(
+            1
+            for r in start
+            if r["task"] == task and float(r["delta_L"]) >= 0
         )
-    n_end_up = sum(1 for row in summaries if row.get("objective_improved_end"))
-    lines.extend(
-        [
+        n_end_neg = sum(1 for r in group if float(r["delta_L"]) < 0)
+        mean_start = float(
+            np.mean(
+                [float(r["delta_L"]) for r in start if r["task"] == task]
+            )
+        )
+        mean_end = float(np.mean([float(r["delta_L"]) for r in group]))
+        mean_ratio_end = float(
+            np.mean([float(r["q_gain_move_ratio"]) for r in group])
+        )
+        lines += [
+            f"### {task.replace('-v2', '')}",
             "",
-            f"Hops with ΔL<0 after extra-opt: {n_end_up}/{len(summaries)}.",
-            "Negative ΔL means the hop loss is better than staying at μ_{k-1}.",
+            f"- hops with ΔL≥0 at step 0: {n_start_pos}/{len(group)}.",
+            f"- hops with ΔL<0 after {extra_steps} steps: {n_end_neg}/{len(group)}.",
+            f"- mean ΔL {mean_start:+.4g} → {mean_end:+.4g}.",
+            f"- mean Q-gain/move-cost after extra steps: {mean_ratio_end:.3f}.",
             "",
         ]
-    )
-    (out_dir / "ANALYSIS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+        for row in group:
+            match = next(
+                r
+                for r in start
+                if r["task"] == task
+                and r["training_seed"] == row["training_seed"]
+                and r["hop"] == row["hop"]
+            )
+            lines.append(
+                f"- seed {row['training_seed']} {row['actor_a']}→{row['actor_b']}: "
+                f"ΔL {float(match['delta_L']):+.4g} → {float(row['delta_L']):+.4g}, "
+                f"ratio {float(match['q_gain_move_ratio']):.3f} → "
+                f"{float(row['q_gain_move_ratio']):.3f}, "
+                f"grad {float(row['grad_l2']):.3g}, "
+                f"move from snapshot RMS {float(row['action_rms_from_snapshot']):.4f}."
+            )
+        lines.append("")
+    lines += [
+        "## Read",
+        "",
+        "If extra steps drive ΔL below 0, snapshot non-improvement was optimizer",
+        "slack on this frozen objective. If ΔL stays positive while the actor",
+        "still moves, the hop is not a minimizer of the measured JKO loss.",
+        "This does not reconstruct per-minibatch decreases during joint training.",
+        "",
+        "## Figures",
+        "",
+        f"- `{Path(figure).name}`",
+        "",
+    ]
+    (OUT / "ANALYSIS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def main() -> int:
-    args = parse_args()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--T", type=int, default=10)
+    parser.add_argument("--tasks", nargs="+", default=list(TASKS))
+    parser.add_argument("--seeds", type=int, nargs="+", default=[0, 1])
+    parser.add_argument("--extra-steps", type=int, default=10000)
+    parser.add_argument("--log-steps", type=int, nargs="+", default=list(DEFAULT_LOG_STEPS))
+    parser.add_argument("--batch-size", type=int, default=256)
+    parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
+    parser.add_argument("--out-csv", type=Path, default=None)
+    parser.add_argument("--skip-report", action="store_true")
+    args = parser.parse_args()
     backend = jax.default_backend()
+    if args.device == "cpu" and backend != "cpu":
+        raise RuntimeError(f"refusing non-CPU JAX backend {backend!r}")
+    if args.device == "cuda" and backend not in ("gpu", "cuda"):
+        raise RuntimeError(
+            f"expected CUDA JAX backend, got {backend!r} devices={jax.devices()!r}"
+        )
+    log_steps = tuple(sorted(set(int(s) for s in args.log_steps if 0 <= int(s) <= args.extra_steps)))
+    if args.extra_steps not in log_steps:
+        log_steps = tuple(sorted(log_steps + (args.extra_steps,)))
+    inventory = json.loads((ARCHIVE / "INVENTORY.json").read_text(encoding="utf-8"))
+    records = []
+    for row in inventory["rows"]:
+        if (
+            row["status"] == "evalable"
+            and row["condition"] == "bar_p4"
+            and row["environment"] in set(args.tasks)
+            and int(row["T"]) == int(args.T)
+            and int(row["seed"]) in set(args.seeds)
+        ):
+            records.append(resolve_checkpoint(row))
+    if not records:
+        raise FileNotFoundError(
+            f"no evalable MART checkpoints for tasks={args.tasks} T={args.T} seeds={args.seeds}"
+        )
+    OUT.mkdir(parents=True, exist_ok=True)
     print(
         json.dumps(
             {
-                "backend": backend,
+                "understood_as": (
+                    "Freeze critic and previous actor; extra-optimize hop actor; "
+                    "test whether snapshot ΔL>0 shrinks on Hopper-medium/expert T=10."
+                ),
+                "backend": jax.default_backend(),
                 "devices": [str(d) for d in jax.devices()],
-                "gpu": args.gpu,
+                "n_records": len(records),
+                "checkpoint_paths": [row["checkpoint_path"] for row in records],
+                "extra_steps": args.extra_steps,
+                "log_steps": log_steps,
                 "started_at": now_kst(),
-            }
+            },
+            indent=2,
         ),
         flush=True,
     )
-    if args.require_gpu and backend != "gpu" and not args.allow_cpu:
-        raise RuntimeError(
-            f"refusing non-GPU JAX backend {backend!r}; pass --allow-cpu to override"
-        )
-
-    out_dir = args.out_dir
-    out_dir.mkdir(parents=True, exist_ok=True)
-    cache_root = args.ckpt_root
-    jobs = planned_jobs(args.tasks, args.seeds, args.hops)
-    found, missing = resolve_all(jobs, cache_root=cache_root, extra_roots=())
-    if missing:
-        text = copy_instructions(missing, cache_root=cache_root)
-        (out_dir / "COPY_INSTRUCTIONS.md").write_text(text, encoding="utf-8")
-        _write_json(
-            out_dir / "STATUS.json",
-            {
-                "status": "blocked_missing_first90_ckpts",
-                "backend": backend,
-                "gpu": args.gpu,
-                "missing": [
-                    {
-                        "environment": cell["environment"],
-                        "seed": cell["seed"],
-                        "expected_sha256": cell["expected_sha256"],
-                        "inventory_path": cell["inventory_path"],
-                        "cache_path": str(
-                            cache_ckpt_path(cache_root, cell["environment"], int(cell["seed"]))
-                        ),
-                    }
-                    for cell in missing
-                ],
-                "n_jobs": len(jobs),
-                "started_at": now_kst(),
-            },
-        )
-        print(text, flush=True)
-        return 2
-
-    summaries = []
-    for job in jobs:
-        ckpt = found[(job["environment"], int(job["seed"]))]
-        print(
-            f"[job] {job['environment']} seed={job['seed']} hop={job['hop']} ckpt={ckpt}",
-            flush=True,
-        )
-        summaries.append(
-            extra_opt_one_job(
-                job,
-                ckpt,
-                data_dir=args.data_dir,
-                out_dir=out_dir,
-                extra_steps=args.extra_steps,
-                log_every=args.log_every,
-                save_every=args.save_every,
-                updates_per_dispatch=args.updates_per_dispatch,
-                batch_size=args.batch_size,
-                lr=args.lr,
-                eval_episodes=args.eval_episodes,
+    all_rows: list[dict[str, Any]] = []
+    for record in records:
+        for prev_role, role, hop in HOPS:
+            rng_seed = (
+                20260906
+                + 1000 * int(record["seed"])
+                + 10 * hop
+                + (0 if "medium-v2" in record["environment"] else 1)
             )
-        )
-        if summaries[-1]["stopped_by_signal"]:
-            break
-
-    with (out_dir / "summaries.csv").open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(
-            handle,
-            fieldnames=[
-                "environment",
-                "T",
-                "seed",
-                "hop",
-                "delta_L_start",
-                "delta_L_end",
-                "objective_improved_start",
-                "objective_improved_end",
-                "eval_start_normalized",
-                "eval_end_normalized",
-                "extra_steps_done",
-                "parent_sha256",
-            ],
-        )
+            all_rows.extend(
+                process_hop(
+                    record,
+                    prev_role,
+                    role,
+                    hop,
+                    args.extra_steps,
+                    log_steps,
+                    args.batch_size,
+                    args.lr,
+                    rng_seed,
+                )
+            )
+    fields = [
+        "task",
+        "T",
+        "training_seed",
+        "hop",
+        "actor_a",
+        "actor_b",
+        "extra_steps",
+        "batch_size",
+        "lr",
+        "tau_step",
+        "n_eval",
+        "q_weight",
+        "mean_q_k",
+        "mean_q_prev",
+        "delta_q",
+        "w2",
+        "delta_L",
+        "q_term",
+        "q_gain_move_ratio",
+        "objective_improved",
+        "grad_l2",
+        "action_rms_from_snapshot",
+        "checkpoint_hash",
+    ]
+    out_csv = Path(args.out_csv) if args.out_csv else OUT / "extra_opt_curves.csv"
+    out_csv.parent.mkdir(parents=True, exist_ok=True)
+    with out_csv.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
-        for row in summaries:
-            writer.writerow(
+        writer.writerows(all_rows)
+    if not args.skip_report:
+        figure = plot_curves(all_rows)
+        write_report(all_rows, args.extra_steps, figure)
+        (OUT / "RECEIPT.json").write_text(
+            json.dumps(
                 {
-                    "environment": row["environment"],
-                    "T": row["T"],
-                    "seed": row["seed"],
-                    "hop": row["hop"],
-                    "delta_L_start": row["delta_L_start"],
-                    "delta_L_end": row["delta_L_end"],
-                    "objective_improved_start": row["objective_improved_start"],
-                    "objective_improved_end": row["objective_improved_end"],
-                    "eval_start_normalized": row["eval_start"]["mean_normalized"],
-                    "eval_end_normalized": row["eval_end"]["mean_normalized"],
-                    "extra_steps_done": row["extra_steps_done"],
-                    "parent_sha256": row["parent_sha256"],
-                }
+                    "built_at": now_kst(),
+                    "n_rows": len(all_rows),
+                    "extra_steps": args.extra_steps,
+                    "log_steps": log_steps,
+                    "tasks": args.tasks,
+                    "T": args.T,
+                    "backend": jax.default_backend(),
+                    "devices": [str(d) for d in jax.devices()],
+                    "out_csv": str(out_csv),
+                    "note": (
+                        "Negative delta_L is an improvement of the hop objective. "
+                        "q_gain_move_ratio = (c_k ΔQ) / w2; values > 1 mean ΔL < 0."
+                    ),
+                },
+                indent=2,
             )
-
-    meta = {
-        "status": "complete" if all(not r["stopped_by_signal"] for r in summaries) else "signaled",
-        "backend": backend,
-        "gpu": args.gpu,
-        "extra_steps": args.extra_steps,
-        "n_jobs": len(summaries),
-        "cells": [dict(cell) for cell in FIRST90_CELLS],
-        "finished_at": now_kst(),
-    }
-    _write_json(out_dir / "STATUS.json", meta)
-    write_report(out_dir, summaries, meta)
+            + "\n",
+            encoding="utf-8",
+        )
+    print(f"wrote {out_csv} rows={len(all_rows)}", flush=True)
     return 0
 
 

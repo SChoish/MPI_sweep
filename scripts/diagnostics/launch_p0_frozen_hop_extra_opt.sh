@@ -1,51 +1,66 @@
 #!/usr/bin/env bash
-# One extra-opt process per GPU. Does not pack 12 jobs.
-# GPU 0: hopper-medium seed 0 hops 2-3-4
-# GPU 1: hopper-expert seed 0 hops 2-3-4
-set -uo pipefail
-ROOT=/home/ext_csh/MPI_sweep
-PY=/home/ext_csh/miniconda3/envs/capo_jax/bin/python
-OUT=$ROOT/sweep_results/diagnostics/p0_frozen_hop_extra_opt
-CKPT_ROOT=$OUT/source_ckpts
-RUNNER=$ROOT/scripts/diagnostics/run_p0_frozen_hop_extra_opt.py
-mkdir -p "$OUT/logs" "$CKPT_ROOT"
+# One frozen extra-opt process per GPU. Does not stop AMO.
+set -euo pipefail
 
-need=(
-  "$CKPT_ROOT/hopper-medium-v2_tau10_mpi4_seed0/params_1000000.pkl"
-  "$CKPT_ROOT/hopper-expert-v2_tau10_mpi4_seed0/params_1000000.pkl"
-)
-missing=0
-for path in "${need[@]}"; do
-  if [[ ! -f "$path" ]]; then
-    echo "missing $path" >&2
-    missing=1
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+OUT="$ROOT/sweep_results/diagnostics/p0_frozen_hop_extra_opt"
+SRC="$OUT/source_ckpts"
+LOG="$OUT/logs"
+PY="${PY:-/home/ext_csv/miniconda3/envs/offrl/bin/python3.12}"
+SCRIPT="$ROOT/scripts/diagnostics/run_p0_frozen_hop_extra_opt.py"
+
+MEDIUM_SRC="/home/ext_csv/mpi_sweep_lab/p0_bar_two_actor_p4_29fea94/runs/bar_p4/hopper-medium-v2_tau10_mpi4_seed0/params_1000000.pkl"
+EXPERT_SRC="/home/ext_csv/mpi_sweep_lab/p0_bar_two_actor_p4_29fea94_cont2_gpu_d923/runs/bar_p4/hopper-expert-v2_tau10_mpi4_seed0/params_1000000.pkl"
+MEDIUM_DST="$SRC/hopper-medium-v2_tau10_mpi4_seed0/params_1000000.pkl"
+EXPERT_DST="$SRC/hopper-expert-v2_tau10_mpi4_seed0/params_1000000.pkl"
+
+stage() {
+  local src="$1" dest="$2"
+  mkdir -p "$(dirname "$dest")"
+  if [[ ! -f "$src" ]]; then
+    echo "missing source checkpoint: $src" >&2
+    exit 1
   fi
-done
-if [[ "$missing" -ne 0 ]]; then
-  echo "refusing to launch: first90 Hopper 1M ckpts are not on this host" >&2
-  exit 2
-fi
-
-launch_one() {
-  local gpu=$1 task=$2 seed=$3
-  local log=$OUT/logs/${task}_seed${seed}_gpu${gpu}.log
-  local pidfile=$OUT/logs/${task}_seed${seed}_gpu${gpu}.pid
-  unset JAX_PLATFORMS JAX_PLATFORM_NAME
-  CUDA_VISIBLE_DEVICES=$gpu \
-  XLA_PYTHON_CLIENT_PREALLOCATE=false \
-  XLA_PYTHON_CLIENT_ALLOCATOR=platform \
-  nohup "$PY" -u "$RUNNER" \
-    --gpu "$gpu" \
-    --tasks "$task" \
-    --seeds "$seed" \
-    --hops 2 3 4 \
-    --data-dir "$ROOT/data" \
-    --out-dir "$OUT" \
-    --ckpt-root "$CKPT_ROOT" \
-    >"$log" 2>&1 &
-  echo $! >"$pidfile"
-  echo "launched gpu=$gpu task=$task seed=$seed pid=$(cat "$pidfile") log=$log"
+  if [[ ! -f "$dest" ]]; then
+    cp -a "$src" "$dest"
+  fi
 }
 
-launch_one 0 hopper-medium-v2 0
-launch_one 1 hopper-expert-v2 0
+stage "$MEDIUM_SRC" "$MEDIUM_DST"
+stage "$EXPERT_SRC" "$EXPERT_DST"
+mkdir -p "$LOG"
+
+export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1 TF_NUM_INTRAOP_THREADS=1 TF_NUM_INTEROP_THREADS=1
+export EIGEN_NUM_THREADS=1
+export JAX_PLATFORMS=cuda JAX_PLATFORM_NAME=cuda
+export XLA_PYTHON_CLIENT_PREALLOCATE=false
+export XLA_FLAGS="--xla_gpu_force_compilation_parallelism=1 --xla_gpu_autotune_level=0"
+export D4RL_SUPPRESS_IMPORT_ERROR=1
+
+launch_one() {
+  local gpu="$1" cpus="$2" task="$3" tag="$4"
+  local log="$LOG/${tag}.log"
+  local pidf="$LOG/${tag}.pid"
+  nohup env CUDA_VISIBLE_DEVICES="$gpu" \
+    taskset -c "$cpus" \
+    "$PY" -u "$SCRIPT" \
+      --device cuda \
+      --tasks "$task" \
+      --seeds 0 \
+      --T 10 \
+      --extra-steps 10000 \
+      --skip-report \
+      --out-csv "$OUT/extra_opt_curves.${tag}.csv" \
+    </dev/null >"$log" 2>&1 &
+  local pid=$!
+  disown "$pid" 2>/dev/null || true
+  echo "$pid" >"$pidf"
+  echo "gpu=$gpu pid=$pid tag=$tag log=$log"
+}
+
+cd "$ROOT"
+launch_one 0 200-207 hopper-medium-v2 medium_s0
+sleep 5
+launch_one 1 208-215 hopper-expert-v2 expert_s0
+echo "AMO left running. extra-opt: one process on GPU 0, one on GPU 1."

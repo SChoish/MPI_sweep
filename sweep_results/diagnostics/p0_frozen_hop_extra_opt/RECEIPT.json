@@ -1,0 +1,24 @@
+{
+  "built_at": "2026-09-06T01:20:53+09:00",
+  "n_rows": 24,
+  "extra_steps": 10000,
+  "log_steps": [
+    0,
+    500,
+    2000,
+    10000
+  ],
+  "tasks": [
+    "hopper-medium-v2",
+    "hopper-expert-v2"
+  ],
+  "T": 10,
+  "seeds": [
+    0
+  ],
+  "backend": "gpu",
+  "launch": "scripts/diagnostics/launch_p0_frozen_hop_extra_opt.sh (nohup, one process per GPU)",
+  "out_csv": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/p0_frozen_hop_extra_opt/extra_opt_curves.csv",
+  "figure": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/p0_frozen_hop_extra_opt/fig_deltaL_vs_extra_steps.png",
+  "note": "Negative delta_L is an improvement of the hop objective. q_gain_move_ratio = (c_k \u0394Q) / w2; values > 1 mean \u0394L < 0."
+}

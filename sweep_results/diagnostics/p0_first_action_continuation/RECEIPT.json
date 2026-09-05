@@ -1,0 +1,10 @@
+{
+  "built_at": "2026-09-06T01:09:43+09:00",
+  "n_episode_rows": 480,
+  "n_pairs": 6,
+  "backend": "cpu",
+  "discount": 0.99,
+  "eval_seed_base": 10000,
+  "continuation": "Polyak target_actor_params, not online actor 1",
+  "figure": "/home/ext_csv/MPI_sweep/sweep_results/diagnostics/p0_first_action_continuation/fig_first_action_continuation.png"
+}

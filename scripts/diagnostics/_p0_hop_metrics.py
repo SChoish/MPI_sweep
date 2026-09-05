@@ -111,8 +111,19 @@ def hop_objective_delta(
         "loss_k": float(loss_k),
         "loss_stay": float(loss_stay),
         "delta_L": float(loss_k - loss_stay),
+        "q_term": float(-lam * delta_q),
+        "q_gain_move_ratio": q_gain_move_ratio(lam, delta_q, w2),
         "objective_improved": bool(loss_k < loss_stay),
     }
+
+
+def q_gain_move_ratio(c_k: float, delta_q: float, w2: float) -> float:
+    """(c_k ΔQ) / E[||Δμ||^2 / d]. Ratio > 1 iff ΔL < 0."""
+    move = float(w2)
+    gain = float(c_k) * float(delta_q)
+    if move <= 0.0:
+        return float("inf") if gain > 0.0 else float("nan")
+    return float(gain / move)
 
 
 def classify_obj_vs_return(
@@ -125,16 +136,16 @@ def classify_obj_vs_return(
     ret_up = delta_return > return_flat
     ret_down = delta_return < -return_flat
     if obj_up and ret_up:
-        return "obj_up_return_up"
+        return "objective_improved_return_up"
     if obj_up and ret_down:
-        return "obj_up_return_down"
+        return "objective_improved_return_down"
     if (not obj_up) and ret_down:
-        return "obj_flat_return_down"
+        return "objective_not_improved_return_down"
     if obj_up and not ret_up and not ret_down:
-        return "obj_up_return_flat"
+        return "objective_improved_return_flat"
     if (not obj_up) and ret_up:
-        return "obj_flat_return_up"
-    return "obj_flat_return_flat"
+        return "objective_not_improved_return_up"
+    return "objective_not_improved_return_flat"
 
 
 def group_episodes(episodes: Iterable[Mapping[str, Any]]) -> dict[tuple, list[dict]]:

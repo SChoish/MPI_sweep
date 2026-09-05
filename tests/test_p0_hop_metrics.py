@@ -71,7 +71,16 @@ def test_w2_is_mean_over_action_coordinates():
 
 
 def test_classify_obj_up_return_down():
-    assert classify_obj_vs_return(delta_L=-0.01, delta_return=-31.0) == "obj_up_return_down"
-    assert classify_obj_vs_return(delta_L=-0.01, delta_return=36.0) == "obj_up_return_up"
-    assert classify_obj_vs_return(delta_L=0.02, delta_return=-31.0) == "obj_flat_return_down"
-    assert classify_obj_vs_return(delta_L=-0.01, delta_return=0.5) == "obj_up_return_flat"
+    assert classify_obj_vs_return(delta_L=-0.01, delta_return=-31.0) == "objective_improved_return_down"
+    assert classify_obj_vs_return(delta_L=-0.01, delta_return=36.0) == "objective_improved_return_up"
+    assert classify_obj_vs_return(delta_L=0.02, delta_return=-31.0) == "objective_not_improved_return_down"
+    assert classify_obj_vs_return(delta_L=-0.01, delta_return=0.5) == "objective_improved_return_flat"
+
+
+def test_q_gain_move_ratio_exceeds_one_iff_delta_L_negative():
+    from _p0_hop_metrics import q_gain_move_ratio
+
+    c_k, delta_q, w2 = 0.02, 0.16, 0.004
+    ratio = q_gain_move_ratio(c_k, delta_q, w2)
+    np.testing.assert_allclose(ratio, 0.8)
+    assert q_gain_move_ratio(0.02, 0.16, 0.002) > 1.0

@@ -11,17 +11,20 @@ import pickle
 from pathlib import Path
 from typing import Any
 
-os.environ["CUDA_VISIBLE_DEVICES"] = ""
-os.environ["JAX_PLATFORMS"] = "cpu"
-os.environ["JAX_PLATFORM_NAME"] = "cpu"
 os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
 os.environ.setdefault("OMP_NUM_THREADS", "1")
 os.environ.setdefault("MKL_NUM_THREADS", "1")
 os.environ.setdefault("EIGEN_NUM_THREADS", "1")
-os.environ.setdefault(
-    "XLA_FLAGS",
-    "--xla_cpu_multi_thread_eigen=false intra_op_parallelism_threads=1",
-)
+_cuda = os.environ.get("CUDA_VISIBLE_DEVICES")
+_platforms = os.environ.get("JAX_PLATFORMS", "").lower()
+if _platforms != "cuda" and _cuda in (None, ""):
+    os.environ["CUDA_VISIBLE_DEVICES"] = ""
+    os.environ["JAX_PLATFORMS"] = "cpu"
+    os.environ["JAX_PLATFORM_NAME"] = "cpu"
+    os.environ.setdefault(
+        "XLA_FLAGS",
+        "--xla_cpu_multi_thread_eigen=false intra_op_parallelism_threads=1",
+    )
 
 from _lab_import import ensure_train_import_path  # noqa: E402
 

@@ -9,8 +9,9 @@ stronger result. The manuscript now uses MART / I-MART; P2, P3, and P4 below
 retain the archive's PART-Prox names for `K=2,3,4`. Archived paths and
 configuration fields retain historical `PART` / `BAR` identifiers.
 
-The September 5 manuscript revision reanalyzes existing CSVs at revision
-`2fe4b8f`; it does not launch training or re-evaluate checkpoints. Reproducible
+The September 5 manuscript revision reanalyzes the original CSV bundle at
+`2fe4b8f` and the additional logged/re-evaluated policy scores at `28ce69a4`.
+The manuscript build itself does not launch training or re-evaluate checkpoints. Reproducible
 inputs, aggregation code, and tables are in the manuscript repository's
 [analysis directory](https://github.com/SChoish/PART/tree/main/analysis).
 
@@ -19,10 +20,14 @@ the proposed mechanism, validate the local numerical interpretation, then
 harden release provenance and cost reporting. A lower-priority completed run
 does not displace a higher-priority unresolved claim.
 
-Next action: keep P0.B unlaunched. The shared-driver protocol and driver are
-frozen; do not start training until a later host writes an environment-locked
-manifest. P0.C still needs the missing K1 `h` grid after that freeze. P0.A's
-clean repeat is conditional on promoting a new P4 comparison to primary
+The manuscript now includes the completed historical I4 504 first/endpoint
+reevaluation and full P0 90-run-per-procedure recovery. Next action: assess
+the TD3+BC follow-up reported in progress by the author once its actual grid,
+endpoint coverage, and evaluation protocol are available.
+P0.C is a complementary independent-baseline comparison, not a prerequisite
+for measuring extraction inside an existing I4 run. P0.B remains unlaunched;
+its frozen shared-driver experiment awaits one environment-locked manifest.
+P0.A's clean repeat is conditional on promoting a new P4 contrast to primary
 evidence. The original P4
 [frozen manifest](sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/FROZEN_MANIFEST.json)
 records the decision rule and integrity contract for that archive.
@@ -105,7 +110,7 @@ override the failed inclusion gate.
   shared-`data_anchor` endpoint return on nine tasks, `T={4,7,10,14,20}`,
   `K=4`, seeds 0--1. Record first-actor returns on every branch.
 
-### C. Match the first actor's local budget (partial coverage; reanalysis complete)
+### C. Independently match the first actor's local budget (complementary baseline)
 
 - [x] Reindex the complete four-seed I-MART/TD3+BC grid by `h=T/K` and report
   all nine exact intersections, without interpolation or outcome filtering.
@@ -119,26 +124,29 @@ override the failed inclusion gate.
   only). None of the requested local budgets
   `h={.625,1,1.75,3,3.5,4.25,5}` are present. Receipt:
   [`sweep_results/diagnostics/i234_first_endpoint/K1_INVENTORY.json`](sweep_results/diagnostics/i234_first_endpoint/K1_INVENTORY.json).
-- [ ] Fill the missing K1 baseline budgets for the I4 plateau and tail:
+- [ ] Complete the optional independent K1 comparison at the missing I4 local budgets:
   `h={.625,1,1.75,3,3.5,4.25,5}`, corresponding to
   `T={2.5,4,7,12,14,17,20}`. Require all nine tasks and four seeds for a
   headline contrast; existing seed-0/1-only extra budgets and the s23
-  total-budget K1 grid cannot substitute. Do not launch these cells before
-  the P0.B host manifest exists. Use contemporaneous I4 comparisons when
-  historical protocols cannot be matched. Freeze the complete requested grid
-  and report every result.
+  total-budget K1 grid cannot substitute. Record the actual training and
+  evaluation protocol; use contemporaneous I4 comparisons when historical
+  protocols cannot be matched. Freeze and report the complete requested grid.
+  This is an independent-baseline check. The already trained I4 first actor
+  supplies the within-run TD3+BC-form comparator at `h=T/4`, so additional K1
+  training is not needed to compute endpoint-minus-first return. It does not
+  isolate sequential re-centering from direct policy separation.
 
-### D. Evaluate first-actor versus endpoint return (available subset recovered)
+### D. Evaluate first-actor versus endpoint return (I4 full grid complete)
 
-- [x] Recover `target_d4rl` and `deployment_d4rl` from
-  `sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/first90_final_scores.csv`.
-  The evaluation contract maps `target_d4rl` to the online first actor, not
-  its Polyak copy; both policies use the same ten episode seeds. Validate
-  every endpoint against the merged table. The 45 runs per procedure have
-  mean endpoint-minus-first scores `+13.84` for I4 and `+15.59` for the
-  control, with 36/45 positive in each. The four fully covered tasks give
-  `+14.71/+16.87` over 40 runs. Report the Hopper-expert reversal
-  `-21.08/-7.80` and the incomplete five-task scope.
+- [x] Recover both online-policy scores for all 90 runs per procedure from
+  `sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/all180_first_endpoint_scores.csv`.
+  `target_d4rl` is the online first actor, not its Polyak copy. Both policies
+  use the same ten evaluation seeds within each run; every endpoint matches
+  the merged table. Mean endpoint-minus-first is I4 `+2.18` (61/90 positive)
+  and control `+4.19` (63/90 positive), replacing the incomplete first-host
+  subset in manuscript-facing summaries. Retain all nine tasks, including
+  HalfCheetah-expert `-47.66/-33.92` and Hopper-expert `-21.08/-7.80`.
+  Full column recovery does not repair the failed primary inclusion gate.
 - [x] Use the simulator archive's complete 60-cell
   `actual_policy_value_difference_mean` as a separately labeled sampled-state
   continuation-value diagnostic: I2 `+16.13`, 22/30 positive; I3 `+24.70`,
@@ -173,6 +181,13 @@ override the failed inclusion gate.
   (504/504). Mean endpoint-minus-first `+5.76` (367/504 positive). Summary:
   [`I4_HISTORICAL_504_REEVAL_SUMMARY.json`](sweep_results/diagnostics/i234_first_endpoint/I4_HISTORICAL_504_REEVAL_SUMMARY.json).
   Original `mpi4_norm` `eval.csv` is unchanged. Do not mix with P0 I4.
+  At `T={2.5,4,7}`, the gain is `+11.43` (89/108 positive); at
+  `T={10,12,14,17,20}`, it is `+0.26`. In the latter region, raw score-below-20
+  counts rise from 32 first actors to 54 endpoints, with two recoveries and
+  24 new failures. Report these as within-run deployment comparisons, not
+  cross-depth collapse counts or proof of a re-centering-specific advantage.
+  Published outputs lack a checkpoint-bound reevaluation manifest and
+  individual episode returns; preserve this reproducibility limitation.
 
 ## P1: measure target-value perturbation and matched final reach (CPU)
 

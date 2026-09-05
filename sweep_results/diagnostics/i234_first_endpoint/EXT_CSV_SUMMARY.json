@@ -22,7 +22,7 @@
     "excluded_or_separate": {
       "i2_i3_seeds_2_3": "ext_csh s23 tables; do not concatenate",
       "i4_p0_contemporaneous": "P0 BAR-P4 90-cell table; different family",
-      "i4_historical_504_first_actor": "eval.csv has finite d4rl_pi4 on 504/504 but finite d4rl_score on only 4/504; no first/endpoint table written",
+      "i4_historical_504_first_actor": "eval.csv still incomplete (4/504 first); CPU re-eval table is i4_historical_504_first_endpoint.csv (504/504), separate family, do not mix with P0 I4",
       "explicit_integrator": "not recovered here",
       "two_actor_p4": "P0 control, not I-MART"
     },
@@ -481,5 +481,5 @@
     "i2_s01": "75b4954c3b4177fbe40b1ca3e14b2f742827e97ea06243b59b9a70c15ef934d5",
     "i3_s01": "59a77113c4f8b265fa60256b5b52d216b4759341274850b13d201a180070fe57"
   },
-  "note": "Extraction gain is within-run endpoint minus first actor. Do not mix with s23 or P0 families or treat this as a four-seed headline. Historical I4 first-actor columns are not recovered from empty eval fields."
+  "note": "Extraction gain is within-run endpoint minus first actor. Do not mix with s23 or P0 families or treat I2/I3 s01 as a four-seed headline. Historical I4 first-actor columns are not recovered from empty eval fields; the 504-cell CPU re-eval lives in i4_historical_504_first_endpoint.csv."
 }

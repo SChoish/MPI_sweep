@@ -164,13 +164,15 @@ override the failed inclusion gate.
   [`EXT_CSV_INCLUSION_GRID.json`](sweep_results/diagnostics/i234_first_endpoint/EXT_CSV_INCLUSION_GRID.json).
   Do not concatenate with s23 or P0 tables or treat this as a four-seed
   headline.
-- [ ] Historical I4 504 first-actor columns cannot be recovered the same way.
-  Local `mpi4_norm` has finite `d4rl_pi4` on 504/504 but finite `d4rl_score`
-  on only 4/504 (`hopper-medium-v2`, `T={.05,.1}`, seeds 0--1). Coverage:
+- [x] Historical I4 504 first-actor columns cannot be recovered from
+  `eval.csv` (finite `d4rl_pi4` 504/504, finite `d4rl_score` 4/504). Coverage:
   [`I4_HISTORICAL_504_COVERAGE.json`](sweep_results/diagnostics/i234_first_endpoint/I4_HISTORICAL_504_COVERAGE.json).
-  Do not invent a 504 first/endpoint table or fill blanks from P0 or s23.
-  Getting the missing first-actor scores requires re-evaluating both
-  policies from `params_1000000.pkl`, which is outside this CPU dump.
+  Same-stack CPU re-eval of both online policies from `params_1000000.pkl`
+  is complete:
+  [`i4_historical_504_first_endpoint.csv`](sweep_results/diagnostics/i234_first_endpoint/i4_historical_504_first_endpoint.csv)
+  (504/504). Mean endpoint-minus-first `+5.76` (367/504 positive). Summary:
+  [`I4_HISTORICAL_504_REEVAL_SUMMARY.json`](sweep_results/diagnostics/i234_first_endpoint/I4_HISTORICAL_504_REEVAL_SUMMARY.json).
+  Original `mpi4_norm` `eval.csv` is unchanged. Do not mix with P0 I4.
 
 ## P1: measure target-value perturbation and matched final reach (CPU)
 

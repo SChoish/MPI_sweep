@@ -1,0 +1,14 @@
+{
+  "built_at": "2026-09-05T19:53:35+09:00",
+  "host": "ext_csv",
+  "method": "cpu_checkpoint_reeval",
+  "family": "historical_i4_504_cpu_reeval",
+  "n": 504,
+  "mean_endpoint_minus_first": 5.759667522766597,
+  "n_positive": 367,
+  "n_negative": 135,
+  "n_zero": 2,
+  "csv": "i4_historical_504_first_endpoint.csv",
+  "csv_sha256": "5ba0d810a2bf3184377f3278eb840b947190e7b89e3ffc887e91be626f28685c",
+  "note": "Same-stack CPU re-eval of online first actor and endpoint. Original mpi4_norm eval.csv is unchanged. Do not mix with P0 I4."
+}

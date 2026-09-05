@@ -14,7 +14,9 @@ from __future__ import annotations
 
 import argparse
 import csv
+import fcntl
 import json
+import multiprocessing as mp
 import os
 import re
 import statistics
@@ -31,6 +33,10 @@ os.environ.setdefault("OMP_NUM_THREADS", "1")
 os.environ.setdefault("MKL_NUM_THREADS", "1")
 os.environ.setdefault("EIGEN_NUM_THREADS", "1")
 os.environ.setdefault("D4RL_SUPPRESS_IMPORT_ERROR", "1")
+os.environ.setdefault(
+    "XLA_FLAGS",
+    "--xla_cpu_multi_thread_eigen=false intra_op_parallelism_threads=1",
+)
 
 from _lab_import import REPO_ROOT as _ROOT, ensure_train_import_path  # noqa: E402
 
@@ -101,13 +107,17 @@ def _load_done(path: Path) -> dict[tuple[str, str, str], dict[str, str]]:
 
 
 def _append_row(path: Path, row: dict[str, str]) -> None:
-    write_header = not path.is_file() or path.stat().st_size == 0
-    with path.open("a", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=FIELDS)
-        if write_header:
-            writer.writeheader()
-        writer.writerow(row)
-        handle.flush()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = path.with_suffix(path.suffix + ".lock")
+    with lock_path.open("a", encoding="utf-8") as lock_handle:
+        fcntl.flock(lock_handle.fileno(), fcntl.LOCK_EX)
+        write_header = not path.is_file() or path.stat().st_size == 0
+        with path.open("a", newline="", encoding="utf-8") as handle:
+            writer = csv.DictWriter(handle, fieldnames=FIELDS)
+            if write_header:
+                writer.writeheader()
+            writer.writerow(row)
+            handle.flush()
 
 
 def _list_cells(results_dir: Path) -> list[tuple[str, str, int, Path]]:
@@ -151,6 +161,110 @@ def eval_cell(run_dir: Path, env: str, seed: int, episodes: int) -> tuple[float,
     return first_ret, first_score, deploy_ret, deploy_score
 
 
+def _write_summary(output_csv: Path) -> None:
+    done = _load_done(output_csv)
+    if len(done) != 504:
+        return
+    deltas = [float(row["delta_endpoint_minus_first"]) for row in done.values()]
+    summary = {
+        "built_at": datetime.now(KST).isoformat(timespec="seconds"),
+        "host": "ext_csv",
+        "method": "cpu_checkpoint_reeval",
+        "family": FAMILY,
+        "n": 504,
+        "mean_endpoint_minus_first": statistics.mean(deltas),
+        "n_positive": sum(delta > 0.0 for delta in deltas),
+        "n_negative": sum(delta < 0.0 for delta in deltas),
+        "n_zero": sum(delta == 0.0 for delta in deltas),
+        "note": (
+            "Same-stack CPU re-eval of online first actor and endpoint. "
+            "Original mpi4_norm eval.csv is unchanged. Do not mix with P0 I4."
+        ),
+    }
+    (ARCHIVE / "I4_HISTORICAL_504_REEVAL_SUMMARY.json").write_text(
+        json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+    )
+    print(json.dumps(summary, indent=2), flush=True)
+
+
+def _eval_and_record(
+    env: str,
+    tau_s: str,
+    seed: int,
+    run_dir: Path,
+    output_csv: Path,
+    progress_json: Path,
+    episodes: int,
+) -> None:
+    orig_first, orig_deploy = _read_original(run_dir / "eval.csv")
+    t0 = time.time()
+    first_ret, first_score, deploy_ret, deploy_score = eval_cell(
+        run_dir, env, seed, episodes
+    )
+    elapsed = time.time() - t0
+    row = {
+        "family": FAMILY,
+        "K": "4",
+        "integrator": "implicit",
+        "environment": env,
+        "T": tau_s,
+        "seed": str(seed),
+        "tag": run_dir.name,
+        "score_column": "d4rl_pi4",
+        "target_d4rl": f"{first_score}",
+        "deployment_d4rl": f"{deploy_score}",
+        "delta_endpoint_minus_first": f"{deploy_score - first_score}",
+        "host_run_dir": str(run_dir.resolve()),
+    }
+    _append_row(output_csv, row)
+    n_done = len(_load_done(output_csv))
+    receipt = {
+        "updated_at": datetime.now(KST).isoformat(timespec="seconds"),
+        "backend": "cpu",
+        "n_done": n_done,
+        "n_expected": 504,
+        "last_cell": {
+            "environment": env,
+            "T": tau_s,
+            "seed": seed,
+            "seconds": round(elapsed, 3),
+            "target_d4rl": first_score,
+            "deployment_d4rl": deploy_score,
+            "original_d4rl_score": orig_first,
+            "original_d4rl_pi4": orig_deploy,
+            "return_first": first_ret,
+            "return_pi4": deploy_ret,
+        },
+    }
+    lock_path = progress_json.with_suffix(progress_json.suffix + ".lock")
+    with lock_path.open("a", encoding="utf-8") as lock_handle:
+        fcntl.flock(lock_handle.fileno(), fcntl.LOCK_EX)
+        progress_json.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+    print(
+        f"[{n_done}/504] {run_dir.name} first={first_score:.2f} "
+        f"pi4={deploy_score:.2f} orig_pi4={orig_deploy} {elapsed:.1f}s",
+        flush=True,
+    )
+
+
+def _worker(
+    worker_id: int,
+    jobs: list[tuple[str, str, int, str]],
+    output_csv: str,
+    progress_json: str,
+    episodes: int,
+    cpu0: int,
+) -> None:
+    try:
+        os.sched_setaffinity(0, {cpu0 + worker_id})
+    except OSError:
+        pass
+    out = Path(output_csv)
+    progress = Path(progress_json)
+    for env, tau_s, seed, run_dir_s in jobs:
+        _eval_and_record(env, tau_s, seed, Path(run_dir_s), out, progress, episodes)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--lab-root", type=Path, default=DEFAULT_LAB)
@@ -164,6 +278,18 @@ def main() -> int:
     parser.add_argument("--progress-json", type=Path, default=ARCHIVE / "I4_HISTORICAL_504_REEVAL_PROGRESS.json")
     parser.add_argument("--limit", type=int, default=0, help="evaluate at most N unfinished cells; 0 = all")
     parser.add_argument("--eval-episodes", type=int, default=10)
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=1,
+        help="Independent CPU processes. Each cell still evals two policies serially.",
+    )
+    parser.add_argument(
+        "--cpu0",
+        type=int,
+        default=64,
+        help="First pinned core; worker i uses cpu0+i (keeps off TDBC 0-63)",
+    )
     args = parser.parse_args()
     if jax.default_backend() != "cpu":
         raise RuntimeError(f"refusing non-CPU JAX backend {jax.default_backend()!r}")
@@ -176,6 +302,7 @@ def main() -> int:
     remaining = [cell for cell in cells if (cell[0], cell[1], str(cell[2])) not in done]
     if args.limit > 0:
         remaining = remaining[: args.limit]
+    workers = max(1, min(int(args.workers), len(remaining) or 1))
     started = datetime.now(KST)
     print(
         json.dumps(
@@ -183,80 +310,51 @@ def main() -> int:
                 "backend": jax.default_backend(),
                 "n_done": len(done),
                 "n_remaining_this_run": len(remaining),
+                "workers": workers,
                 "started_at": started.isoformat(timespec="seconds"),
             },
             indent=2,
         ),
         flush=True,
     )
-    for env, tau_s, seed, run_dir in remaining:
-        orig_first, orig_deploy = _read_original(run_dir / "eval.csv")
-        t0 = time.time()
-        first_ret, first_score, deploy_ret, deploy_score = eval_cell(
-            run_dir, env, seed, args.eval_episodes
-        )
-        elapsed = time.time() - t0
-        row = {
-            "family": FAMILY,
-            "K": "4",
-            "integrator": "implicit",
-            "environment": env,
-            "T": tau_s,
-            "seed": str(seed),
-            "tag": run_dir.name,
-            "score_column": "d4rl_pi4",
-            "target_d4rl": f"{first_score}",
-            "deployment_d4rl": f"{deploy_score}",
-            "delta_endpoint_minus_first": f"{deploy_score - first_score}",
-            "host_run_dir": str(run_dir.resolve()),
-        }
-        _append_row(args.output_csv, row)
-        done[(env, tau_s, str(seed))] = row
-        receipt = {
-            "updated_at": datetime.now(KST).isoformat(timespec="seconds"),
-            "backend": "cpu",
-            "n_done": len(done),
-            "n_expected": 504,
-            "last_cell": {
-                "environment": env,
-                "T": tau_s,
-                "seed": seed,
-                "seconds": round(elapsed, 3),
-                "target_d4rl": first_score,
-                "deployment_d4rl": deploy_score,
-                "original_d4rl_score": orig_first,
-                "original_d4rl_pi4": orig_deploy,
-                "return_first": first_ret,
-                "return_pi4": deploy_ret,
-            },
-        }
-        args.progress_json.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
-        print(
-            f"[{len(done)}/504] {run_dir.name} first={first_score:.2f} "
-            f"pi4={deploy_score:.2f} orig_pi4={orig_deploy} {elapsed:.1f}s",
-            flush=True,
-        )
-    if len(done) == 504:
-        deltas = [float(row["delta_endpoint_minus_first"]) for row in done.values()]
-        summary = {
-            "built_at": datetime.now(KST).isoformat(timespec="seconds"),
-            "host": "ext_csv",
-            "method": "cpu_checkpoint_reeval",
-            "family": FAMILY,
-            "n": 504,
-            "mean_endpoint_minus_first": statistics.mean(deltas),
-            "n_positive": sum(delta > 0.0 for delta in deltas),
-            "n_negative": sum(delta < 0.0 for delta in deltas),
-            "n_zero": sum(delta == 0.0 for delta in deltas),
-            "note": (
-                "Same-stack CPU re-eval of online first actor and endpoint. "
-                "Original mpi4_norm eval.csv is unchanged. Do not mix with P0 I4."
-            ),
-        }
-        (ARCHIVE / "I4_HISTORICAL_504_REEVAL_SUMMARY.json").write_text(
-            json.dumps(summary, indent=2) + "\n", encoding="utf-8"
-        )
-        print(json.dumps(summary, indent=2), flush=True)
+    if not remaining:
+        _write_summary(args.output_csv)
+        return 0
+    if workers == 1:
+        for env, tau_s, seed, run_dir in remaining:
+            _eval_and_record(
+                env, tau_s, seed, run_dir, args.output_csv, args.progress_json, args.eval_episodes
+            )
+    else:
+        shards: list[list[tuple[str, str, int, str]]] = [[] for _ in range(workers)]
+        for index, (env, tau_s, seed, run_dir) in enumerate(remaining):
+            shards[index % workers].append((env, tau_s, seed, str(run_dir)))
+        ctx = mp.get_context("spawn")
+        procs = []
+        for worker_id, shard in enumerate(shards):
+            if not shard:
+                continue
+            proc = ctx.Process(
+                target=_worker,
+                args=(
+                    worker_id,
+                    shard,
+                    str(args.output_csv),
+                    str(args.progress_json),
+                    args.eval_episodes,
+                    args.cpu0,
+                ),
+            )
+            proc.start()
+            procs.append(proc)
+        failures = 0
+        for proc in procs:
+            proc.join()
+            if proc.exitcode != 0:
+                failures += 1
+        if failures:
+            raise RuntimeError(f"{failures} CPU eval workers failed")
+    _write_summary(args.output_csv)
     return 0
 
 

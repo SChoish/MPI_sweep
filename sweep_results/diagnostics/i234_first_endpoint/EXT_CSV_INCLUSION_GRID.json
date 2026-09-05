@@ -1,18 +1,19 @@
 {
   "host": "ext_csv",
   "frozen_at": "2026-09-05T19:11:53+09:00",
-  "no_reevaluation": true,
+  "no_reevaluation": "i2_i3_s01 from eval.csv; historical I4 504 is CPU ckpt re-eval",
   "no_training": true,
   "do_not_mix_with_s23_or_p0": true,
-  "not_a_four_seed_headline": true,
+  "not_a_four_seed_headline": "I2/I3 s01 only; I4 CPU re-eval is seeds 0-3",
   "included": {
     "i2_historical_s01": "9 task x 14 T x seeds {0,1} = 252",
-    "i3_historical_s01": "9 task x 14 T x seeds {0,1} = 252"
+    "i3_historical_s01": "9 task x 14 T x seeds {0,1} = 252",
+    "i4_historical_504_cpu_reeval": "9 task x 14 T x seeds {0,1,2,3} = 504; same-stack CPU ckpt re-eval, not eval.csv recovery"
   },
   "excluded_or_separate": {
     "i2_i3_seeds_2_3": "ext_csh s23 tables; do not concatenate",
     "i4_p0_contemporaneous": "P0 BAR-P4 90-cell table; different family",
-    "i4_historical_504_first_actor": "eval.csv has finite d4rl_pi4 on 504/504 but finite d4rl_score on only 4/504; no first/endpoint table written",
+    "i4_historical_504_first_actor": "eval.csv still incomplete (4/504 first); CPU re-eval table is i4_historical_504_first_endpoint.csv (504/504), separate family, do not mix with P0 I4",
     "explicit_integrator": "not recovered here",
     "two_actor_p4": "P0 control, not I-MART"
   },

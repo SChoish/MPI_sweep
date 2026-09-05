@@ -1,6 +1,6 @@
 # Submission TODO
 
-Last audited: 2026-09-05.
+Last audited: 2026-09-06.
 
 This file tracks work that can change a manuscript claim. A completed run is
 not included automatically; it must identify the intended quantity, pass its
@@ -19,11 +19,14 @@ the proposed mechanism, validate the local numerical interpretation, then
 harden release provenance and cost reporting. A lower-priority completed run
 does not displace a higher-priority unresolved claim.
 
-Next action: keep P0.B unlaunched. The shared-driver protocol and driver are
-frozen; do not start training until a later host writes an environment-locked
-manifest. P0.C still needs the missing K1 `h` grid after that freeze. P0.A's
-clean repeat is conditional on promoting a new P4 comparison to primary
-evidence. The original P4
+Next action: keep using stored episode lengths and frozen-critic hop
+objectives to explain when extra hops help, saturate, or hurt survival.
+Shared-driver P0.B stays implemented and frozen, but it is **not** the next
+experiment: matching two methods under one critic is less direct than
+measuring which actor-path changes raise or cut episode lifetime. Do not
+launch P0.B. P0.C still needs the missing K1 `h` grid after any later freeze.
+P0.A's clean repeat is conditional on promoting a new P4 comparison to
+primary evidence. The original P4
 [frozen manifest](sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/FROZEN_MANIFEST.json)
 records the decision rule and integrity contract for that archive.
 
@@ -101,9 +104,13 @@ override the failed inclusion gate.
   compute-controlled extra-update contrast. Do not splice historical BAR/mcep
   scores into future shared pairs.
 - [ ] Launch the frozen shared-driver grid only after one resolved-stack
-  `FROZEN_MANIFEST.json`. Primary contrast is shared-`recenter` minus
-  shared-`data_anchor` endpoint return on nine tasks, `T={4,7,10,14,20}`,
-  `K=4`, seeds 0--1. Record first-actor returns on every branch.
+  `FROZEN_MANIFEST.json`, and only if hop-survival / hop-objective analysis
+  still cannot separate helpful vs harmful refinement. This is a **lower**
+  priority than episode-survival and frozen-critic ΔL diagnostics. Primary
+  contrast remains shared-`recenter` minus shared-`data_anchor` endpoint
+  return on nine tasks, `T={4,7,10,14,20}`, `K=4`, seeds 0--1. Record
+  first-actor returns on every branch. Do not start this from the current
+  analysis pass.
 
 ### C. Match the first actor's local budget (partial coverage; reanalysis complete)
 
@@ -157,6 +164,68 @@ override the failed inclusion gate.
 - [ ] Recover ext_csv I2/I3 seeds 0--1 and historical I4 504 first/endpoint
   columns the same way, without mixing families. Do not treat the s23-only
   or P0-only subsets as a four-seed headline grid.
+
+### E. Intermediate actors vs two-actor (ext_csh tail90; no training)
+
+Post-hoc CPU dump of every stored actor on the frozen P0 K=4 1M checkpoints
+that live on this host. Archive:
+[`sweep_results/diagnostics/p0_intermediate_actors/`](sweep_results/diagnostics/p0_intermediate_actors/).
+Runbook:
+[`scripts/diagnostics/P0_INTERMEDIATE_ACTORS_RUNBOOK.md`](scripts/diagnostics/P0_INTERMEDIATE_ACTORS_RUNBOOK.md).
+Episode seeds 1000--1009; do not mix with archived first/endpoint columns.
+Coverage is 90/180 runs, 45/90 paired cells, 270/540 policies. Head90
+Hopper and HalfCheetah-medium stay missing; they were not filled from
+`results/mpi4*` or other sweeps.
+
+- [x] Inventory the planned 180-run grid against frozen tail90
+  `CHECKPOINTS.json`, record hashes/actors/normalization/code revision, and
+  refuse substitution for missing cells.
+- [x] Re-evaluate MART actors 1--4 and two-actor target/deploy with 10 shared
+  episode seeds, resume-able JSONL, and CPU workers limited to 4.
+- [x] Measure action RMS, hop deltas, cosine (near-zero excluded), bound
+  occupancy, and current-objective median Q/λ on dataset states and on a
+  MART-μ4 + two-actor-deploy rollout union (diagnostic only).
+- [x] Report actor-index return profiles, adjacent-hop heatmaps, and
+  MART–two-actor action-distance vs return-gap scatter. Oracle mid-actor
+  return is labeled oracle-only.
+- [x] Split return into episode lifetime vs pooled reward/step, and plot
+  actor survival \(S_k(t)=\Pr(L_k\ge t)\) from stored lengths. Hopper T=10
+  first90 table: medium μ2→μ4 is survival rescue (653→1000 steps, 1/20→20/20
+  timeouts) with slightly *lower* reward/step; expert is early termination
+  (875→457, 12/20→0/20) with almost unchanged reward/step; medium-replay is
+  already at the time limit from μ2. Archive:
+  [`sweep_results/diagnostics/p0_episode_survival/`](sweep_results/diagnostics/p0_episode_survival/).
+- [x] Finish frozen-critic hop ΔL on local tail90 checkpoints (135 MART hops
+  k=2,3,4, dataset states). Q rises on 134/135 hops, but ΔL<0 on only 25/135
+  (17/45 at hop 2, 5/45 at hop 3, 3/45 at hop 4). Labels:
+  55 `other_obj_not_up_return_up`, 28 `other_obj_not_up_return_flat`,
+  27 `objective_not_up_return_down`, 12 `objective_up_return_down`,
+  8 `objective_up_return_flat`, 5 `objective_up_return_up`. Walker-medium
+  T=14 seed 0 hop 4 is `objective_not_up_return_down` with survival collapse
+  (L 1000→195) despite ΔQ>0. HalfCheetah-expert return drops are reward/step
+  under a full 1000-step horizon, not early termination. Hopper-expert ΔL
+  still needs first90 checkpoints on ext_csv. Q-up with return-down is
+  **not** by itself critic error, because backups use Polyak μ1
+  continuation.
+
+Manuscript direction: extra hops matter through episode lifetime (and, on
+non-terminating tasks, reward/step) more than through action-distance size.
+Same final scores can be shared survival success (Hopper-medium vs two-actor)
+or shared time-limit saturation (medium-replay). Harmful hops are survival
+failures on Hopper/Walker, or reward-rate collapse on HalfCheetah-expert.
+
+Follow-up priority (do not auto-start training):
+
+1. Hopper first90 hop ΔL on ext_csv, so Hopper-expert can be placed in the
+   same four-row table. Local tail90 ΔL is done.
+2. Survival-conditioned MC continuation only where ΔL improved **and**
+   lifetime collapsed (walker-medium T=20 seed 0 hops 2–3). Do **not** start
+   with walker-medium T=14 seed 0 hop 4 (ΔL did not improve) or
+   HalfCheetah-expert (no early termination). Hopper-expert waits on ΔL.
+3. Shared-driver P0.B: implemented, frozen, **deprioritized**. Not required
+   to describe helpful / saturating / harmful hops on the current actor path.
+4. Frozen-critic extra extraction: only if later hops show tiny movement and
+   leftover objective slack.
 
 ## P1: measure target-value perturbation and matched final reach (CPU)
 

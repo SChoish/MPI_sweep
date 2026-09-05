@@ -1,0 +1,8 @@
+{
+  "copied_to_ext_csh": true,
+  "origin_host": "ext_csv",
+  "origin_commit": "0c8c50cd9d46f807c779fcb0c185d3484d3204c8",
+  "origin_path": "sweep_results/diagnostics/p0_hop_actor_audit/",
+  "note": "Episode and action CSVs only. First90 checkpoints remain on ext_csv and were not used or substituted here.",
+  "eval_protocol": "10 deterministic episodes per training seed; evaluation_seed=10000+ep"
+}

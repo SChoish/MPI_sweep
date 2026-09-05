@@ -44,6 +44,7 @@ folders below in place; see ARTIFACT_MAP.
 | `bar_mcep_p3_paired/` | 90-pair MCEP-inspired control: completeness audit, compact scores, summary, and raw-source hashes |
 | `hosts/ext_csh/p0_manifest_tail90/` | Frozen-manifest entries 91--180; five optimizer-diverged Walker2d-expert cells retained |
 | `p0_bar_p4_vs_two_actor_p4/` | Complete 90-pair score merge; numeric unresolved, but locked-P0 inadmissible because host stacks differ |
+| `p0_intermediate_actors/` | Local tail90 all-actor env eval and common-state action distances; head90 not substituted |
 | `p0_bar_p4_vs_two_actor_p4/tail90_final_scores.csv` | ext_csh first-actor recovery; does not repair the primary gate |
 | `i234_first_endpoint/` | Local I2/I3 s23 and P0 I4 first/endpoint recovery; inclusion-frozen, families unmixed |
 | `*_MANIFEST.json` | Audit protocol and provenance; host manifests are not historical training launch files |

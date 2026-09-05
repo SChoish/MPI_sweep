@@ -1,0 +1,8 @@
+{
+  "H1_saturation": "later |\u0394J| and adjacent action RMS compared with hop 1\u21922; mean |\u0394J| hop2=16.839, hop3=6.407, hop4=5.996; mean adj RMS mu1\u21922=0.0960, mu2\u21923=0.0827, mu3\u21924=0.0787.",
+  "H2_reversion": "18 cells have mu4 below the best of mu1\u2013mu3 (oracle diagnostic, not offline selection).",
+  "H3_direction": "mean cosine(\u03b42,\u03b43) on dataset states=0.159 after dropping near-zero hops.",
+  "H4_similar_return_different_action": "34/45 paired cells have dataset action RMS>0.05 and |\u0394J|<3.",
+  "H5_task_offset": "task-mean J(mu4)-J(deploy)={\"halfcheetah-medium-replay-v2\": 1.4439261052317947, \"halfcheetah-medium-v2\": -0.0028703428964746537, \"hopper-expert-v2\": -13.451350060424266, \"hopper-medium-replay-v2\": 0.7129885830427511, \"hopper-medium-v2\": 3.823958116761203}; grand mean=-1.821180144644642; sign mix=[1, -1, -1, 1, 1].",
+  "H6_first_actor_path": "Not isolated here: MART mu1 and two-actor target were trained on independent first-actor/critic trajectories. Shared-driver P0.B remains the experiment that holds that path fixed."
+}

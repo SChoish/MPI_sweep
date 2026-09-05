@@ -1,0 +1,36 @@
+{
+  "command": "objectives",
+  "coverage": {
+    "missing_runs": 90,
+    "note": "Evaluate present cells only. Paired MART vs two-actor analysis uses cells where both methods have a 1M checkpoint. Do not substitute other sweeps.",
+    "pair_coverage": 0.5,
+    "paired_cells_both_methods": 45,
+    "planned_pairs": 90,
+    "planned_policies": 540,
+    "planned_runs": 180,
+    "policy_coverage": 0.5,
+    "present_by_condition": {
+      "bar_p4": 45,
+      "two_actor_p4": 45
+    },
+    "present_policies": 270,
+    "present_runs": 90,
+    "run_coverage": 0.5,
+    "tasks_missing": [
+      "hopper-medium-v2",
+      "hopper-medium-replay-v2",
+      "hopper-expert-v2",
+      "halfcheetah-medium-v2"
+    ],
+    "tasks_present": [
+      "halfcheetah-expert-v2",
+      "halfcheetah-medium-replay-v2",
+      "walker2d-expert-v2",
+      "walker2d-medium-replay-v2",
+      "walker2d-medium-v2"
+    ]
+  },
+  "out_dir": "/home/ext_csh/MPI_sweep/sweep_results/diagnostics/p0_intermediate_actors",
+  "pilot": false,
+  "python": "/home/ext_csh/miniconda3/envs/capo_jax/bin/python"
+}

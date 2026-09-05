@@ -1,0 +1,35 @@
+{
+  "action_distance_vs_return_corr_dataset": 0.014035524803990895,
+  "high_T_first_negative_hop": {
+    "hop2": 12,
+    "hop3": 0,
+    "hop4": 3,
+    "n": 29,
+    "none": 14
+  },
+  "mean_abs_first_actor_gap": 6.521872774431745,
+  "mean_abs_return_gap_high_vs_low_action_distance": [
+    14.93225307304148,
+    4.895140162921664
+  ],
+  "mean_hop_deltas": {
+    "d12": -2.5490408412336856,
+    "d23": -1.9647946009163864,
+    "d34": -5.47218170982123,
+    "d41": -9.986017151971302
+  },
+  "n_final_worse_than_mid_oracle": 28,
+  "n_mart_profiles": 45,
+  "n_paired_cells": 45,
+  "seed_limit": "training seeds are {0,1} only; episode repeats are not extra training seeds",
+  "share_final_worse_than_mid_oracle": 0.6222222222222222,
+  "share_later_hops_smaller_than_half_first": 0.5111111111111111,
+  "task_equal_mean_mart4_minus_two": -2.022361747951447,
+  "task_mean_mart4_minus_two": {
+    "halfcheetah-expert-v2": -5.3118360050352464,
+    "halfcheetah-medium-replay-v2": 2.8532495307102153,
+    "walker2d-expert-v2": 1.0492791742816614,
+    "walker2d-medium-replay-v2": 6.354442982966136,
+    "walker2d-medium-v2": -15.05694442268
+  }
+}

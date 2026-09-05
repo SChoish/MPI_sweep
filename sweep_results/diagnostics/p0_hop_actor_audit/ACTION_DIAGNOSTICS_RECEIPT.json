@@ -1,0 +1,10 @@
+{
+  "built_at": "2026-09-05T23:37:05+09:00",
+  "n_rows": 1440,
+  "dataset_n": 4096,
+  "dataset_sample_seed": 20260905,
+  "near_zero_rms": 1e-06,
+  "workers": 4,
+  "cpu_pin": "96-99",
+  "note": "Distances are on shared raw states with per-checkpoint normalization. Do not treat per-policy visit statistics as cross-policy action distances."
+}

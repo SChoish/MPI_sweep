@@ -1,0 +1,8 @@
+{
+  "objective_not_up_return_down": 27,
+  "objective_up_return_down": 12,
+  "objective_up_return_flat": 8,
+  "objective_up_return_up": 5,
+  "other_obj_not_up_return_flat": 28,
+  "other_obj_not_up_return_up": 55
+}

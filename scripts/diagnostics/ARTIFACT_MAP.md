@@ -28,6 +28,9 @@ selection of runs.
 | `route_shadow_k4/` | archive | partial | Compact copy of `audit_report_20260901/route_shadow_mc_k4`; excluded from manuscript |
 | `bar_mcep_p3_paired/` | aggregate/archive | partial | `audit_bar_mcep_p3_paired.py` regenerates `AUDIT.json` only; the paired CSV, summary, and source manifest are frozen and verifier-gated |
 | `p0_bar_p4_vs_two_actor_p4/` | retrain + aggregate | **180-cell score integrity only**; numeric `unresolved`; **P0-inadmissible** | `verify_p0_score_merge.py` independently checks the compact merge; host dependency stacks differ, five optimizer states are nonfinite, and no full ckpt-bound verify exists |
+| `p0_intermediate_actors/` | ckpt | **yes** (local tail90 only) | `run_p0_intermediate_actors.py` + `analyze_p0_intermediate_actors.py`; all-actor env eval, action distances, frozen-critic hop ΔL. Does not train. Head90 stays missing. See `P0_INTERMEDIATE_ACTORS_RUNBOOK.md` |
+| `p0_episode_survival/` | aggregate | **yes** from stored episode CSVs | `analyze_p0_episode_survival.py`; Hopper T=10 survival from first90 `p0_hop_actor_audit/episode_scores.csv`; hop-objective join from local `hop_objectives.csv` |
+| `p0_hop_actor_audit/` | archive | **no** (ext_csv first90 dump) | Published episode CSV at `0c8c50cd`; Hopper checkpoints are not on this host |
 | `p1_target_value_audit/` | archive | **artifact-arithmetic verified**; raw NPZ external | Common-critic paired ratios and full geometry are promoted; outlier-dominated absolute means and comparator residual are not headline evidence |
 | `actor_cost/` | benchmark/archive | **verified measured snapshot**; rerun needs local data/GPU | Hash-pinned K=1--4 H200 profile plus profiler and independent verifier; see `ACTOR_COST_RUNBOOK.md` |
 | `frozen_critic_small_step/` (top-level archive) | archive | partial | Use `run_frozen_critic_small_step.py` |

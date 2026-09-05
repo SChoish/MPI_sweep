@@ -1,0 +1,14 @@
+{
+  "n_expected_runs": 180,
+  "n_local_checkpoints": 90,
+  "n_evalable": 90,
+  "n_paired_task_T_seed": 45,
+  "fraction_runs_evalable": 0.5,
+  "fraction_paired": 0.5,
+  "missing_tasks_on_this_host": [
+    "halfcheetah-expert-v2",
+    "walker2d-medium-v2",
+    "walker2d-medium-replay-v2",
+    "walker2d-expert-v2"
+  ]
+}

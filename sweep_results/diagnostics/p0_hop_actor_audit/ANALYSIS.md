@@ -1,10 +1,11 @@
 # P0 hop-actor audit
 
-Built: 2026-09-05T23:38:09+09:00
+Built: 2026-09-06T00:21:39+09:00
 
-Understood as: explain similar MART vs two-actor *final* scores by measuring
-each hop's return and action change on existing P0 K=4 checkpoints.
-No new training. Episode repeats are noise reduction, not extra seeds.
+Understood as: explain similar final scores and later-hop gains/losses
+by splitting return into episode survival vs per-step reward, then
+(next) hop-objective change on the frozen critic. No new training.
+Episode repeats are noise reduction, not extra seeds.
 
 ## Coverage
 
@@ -27,6 +28,53 @@ No new training. Episode repeats are noise reduction, not extra seeds.
 - Oracle mid-actor better than mu4 in 18 cells.
 - Do not read that oracle as an offline selection policy.
 - Actor index is not a separately trained K=2/K=3 run; timestep is 1M for every stored actor.
+
+## Hopper T=10 survival vs per-step reward
+
+### hopper-medium
+
+- μ2: score 66.94, length 653.0, timeout 1/20, r/step 3.305.
+- μ4: score 100.73, length 1000.0, timeout 20/20, r/step 3.258.
+- two-actor final: score 98.35, length 1000.0, timeout 20/20, r/step 3.181.
+- μ4−μ2 score +33.80 (seeds +36.95, +30.64). Raw-return split: length term +1147.1, rate term -47.2 (length share 0.96).
+- Reaching 1,000 steps is a timeout, not a return ceiling.
+
+### hopper-med-replay
+
+- μ2: score 99.90, length 1000.0, timeout 20/20, r/step 3.231.
+- μ4: score 100.42, length 1000.0, timeout 20/20, r/step 3.248.
+- two-actor final: score 99.76, length 1000.0, timeout 20/20, r/step 3.226.
+- μ4−μ2 score +0.53 (seeds +1.32, -0.27). Raw-return split: length term +0.0, rate term +17.2 (length share 0.00).
+- Reaching 1,000 steps is a timeout, not a return ceiling.
+
+### hopper-expert
+
+- μ2: score 99.40, length 874.9, timeout 12/20, r/step 3.675.
+- μ4: score 51.52, length 456.5, timeout 0/20, r/step 3.629.
+- two-actor final: score 100.17, length 878.6, timeout 11/20, r/step 3.688.
+- μ4−μ2 score -47.89 (seeds -31.29, -64.48). Raw-return split: length term -1537.4, rate term -21.1 (length share 0.99).
+- Reaching 1,000 steps is a timeout, not a return ceiling.
+
+## Hopper T=10 hop objective (frozen critic, dataset states)
+
+ΔL_k = -c_k E[Q(μ_k)-Q(μ_{k-1})] + E[||Δμ||^2 / d], c_k = 2(T/K) / mean(|Q(μ_{k-1})|), Q = critic head 1. Negative ΔL is an objective improvement. Residuals are ~10^{-3} on a loss of about -5.
+
+### hopper-medium
+
+- mean ΔL=+0.001272, mean ΔQ=+0.1608, objective-improved hops 0/6.
+- class counts: `{'obj_flat_return_flat': 1, 'obj_flat_return_up': 5}`.
+
+### hopper-med-replay
+
+- mean ΔL=-0.0005412, mean ΔQ=+0.8748, objective-improved hops 3/6.
+- class counts: `{'obj_flat_return_flat': 2, 'obj_flat_return_up': 1, 'obj_up_return_flat': 2, 'obj_up_return_up': 1}`.
+
+### hopper-expert
+
+- mean ΔL=+0.003409, mean ΔQ=+0.02711, objective-improved hops 0/6.
+- class counts: `{'obj_flat_return_down': 5, 'obj_flat_return_up': 1}`.
+
+Hopper-expert later hops sit in **obj not improved + return down**. Hopper-medium is the missing fifth cell: **obj not improved + return up**. ΔQ is positive in every hop, including expert. That is not treated as policy improvement: this critic's Bellman target is actor-1 continuation.
 
 ## Hypotheses (evidence, not verdicts)
 
@@ -52,13 +100,24 @@ task-mean J(mu4)-J(deploy)={"halfcheetah-medium-replay-v2": 1.4439261052317947, 
 
 ### H6_first_actor_path
 
-Not isolated here: MART mu1 and two-actor target were trained on independent first-actor/critic trajectories. Shared-driver P0.B remains the experiment that holds that path fixed.
+Not isolated here: MART mu1 and two-actor target were trained on independent first-actor/critic trajectories. Shared-driver remains available but is deprioritized relative to the actor-path survival and hop-objective readout.
+
+### H7_survival_not_rate
+
+At Hopper T=10, mu2→mu4 per-step reward falls slightly on medium and expert while episode length moves in opposite directions. Return change is therefore mostly survival, not richer per-step reward.
+
+### H8_hop_objective
+
+Frozen-critic JKO ΔL at the 1M snapshot is tiny (~1e-3 on |L|≈5). Q(s,μ_k) still ticks up. Medium return rises and expert return falls anyway, so this critic's hop objective does not separate helpful from harmful hops. The critic is trained on actor-1 continuation.
 
 ## Figures
 
 - `fig_actor_index_profiles.png`
 - `fig_hop_return_heatmap.png`
 - `fig_action_vs_return_scatter.png`
+- `fig_survival_hopper_T10.png`
+- `fig_return_decomposition_hopper_T10.png`
+- `fig_hop_objective_vs_return.png`
 
 ## Limits
 
@@ -66,8 +125,9 @@ Not isolated here: MART mu1 and two-actor target were trained on independent fir
 - Cross-stack P0 merge remains scientifically inadmissible; this CPU re-eval is a same-host diagnostic.
 - Learned Q increase is not treated as policy improvement.
 
-## Next experiment
+## Next measurement
 
-P0.B shared-driver (`recenter` minus `data_anchor`) remains the first training experiment,
-because H6 is unresolved and hop diagnostics cannot hold the first actor/critic path fixed.
+Shared-driver is deprioritized. Next is only to extend hop-objective
+coverage beyond Hopper T=10 if that contrast is needed, not to launch
+a new training grid.
 

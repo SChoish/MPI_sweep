@@ -46,7 +46,7 @@ folders below in place; see ARTIFACT_MAP.
 | `p0_bar_p4_vs_two_actor_p4/` | Complete 90-pair score merge; numeric unresolved, but locked-P0 inadmissible because host stacks differ |
 | `p0_intermediate_actors/` | Local tail90 all-actor env eval and common-state action distances; head90 not substituted |
 | `p0_bar_p4_vs_two_actor_p4/tail90_final_scores.csv` | ext_csh first-actor recovery; does not repair the primary gate |
-| `i234_first_endpoint/` | Local I2/I3 s23 and P0 I4 first/endpoint recovery; inclusion-frozen, families unmixed |
+| `i234_first_endpoint/` | Unmixed first/endpoint recovery: ext_csh I2/I3 s23 + P0 I4; ext_csv I2/I3 s01; historical I4-504 coverage only (first-actor 4/504) |
 | `*_MANIFEST.json` | Audit protocol and provenance; host manifests are not historical training launch files |
 
 ## Manuscript-facing checks

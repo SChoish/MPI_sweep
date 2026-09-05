@@ -45,6 +45,8 @@ Survival curves use stored lengths only; Hopper T=10 plots come from
 - Local checkpoints: frozen tail90 `CHECKPOINTS.json` only.
 - Missing head90 cells stay missing (ext_csv). No `results/mpi4*` substitution.
 - 10 episodes, seeds `1000..1009`, shared across compared policies of a task.
+  This dump is the tail90 checkpoint shard only. First90 Hopper checkpoints
+  are not on this host; do not splice the two shards.
 - Gymnasium v4 eval envs from `train_td3bc.EVAL_ENV`; per-checkpoint mean/std.
 - Dataset states: 2048 HDF5 transitions, seed `20260905`, per task.
 - Rollout common set B: 256 states from MART μ4 plus 256 from two-actor deploy.

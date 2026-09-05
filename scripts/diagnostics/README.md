@@ -11,6 +11,7 @@ Package root: `scripts/diagnostics/`
 | [ACTOR_COST_RUNBOOK.md](ACTOR_COST_RUNBOOK.md) | Released K=1--4 H200 timing/memory snapshot and rerun protocol |
 | [P0_INTERMEDIATE_ACTORS_RUNBOOK.md](P0_INTERMEDIATE_ACTORS_RUNBOOK.md) | CPU all-actor eval and action distances on frozen P0 K=4 checkpoints |
 | `verify_p0_score_merge.py` | Independently rebuilds the 180-row/90-pair P0 compact merge and keeps integrity separate from scientific admissibility |
+| `inventory_p0_hop_actors.py` / `eval_p0_hop_actors.py` / `diagnose_p0_hop_actions.py` / `analyze_p0_hop_actors.py` / `diagnose_p0_hop_objective.py` | P0 K=4 hop-actor CPU eval, survival/return split, frozen-critic hop ΔL |
 | `run_host.sh` | One-shot wrapper for this host's seeds |
 | `dump_*.py` / `run_*.py` / `summarize_*.py` | Implementations |
 

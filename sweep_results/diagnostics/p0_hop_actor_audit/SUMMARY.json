@@ -45,5 +45,94 @@
     "hopper-medium-v2": 3.823958116761203
   },
   "grand_mean_mu4_minus_deploy": -1.821180144644642,
-  "worsen_n": 18
+  "worsen_n": 18,
+  "hopper_t10_mu4_minus_mu2_by_seed": [
+    {
+      "task": "hopper-medium-v2",
+      "T": 10,
+      "training_seed": 0,
+      "delta_mu4_minus_mu2": 36.94798600930865
+    },
+    {
+      "task": "hopper-medium-v2",
+      "T": 10,
+      "training_seed": 1,
+      "delta_mu4_minus_mu2": 30.642278121967877
+    },
+    {
+      "task": "hopper-medium-replay-v2",
+      "T": 10,
+      "training_seed": 0,
+      "delta_mu4_minus_mu2": 1.3244027294858682
+    },
+    {
+      "task": "hopper-medium-replay-v2",
+      "T": 10,
+      "training_seed": 1,
+      "delta_mu4_minus_mu2": -0.2672625618264419
+    },
+    {
+      "task": "hopper-expert-v2",
+      "T": 10,
+      "training_seed": 0,
+      "delta_mu4_minus_mu2": -31.293133687404605
+    },
+    {
+      "task": "hopper-expert-v2",
+      "T": 10,
+      "training_seed": 1,
+      "delta_mu4_minus_mu2": -64.47692638780012
+    }
+  ],
+  "hopper_t10_pooled_r_per_step": {
+    "hopper-medium-v2": {
+      "mu2": 3.305352194138953,
+      "mu4": 3.258116723809467,
+      "length_share": 0.9604511609296382
+    },
+    "hopper-medium-replay-v2": {
+      "mu2": 3.2309285181651894,
+      "mu4": 3.248131213726026,
+      "length_share": 0.0
+    },
+    "hopper-expert-v2": {
+      "mu2": 3.674795322185114,
+      "mu4": 3.628569029066614,
+      "length_share": 0.98645945446369
+    }
+  },
+  "hopper_t10_hop_objective": {
+    "n_hops": 18,
+    "tasks": {
+      "hopper-medium-v2": {
+        "mean_delta_L": 0.0012719475388457784,
+        "mean_delta_q": 0.16082392704750723,
+        "n_obj_improved": 0,
+        "obj_vs_return_counts": {
+          "obj_flat_return_flat": 1,
+          "obj_flat_return_up": 5
+        }
+      },
+      "hopper-medium-replay-v2": {
+        "mean_delta_L": -0.0005411590785763624,
+        "mean_delta_q": 0.8748107520126117,
+        "n_obj_improved": 3,
+        "obj_vs_return_counts": {
+          "obj_flat_return_flat": 2,
+          "obj_flat_return_up": 1,
+          "obj_up_return_flat": 2,
+          "obj_up_return_up": 1
+        }
+      },
+      "hopper-expert-v2": {
+        "mean_delta_L": 0.0034088334106828397,
+        "mean_delta_q": 0.027105621685526177,
+        "n_obj_improved": 0,
+        "obj_vs_return_counts": {
+          "obj_flat_return_down": 5,
+          "obj_flat_return_up": 1
+        }
+      }
+    }
+  }
 }

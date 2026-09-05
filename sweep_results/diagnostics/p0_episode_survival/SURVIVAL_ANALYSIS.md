@@ -2,10 +2,11 @@
 
 Return is split into how long the episode lasts and how much reward
 arrives per step. Survival curves use stored `episode_length` only.
-Hopper T=10 uses the ext_csv first90 episode CSV (commit `0c8c50cd`,
-10 episodes per training seed). Seeds are not extra samples; pooling
-two seeds gives the 20-episode table below. Tail90 hop objectives use
-local frozen critics; Hopper checkpoints are not on this host.
+Hopper T=10 uses the ext_csv first90 checkpoints (training seeds 0
+and 1 of those Hopper cells). Tail90 hop objectives use a different
+checkpoint shard on this host; the same integer seed label is not the
+same run. Do not pool episode scores across shards. Tail90 hop
+objectives use local frozen critics; Hopper checkpoints are not here.
 
 ## Hopper T=10 pooled two-seed table (20 episodes = 2×10)
 

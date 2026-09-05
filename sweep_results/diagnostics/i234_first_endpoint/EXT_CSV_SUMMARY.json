@@ -1,0 +1,485 @@
+{
+  "built_at": "2026-09-05T19:11:53+09:00",
+  "host": "ext_csv",
+  "method": "cpu_eval_csv_recovery",
+  "evaluation_contract": {
+    "target_d4rl": "d4rl_score (online first actor)",
+    "i2_deployment": "d4rl_pi2",
+    "i3_deployment": "d4rl_pi3",
+    "i4_historical_deployment": "d4rl_pi4"
+  },
+  "inclusion": {
+    "host": "ext_csv",
+    "frozen_at": "2026-09-05T19:11:53+09:00",
+    "no_reevaluation": true,
+    "no_training": true,
+    "do_not_mix_with_s23_or_p0": true,
+    "not_a_four_seed_headline": true,
+    "included": {
+      "i2_historical_s01": "9 task x 14 T x seeds {0,1} = 252",
+      "i3_historical_s01": "9 task x 14 T x seeds {0,1} = 252"
+    },
+    "excluded_or_separate": {
+      "i2_i3_seeds_2_3": "ext_csh s23 tables; do not concatenate",
+      "i4_p0_contemporaneous": "P0 BAR-P4 90-cell table; different family",
+      "i4_historical_504_first_actor": "eval.csv still incomplete (4/504 first); CPU re-eval table is i4_historical_504_first_endpoint.csv (504/504), separate family, do not mix with P0 I4",
+      "explicit_integrator": "not recovered here",
+      "two_actor_p4": "P0 control, not I-MART"
+    },
+    "priority_regions": {
+      "plateau": [
+        0.05,
+        0.1,
+        0.2,
+        0.4
+      ],
+      "transition": [
+        0.7,
+        1.5,
+        2.5,
+        4.0,
+        7.0
+      ],
+      "tail": [
+        10.0,
+        12.0,
+        14.0,
+        17.0,
+        20.0
+      ]
+    },
+    "lab_root": "/home/ext_csv/mpi_sweep_lab"
+  },
+  "i2_s01": {
+    "n": 252,
+    "mean_endpoint_minus_first": 5.197719031932953,
+    "n_positive": 155,
+    "n_negative": 88,
+    "n_zero": 9
+  },
+  "i3_s01": {
+    "n": 252,
+    "mean_endpoint_minus_first": 5.45244542577817,
+    "n_positive": 168,
+    "n_negative": 79,
+    "n_zero": 5
+  },
+  "i4_historical_504_coverage": {
+    "family": "historical_i4_504",
+    "results_dir": "/home/ext_csv/mpi_sweep_lab/results/mpi4_norm",
+    "n_expected": 504,
+    "n_endpoint": 504,
+    "n_first_actor": 4,
+    "n_missing_first_actor": 500,
+    "first_actor_present": [
+      {
+        "environment": "hopper-medium-v2",
+        "T": "0.05",
+        "seed": 0
+      },
+      {
+        "environment": "hopper-medium-v2",
+        "T": "0.05",
+        "seed": 1
+      },
+      {
+        "environment": "hopper-medium-v2",
+        "T": "0.1",
+        "seed": 0
+      },
+      {
+        "environment": "hopper-medium-v2",
+        "T": "0.1",
+        "seed": 1
+      }
+    ],
+    "note": "Historical mpi4_norm eval.csv stores d4rl_pi4 at 1M but leaves d4rl_score empty on almost every cell. First-actor recovery from eval.csv is therefore impossible; re-evaluation of both policies from params_1000000.pkl would be required. Do not fill those blanks from P0 or s23 tables."
+  },
+  "i2_s01_by_task_region": [
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": -1.0861885389726993,
+      "n_positive": 4
+    },
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -12.24055820386697,
+      "n_positive": 0
+    },
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": -11.551011333816549,
+      "n_positive": 3
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 1.2134389139416628,
+      "n_positive": 7
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 2.708356937377785,
+      "n_positive": 10
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 3.329196286110227,
+      "n_positive": 10
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 0.48953431209301357,
+      "n_positive": 6
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 4.148461463921849,
+      "n_positive": 10
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 3.01458034108366,
+      "n_positive": 10
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": -1.2527255191153692,
+      "n_positive": 4
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -3.4475818565037204,
+      "n_positive": 1
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": -5.67368883274438,
+      "n_positive": 2
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 10.749351449123488,
+      "n_positive": 4
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 35.29528659582082,
+      "n_positive": 9
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 42.792007251264714,
+      "n_positive": 10
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 2.535012402835113,
+      "n_positive": 6
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 4.690282043768472,
+      "n_positive": 5
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 8.027316249867518,
+      "n_positive": 8
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 0.6483533412096119,
+      "n_positive": 5
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -4.478707664570374,
+      "n_positive": 2
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 0.9915007768842743,
+      "n_positive": 9
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 33.94260606415177,
+      "n_positive": 7
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 2.4132736189956594,
+      "n_positive": 3
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 22.969998545272656,
+      "n_positive": 8
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 1.8970364667070534,
+      "n_positive": 6
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -4.481313215286279,
+      "n_positive": 0
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 3.1659854875521596,
+      "n_positive": 6
+    }
+  ],
+  "i3_s01_by_task_region": [
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": -0.23872374435522126,
+      "n_positive": 5
+    },
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -29.628666336623866,
+      "n_positive": 0
+    },
+    {
+      "environment": "halfcheetah-expert-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": -12.788666914384367,
+      "n_positive": 4
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 2.2018470380199955,
+      "n_positive": 6
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 3.9249390651579894,
+      "n_positive": 9
+    },
+    {
+      "environment": "halfcheetah-medium-replay-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 4.720629277471173,
+      "n_positive": 10
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 0.9540802273962941,
+      "n_positive": 8
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 6.283473749140121,
+      "n_positive": 10
+    },
+    {
+      "environment": "halfcheetah-medium-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 3.886005233203028,
+      "n_positive": 10
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": -1.8734437427236408,
+      "n_positive": 3
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -6.28252003745596,
+      "n_positive": 0
+    },
+    {
+      "environment": "hopper-expert-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": -0.6316136302956622,
+      "n_positive": 3
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 11.925080394274435,
+      "n_positive": 5
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 31.43009157705543,
+      "n_positive": 10
+    },
+    {
+      "environment": "hopper-medium-replay-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 41.10771119482676,
+      "n_positive": 9
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": -4.210436285519057,
+      "n_positive": 2
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 25.26453976816678,
+      "n_positive": 8
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 10.293307646197842,
+      "n_positive": 7
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 0.7453302567370486,
+      "n_positive": 8
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -4.3798251275526425,
+      "n_positive": 2
+    },
+    {
+      "environment": "walker2d-expert-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 2.055218093511636,
+      "n_positive": 9
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 24.989330085797747,
+      "n_positive": 8
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": 0.7857122874120585,
+      "n_positive": 6
+    },
+    {
+      "environment": "walker2d-medium-replay-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 29.27662591013883,
+      "n_positive": 10
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "plateau",
+      "n": 8,
+      "mean_endpoint_minus_first": 4.820642465622514,
+      "n_positive": 5
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "tail",
+      "n": 10,
+      "mean_endpoint_minus_first": -1.4469123451953876,
+      "n_positive": 2
+    },
+    {
+      "environment": "walker2d-medium-v2",
+      "region": "transition",
+      "n": 10,
+      "mean_endpoint_minus_first": 2.0806099626360366,
+      "n_positive": 9
+    }
+  ],
+  "hashes": {
+    "i2_s01": "75b4954c3b4177fbe40b1ca3e14b2f742827e97ea06243b59b9a70c15ef934d5",
+    "i3_s01": "59a77113c4f8b265fa60256b5b52d216b4759341274850b13d201a180070fe57"
+  },
+  "note": "Extraction gain is within-run endpoint minus first actor. Do not mix with s23 or P0 families or treat I2/I3 s01 as a four-seed headline. Historical I4 first-actor columns are not recovered from empty eval fields; the 504-cell CPU re-eval lives in i4_historical_504_first_endpoint.csv."
+}

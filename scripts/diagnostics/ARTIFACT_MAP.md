@@ -29,8 +29,8 @@ selection of runs.
 | `bar_mcep_p3_paired/` | aggregate/archive | partial | `audit_bar_mcep_p3_paired.py` regenerates `AUDIT.json` only; the paired CSV, summary, and source manifest are frozen and verifier-gated |
 | `p0_bar_p4_vs_two_actor_p4/` | retrain + aggregate | **180-cell score integrity only**; numeric `unresolved`; **P0-inadmissible** | `verify_p0_score_merge.py` independently checks the compact merge; host dependency stacks differ, five optimizer states are nonfinite, and no full ckpt-bound verify exists |
 | `p0_intermediate_actors/` | ckpt | **yes** (local tail90 only) | `run_p0_intermediate_actors.py` + `analyze_p0_intermediate_actors.py`; all-actor env eval, action distances, frozen-critic hop ΔL. Does not train. Head90 stays missing. See `P0_INTERMEDIATE_ACTORS_RUNBOOK.md` |
-| `p0_episode_survival/` | aggregate | **yes** from stored episode CSVs | `analyze_p0_episode_survival.py`; Hopper T=10 survival from first90 `p0_hop_actor_audit/episode_scores.csv`; hop-objective join from local `hop_objectives.csv` |
-| `p0_hop_actor_audit/` | archive | **no** (ext_csv first90 dump) | Published episode CSV at `0c8c50cd`; Hopper checkpoints are not on this host |
+| `p0_episode_survival/` | aggregate | **yes** from stored episode CSVs | `analyze_p0_episode_survival.py`; Hopper T=10 survival from first90 checkpoints; tail90 hop-objective join from a different checkpoint shard. Do not pool across shards. |
+| `p0_hop_actor_audit/` | archive + ckpt CPU re-eval | **yes** on hosts with local P0 1M ckpts | First90 Hopper eval, survival, and hop ΔL live here (`0c8c50cd` / `ab0f233`). Regenerators: `inventory_p0_hop_actors.py`, `eval_p0_hop_actors.py`, `diagnose_p0_hop_actions.py`, `analyze_p0_hop_actors.py`, `diagnose_p0_hop_objective.py`. Do not splice other sweeps. |
 | `p1_target_value_audit/` | archive | **artifact-arithmetic verified**; raw NPZ external | Common-critic paired ratios and full geometry are promoted; outlier-dominated absolute means and comparator residual are not headline evidence |
 | `actor_cost/` | benchmark/archive | **verified measured snapshot**; rerun needs local data/GPU | Hash-pinned K=1--4 H200 profile plus profiler and independent verifier; see `ACTOR_COST_RUNBOOK.md` |
 | `frozen_critic_small_step/` (top-level archive) | archive | partial | Use `run_frozen_critic_small_step.py` |
@@ -41,6 +41,7 @@ selection of runs.
 | `control_final_scores.csv`, `control_summary.csv` | retrain | **no** | From compute-matched / target-lag **training** (`launch_causal_controls.py` in lab) |
 | `compute_matched_MANIFEST.json`, `target_lag_MANIFEST.json` | retrain | **no** | Launch manifests for those controls |
 | `environment_t_sensitivity.csv` | aggregate | **no** | Built from return tables, not raw ckpt dumps |
+| `i234_first_endpoint/` | aggregate (eval.csv) + CPU ckpt re-eval | **yes** on the owning host | `recover_i234_first_endpoint.py --host {s23,ext_csv}` for eval.csv tables; `eval_i4_historical_first_endpoint.py` for historical I4 first/endpoint CPU re-eval; s01 and s23 stay in separate tables |
 
 Raw checkpoint derivatives, common batches, per-state arrays, and benchmark work
 files are not release artifacts and must not be staged merely because a run

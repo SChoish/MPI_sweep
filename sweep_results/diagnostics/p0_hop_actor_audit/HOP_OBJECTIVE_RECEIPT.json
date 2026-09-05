@@ -1,0 +1,7 @@
+{
+  "built_at": "2026-09-06T00:15:51+09:00",
+  "n_rows": 18,
+  "formula": "delta_L = -c_k * mean(Q(mu_k)-Q(mu_{k-1})) + mean((mu_k-mu_{k-1})^2); c_k = 2*(T/K) / mean(|Q(mu_{k-1})|); Q is critic head 1",
+  "state_set": "dataset sample from diagnose_p0_hop_actions",
+  "note": "Negative delta_L is an improvement of the hop objective. Q improvement is not treated as policy improvement. The critic is trained on actor-1 continuation."
+}

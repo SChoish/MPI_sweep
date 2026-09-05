@@ -1,6 +1,6 @@
 # Submission TODO
 
-Last audited: 2026-09-05.
+Last audited: 2026-09-06.
 
 This file tracks work that can change a manuscript claim. A completed run is
 not included automatically; it must identify the intended quantity, pass its
@@ -22,13 +22,12 @@ does not displace a higher-priority unresolved claim.
 
 The manuscript now includes the completed historical I4 504 first/endpoint
 reevaluation and full P0 90-run-per-procedure recovery. The ext_csv hop-actor
-CPU audit is complete for the local first90 P0 shard. Next action: keep P0.B
-unlaunched until one environment-locked manifest exists; assess the TD3+BC
-follow-up reported in progress by the author once its actual grid, endpoint
-coverage, and evaluation protocol are available.
-P0.C is a complementary independent-baseline comparison, not a prerequisite
-for measuring extraction inside an existing I4 run. P0.B remains unlaunched;
-its frozen shared-driver experiment awaits one environment-locked manifest.
+CPU audit now includes Hopper T=10 survival curves, a length vs per-step
+return split, and frozen-critic hop ΔL. Shared-driver P0.B stays unlaunched
+and is deprioritized: the current actor path already separates accumulate /
+saturate / harm without holding the first actor fixed. P0.C is a
+complementary independent-baseline comparison, not a prerequisite
+for measuring extraction inside an existing I4 run.
 P0.A's clean repeat is conditional on promoting a new P4 contrast to primary
 evidence. The original P4
 [frozen manifest](sweep_results/diagnostics/p0_bar_p4_vs_two_actor_p4/FROZEN_MANIFEST.json)
@@ -110,8 +109,9 @@ override the failed inclusion gate.
 - [ ] Launch the frozen shared-driver grid only after one resolved-stack
   `FROZEN_MANIFEST.json`. Primary contrast is shared-`recenter` minus
   shared-`data_anchor` endpoint return on nine tasks, `T={4,7,10,14,20}`,
-  `K=4`, seeds 0--1. Record first-actor returns on every branch. This remains
-  the first training experiment after the hop-actor audit: H6 is unresolved.
+  `K=4`, seeds 0--1. Record first-actor returns on every branch. Deprioritized
+  after the hop-actor survival/objective readout; launch only if a shared
+  first-actor/critic contrast is later required.
 
 ### E. Hop-actor audit on existing P0 K=4 checkpoints (CPU; first90 complete)
 
@@ -130,38 +130,40 @@ diagnostics only.
   states and on the mu4∪deploy rollout union.
 - [x] Record hop-index return profiles, hop-ΔJ heatmap, and action-vs-return
   scatter without mixing archived first/endpoint columns.
+- [x] Split Hopper T=10 return into episode length vs pooled reward/step and
+  plot actor-wise survival S(t)=Pr(L≥t), seeds separate.
+- [x] Evaluate frozen-critic JKO ΔL_k on dataset states for Hopper T=10
+  (6 MART checkpoints, 18 hops). Negative ΔL is an objective improvement.
 
-Readout (local 45 pairs, two seeds): most return change is hop 1→2; at
-`T∈{10,14,20}` later hops are often flat or negative. Dataset action RMS stays
-nonzero on later hops (~0.08). 34/45 pairs have action RMS>0.05 with
-`|J(μ4)-J(deploy)|<3`. hopper-expert mean μ4−deploy is `-13.45` against
-hopper-medium `+3.82`. Cosine(δ2,δ3)=0.16, so hops are not a repeated
-direction. H6 (independent first-actor/critic paths) is not isolated.
+Readout (Hopper T=10, two seeds): mu2→mu4 per-step reward falls slightly on
+medium (3.305→3.258) and expert (3.675→3.629), while mean length goes
+653→1000 vs 875→457. Length accounts for 96% and 99% of the raw-return
+change. Medium-replay is already at the 1,000-step timeout from mu2.
+Frozen-critic ΔL is ~10^{-3} on |L|≈5; Q still ticks up. Expert hops are
+**obj not improved + return down**; medium is **obj not improved + return up**,
+so this critic does not separate helpful from harmful hops.
 
-### Follow-up experiments from the hop audit (not launched)
+### Follow-up from the hop audit
 
-Priority 1 — A. Shared-driver (existing P0.B above). Question: does sequential
-re-centering still match direct extraction when first actor, critic, target,
-minibatch, and RNG are shared? Resource: one frozen resolved stack, 90+90
-cells. Status: protocol frozen, no host manifest. Supports H6 if first-actor
-scores match across branches and the endpoint contrast stays small or
-unresolved.
+Priority 1 — Survival/return-split writeup. The paper claim is that extra hops
+help, saturate, or harm through episode maintenance, not through larger
+action moves. Hopper T=10 figures are in
+`sweep_results/diagnostics/p0_hop_actor_audit/`. Status: local first90 done.
 
-Priority 2 — B. Critic-error MC on Q-up / return-down cells. First action from
-the compared actor, continuation from that critic's Bellman target policy
-(Polyak actor 1 + target noise). Distinct from full-episode J(μk). Needs
-simulator state restore and matching discount / termination / target noise.
-Prefer hopper-expert and high-T cells where hop 3–4 ΔJ < 0. Status: design
-only.
+Priority 2 — Optional hop-objective coverage beyond Hopper T=10 if a second
+task is needed. Same frozen critic, no training.
 
-Priority 3 — C. Frozen-critic extra extraction, only if later-hop ΔJ
-saturation could be optimizer shortfall. Same fixed critic, more actor steps;
-report as extraction-on-frozen-Q, not as a causal account of the original run.
-Distinguish `fixed_ref` (prox to actor 1 at hop size T/K) from a
-remaining-horizon direct-from-first control. Status: not started.
+Priority 3 — Shared-driver (existing P0.B). Deprioritized. It still isolates
+whether sequential re-centering matches direct extraction under a shared
+first actor/critic, but that is no longer the next measurement.
 
-Do not start A–C from this audit. Do not edit the manuscript from these
-figures until the hop claims are chosen.
+Priority 4 — Critic-error MC only if a closed-loop Q vs survival mismatch
+needs a simulator continuation. Distinct from full-episode J(μk). Status:
+design only.
+
+Do not launch shared-driver, critic-error MC, or frozen-critic extra
+extraction from this audit. Do not edit the manuscript from these figures
+until the hop claims are chosen.
 
 ### C. Independently match the first actor's local budget (complementary baseline)
 

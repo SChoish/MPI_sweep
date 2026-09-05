@@ -4,5 +4,7 @@
   "H3_direction": "mean cosine(\u03b42,\u03b43) on dataset states=0.159 after dropping near-zero hops.",
   "H4_similar_return_different_action": "34/45 paired cells have dataset action RMS>0.05 and |\u0394J|<3.",
   "H5_task_offset": "task-mean J(mu4)-J(deploy)={\"halfcheetah-medium-replay-v2\": 1.4439261052317947, \"halfcheetah-medium-v2\": -0.0028703428964746537, \"hopper-expert-v2\": -13.451350060424266, \"hopper-medium-replay-v2\": 0.7129885830427511, \"hopper-medium-v2\": 3.823958116761203}; grand mean=-1.821180144644642; sign mix=[1, -1, -1, 1, 1].",
-  "H6_first_actor_path": "Not isolated here: MART mu1 and two-actor target were trained on independent first-actor/critic trajectories. Shared-driver P0.B remains the experiment that holds that path fixed."
+  "H6_first_actor_path": "Not isolated here: MART mu1 and two-actor target were trained on independent first-actor/critic trajectories. Shared-driver remains available but is deprioritized relative to the actor-path survival and hop-objective readout.",
+  "H7_survival_not_rate": "At Hopper T=10, mu2\u2192mu4 per-step reward falls slightly on medium and expert while episode length moves in opposite directions. Return change is therefore mostly survival, not richer per-step reward.",
+  "H8_hop_objective": "Frozen-critic JKO \u0394L at the 1M snapshot is tiny (~1e-3 on |L|\u22485). Q(s,\u03bc_k) still ticks up. Medium return rises and expert return falls anyway, so this critic's hop objective does not separate helpful from harmful hops. The critic is trained on actor-1 continuation."
 }

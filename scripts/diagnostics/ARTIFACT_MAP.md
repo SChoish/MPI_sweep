@@ -39,7 +39,7 @@ selection of runs.
 | `compute_matched_MANIFEST.json`, `target_lag_MANIFEST.json` | retrain | **no** | Launch manifests for those controls |
 | `environment_t_sensitivity.csv` | aggregate | **no** | Built from return tables, not raw ckpt dumps |
 | `i234_first_endpoint/` | aggregate (eval.csv) + CPU ckpt re-eval | **yes** on the owning host | `recover_i234_first_endpoint.py --host {s23,ext_csv}` for eval.csv tables; `eval_i4_historical_first_endpoint.py` for historical I4 first/endpoint CPU re-eval; s01 and s23 stay in separate tables |
-| `p0_hop_actor_audit/` | ckpt CPU re-eval + action distances | **yes** on hosts with local P0 1M ckpts | `inventory_p0_hop_actors.py`, `eval_p0_hop_actors.py`, `diagnose_p0_hop_actions.py`, `analyze_p0_hop_actors.py`; first90-only on ext_csv; do not splice other sweeps |
+| `p0_hop_actor_audit/` | ckpt CPU re-eval + action distances | **yes** on hosts with local P0 1M ckpts | `inventory_p0_hop_actors.py`, `eval_p0_hop_actors.py`, `diagnose_p0_hop_actions.py`, `analyze_p0_hop_actors.py`, `diagnose_p0_hop_objective.py`; first90-only on ext_csv; do not splice other sweeps |
 
 Raw checkpoint derivatives, common batches, per-state arrays, and benchmark work
 files are not release artifacts and must not be staged merely because a run

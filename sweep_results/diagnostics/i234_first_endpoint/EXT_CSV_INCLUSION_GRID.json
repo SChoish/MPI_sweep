@@ -1,0 +1,42 @@
+{
+  "host": "ext_csv",
+  "frozen_at": "2026-09-05T19:11:53+09:00",
+  "no_reevaluation": true,
+  "no_training": true,
+  "do_not_mix_with_s23_or_p0": true,
+  "not_a_four_seed_headline": true,
+  "included": {
+    "i2_historical_s01": "9 task x 14 T x seeds {0,1} = 252",
+    "i3_historical_s01": "9 task x 14 T x seeds {0,1} = 252"
+  },
+  "excluded_or_separate": {
+    "i2_i3_seeds_2_3": "ext_csh s23 tables; do not concatenate",
+    "i4_p0_contemporaneous": "P0 BAR-P4 90-cell table; different family",
+    "i4_historical_504_first_actor": "eval.csv has finite d4rl_pi4 on 504/504 but finite d4rl_score on only 4/504; no first/endpoint table written",
+    "explicit_integrator": "not recovered here",
+    "two_actor_p4": "P0 control, not I-MART"
+  },
+  "priority_regions": {
+    "plateau": [
+      0.05,
+      0.1,
+      0.2,
+      0.4
+    ],
+    "transition": [
+      0.7,
+      1.5,
+      2.5,
+      4.0,
+      7.0
+    ],
+    "tail": [
+      10.0,
+      12.0,
+      14.0,
+      17.0,
+      20.0
+    ]
+  },
+  "lab_root": "/home/ext_csv/mpi_sweep_lab"
+}

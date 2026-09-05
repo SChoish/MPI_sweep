@@ -38,6 +38,7 @@ selection of runs.
 | `control_final_scores.csv`, `control_summary.csv` | retrain | **no** | From compute-matched / target-lag **training** (`launch_causal_controls.py` in lab) |
 | `compute_matched_MANIFEST.json`, `target_lag_MANIFEST.json` | retrain | **no** | Launch manifests for those controls |
 | `environment_t_sensitivity.csv` | aggregate | **no** | Built from return tables, not raw ckpt dumps |
+| `i234_first_endpoint/` | aggregate (eval.csv) + CPU ckpt re-eval | **yes** on the owning host | `recover_i234_first_endpoint.py --host {s23,ext_csv}` for eval.csv tables; `eval_i4_historical_first_endpoint.py` for historical I4 first/endpoint CPU re-eval; s01 and s23 stay in separate tables |
 
 Raw checkpoint derivatives, common batches, per-state arrays, and benchmark work
 files are not release artifacts and must not be staged merely because a run

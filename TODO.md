@@ -154,9 +154,23 @@ override the failed inclusion gate.
   plus P0 BAR-P4 I4 seeds 0--1 at 90/90. Seeds 0--1 I2/I3 and historical I4
   504 are not on this host. Explicit I3 s23 is stored separately. Archive:
   [`sweep_results/diagnostics/i234_first_endpoint/`](sweep_results/diagnostics/i234_first_endpoint/).
-- [ ] Recover ext_csv I2/I3 seeds 0--1 and historical I4 504 first/endpoint
-  columns the same way, without mixing families. Do not treat the s23-only
-  or P0-only subsets as a four-seed headline grid.
+- [x] Recover ext_csv implicit I2/I3 seeds 0--1 from local `eval.csv` without
+  mixing families. Tables:
+  [`i2_s01_first_endpoint.csv`](sweep_results/diagnostics/i234_first_endpoint/i2_s01_first_endpoint.csv)
+  and
+  [`i3_s01_first_endpoint.csv`](sweep_results/diagnostics/i234_first_endpoint/i3_s01_first_endpoint.csv)
+  (252/252 each). Mean endpoint-minus-first is I2 `+5.20` (155/252 positive)
+  and I3 `+5.45` (168/252 positive). Inclusion:
+  [`EXT_CSV_INCLUSION_GRID.json`](sweep_results/diagnostics/i234_first_endpoint/EXT_CSV_INCLUSION_GRID.json).
+  Do not concatenate with s23 or P0 tables or treat this as a four-seed
+  headline.
+- [ ] Historical I4 504 first-actor columns cannot be recovered the same way.
+  Local `mpi4_norm` has finite `d4rl_pi4` on 504/504 but finite `d4rl_score`
+  on only 4/504 (`hopper-medium-v2`, `T={.05,.1}`, seeds 0--1). Coverage:
+  [`I4_HISTORICAL_504_COVERAGE.json`](sweep_results/diagnostics/i234_first_endpoint/I4_HISTORICAL_504_COVERAGE.json).
+  Do not invent a 504 first/endpoint table or fill blanks from P0 or s23.
+  Getting the missing first-actor scores requires re-evaluating both
+  policies from `params_1000000.pkl`, which is outside this CPU dump.
 
 ## P1: measure target-value perturbation and matched final reach (CPU)
 

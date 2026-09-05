@@ -1,0 +1,31 @@
+{
+  "family": "historical_i4_504",
+  "results_dir": "/home/ext_csv/mpi_sweep_lab/results/mpi4_norm",
+  "n_expected": 504,
+  "n_endpoint": 504,
+  "n_first_actor": 4,
+  "n_missing_first_actor": 500,
+  "first_actor_present": [
+    {
+      "environment": "hopper-medium-v2",
+      "T": "0.05",
+      "seed": 0
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "T": "0.05",
+      "seed": 1
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "T": "0.1",
+      "seed": 0
+    },
+    {
+      "environment": "hopper-medium-v2",
+      "T": "0.1",
+      "seed": 1
+    }
+  ],
+  "note": "Historical mpi4_norm eval.csv stores d4rl_pi4 at 1M but leaves d4rl_score empty on almost every cell. First-actor recovery from eval.csv is therefore impossible; re-evaluation of both policies from params_1000000.pkl would be required. Do not fill those blanks from P0 or s23 tables."
+}

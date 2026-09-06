@@ -2,7 +2,7 @@
 """Cross-method continuation MC: MART hops vs two-actor deployment.
 
 Same Walker-medium T=20 seed 0 start states (eval seeds 1000–1009). For MART
-μ2 and μ3, fill the 2×2 of first action × continuation:
+μ2, μ3, and optionally μ4, fill the 2×2 of first action × continuation:
 
   first: MART hop actor vs two-actor deployment
   rest:  MART Polyak μ1 vs two-actor Polyak target
@@ -281,6 +281,9 @@ def write_report(
     contrasts: list[dict[str, Any]],
     meta: Mapping[str, Any],
 ) -> None:
+    def fmt_ratio(value: float) -> str:
+        return f"{value:.2f}" if np.isfinite(value) else "n/a"
+
     def fmt_proto(key: str) -> str:
         s = protocol_stats[key]
         return (
@@ -304,6 +307,7 @@ def write_report(
         f"two-actor `{meta['two_actor_checkpoint']}`",
         f"sha256 `{meta['two_actor_sha256']}`; discount `{meta['discount']}`.",
         "",
+        *([meta["provenance_note"], ""] if meta.get("provenance_note") else []),
         "## Full rollouts",
         "",
         "| Protocol | Score | Mean L | Timeouts | Q(s0,a0) | Disc. G |",
@@ -370,15 +374,16 @@ def write_report(
             if not row["same_critic"]
             else (
                 f"{row['q_s0_mean']:.2f} (se {row['q_s0_se']:.2f}, "
-                f"{row['q_s0_mean_over_se']:.2f}; {row['q_s0_n_pos']}+/{row['q_s0_n_neg']}-)"
+                f"{fmt_ratio(row['q_s0_mean_over_se'])}; {row['q_s0_n_pos']}+/{row['q_s0_n_neg']}-)"
             )
         )
+        contrast_label = row["contrast"].replace("|", r"\|")
         lines.append(
-            f"| {row['hop_index']} | {row['contrast']} | "
+            f"| {row['hop_index']} | {contrast_label} | "
             f"{row['score_mean']:.2f} (se {row['score_se']:.2f}, "
-            f"{row['score_mean_over_se']:.2f}; {row['score_n_pos']}+/{row['score_n_neg']}-) | "
+            f"{fmt_ratio(row['score_mean_over_se'])}; {row['score_n_pos']}+/{row['score_n_neg']}-) | "
             f"{row['discounted_mean']:.2f} (se {row['discounted_se']:.2f}, "
-            f"{row['discounted_mean_over_se']:.2f}; {row['discounted_n_pos']}+/{row['discounted_n_neg']}-) | "
+            f"{fmt_ratio(row['discounted_mean_over_se'])}; {row['discounted_n_pos']}+/{row['discounted_n_neg']}-) | "
             f"{q} |"
         )
     hop3_qg = next(
@@ -392,24 +397,52 @@ def write_report(
         "",
         "Same discount 0.99. MART μ3 vs μ2, both followed by MART Polyak μ1.",
         f"ΔQ(s0) mean {hop3_qg['q_s0_mean']:.3f} (se {hop3_qg['q_s0_se']:.3f}, "
-        f"mean/se {hop3_qg['q_s0_mean_over_se']:.2f}, {hop3_qg['q_s0_n_pos']}/10 positive).",
+        f"mean/se {fmt_ratio(hop3_qg['q_s0_mean_over_se'])}, {hop3_qg['q_s0_n_pos']}/10 positive).",
         f"Discounted ΔG mean {hop3_qg['discounted_mean']:.3f} (se {hop3_qg['discounted_se']:.3f}, "
-        f"mean/se {hop3_qg['discounted_mean_over_se']:.2f}, "
+        f"mean/se {fmt_ratio(hop3_qg['discounted_mean_over_se'])}, "
         f"{hop3_qg['discounted_n_pos']}+/{hop3_qg['discounted_n_neg']}-).",
-        "A consistent Q rise with a smaller, noisier G drop is start-state",
-        "misranking under this continuation. It is not a claim about later states.",
+    ]
+    if hop3_qg["q_s0_mean"] > 0 and hop3_qg["discounted_mean"] < 0:
+        lines += [
+            "The sample means have opposite signs: estimated Q rises while",
+            "discounted hybrid return falls. The paired spread above describes",
+            "evaluation variation; this is not a claim about later states.",
+        ]
+    else:
+        lines += [
+            "This contrast does not show a positive mean Q change paired with",
+            "a negative mean discounted return change. It does not establish",
+            "start-state misranking under this continuation.",
+        ]
+    if all(
+        r["score_mean"] == 0 and r["score_se"] == 0
+        and r["discounted_mean"] == 0 and r["discounted_se"] == 0
+        for r in contrasts
+    ):
+        lines += [
+            "",
+            "All reported paired score and discounted-return contrasts are zero.",
+            "An undefined mean/SE ratio is displayed as n/a, not evidence of precision.",
+        ]
+    if all(s["n_timeout"] == 0 for s in protocol_stats.values()):
+        lines += [
+            "All reported protocols have zero timeouts, including the hybrids.",
+            "The initial-action swaps therefore do not demonstrate a rescue",
+            "from early termination in this execution.",
+        ]
+    lines += [
         "",
         "## Readout constraints",
         "",
         "- First-action findings apply to these start states only.",
         "- Hybrid minus full is not a share of return explained by continuation.",
         "- Extra hop-actor optimization is not measured here.",
-        f"- Shard `{meta.get('shard', 'unspecified')}`. Do not pool with a different MART/two-actor tree.",
+        f"- Execution `{meta.get('shard', 'unspecified')}`; pair episodes by checkpoint hashes and reset seeds.",
+        "- A same-code, same-training-seed rerun can produce a different realized policy on another machine.",
         "",
-        "Start-state action swaps under a conservative target continuation did",
-        "not reproduce the early terminations seen when rolling out the later",
-        "actor for the whole episode. First-action value at s0 does not explain",
-        "deployment return of the later actor.",
+        "The tables compare initial-action interventions and complete policy",
+        "rollouts. They do not locate the later states or action differences",
+        "responsible for a deployment gap, or establish policy equivalence.",
         "",
     ]
     (out_dir / "ANALYSIS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -422,6 +455,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--two-actor-checkpoint", type=Path, default=None)
     parser.add_argument("--out-dir", type=Path, default=OUT_DEFAULT)
     parser.add_argument("--shard", default="ext_csh_tail90")
+    parser.add_argument(
+        "--provenance-note", default=None,
+        help="Execution or legacy-name clarification copied to STATUS.json and ANALYSIS.md.",
+    )
     return parser.parse_args()
 
 
@@ -767,6 +804,8 @@ def main() -> int:
         "q_convention": "continuation critic at s0",
         "jax_backend": jax.default_backend(),
     }
+    if args.provenance_note:
+        meta["provenance_note"] = args.provenance_note
     write_json(args.out_dir / "STATUS.json", meta)
     write_report(args.out_dir, protocol_stats, contrasts, meta)
     print(

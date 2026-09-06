@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# CPU Walker T=20 seed 0: local mpi4_norm MART4 vs local same-seed mcep.
+# CPU Walker T=20 seed 0: same-code, same-seed MART4 / two-actor-I4 rerun.
+# mpi4_norm and mcep_p3 below are historical directory aliases, not new methods.
 # Does not overwrite the published P0 tail90 dump. Does not use GPU.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -28,7 +29,8 @@ nohup env CUDA_VISIBLE_DEVICES="" JAX_PLATFORMS=cpu \
     --mart-checkpoint "$MART" \
     --two-actor-checkpoint "$TWO" \
     --out-dir "$OUT" \
-    --shard local_mpi4_norm_vs_mcep3_same_seed \
+    --shard local_same_code_same_seed \
+    --provenance-note 'The project author confirms that these are same-code, same-training-seed MART4 and two-actor-I4 runs from another machine. mpi4_norm and mcep_p3 are historical directory aliases; the original checkpoint paths and hashes identify this execution.' \
   </dev/null >"$log" 2>&1 &
 pid=$!
 disown "$pid" 2>/dev/null || true

@@ -24,8 +24,11 @@
   "pair_key": "walker2d-medium-v2|T=20|seed=0",
   "q_convention": "continuation critic at s0",
   "seed": 0,
-  "shard": "local_mpi4_norm_vs_mcep3_same_seed",
+  "shard": "local_same_code_same_seed",
   "two_actor_checkpoint": "/home/ext_csv/MPI_sweep/results/mcep_p3/walker2d-medium-v2_tau20_mcep3_seed0/params_1000000.pkl",
-  "two_actor_run_key": "mcep_p3|walker2d-medium-v2|T=20|seed=0",
-  "two_actor_sha256": "15a9b3e6298b836170f2bce03d00c8be76c21fcfeff07972d2d389e1562ee503"
+  "two_actor_run_key": "two_actor_p4|walker2d-medium-v2|T=20|seed=0",
+  "two_actor_sha256": "15a9b3e6298b836170f2bce03d00c8be76c21fcfeff07972d2d389e1562ee503",
+  "legacy_shard": "local_mpi4_norm_vs_mcep3_same_seed",
+  "legacy_two_actor_run_key": "mcep_p3|walker2d-medium-v2|T=20|seed=0",
+  "provenance_note": "The project author confirms that these are same-code, same-training-seed MART4 and two-actor-I4 runs from another machine. mpi4_norm and mcep_p3 are historical directory aliases; the original checkpoint paths and hashes identify this execution."
 }

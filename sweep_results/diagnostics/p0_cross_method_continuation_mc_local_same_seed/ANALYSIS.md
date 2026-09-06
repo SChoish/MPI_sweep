@@ -12,6 +12,8 @@ sha256 `6afcce90cb8bbcf963876013da788714096f4e5c896d36e68fee793e3c19ff48`
 two-actor `/home/ext_csv/MPI_sweep/results/mcep_p3/walker2d-medium-v2_tau20_mcep3_seed0/params_1000000.pkl`
 sha256 `15a9b3e6298b836170f2bce03d00c8be76c21fcfeff07972d2d389e1562ee503`; discount `0.99`.
 
+The project author confirms that these are same-code, same-training-seed MART4 and two-actor-I4 runs from another machine. mpi4_norm and mcep_p3 are historical directory aliases; the original checkpoint paths and hashes identify this execution.
+
 ## Full rollouts
 
 | Protocol | Score | Mean L | Timeouts | Q(s0,a0) | Disc. G |
@@ -53,39 +55,46 @@ critic. Continuation swaps change the critic, so those rows leave ΔQ blank.
 
 | Hop | Contrast | ΔJ mean (se, mean/se) | ΔG disc. mean (se, mean/se) | ΔQ(s0) |
 | ---: | --- | --- | --- | --- |
-| 3 | MART μ3−μ2 | MART Polyak μ1 | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) |
-| 3 | MART μ3−μ2 | two-actor Polyak target | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) |
-| 2 | MART μ2 − two-actor deploy | MART Polyak μ1 | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) |
-| 2 | MART μ2 − two-actor deploy | two-actor Polyak target | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) |
-| 3 | MART μ3 − two-actor deploy | MART Polyak μ1 | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) |
-| 3 | MART μ3 − two-actor deploy | two-actor Polyak target | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) |
-| 4 | MART μ4−μ3 | MART Polyak μ1 | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) |
-| 4 | MART μ4 − two-actor deploy | MART Polyak μ1 | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) |
-| 4 | MART μ4 − two-actor deploy | two-actor Polyak target | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) |
-| 4 | full MART μ4 − full two-actor deploy | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | n/a |
-| 2 | MART Polyak μ1 − two-actor Polyak | first MART μ2 | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | n/a |
-| 3 | MART Polyak μ1 − two-actor Polyak | first MART μ3 | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | n/a |
-| 0 | MART Polyak μ1 − two-actor Polyak | first two-actor deploy | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | n/a |
-| 2 | full MART μ2 − full two-actor deploy | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | n/a |
-| 3 | full MART μ3 − full two-actor deploy | 0.00 (se 0.00, nan; 0+/0-) | 0.00 (se 0.00, nan; 0+/0-) | n/a |
+| 3 | MART μ3−μ2 \| MART Polyak μ1 | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) |
+| 3 | MART μ3−μ2 \| two-actor Polyak target | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) |
+| 2 | MART μ2 − two-actor deploy \| MART Polyak μ1 | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) |
+| 2 | MART μ2 − two-actor deploy \| two-actor Polyak target | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) |
+| 3 | MART μ3 − two-actor deploy \| MART Polyak μ1 | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) |
+| 3 | MART μ3 − two-actor deploy \| two-actor Polyak target | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) |
+| 4 | MART μ4−μ3 \| MART Polyak μ1 | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) |
+| 4 | MART μ4 − two-actor deploy \| MART Polyak μ1 | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) |
+| 4 | MART μ4 − two-actor deploy \| two-actor Polyak target | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) |
+| 4 | full MART μ4 − full two-actor deploy | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | n/a |
+| 2 | MART Polyak μ1 − two-actor Polyak \| first MART μ2 | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | n/a |
+| 3 | MART Polyak μ1 − two-actor Polyak \| first MART μ3 | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | n/a |
+| 0 | MART Polyak μ1 − two-actor Polyak \| first two-actor deploy | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | n/a |
+| 2 | full MART μ2 − full two-actor deploy | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | n/a |
+| 3 | full MART μ3 − full two-actor deploy | 0.00 (se 0.00, n/a; 0+/0-) | 0.00 (se 0.00, n/a; 0+/0-) | n/a |
 
 ## Hop 3 start-state ΔQ vs discounted ΔG
 
 Same discount 0.99. MART μ3 vs μ2, both followed by MART Polyak μ1.
-ΔQ(s0) mean 0.000 (se 0.000, mean/se nan, 0/10 positive).
-Discounted ΔG mean 0.000 (se 0.000, mean/se nan, 0+/0-).
-A consistent Q rise with a smaller, noisier G drop is start-state
-misranking under this continuation. It is not a claim about later states.
+ΔQ(s0) mean 0.000 (se 0.000, mean/se n/a, 0/10 positive).
+Discounted ΔG mean 0.000 (se 0.000, mean/se n/a, 0+/0-).
+This contrast does not show a positive mean Q change paired with
+a negative mean discounted return change. It does not establish
+start-state misranking under this continuation.
+
+All reported paired score and discounted-return contrasts are zero.
+An undefined mean/SE ratio is displayed as n/a, not evidence of precision.
+All reported protocols have zero timeouts, including the hybrids.
+The initial-action swaps therefore do not demonstrate a rescue
+from early termination in this execution.
 
 ## Readout constraints
 
 - First-action findings apply to these start states only.
 - Hybrid minus full is not a share of return explained by continuation.
 - Extra hop-actor optimization is not measured here.
-- Shard `local_mpi4_norm_vs_mcep3_same_seed`. Do not pool with a different MART/two-actor tree.
+- Execution `local_same_code_same_seed`; pair episodes by checkpoint hashes and reset seeds.
+- A same-code, same-training-seed rerun can produce a different realized policy on another machine.
 
-Start-state action swaps under a conservative target continuation did
-not reproduce the early terminations seen when rolling out the later
-actor for the whole episode. First-action value at s0 does not explain
-deployment return of the later actor.
+The tables compare initial-action interventions and complete policy
+rollouts. They do not locate the later states or action differences
+responsible for a deployment gap, or establish policy equivalence.
 

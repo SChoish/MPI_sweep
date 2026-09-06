@@ -2,8 +2,9 @@
 """CPU 2×2: first action × Polyak continuation on Hopper T=10 P0 checkpoints.
 
 Understood as: on existing first90 1M snapshots, swap only the first action
-then follow MART Polyak μ1 or two-actor Polyak target. Fills the missing
-two-actor cells of the hop-2/3 continuation table. No training. No GPU.
+then follow MART Polyak μ1 or two-actor Polyak target. Includes MART μ4 so
+the 2×2 can speak to the final MART4 vs two-actor comparison. No training.
+No GPU.
 """
 from __future__ import annotations
 
@@ -453,9 +454,9 @@ def write_report(rows: list[dict[str, str]], pairs: list[dict[str, Any]], extra:
         "",
         "Understood as: same Gymnasium reset seeds as the hop-actor audit",
         f"({EVAL_SEED_BASE}–{EVAL_SEED_BASE + extra['episodes'] - 1}), first action from",
-        "MART μ2/μ3 or two-actor deployment, then continuation from MART Polyak μ1",
-        "or two-actor Polyak target. CPU only. First90 checkpoints on ext_csv.",
-        "Walker / HalfCheetah-expert tail90 checkpoints are not on this host.",
+        "MART μ2/μ3/μ4 or two-actor deployment, then continuation from MART Polyak μ1",
+        "or two-actor Polyak target. CPU, deterministic Polyak (no TD3 target noise).",
+        "First90 checkpoints on ext_csv. Walker tail90 is not on this host.",
         "",
         "## Checkpoints",
         "",
@@ -467,7 +468,9 @@ def write_report(rows: list[dict[str, str]], pairs: list[dict[str, Any]], extra:
         "- Continuation is the Polyak target actor, not the online first actor.",
         "- Each policy uses its own checkpoint mean/std.",
         f"- Discount for ΔG is {DISCOUNT}, matching `train_td3bc --discount`.",
-        "- Two-actor first-action rows are shared across hop-2 and hop-3 tables.",
+        "- Two-actor first-action rows are shared across hop-2/3/4 tables.",
+        "- Adjacent-hop ranking is μ_k−μ_{k-1} under the same MART Polyak continuation.",
+        "- Timeout counts are per 2×2 cell; they are not shared across the table.",
         "- Full-episode μk / deployment numbers come from `p0_hop_actor_audit`.",
         "",
     ]
@@ -484,12 +487,39 @@ def write_report(rows: list[dict[str, str]], pairs: list[dict[str, Any]], extra:
                 (FIRST_MART_HOP, f"MART μ{hop}"),
                 (FIRST_TWO_DEPLOY, "two-actor deploy"),
             ):
-                vals = []
+                cells = []
                 for cont in (CONT_MART_POLYAK, CONT_TWO_POLYAK):
                     sub = select_rows(rows, task, None, table_row_selector(hop, first, cont))
-                    vals.append(mean_score(sub))
+                    n_to = sum(int(float(r["episode_length"]) >= HORIZON) for r in sub)
+                    cells.append(f"{fmt(mean_score(sub))} ({n_to}/{len(sub)} to)" if sub else "NA")
+                lines.append(f"| {first_label} | {cells[0]} | {cells[1]} |")
+            lines.append("")
+            for cont, cont_label in (
+                (CONT_MART_POLYAK, "MART Polyak"),
+                (CONT_TWO_POLYAK, "two-actor Polyak"),
+            ):
+                a = select_rows(rows, task, None, table_row_selector(hop, FIRST_MART_HOP, cont))
+                b = select_rows(rows, task, None, table_row_selector(hop, FIRST_TWO_DEPLOY, cont))
+                if not a or not b:
+                    continue
+                ka = {(int(r["training_seed"]), int(r["evaluation_seed"])): r for r in a}
+                kb = {(int(r["training_seed"]), int(r["evaluation_seed"])): r for r in b}
+                keys = sorted(set(ka) & set(kb))
+                if not keys:
+                    continue
+                dj = paired_delta(
+                    [float(ka[k]["normalized_score"]) for k in keys],
+                    [float(kb[k]["normalized_score"]) for k in keys],
+                )
+                dg = paired_delta(
+                    [float(ka[k]["discounted_return"]) for k in keys],
+                    [float(kb[k]["discounted_return"]) for k in keys],
+                )
                 lines.append(
-                    f"| {first_label} | {fmt(vals[0])} | {fmt(vals[1])} |"
+                    f"- First action μ{hop} minus two-actor deploy, {cont_label} continuation: "
+                    f"ΔJ {dj['mean']:+.2f} (std {dj['std']:.2f}); "
+                    f"discounted ΔG {dg['mean']:+.2f} (std {dg['std']:.2f}). "
+                    "ΔJ is normalized score; ΔG is discounted raw return."
                 )
             lines.append("")
             # first-action effect holding MART continuation
@@ -542,6 +572,42 @@ def write_report(rows: list[dict[str, str]], pairs: list[dict[str, Any]], extra:
                     f"lengths {fmt(lengths[0], 0)}/{fmt(lengths[1], 0)}."
                 )
                 lines.append("")
+            if hop >= 3:
+                prev_rows = select_rows(
+                    rows, task, None, table_row_selector(hop - 1, FIRST_MART_HOP, CONT_MART_POLYAK)
+                )
+                curr_rows = select_rows(
+                    rows, task, None, table_row_selector(hop, FIRST_MART_HOP, CONT_MART_POLYAK)
+                )
+                if prev_rows and curr_rows:
+                    prev_map = {
+                        (int(r["training_seed"]), int(r["evaluation_seed"])): r for r in prev_rows
+                    }
+                    curr_map = {
+                        (int(r["training_seed"]), int(r["evaluation_seed"])): r for r in curr_rows
+                    }
+                    keys = sorted(set(prev_map) & set(curr_map))
+                    if keys:
+                        dq = [
+                            float(curr_map[k]["q_mart_first"]) - float(prev_map[k]["q_mart_first"])
+                            for k in keys
+                        ]
+                        dg = [
+                            float(curr_map[k]["discounted_return"])
+                            - float(prev_map[k]["discounted_return"])
+                            for k in keys
+                        ]
+                        rank = ranking_agreement(dq, dg)
+                        lines += [
+                            f"Adjacent μ{hop}−μ{hop-1} under MART Polyak continuation (γ={DISCOUNT}):",
+                            f"- mean ΔQ(s0) {rank['mean_delta_q']:+.3f}.",
+                            f"- mean discounted ΔG {rank['mean_delta_g']:+.3f} "
+                            f"(std {rank['std_delta_g']:.3f}).",
+                            f"- sign agree {int(rank['n_sign_agree'])}/{int(rank['n'])}; "
+                            f"Q↑ G↓ {int(rank['n_q_pos_g_neg'])}; "
+                            f"Q↓ G↑ {int(rank['n_q_neg_g_pos'])}.",
+                            "",
+                        ]
             if hop == 3:
                 treat_g = select_rows(rows, task, None, table_row_selector(3, FIRST_MART_HOP, CONT_MART_POLYAK))
                 base_g = select_rows(rows, task, None, baseline_selector(CONT_MART_POLYAK))
@@ -563,13 +629,10 @@ def write_report(rows: list[dict[str, str]], pairs: list[dict[str, Any]], extra:
                         ]
                         rank = ranking_agreement(dq, dg)
                         lines += [
-                            "Hop-3 ranking on the same discount 0.99:",
+                            "Same hop vs Polyak μ1 first action (not the adjacent-hop contrast):",
                             f"- mean ΔQ(s0, μ3−Polyak μ1) {rank['mean_delta_q']:+.3f}.",
                             f"- mean discounted ΔG {rank['mean_delta_g']:+.3f} "
                             f"(std {rank['std_delta_g']:.3f}).",
-                            f"- sign agree {int(rank['n_sign_agree'])}/{int(rank['n'])}; "
-                            f"Q↑ G↓ {int(rank['n_q_pos_g_neg'])}; "
-                            f"Q↓ G↑ {int(rank['n_q_neg_g_pos'])}.",
                             "",
                         ]
         # continuation contrast holding first=μ2
@@ -582,16 +645,50 @@ def write_report(rows: list[dict[str, str]], pairs: list[dict[str, Any]], extra:
     lines += [
         "## Read",
         "",
-        "A small first-action gap under MART Polyak continuation, together with a",
-        "much larger full-episode μk gap, supports a continuation difference on the",
-        "evaluated initial states. The 2×2 separates that from a two-actor first-action",
-        "difference and from a two-actor continuation difference. It does not decompose",
-        "the full-episode drop into a percentage, because later states diverge.",
+        "On Hopper score, a small first-action gap with a larger full-episode μk gap",
+        "supports a continuation difference on the evaluated initial states. That is not",
+        "a claim that first actions are equivalent on every metric, nor that this",
+        "isolates the training Bellman target: continuation is deterministic Polyak,",
+        "without TD3 target noise. Timeout counts and ΔJ std are per cell; a small",
+        "mean ΔJ is not policy equality. MART μ4 is in the same 2×2 so the grid can",
+        "be read against the deployed MART4 actor, not only intermediate hops.",
         "",
         "Walker-medium is not in this dump: those 1M checkpoints are not on ext_csv.",
         "",
     ]
     (OUT / "ANALYSIS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _append_contrast(
+    out_rows: list[dict[str, Any]],
+    *,
+    task: str,
+    hop: int,
+    contrast: str,
+    held_fixed: str,
+    a: list[dict[str, str]],
+    b: list[dict[str, str]],
+) -> None:
+    ka = {(int(r["training_seed"]), int(r["evaluation_seed"])): r for r in a}
+    kb = {(int(r["training_seed"]), int(r["evaluation_seed"])): r for r in b}
+    keys = sorted(set(ka) & set(kb))
+    if not keys:
+        return
+    for metric in ("normalized_score", "discounted_return"):
+        delta = paired_delta(
+            [float(ka[k][metric]) for k in keys],
+            [float(kb[k][metric]) for k in keys],
+        )
+        out_rows.append(
+            {
+                "task": task,
+                "hop": hop,
+                "contrast": contrast,
+                "held_fixed": held_fixed,
+                "metric": metric,
+                **{k: delta[k] for k in delta},
+            }
+        )
 
 
 def write_contrasts(rows: list[dict[str, str]]) -> None:
@@ -602,38 +699,28 @@ def write_contrasts(rows: list[dict[str, str]]) -> None:
                 a = select_rows(rows, task, None, table_row_selector(hop, FIRST_MART_HOP, cont))
                 b = select_rows(rows, task, None, table_row_selector(hop, FIRST_TWO_DEPLOY, cont))
                 if a and b:
-                    ka = {(int(r["training_seed"]), int(r["evaluation_seed"])): float(r["normalized_score"]) for r in a}
-                    kb = {(int(r["training_seed"]), int(r["evaluation_seed"])): float(r["normalized_score"]) for r in b}
-                    keys = sorted(set(ka) & set(kb))
-                    if keys:
-                        delta = paired_delta([ka[k] for k in keys], [kb[k] for k in keys])
-                        out_rows.append(
-                            {
-                                "task": task,
-                                "hop": hop,
-                                "contrast": "first_mart_hop_minus_two_deploy",
-                                "held_fixed": cont,
-                                **{k: delta[k] for k in delta},
-                            }
-                        )
+                    _append_contrast(
+                        out_rows,
+                        task=task,
+                        hop=hop,
+                        contrast="first_mart_hop_minus_two_deploy",
+                        held_fixed=cont,
+                        a=a,
+                        b=b,
+                    )
             for first in (FIRST_MART_HOP, FIRST_TWO_DEPLOY):
                 a = select_rows(rows, task, None, table_row_selector(hop, first, CONT_MART_POLYAK))
                 b = select_rows(rows, task, None, table_row_selector(hop, first, CONT_TWO_POLYAK))
                 if a and b:
-                    ka = {(int(r["training_seed"]), int(r["evaluation_seed"])): float(r["normalized_score"]) for r in a}
-                    kb = {(int(r["training_seed"]), int(r["evaluation_seed"])): float(r["normalized_score"]) for r in b}
-                    keys = sorted(set(ka) & set(kb))
-                    if keys:
-                        delta = paired_delta([ka[k] for k in keys], [kb[k] for k in keys])
-                        out_rows.append(
-                            {
-                                "task": task,
-                                "hop": hop,
-                                "contrast": "cont_mart_polyak_minus_two_polyak",
-                                "held_fixed": first if first != FIRST_MART_HOP else f"mart_mu{hop}",
-                                **{k: delta[k] for k in delta},
-                            }
-                        )
+                    _append_contrast(
+                        out_rows,
+                        task=task,
+                        hop=hop,
+                        contrast="cont_mart_polyak_minus_two_polyak",
+                        held_fixed=first if first != FIRST_MART_HOP else f"mart_mu{hop}",
+                        a=a,
+                        b=b,
+                    )
     path = OUT / "contrasts.csv"
     if not out_rows:
         return
@@ -659,8 +746,9 @@ def plot_tables(rows: list[dict[str, str]]) -> str | None:
     colors = ["#2c7fb8", "#41b6c4", "#fdae61", "#d73027"]
     for ax, task in zip(axes, HOPPER_T10_TASKS):
         x = np.arange(len(labels))
-        width = 0.35
-        for offset, hop, hatch in ((-width / 2, 2, None), (width / 2, 3, "//")):
+        width = 0.24
+        styles = ((2, None, -width), (3, "//", 0.0), (4, "..", width))
+        for hop, hatch, offset in styles:
             vals = []
             for first, cont in hybrid_cells():
                 sub = select_rows(rows, task, None, table_row_selector(hop, first, cont))
@@ -709,7 +797,7 @@ def main() -> int:
             {
                 "understood_as": (
                     "Fill the 2x2 first-action x Polyak-continuation table for "
-                    "MART mu2/mu3 vs two-actor deploy on Hopper T=10 first90 checkpoints."
+                    "MART mu2/mu3/mu4 vs two-actor deploy on Hopper T=10 first90 checkpoints."
                 ),
                 "backend": jax.default_backend(),
                 "n_pairs": len(pairs),
@@ -772,7 +860,8 @@ def main() -> int:
                 "backend": jax.default_backend(),
                 "discount": DISCOUNT,
                 "eval_seed_base": EVAL_SEED_BASE,
-                "continuation": "Polyak target_actor_params, not online actor 1",
+                "continuation": "deterministic Polyak target_actor_params, not TD3 target noise",
+                "hops": list(HOPS),
                 "figure": figure,
             },
             indent=2,

@@ -26,7 +26,10 @@ from typing import Any, Callable, Mapping
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["JAX_PLATFORMS"] = "cpu"
 os.environ["JAX_PLATFORM_NAME"] = "cpu"
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
 os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+os.environ.setdefault("EIGEN_NUM_THREADS", "1")
 os.environ.setdefault(
     "XLA_FLAGS",
     "--xla_cpu_multi_thread_eigen=false intra_op_parallelism_threads=1",
@@ -133,7 +136,7 @@ def _load_bundle(
     max_action: float,
 ) -> Bundle:
     digest = sha256_file(checkpoint)
-    if digest != expected_sha:
+    if expected_sha and digest != expected_sha:
         raise ValueError(f"hash mismatch for {checkpoint}: got {digest}, expected {expected_sha}")
     actor = Actor(action_dim=infer_action_dim(actor_params), max_action=max_action)
     critic = TwinCritic()
@@ -289,7 +292,7 @@ def write_report(
     lines = [
         "# Cross-method continuation MC (Walker-medium T=20 seed 0)",
         "",
-        "Tail90 only. Same eval seeds `1000–1009`. First action and continuation",
+        "Same eval seeds `1000–1009`. First action and continuation",
         "may come from different checkpoints; each actor uses its own mean/std.",
         "Q(s0,a0) is the continuation critic. Start-state only: later visited",
         "states are not restored here. Hybrid vs full rollout is not a percent",
@@ -307,6 +310,11 @@ def write_report(
         "| --- | ---: | ---: | ---: | ---: | ---: |",
         f"| MART μ2 | {fmt_proto('full_mart_mu2')} |",
         f"| MART μ3 | {fmt_proto('full_mart_mu3')} |",
+        *(
+            [f"| MART μ4 | {fmt_proto('full_mart_mu4')} |"]
+            if "full_mart_mu4" in protocol_stats
+            else []
+        ),
         f"| two-actor deployment | {fmt_proto('full_ta_deploy')} |",
         f"| MART Polyak μ1 | {fmt_proto('full_mart_polyak')} |",
         f"| two-actor Polyak target | {fmt_proto('full_ta_polyak')} |",
@@ -314,10 +322,13 @@ def write_report(
         "## 2×2 hybrid (first action × continuation)",
         "",
     ]
-    for hop, mart_first, title in (
+    hop_titles = [
         (2, "first_mart_mu2", "Hop 2: MART μ2 vs two-actor deployment"),
         (3, "first_mart_mu3", "Hop 3: MART μ3 vs two-actor deployment"),
-    ):
+    ]
+    if "first_mart_mu4_rest_mart_polyak" in protocol_stats:
+        hop_titles.append((4, "first_mart_mu4", "Hop 4: MART μ4 vs two-actor deployment"))
+    for hop, mart_first, title in hop_titles:
         lines += [
             f"### {title}",
             "",
@@ -393,7 +404,7 @@ def write_report(
         "- First-action findings apply to these start states only.",
         "- Hybrid minus full is not a share of return explained by continuation.",
         "- Extra hop-actor optimization is not measured here.",
-        "- This cell is tail90 Walker; do not pool with first90 Hopper scores.",
+        f"- Shard `{meta.get('shard', 'unspecified')}`. Do not pool with a different MART/two-actor tree.",
         "",
         "Start-state action swaps under a conservative target continuation did",
         "not reproduce the early terminations seen when rolling out the later",
@@ -407,7 +418,10 @@ def write_report(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoints-json", type=Path, default=DEFAULT_TAIL_CHECKPOINTS)
+    parser.add_argument("--mart-checkpoint", type=Path, default=None)
+    parser.add_argument("--two-actor-checkpoint", type=Path, default=None)
     parser.add_argument("--out-dir", type=Path, default=OUT_DEFAULT)
+    parser.add_argument("--shard", default="ext_csh_tail90")
     return parser.parse_args()
 
 
@@ -415,11 +429,21 @@ def main() -> int:
     args = parse_args()
     if jax.default_backend() != "cpu":
         raise RuntimeError(f"refusing non-CPU backend {jax.default_backend()!r}")
-    recorded = load_json(args.checkpoints_json)
-    mart_entry = recorded[MART_KEY]
-    ta_entry = recorded[TA_KEY]
-    mart_ckpt = Path(mart_entry["checkpoint"])
-    ta_ckpt = Path(ta_entry["checkpoint"])
+    if args.mart_checkpoint is not None or args.two_actor_checkpoint is not None:
+        if args.mart_checkpoint is None or args.two_actor_checkpoint is None:
+            raise ValueError("provide both --mart-checkpoint and --two-actor-checkpoint")
+        mart_ckpt = args.mart_checkpoint
+        ta_ckpt = args.two_actor_checkpoint
+        mart_sha = ""
+        ta_sha = ""
+    else:
+        recorded = load_json(args.checkpoints_json)
+        mart_entry = recorded[MART_KEY]
+        ta_entry = recorded[TA_KEY]
+        mart_ckpt = Path(mart_entry["checkpoint"])
+        ta_ckpt = Path(ta_entry["checkpoint"])
+        mart_sha = mart_entry["file_sha256"]
+        ta_sha = ta_entry["file_sha256"]
     mart_payload = load_payload(mart_ckpt)
     ta_payload = load_payload(ta_ckpt)
     for payload, label in ((mart_payload, "MART"), (ta_payload, "two-actor")):
@@ -431,6 +455,7 @@ def main() -> int:
         raise ValueError("MART checkpoint needs μ1–μ3")
     if len(ta_actors) < 2:
         raise ValueError("two-actor checkpoint needs target and deployment")
+    include_mu4 = len(mart_actors) >= 4
 
     mart_mean = np.asarray(mart_payload["mean"], dtype=np.float32)
     mart_std = np.asarray(mart_payload["std"], dtype=np.float32)
@@ -448,7 +473,7 @@ def main() -> int:
         "mart_mu2": _load_bundle(
             name="mart_mu2",
             checkpoint=mart_ckpt,
-            expected_sha=mart_entry["file_sha256"],
+            expected_sha=mart_sha,
             actor_params=mart_actors[1],
             critic_params=mart_payload["critic_params"],
             mean=mart_mean,
@@ -458,7 +483,7 @@ def main() -> int:
         "mart_mu3": _load_bundle(
             name="mart_mu3",
             checkpoint=mart_ckpt,
-            expected_sha=mart_entry["file_sha256"],
+            expected_sha=mart_sha,
             actor_params=mart_actors[2],
             critic_params=mart_payload["critic_params"],
             mean=mart_mean,
@@ -468,7 +493,7 @@ def main() -> int:
         "mart_polyak": _load_bundle(
             name="mart_polyak",
             checkpoint=mart_ckpt,
-            expected_sha=mart_entry["file_sha256"],
+            expected_sha=mart_sha,
             actor_params=mart_payload["target_actor_params"],
             critic_params=mart_payload["critic_params"],
             mean=mart_mean,
@@ -478,7 +503,7 @@ def main() -> int:
         "ta_deploy": _load_bundle(
             name="ta_deploy",
             checkpoint=ta_ckpt,
-            expected_sha=ta_entry["file_sha256"],
+            expected_sha=ta_sha,
             actor_params=ta_actors[1],
             critic_params=ta_payload["critic_params"],
             mean=ta_mean,
@@ -488,7 +513,7 @@ def main() -> int:
         "ta_polyak": _load_bundle(
             name="ta_polyak",
             checkpoint=ta_ckpt,
-            expected_sha=ta_entry["file_sha256"],
+            expected_sha=ta_sha,
             actor_params=ta_payload["target_actor_params"],
             critic_params=ta_payload["critic_params"],
             mean=ta_mean,
@@ -496,9 +521,20 @@ def main() -> int:
             max_action=ta_max,
         ),
     }
+    if include_mu4:
+        bundles["mart_mu4"] = _load_bundle(
+            name="mart_mu4",
+            checkpoint=mart_ckpt,
+            expected_sha=mart_sha,
+            actor_params=mart_actors[3],
+            critic_params=mart_payload["critic_params"],
+            mean=mart_mean,
+            std=mart_std,
+            max_action=mart_max,
+        )
     del common
 
-    protocols = (
+    protocols = [
         ("full_mart_mu2", "mart_mu2", "mart_mu2"),
         ("full_mart_mu3", "mart_mu3", "mart_mu3"),
         ("full_ta_deploy", "ta_deploy", "ta_deploy"),
@@ -510,7 +546,15 @@ def main() -> int:
         ("first_mart_mu3_rest_ta_polyak", "mart_mu3", "ta_polyak"),
         ("first_ta_deploy_rest_mart_polyak", "ta_deploy", "mart_polyak"),
         ("first_ta_deploy_rest_ta_polyak", "ta_deploy", "ta_polyak"),
-    )
+    ]
+    if include_mu4:
+        protocols.extend(
+            [
+                ("full_mart_mu4", "mart_mu4", "mart_mu4"),
+                ("first_mart_mu4_rest_mart_polyak", "mart_mu4", "mart_polyak"),
+                ("first_mart_mu4_rest_ta_polyak", "mart_mu4", "ta_polyak"),
+            ]
+        )
     env = gym.make(EVAL_ENV[_domain(ENV_NAME)])
     episode_rows: list[dict[str, Any]] = []
     grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -579,6 +623,42 @@ def main() -> int:
             ref_rows=grouped["first_ta_deploy_rest_ta_polyak"],
             same_critic=True,
         ),
+    ]
+    if include_mu4:
+        contrasts.extend(
+            [
+                _contrast_row(
+                    hop=4,
+                    label="MART μ4−μ3 | MART Polyak μ1",
+                    new_rows=grouped["first_mart_mu4_rest_mart_polyak"],
+                    ref_rows=grouped["first_mart_mu3_rest_mart_polyak"],
+                    same_critic=True,
+                ),
+                _contrast_row(
+                    hop=4,
+                    label="MART μ4 − two-actor deploy | MART Polyak μ1",
+                    new_rows=grouped["first_mart_mu4_rest_mart_polyak"],
+                    ref_rows=grouped["first_ta_deploy_rest_mart_polyak"],
+                    same_critic=True,
+                ),
+                _contrast_row(
+                    hop=4,
+                    label="MART μ4 − two-actor deploy | two-actor Polyak target",
+                    new_rows=grouped["first_mart_mu4_rest_ta_polyak"],
+                    ref_rows=grouped["first_ta_deploy_rest_ta_polyak"],
+                    same_critic=True,
+                ),
+                _contrast_row(
+                    hop=4,
+                    label="full MART μ4 − full two-actor deploy",
+                    new_rows=grouped["full_mart_mu4"],
+                    ref_rows=grouped["full_ta_deploy"],
+                    same_critic=False,
+                ),
+            ]
+        )
+    contrasts.extend(
+        [
         _contrast_row(
             hop=2,
             label="MART Polyak μ1 − two-actor Polyak | first MART μ2",
@@ -614,7 +694,8 @@ def main() -> int:
             ref_rows=grouped["full_ta_deploy"],
             same_critic=False,
         ),
-    ]
+        ]
+    )
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     write_csv(
@@ -681,7 +762,8 @@ def main() -> int:
         "eval_seeds": list(EVAL_EPISODE_SEEDS),
         "n_episodes": len(EVAL_EPISODE_SEEDS),
         "n_protocols": len(protocols),
-        "shard": "ext_csh_tail90",
+        "shard": args.shard,
+        "include_mu4": include_mu4,
         "q_convention": "continuation critic at s0",
         "jax_backend": jax.default_backend(),
     }

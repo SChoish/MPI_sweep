@@ -37,10 +37,10 @@ def test_four_hybrid_cells_and_shared_deploy_jobs():
     mart = [j for j in jobs if j["first_source"] == FIRST_MART_HOP]
     deploy = [j for j in jobs if j["first_source"] == FIRST_TWO_DEPLOY]
     baselines = [j for j in jobs if j["kind"] == "baseline"]
-    assert len(mart) == 4  # hops 2,3 × 2 continuations
+    assert len(mart) == 6  # hops 2,3,4 × 2 continuations
     assert len(deploy) == 2  # shared across hops
     assert len(baselines) == 2
-    assert {j["hop"] for j in mart} == {2, 3}
+    assert {j["hop"] for j in mart} == {2, 3, 4}
     assert all(j["hop"] is None for j in deploy)
 
 

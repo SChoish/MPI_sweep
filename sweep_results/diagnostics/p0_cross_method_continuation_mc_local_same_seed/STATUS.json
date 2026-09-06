@@ -1,0 +1,31 @@
+{
+  "T": 20,
+  "discount": 0.99,
+  "environment": "walker2d-medium-v2",
+  "eval_seeds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009
+  ],
+  "include_mu4": true,
+  "jax_backend": "cpu",
+  "mart_checkpoint": "/home/ext_csv/mpi_sweep_lab/results/mpi4_norm/walker2d-medium-v2_tau20_mpi4_seed0/params_1000000.pkl",
+  "mart_run_key": "bar_p4|walker2d-medium-v2|T=20|seed=0",
+  "mart_sha256": "6afcce90cb8bbcf963876013da788714096f4e5c896d36e68fee793e3c19ff48",
+  "n_episodes": 10,
+  "n_protocols": 14,
+  "pair_key": "walker2d-medium-v2|T=20|seed=0",
+  "q_convention": "continuation critic at s0",
+  "seed": 0,
+  "shard": "local_mpi4_norm_vs_mcep3_same_seed",
+  "two_actor_checkpoint": "/home/ext_csv/MPI_sweep/results/mcep_p3/walker2d-medium-v2_tau20_mcep3_seed0/params_1000000.pkl",
+  "two_actor_run_key": "mcep_p3|walker2d-medium-v2|T=20|seed=0",
+  "two_actor_sha256": "15a9b3e6298b836170f2bce03d00c8be76c21fcfeff07972d2d389e1562ee503"
+}

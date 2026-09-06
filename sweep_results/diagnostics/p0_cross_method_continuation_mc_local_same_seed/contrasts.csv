@@ -1,0 +1,16 @@
+environment,T,seed,pair_key,hop_index,contrast,same_critic,score_mean,score_se,score_mean_over_se,score_n_pos,score_n_neg,discounted_mean,discounted_se,discounted_mean_over_se,discounted_n_pos,discounted_n_neg,q_s0_mean,q_s0_se,q_s0_mean_over_se,q_s0_n_pos,q_s0_n_neg,length_mean
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,3,MART μ3−μ2 | MART Polyak μ1,True,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,3,MART μ3−μ2 | two-actor Polyak target,True,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,2,MART μ2 − two-actor deploy | MART Polyak μ1,True,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,2,MART μ2 − two-actor deploy | two-actor Polyak target,True,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,3,MART μ3 − two-actor deploy | MART Polyak μ1,True,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,3,MART μ3 − two-actor deploy | two-actor Polyak target,True,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,4,MART μ4−μ3 | MART Polyak μ1,True,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,4,MART μ4 − two-actor deploy | MART Polyak μ1,True,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,4,MART μ4 − two-actor deploy | two-actor Polyak target,True,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,4,full MART μ4 − full two-actor deploy,False,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,nan,nan,nan,,,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,2,MART Polyak μ1 − two-actor Polyak | first MART μ2,False,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,nan,nan,nan,,,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,3,MART Polyak μ1 − two-actor Polyak | first MART μ3,False,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,nan,nan,nan,,,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,0,MART Polyak μ1 − two-actor Polyak | first two-actor deploy,False,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,nan,nan,nan,,,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,2,full MART μ2 − full two-actor deploy,False,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,nan,nan,nan,,,0.0
+walker2d-medium-v2,20,0,walker2d-medium-v2|T=20|seed=0,3,full MART μ3 − full two-actor deploy,False,0.0,0.0,nan,0,0,0.0,0.0,nan,0,0,nan,nan,nan,,,0.0

@@ -16,7 +16,7 @@ HOPPER_T10_TASKS = (
     "hopper-medium-replay-v2",
     "hopper-expert-v2",
 )
-HOPS = (2, 3)
+HOPS = (2, 3, 4)
 FIRST_MART_HOP = "mart_hop"
 FIRST_TWO_DEPLOY = "two_actor_deploy"
 CONT_MART_POLYAK = "mart_polyak_mu1"

@@ -1,0 +1,13 @@
+{
+  "host": "ext_csv",
+  "method": "TD3+BC q_scale_norm",
+  "tau": 40,
+  "n_cells": 18,
+  "n_missing": 0,
+  "missing": [],
+  "all_1m_done": true,
+  "source_results": "/home/ext_csv/mpi_sweep_lab/results_qnorm",
+  "source_logs": "/home/ext_csv/mpi_sweep_lab/nohup_logs/tau_sweep_qnorm",
+  "note": "Checkpoints not published; eval.csv + train .out logs only.",
+  "published_at_kst": "2026-09-13T23:43:00.714633+00:00"
+}

@@ -5,7 +5,7 @@ set -euo pipefail
 
 ROOT=/home/ext_csh/MPI_sweep
 PY=/home/ext_csh/miniconda3/envs/capo_jax/bin/python
-KEY=/home/ext_csh/.ssh/deploy_key_ext_csh_20260829
+KEY=/home/ext_csh/.ssh/mpi_sweep_deploy
 export GIT_SSH_COMMAND="ssh -i ${KEY} -o IdentitiesOnly=yes"
 cd "$ROOT"
 

@@ -21,7 +21,7 @@ ENVS = [
     "walker2d-medium-replay-v2",
     "walker2d-expert-v2",
 ]
-# Local s23 runs use the MPI 14-tau grid for all K (incl. Imp K=1).
+# Base MPI 14-tau grid, plus high-τ extension matching TD3 dense tail.
 TAUS = [
     0.05,
     0.1,
@@ -37,6 +37,10 @@ TAUS = [
     14.0,
     17.0,
     20.0,
+    24.0,
+    28.0,
+    34.0,
+    40.0,
 ]
 
 # (K, integrator_dir, results_subdir, run_tag, preferred_score_col)

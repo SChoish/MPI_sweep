@@ -48,10 +48,12 @@ SWEEPS = [
     (1, "Imp", "mpi1_s23", "mpi1", "d4rl_pi1"),
     (2, "Imp", "mpi2_s23", "mpi2", "d4rl_pi2"),
     (3, "Imp", "mpi3_s23", "mpi3", "d4rl_pi3"),
+    (4, "Imp", "mpi4_s23", "mpi4", "d4rl_pi4"),
     (8, "Imp", "mpi8_s23", "mpi8", "d4rl_pi8"),
     (1, "Exp", "exp1_s23", "exp1", "d4rl_pi1"),
     (2, "Exp", "exp2_s23", "exp2", "d4rl_pi2"),
     (3, "Exp", "exp3_s23", "exp3", "d4rl_pi3"),
+    (4, "Exp", "exp4_s23", "exp4", "d4rl_pi4"),
 ]
 
 
@@ -92,6 +94,25 @@ def collect(root: Path, tag: str, score_key: str) -> dict[tuple[str, str, int], 
     return out
 
 
+def load_existing_csv(path: Path, seed: int) -> dict[tuple[str, str, int], float]:
+    """Keep git-owned cells when local results only cover a subset (e.g. high-τ)."""
+    out: dict[tuple[str, str, int], float] = {}
+    if not path.is_file():
+        return out
+    with path.open(encoding="utf-8", newline="") as f:
+        for row in csv.DictReader(f):
+            raw_tau = (row.get("tau") or "").strip()
+            if not raw_tau:
+                continue
+            tk = tau_key(float(raw_tau))
+            for env in ENVS:
+                raw = (row.get(env) or "").strip()
+                if not raw:
+                    continue
+                out[(env, tk, seed)] = float(raw)
+    return out
+
+
 def write_seed_csv(
     path: Path, cells: dict[tuple[str, str, int], float], seed: int
 ) -> tuple[int, int]:
@@ -123,15 +144,17 @@ def main() -> None:
         cells = collect(ROOT / "results" / subdir, tag, score_key)
         for seed in SEEDS:
             path = OUT / f"K={k}" / integ / f"seed{seed}.csv"
+            merged = load_existing_csv(path, seed)
+            merged.update(cells)
             filled_preview = sum(
-                1 for t in TAUS for env in ENVS if (env, tau_key(t), seed) in cells
+                1 for t in TAUS for env in ENVS if (env, tau_key(t), seed) in merged
             )
             if filled_preview == 0:
                 # Never delete: other hosts may own/share the same path via git.
                 stats.append(f"K={k}/{integ}/seed{seed}.csv skip(empty)")
                 continue
             before = path.read_text(encoding="utf-8") if path.is_file() else None
-            filled, total = write_seed_csv(path, cells, seed)
+            filled, total = write_seed_csv(path, merged, seed)
             after = path.read_text(encoding="utf-8")
             changed = before != after
             any_change = any_change or changed

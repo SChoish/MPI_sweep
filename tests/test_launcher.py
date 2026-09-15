@@ -83,3 +83,37 @@ def test_dry_run_has_no_filesystem_side_effects(tmp_path: Path):
     assert run(args) == 0
     assert not args.data_dir.exists()
     assert not args.log_dir.exists()
+
+
+def test_cpu_jobs_pin_and_ignore_gpus(tmp_path: Path):
+    args = parse_args(
+        [
+            "--hops",
+            "4",
+            "--taus",
+            "24",
+            "--seeds",
+            "2",
+            "--cpu-jobs",
+            "2",
+            "--cpus-per-job",
+            "4",
+            "--cpu-start",
+            "200",
+            "--domains",
+            "hopper",
+            "--datasets",
+            "medium",
+            "--save-dir",
+            str(tmp_path / "results"),
+            "--data-dir",
+            str(tmp_path / "data"),
+            "--log-dir",
+            str(tmp_path / "logs"),
+            "--dry-run",
+        ]
+    )
+    jobs = build_jobs(args)
+    command = worker_command(args, jobs[0], slot_index=1)
+    assert command[:3] == ["taskset", "-c", "204-207"]
+    assert run(args) == 0

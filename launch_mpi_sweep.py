@@ -59,6 +59,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--seeds", default="0 1")
     parser.add_argument("--gpus", default="0", help="Visible GPU IDs, comma or space separated")
+    parser.add_argument(
+        "--cpu-jobs",
+        type=int,
+        default=0,
+        help="If >0, run this many concurrent CPU workers and ignore --gpus",
+    )
     parser.add_argument("--slots-per-gpu", type=int, default=1)
     parser.add_argument("--domains", default="hopper halfcheetah walker2d")
     parser.add_argument("--datasets", default="medium medium-replay expert")
@@ -101,6 +107,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--cpus-per-job", type=int, default=1)
     parser.add_argument(
+        "--cpu-start",
+        type=int,
+        default=0,
+        help="First host CPU id used by --cpu-affinity",
+    )
+    parser.add_argument(
         "--q-scale-norm",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -142,10 +154,14 @@ def validate_args(args: argparse.Namespace) -> None:
         raise ValueError("--updates-per-dispatch must be positive")
     if args.updates_per_dispatch % args.n_jitted_updates != 0:
         raise ValueError("--updates-per-dispatch must be divisible by --n-jitted-updates")
-    if not _split(args.gpus):
+    if args.cpu_jobs < 0:
+        raise ValueError("--cpu-jobs must be >= 0")
+    if args.cpu_jobs == 0 and not _split(args.gpus):
         raise ValueError("--gpus must contain at least one GPU ID")
-    if args.cpu_affinity and shutil.which("taskset") is None:
-        raise RuntimeError("--cpu-affinity requires the Linux taskset command")
+    if args.cpu_start < 0:
+        raise ValueError("--cpu-start must be >= 0")
+    if (args.cpu_affinity or args.cpu_jobs > 0) and shutil.which("taskset") is None:
+        raise RuntimeError("CPU pinning requires the Linux taskset command")
 
 
 def selected_envs(args: argparse.Namespace) -> list[str]:
@@ -200,14 +216,27 @@ def worker_environment(gpu: str) -> dict[str, str]:
     env = os.environ.copy()
     env.update(
         {
-            "CUDA_VISIBLE_DEVICES": gpu,
             "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
             "OPENBLAS_NUM_THREADS": "1",
             "OMP_NUM_THREADS": "1",
             "MKL_NUM_THREADS": "1",
             "NUMEXPR_NUM_THREADS": "1",
+            "TF_NUM_INTRAOP_THREADS": "1",
+            "TF_NUM_INTEROP_THREADS": "1",
+            "EIGEN_NUM_THREADS": "1",
         }
     )
+    if gpu == "cpu":
+        env["CUDA_VISIBLE_DEVICES"] = ""
+        env["JAX_PLATFORMS"] = "cpu"
+        env["JAX_PLATFORM_NAME"] = "cpu"
+        env["XLA_FLAGS"] = (
+            "--xla_cpu_multi_thread_eigen=false "
+            "intra_op_parallelism_threads=1 "
+            "inter_op_parallelism_threads=1"
+        )
+    else:
+        env["CUDA_VISIBLE_DEVICES"] = gpu
     return env
 
 
@@ -254,8 +283,8 @@ def worker_command(
         str(args.save_dir),
         "--q-scale-norm" if args.q_scale_norm else "--no-q-scale-norm",
     ]
-    if args.cpu_affinity:
-        cpu_start = slot_index * args.cpus_per_job
+    if args.cpu_affinity or args.cpu_jobs > 0:
+        cpu_start = args.cpu_start + slot_index * args.cpus_per_job
         cpu_end = cpu_start + args.cpus_per_job - 1
         command = ["taskset", "-c", f"{cpu_start}-{cpu_end}", *command]
     return command
@@ -311,11 +340,12 @@ def write_sweep_provenance(args: argparse.Namespace, jobs: list[Job]) -> None:
 def run(args: argparse.Namespace) -> int:
     validate_args(args)
     jobs = build_jobs(args)
-    gpus = _split(args.gpus)
-    concurrency = len(gpus) * args.slots_per_gpu
+    cpu_mode = args.cpu_jobs > 0
+    gpus = ["cpu"] if cpu_mode else _split(args.gpus)
+    concurrency = args.cpu_jobs if cpu_mode else len(gpus) * args.slots_per_gpu
     print(
         f"[sweep] method={args.method} integrator={args.integrator} hops={args.hops} "
-        f"jobs={len(jobs)} gpus={gpus} "
+        f"jobs={len(jobs)} device={'cpu' if cpu_mode else gpus} "
         f"slots/gpu={args.slots_per_gpu} concurrency={concurrency}",
         flush=True,
     )
@@ -323,7 +353,7 @@ def run(args: argparse.Namespace) -> int:
 
     if args.dry_run:
         for index, job in enumerate(jobs):
-            gpu = gpus[index % len(gpus)]
+            gpu = "cpu" if cpu_mode else gpus[index % len(gpus)]
             command = worker_command(args, job, index % concurrency)
             print(f"[dry-run] gpu={gpu} {shlex.join(command)}")
         return 0
@@ -347,7 +377,7 @@ def run(args: argparse.Namespace) -> int:
         while next_job < len(jobs) or running:
             while next_job < len(jobs) and free_slots:
                 slot_index = free_slots.pop(0)
-                gpu = gpus[slot_index // args.slots_per_gpu]
+                gpu = "cpu" if cpu_mode else gpus[slot_index // args.slots_per_gpu]
                 job = jobs[next_job]
                 next_job += 1
                 log_handle = (args.log_dir / f"{job.tag}.log").open(
@@ -359,6 +389,8 @@ def run(args: argparse.Namespace) -> int:
                     file=log_handle,
                     flush=True,
                 )
+                if cpu_mode and running:
+                    time.sleep(25.0)
                 process = subprocess.Popen(
                     worker_command(args, job, slot_index),
                     cwd=ROOT,

@@ -273,6 +273,11 @@ must pass before any result is treated as evidence.
 ## Released results
 
 The compact final-score tables are under [`sweep_results/`](sweep_results/).
+The [sweep index](sweep_results/README.md) reports original-grid and high-T
+coverage separately, with fixed-seed summaries and a consolidated long-form
+CSV. It includes the extension at `T={24,28,34,40}`; incomplete cohorts are
+shown as counts without an aggregate score. Regenerate it with
+`python3 scripts/summarize_sweep_results.py` after manual matrix updates.
 Directories `K=1` through `K=4` are organized by hop count and integrator.
 The proximal `K={1,2,3,4}` and projected-linearized `K={2,3}` CSVs for
 seeds 0--3 each complete the same nine-task, fourteen-budget grid. The intended

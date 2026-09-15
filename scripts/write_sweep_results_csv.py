@@ -7,6 +7,8 @@ import csv
 import re
 from pathlib import Path
 
+from summarize_sweep_results import build as summarize_results
+
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "sweep_results"
 SEEDS = (2, 3)
@@ -163,6 +165,7 @@ def main() -> None:
     for line in stats:
         print(line)
     print(f"any_change={any_change}")
+    summarize_results(OUT)
 
 
 if __name__ == "__main__":

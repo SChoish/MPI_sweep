@@ -184,6 +184,12 @@ by this package.
 
 ## Quick start
 
+For the shared-IQL-critic comparison of Gaussian AWR + local-FR, deterministic
+Q+BC + W2, and Gaussian expected-Q+BC + W2, see
+[IQL actor/geometry experiments](IQL_ACTOR_GEOMETRY.md). Preview it with
+`mpi-sweep --algorithm iql --hops 4 --n-tau 1 --seeds 0 --dry-run`.
+The Gaussian W2 path refines both mean and standard deviation.
+
 The installed command and flag names retain their original identifiers for
 backward compatibility; they are interfaces, not the paper's algorithm name.
 

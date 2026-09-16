@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import math
 import os
 import shlex
 import shutil
@@ -17,6 +18,7 @@ from pathlib import Path
 import provenance
 from d4rl_data import DATASET_FILES, download_dataset
 from tau_grids import MPI_TAU_GRID, mpi_tau_grid
+import iql_mpi_config as iql_config
 
 ROOT = Path(__file__).resolve().parent
 
@@ -35,6 +37,8 @@ def _split(value: str) -> list[str]:
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--algorithm", choices=("td3bc", "iql"), default="td3bc")
+    iql_config.add_iql_args(parser)
     parser.add_argument("--hops", type=int, required=True)
     parser.add_argument(
         "--method",
@@ -132,7 +136,19 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def validate_args(args: argparse.Namespace) -> None:
-    if args.hops < 1:
+    if args.algorithm == "iql":
+        if args.method != "bar" or args.integrator != "implicit":
+            raise ValueError("IQL actor/geometry comparison supports only the implicit chain")
+        for tau in selected_taus(args):
+            iql_config.config_from_args(args, tau=tau, hops=args.hops)
+        for name in ("batch_size", "max_timesteps", "eval_freq", "eval_episodes"):
+            if getattr(args, name) < 1:
+                raise ValueError(f"{name} must be positive")
+        if args.save_interval < 0 or not math.isfinite(args.reward_scale) or args.reward_scale <= 0:
+            raise ValueError("invalid save_interval or reward_scale")
+        if any(int(s) < 0 for s in _split(args.seeds)):
+            raise ValueError("seeds must be nonnegative")
+    elif args.hops < 1:
         raise ValueError("--hops must be positive")
     if args.method == "mcep" and args.hops < 2:
         raise ValueError(
@@ -152,7 +168,9 @@ def validate_args(args: argparse.Namespace) -> None:
         raise ValueError("--cpus-per-job must be positive")
     if args.updates_per_dispatch < 1:
         raise ValueError("--updates-per-dispatch must be positive")
-    if args.updates_per_dispatch % args.n_jitted_updates != 0:
+    if args.n_jitted_updates < 1:
+        raise ValueError("--n-jitted-updates must be positive")
+    if args.algorithm != "iql" and args.updates_per_dispatch % args.n_jitted_updates != 0:
         raise ValueError("--updates-per-dispatch must be divisible by --n-jitted-updates")
     if args.cpu_jobs < 0:
         raise ValueError("--cpu-jobs must be >= 0")
@@ -179,7 +197,7 @@ def selected_taus(args: argparse.Namespace) -> list[str]:
     values = _split(args.taus) if args.taus else mpi_tau_grid(args.n_tau)
     if not values:
         raise ValueError("the tau grid is empty")
-    if any(float(value) <= 0.0 for value in values):
+    if any(not math.isfinite(float(value)) or float(value) <= 0.0 for value in values):
         raise ValueError("all tau values must be positive")
     return [f"{float(value):g}" for value in values]
 
@@ -206,6 +224,13 @@ def build_jobs(args: argparse.Namespace) -> list[Job]:
         selected_envs(args), selected_taus(args), _split(args.seeds)
     ):
         seed = int(seed_text)
+        if args.algorithm == "iql":
+            cfg = iql_config.config_from_args(args, tau=tau, hops=args.hops)
+            run_args = argparse.Namespace(**{**vars(args), "env": env_name, "seed": seed})
+            tag = iql_config.run_name(run_args, cfg)
+            if not iql_config.is_complete(args.save_dir / tag, args.max_timesteps):
+                jobs.append(Job(env_name, tau, seed, tag))
+            continue
         tag = f"{env_name}_tau{tau}_{method_tag}{args.hops}_seed{seed}"
         if not is_complete(args.save_dir, tag, args.max_timesteps):
             jobs.append(Job(env_name, tau, seed, tag))
@@ -245,6 +270,8 @@ def worker_command(
     job: Job,
     slot_index: int,
 ) -> list[str]:
+    if args.algorithm == "iql":
+        return iql_worker_command(args, job, slot_index)
     command = [
         args.python,
         "-u",
@@ -290,6 +317,25 @@ def worker_command(
     return command
 
 
+def iql_worker_command(args, job, slot_index):
+    command = [args.python, "-u", str(ROOT / "train_iql_mpi.py"),
+               "--env", job.env_name, "--tau", job.tau, "--mpi-steps", str(args.hops),
+               "--seed", str(job.seed)]
+    for name in ("polyak", "max_timesteps", "eval_freq", "eval_episodes", "updates_per_dispatch",
+                 "compilation_cache_dir", "save_interval", "data_dir", "save_dir", "variants",
+                 "expectile", "awr_beta", "bc_coef", "actor_lr", "critic_lr", "value_lr",
+                 "discount", "hidden_dims", "log_std_init", "log_std_min", "log_std_max",
+                 "mc_samples", "inner_updates", "metric_reduction", "q_action_transform",
+                 "batch_size", "reward_scale", "eval_mode", "eval_hops"):
+        command.extend(["--" + name.replace("_", "-"), str(getattr(args, name))])
+    for name in ("iql_q_scale_norm", "iql_normalize_state"):
+        command.append("--" + ("" if getattr(args, name) else "no-") + name.replace("_", "-"))
+    if args.cpu_affinity or args.cpu_jobs > 0:
+        start = args.cpu_start + slot_index * args.cpus_per_job
+        command = ["taskset", "-c", f"{start}-{start + args.cpus_per_job - 1}", *command]
+    return command
+
+
 def terminate_workers(running: dict[int, subprocess.Popen]) -> None:
     for process in running.values():
         if process.poll() is None:
@@ -308,12 +354,17 @@ def write_sweep_provenance(args: argparse.Namespace, jobs: list[Job]) -> None:
             "launch_mpi_sweep.py": ROOT / "launch_mpi_sweep.py",
             "train_td3bc.py": ROOT / "train_td3bc.py",
         }
+        if args.algorithm == "iql":
+            source_files.update({name: ROOT / name for name in
+                                 ("train_iql_mpi.py", "iql_mpi.py", "iql_mpi_config.py")})
         payload = provenance.base_provenance(
             ROOT,
             source_files,
             extra={
                 "role": "sweep_orchestrator",
                 "sweep": {
+                    "algorithm": args.algorithm,
+                    "configuration": vars(args),
                     "method": args.method,
                     "integrator": args.integrator,
                     "hops": args.hops,
@@ -344,7 +395,7 @@ def run(args: argparse.Namespace) -> int:
     gpus = ["cpu"] if cpu_mode else _split(args.gpus)
     concurrency = args.cpu_jobs if cpu_mode else len(gpus) * args.slots_per_gpu
     print(
-        f"[sweep] method={args.method} integrator={args.integrator} hops={args.hops} "
+        f"[sweep] algorithm={args.algorithm} method={args.method} integrator={args.integrator} hops={args.hops} "
         f"jobs={len(jobs)} device={'cpu' if cpu_mode else gpus} "
         f"slots/gpu={args.slots_per_gpu} concurrency={concurrency}",
         flush=True,
@@ -412,7 +463,9 @@ def run(args: argparse.Namespace) -> int:
                 free_slots.append(slot_index)
                 free_slots.sort()
                 elapsed = (time.monotonic() - started) / 60.0
-                if process.returncode == 0:
+                completed = process.returncode == 0 and (
+                    args.algorithm != "iql" or iql_config.is_complete(args.save_dir / job.tag, args.max_timesteps))
+                if completed:
                     print(f"[ok] {job.tag} {elapsed:.1f}m", flush=True)
                 else:
                     failures += 1

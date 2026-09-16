@@ -1,0 +1,36 @@
+{
+  "actions": [],
+  "apply": false,
+  "busy": true,
+  "cpu_pids": [],
+  "extra_opt_ckpts_ready": false,
+  "gpus": [
+    {
+      "index": 0,
+      "memory_free_mib": 138594.0,
+      "memory_used_mib": 4564.0,
+      "util": 99.0
+    },
+    {
+      "index": 1,
+      "memory_free_mib": 138594.0,
+      "memory_used_mib": 4564.0,
+      "util": 99.0
+    }
+  ],
+  "idle_for_s": 0.0,
+  "idle_since": null,
+  "idle_threshold_s": 1800,
+  "incomplete_mpi4": [
+    "walker2d-expert-v2_tau24_mpi4_seed0",
+    "walker2d-expert-v2_tau24_mpi4_seed1",
+    "walker2d-expert-v2_tau28_mpi4_seed0",
+    "walker2d-expert-v2_tau28_mpi4_seed1",
+    "walker2d-expert-v2_tau34_mpi4_seed0",
+    "walker2d-expert-v2_tau34_mpi4_seed1",
+    "walker2d-expert-v2_tau40_mpi4_seed0",
+    "walker2d-expert-v2_tau40_mpi4_seed1"
+  ],
+  "n_live_launcher": 1,
+  "n_live_trains": 8
+}

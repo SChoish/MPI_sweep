@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write seed{2,3} D4RL matrices under sweep_results/ from local results/*_s23."""
+"""Write seed{0,1,2,3} D4RL matrices under sweep_results/ from local results/*_s01 and *_s23."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from summarize_sweep_results import build as summarize_results
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "sweep_results"
-SEEDS = (2, 3)
+SEEDS = (0, 1, 2, 3)
 ENVS = [
     "hopper-medium-v2",
     "hopper-medium-replay-v2",
@@ -65,6 +65,15 @@ def tau_key(t: float) -> str:
 
 def fmt_score(v: float) -> str:
     return f"{v:.4f}"
+
+
+def result_dirs(subdir: str) -> list[str]:
+    """Read both seed-pair shards when the writer is pointed at one of them."""
+    if subdir.endswith("_s23"):
+        return [subdir, f"{subdir[:-3]}s01"]
+    if subdir.endswith("_s01"):
+        return [subdir, f"{subdir[:-3]}s23"]
+    return [subdir]
 
 
 def collect(root: Path, tag: str, score_key: str) -> dict[tuple[str, str, int], float]:
@@ -121,11 +130,16 @@ def write_seed_csv(
     """Write matrix CSV. Returns (filled_cells, total_cells)."""
     path.parent.mkdir(parents=True, exist_ok=True)
     filled = 0
-    total = len(TAUS) * len(ENVS)
+    tau_vals = set(TAUS)
+    for env, tk, s in cells:
+        if s == seed:
+            tau_vals.add(float(tk))
+    taus = sorted(tau_vals)
+    total = len(taus) * len(ENVS)
     with path.open("w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
         w.writerow(["tau", *ENVS])
-        for t in TAUS:
+        for t in taus:
             tk = tau_key(t)
             row: list[str] = [tk]
             for env in ENVS:
@@ -143,7 +157,9 @@ def main() -> None:
     stats: list[str] = []
     any_change = False
     for k, integ, subdir, tag, score_key in SWEEPS:
-        cells = collect(ROOT / "results" / subdir, tag, score_key)
+        cells: dict[tuple[str, str, int], float] = {}
+        for shard in result_dirs(subdir):
+            cells.update(collect(ROOT / "results" / shard, tag, score_key))
         for seed in SEEDS:
             path = OUT / f"K={k}" / integ / f"seed{seed}.csv"
             merged = load_existing_csv(path, seed)

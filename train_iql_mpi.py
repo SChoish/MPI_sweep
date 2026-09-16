@@ -218,7 +218,7 @@ def main(argv=None):
             extra={"signature": signature, "dataset_sha256": data_hash,
                    "dataset": provenance.dataset_identity(dataset_path(args.env, args.data_dir)),
                    "normalization": {"mean": mean.tolist(), "std": std.tolist()},
-                   "metric": "raw diagonal Gaussian; FR is 2*KL(new||ref)",
+                   "metric": "raw diagonal Gaussian; ambient FR^2 = 4*acos(BC)^2 (MPI A.3)",
                    "q_action_transform": config.q_action_transform,
                    "evaluation_action_transform": "clip to [-1,1]"}))
     update_fns = {}

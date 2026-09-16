@@ -3,7 +3,8 @@
 Each path has a base actor and K persistent refinement actors. Each minibatch
 updates the base, then the refinement actors in order with stopped references.
 These are amortized neural proximal updates, not exact minimizers or a return
-improvement guarantee. FR denotes the explicit local-KL surrogate below.
+improvement guarantee. FR uses the Gaussian Bhattacharyya closed form for
+the ambient density-space Fisher-Rao distance (MPI Appendix A.3).
 """
 from __future__ import annotations
 
@@ -67,11 +68,43 @@ def gaussian_w2_squared(mean, std, ref_mean, ref_std, reduction="sum"):
     return coordinate_reduce((mean - ref_mean) ** 2 + (std - ref_std) ** 2, reduction)
 
 
-def gaussian_kl(mean, std, ref_mean, ref_std, reduction="sum"):
-    """KL(new || reference), not squared FR distance at finite displacement."""
-    return coordinate_reduce(jnp.log(ref_std / std)
-                             + (std**2 + (mean - ref_mean)**2) / (2 * ref_std**2)
-                             - 0.5, reduction)
+@jax.custom_jvp
+def _fr_squared_from_bhattacharyya_distance(distance):
+    """4 acos(exp(-D_B))^2, evaluated without rounding exp(-D_B) to 1."""
+    sine = jnp.sqrt(-jnp.expm1(-2 * distance))
+    angle = jnp.arctan2(sine, jnp.exp(-distance))
+    return 4 * angle**2
+
+
+@_fr_squared_from_bhattacharyya_distance.defjvp
+def _fr_squared_jvp(primals, tangents):
+    (distance,), (tangent,) = primals, tangents
+    value = _fr_squared_from_bhattacharyya_distance(distance)
+    # The composite has derivative 8 at D_B=0 despite the acos/sqrt singularity.
+    # Evaluate its analytic derivative's series near zero, not a KL surrogate.
+    near = distance < 1e-4
+    small = jnp.where(near, distance, 0.0)
+    derivative_near = 8 + small * (-16 / 3 + small * (16 / 15 + small * 32 / 315))
+    safe = jnp.where(near, 1e-4, distance)
+    sine = jnp.sqrt(-jnp.expm1(-2 * safe))
+    cosine = jnp.exp(-safe)
+    derivative_far = 8 * jnp.arctan2(sine, cosine) * cosine / sine
+    return value, jnp.where(near, derivative_near, derivative_far) * tangent
+
+
+def gaussian_fr_squared(mean, std, ref_mean, ref_std, reduction="sum"):
+    """Exact ambient FR^2 between diagonal Gaussians; all std entries >0.
+
+    BC = product_j sqrt(2*sigma_j*r_j/(sigma_j^2+r_j^2))
+                     * exp(-(mean_j-ref_j)^2/(4*(sigma_j^2+r_j^2))).
+    This is 4*acos(BC)^2, not the intrinsic Gaussian-submanifold distance.
+    Mean reduction divides the final squared distance by action dimension.
+    """
+    variance_sum = std**2 + ref_std**2
+    distance = jnp.sum(0.5 * jnp.log1p((std - ref_std)**2 / (2 * std * ref_std))
+                       + (mean - ref_mean)**2 / (4 * variance_sum), axis=-1)
+    squared = _fr_squared_from_bhattacharyya_distance(distance)
+    return squared / mean.shape[-1] if reduction == "mean" else squared
 
 
 def gaussian_nll(mean, std, actions):
@@ -182,8 +215,7 @@ def refine_actor(actor, reference, critic, batch, variant, key, config, max_acti
         mean, std = policy_stats(actor, params, batch.observations, gaussian)
         q = sampled_q(critic, batch.observations, mean, std, eps, config.q_action_transform, max_action)
         if variant == "awr_gaussian_fr":
-            # d_FR^2 = 2 KL + higher-order terms, hence KL / h, not KL / (2h).
-            distance = 2 * gaussian_kl(mean, std, ref_mean, ref_std, config.metric_reduction)
+            distance = gaussian_fr_squared(mean, std, ref_mean, ref_std, config.metric_reduction)
         else:
             distance = gaussian_w2_squared(mean, std, ref_mean, ref_std, config.metric_reduction)
         return -jnp.mean(q) / scale + jnp.mean(distance) / (2 * h)

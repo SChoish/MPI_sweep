@@ -5,7 +5,7 @@ The original TD3+BC trainer remains available through `--algorithm td3bc`.
 
 | CLI variant | Base actor | Refinement |
 | --- | --- | --- |
-| `awr_gaussian_fr` | Diagonal Gaussian, advantage-weighted negative log likelihood | Expected Q + local-KL approximation to FR |
+| `awr_gaussian_fr` | Diagonal Gaussian, advantage-weighted negative log likelihood | Expected Q + closed-form Gaussian FR |
 | `qbc_deterministic_w2` | Deterministic, negative Q + squared BC | Negative Q + Dirac W2 |
 | `qbc_gaussian_w2` | Diagonal Gaussian, negative expected Q + expected squared BC | Negative expected Q + Gaussian W2, updating mean **and** standard deviation |
 
@@ -48,15 +48,31 @@ the K persistent refinement actors sequentially:
 reference_k = stop_gradient(distribution of updated pi_(k-1)(s))
 
 W2: loss_k = -E[Q(s,a)] + E[c((m-m_ref)^2 + (sigma-sigma_ref)^2)] / (2h)
-FR: loss_k = -E[Q(s,a)] + E[KL(N(m,sigma^2) || N(m_ref,sigma_ref^2))] / h
+FR: loss_k = -E[Q(s,a)] + E[4 * acos(BC(pi, pi_ref))^2] / (2h)
 ```
 
 The deterministic path uses `sigma = sigma_ref = 0` and evaluates Q at m.
 The two Gaussian paths estimate expected Q using reparameterized antithetic
 normal samples (`--mc-samples 8`), preserving the gradient through sigma.
-The FR coefficient is `1/h` because `d_FR^2 = 2 KL + higher-order terms`.
-Direction is always **KL(new || reference)**. No exact finite-distance FR
-claim is made.
+The FR penalty uses the closed form from MPI Appendix A.3:
+
+```text
+BC = product_j sqrt(2*sigma_j*sigma_ref_j / (sigma_j^2+sigma_ref_j^2))
+               * exp(-(m_j-m_ref_j)^2 / (4*(sigma_j^2+sigma_ref_j^2)))
+d_FR^2 = 4 * acos(BC)^2
+```
+
+This is the exact FR distance of the full density space evaluated between
+Gaussian endpoints. It is symmetric and bounded by pi squared after squaring.
+It is not the intrinsic geodesic distance constrained to remain in the Gaussian
+submanifold. The Bhattacharyya coefficient is combined across all dimensions
+**before** applying acos; squared marginal FR distances are not summed.
+
+The implementation computes `D_B = -log(BC)` using nonnegative `log1p` terms
+and evaluates `acos(exp(-D_B))` through an equivalent atan2 expression. Its
+custom derivative uses the removable limit at `D_B=0` (derivative of squared
+FR is 8) and a near-zero series for numerical stability. The actual distance
+value is the closed form everywhere; no KL approximation is used in refinement.
 
 All refinement actors start from the same initial base parameters with
 separate optimizer states. They remain persistent during training. Each hop
@@ -71,8 +87,8 @@ the compute budget and is recorded in the run identity.
 ## Distance, action bounds, and evaluation
 
 The default `--metric-reduction sum` matches the unnormalized Euclidean W2
-formula above. `--metric-reduction mean` divides W2, KL, and QBC's squared BC
-by the action dimension (AWR remains a log density). The legacy TD3+BC
+formula above. `--metric-reduction mean` divides W2, the final squared FR
+distance, and QBC's squared BC by the action dimension (AWR remains a log density). The legacy TD3+BC
 trainer uses mean-squared transport, so nominal tau values are not directly
 comparable across these conventions.
 
@@ -80,8 +96,8 @@ By default, `--q-action-transform identity` evaluates Q at raw Gaussian
 samples, exactly matching the displayed expected-Q objective. These samples
 can leave `[-1,1]`; per-hop `out_of_bounds_fraction` is logged. Selecting
 `--q-action-transform clip` instead optimizes `E[Q(s,clip(m+sigma*eps))]`.
-The Gaussian W2 / KL penalty still applies **before** clipping. It is not
-claimed to be the exact W2 / KL between clipped action distributions.
+The Gaussian W2 / FR penalty still applies **before** clipping. It is not
+claimed to be the exact W2 / FR between clipped action distributions.
 
 Simulator actions are always clipped to `[-1,1]`. `--eval-mode both` (default)
 reports separate mean-action and sampled-policy returns for Gaussian actors;
@@ -149,6 +165,9 @@ Run directories include environment, T, K, seed, and a hash of the actor,
 geometry, training, and evaluation settings. They cannot collide with the
 historical TD3+BC results.
 
+The closed-form FR protocol uses schema `iql_actor_geometry_v2_gaussian_fr`;
+old local-KL checkpoints and completion markers are not reused as FR results.
+
 - `config.json`, `PROVENANCE.json`: precise configuration, source hashes,
   package versions, dataset digest, state-normalization statistics and action
   transform. New runs use the current installed source.
@@ -178,12 +197,14 @@ Run targeted validation:
 pytest tests/test_iql_mpi.py tests/test_iql_launcher.py tests/test_core.py tests/test_launcher.py
 ```
 
-The tests check analytic W2 / KL coefficients, nonzero variance gradients,
+The tests check W2 and FR against independent Gaussian overlap integration,
+finite gradients/Hessians at identical policies, the local Fisher metric,
+nonzero variance gradients,
 variance updates on a concave quadratic critic, stopped/recentered references,
 IQL target semantics, critic independence from actor choices, JIT dispatch
 invariance, checkpoint continuation, and launcher/evaluation recovery.
 
-Implementation validation: 38 targeted new/existing tests passed on CPU with
+Implementation validation: 43 targeted new/existing tests passed on CPU with
 Python 3.12, JAX 0.11.1, Flax 0.12.9 and Optax 0.2.8. A two-update K=4
 smoke run using synthetic, shape-valid data completed all 10 requested
 base/final mean/sample evaluations in the actual Hopper-v4 simulator and

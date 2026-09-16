@@ -8,7 +8,7 @@ import math
 from dataclasses import asdict, dataclass
 
 VARIANTS = ("awr_gaussian_fr", "qbc_deterministic_w2", "qbc_gaussian_w2")
-SCHEMA = "iql_actor_geometry_v1"
+SCHEMA = "iql_actor_geometry_v2_gaussian_fr"
 
 
 @dataclass(frozen=True)

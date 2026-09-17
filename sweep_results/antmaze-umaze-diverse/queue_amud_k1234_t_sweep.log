@@ -775,3 +775,13 @@ Pinned CUDA12 runtime matches: /home/choi/MPI_sweep/.venv-cuda12-locked/bin/pyth
 [launch] gpu=0 antmaze-umaze-diverse-v2_tau2.5_mpi3_seed2 pid=3705377
 [ok] antmaze-umaze-diverse-v2_tau2.5_mpi3_seed1 7.4m
 [launch] gpu=0 antmaze-umaze-diverse-v2_tau2.5_mpi3_seed3 pid=3705510
+[ok] antmaze-umaze-diverse-v2_tau2.5_mpi3_seed3 7.3m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau4_mpi3_seed0 pid=3706833
+[ok] antmaze-umaze-diverse-v2_tau2.5_mpi3_seed2 7.5m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau4_mpi3_seed1 pid=3706851
+[fail] antmaze-umaze-diverse-v2_tau4_mpi3_seed1 rc=-11 1.9m
+[sweep] native crash; stop submitting jobs and let active workers finish. Pending cells remain resumable.
+[ok] antmaze-umaze-diverse-v2_tau4_mpi3_seed0 5.0m
+[sweep] halted ok=29 fail=1 pending=26
+[2026-09-18 03:22:04 KST] K=3 finished rc=86
+[2026-09-18 03:22:04 KST] ABORT after K=3 runtime failure or interruption rc=86; resume after diagnosis

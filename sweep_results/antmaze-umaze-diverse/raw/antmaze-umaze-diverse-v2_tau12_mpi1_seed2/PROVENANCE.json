@@ -1,0 +1,95 @@
+{
+  "schema": "mpi_sweep.provenance/1",
+  "captured_at": "2026-09-17T04:01:12.827340+00:00",
+  "git": {
+    "revision": "b33ab2af1626e449f43519b9c24394a2a1eda850",
+    "dirty": false,
+    "branch": "main"
+  },
+  "source_files": {
+    "train_td3bc.py": {
+      "path": "/home/choi/MPI_sweep/train_td3bc.py",
+      "exists": true,
+      "size": 51163,
+      "sha256": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113"
+    },
+    "launch_mpi_sweep.py": {
+      "path": "/home/choi/MPI_sweep/launch_mpi_sweep.py",
+      "exists": true,
+      "size": 15849,
+      "sha256": "a09764fcd11e89913e253713384ebec43210f5723619b14ef35b82b8482330b3"
+    }
+  },
+  "packages": {
+    "python": "3.10.18",
+    "jax": "0.5.3",
+    "jaxlib": "0.5.3",
+    "flax": "0.10.7",
+    "optax": "0.2.8",
+    "numpy": "2.2.6"
+  },
+  "host": {
+    "hostname": "choi-ubuntu",
+    "platform": "Linux-6.14.0-37-generic-x86_64-with-glibc2.41"
+  },
+  "accelerator": {
+    "cuda_visible_devices": "0",
+    "gpus": [
+      {
+        "index": "0",
+        "uuid": "GPU-0d1ccfb6-a3a6-7999-de3a-dfdea7fb2c19",
+        "name": "NVIDIA GeForce RTX 4070 SUPER"
+      }
+    ]
+  },
+  "run_name": "antmaze-umaze-diverse-v2_tau12_mpi1_seed2",
+  "config": {
+    "env": "antmaze-umaze-diverse-v2",
+    "seed": 2,
+    "eval_freq": 1000000,
+    "eval_episodes": 100,
+    "max_timesteps": 1000000,
+    "batch_size": 256,
+    "discount": 0.99,
+    "tau": 12.0,
+    "polyak": 0.005,
+    "policy_noise": 0.2,
+    "noise_clip": 0.5,
+    "policy_freq": 2,
+    "lr": 0.0003,
+    "normalize": true,
+    "q_scale_norm": true,
+    "n_jitted_updates": 8,
+    "updates_per_dispatch": 64,
+    "compilation_cache_dir": "/home/choi/.cache/mpi-sweep/jax",
+    "data_dir": "/home/choi/MPI_sweep/data",
+    "save_dir": "/home/choi/MPI_sweep/results/antmaze_umaze_diverse_t_sweep",
+    "save_interval": 0,
+    "restore_path": null,
+    "no_resume": false,
+    "mpi_steps": 1,
+    "method": "bar",
+    "deployment_branch": null,
+    "integrator": "implicit"
+  },
+  "dataset": {
+    "path": "/home/choi/MPI_sweep/data/antmaze-umaze-diverse-v2.hdf5",
+    "exists": true,
+    "sha256": null,
+    "hash_skipped": "multi-GB hdf5; recorded path+size+mtime instead",
+    "size": 230854272,
+    "mtime": "2021-11-05T22:20:26+00:00"
+  },
+  "normalization": {
+    "status": "computed",
+    "dim": 29,
+    "mean_sha256": "a371c49dfd80abf6c1f149e1064513364ff996b35b29b9dae2d58b3bd7d7ff83",
+    "std_sha256": "27fbd48241931076af146dcf52dabfded6f741ecb9ae44a5773a386b494346e2"
+  },
+  "final_checkpoint": {
+    "path": "/home/choi/MPI_sweep/results/antmaze_umaze_diverse_t_sweep/antmaze-umaze-diverse-v2_tau12_mpi1_seed2/params_1000000.pkl",
+    "step": 1000000,
+    "sha256": "4a958e297f1ebf67829572bb72700134e3323340d37507eeb13b55e82d5a173e"
+  },
+  "updated_at": "2026-09-17T04:05:45.140297+00:00"
+}

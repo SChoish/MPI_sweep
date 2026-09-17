@@ -119,3 +119,11 @@ OSError: [Errno 28] No space left on device
 [launch] gpu=0 antmaze-umaze-diverse-v2_tau12_mpi1_seed1 pid=3503935
 [fail] antmaze-umaze-diverse-v2_tau12_mpi1_seed1 rc=-11 0.7m
 [launch] gpu=0 antmaze-umaze-diverse-v2_tau12_mpi1_seed2 pid=3504488
+[ok] antmaze-umaze-diverse-v2_tau7_mpi1_seed1 5.1m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau12_mpi1_seed3 pid=3506301
+[ok] antmaze-umaze-diverse-v2_tau12_mpi1_seed2 4.6m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau14_mpi1_seed0 pid=3506450
+[ok] antmaze-umaze-diverse-v2_tau12_mpi1_seed3 4.9m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau14_mpi1_seed1 pid=3507334
+[ok] antmaze-umaze-diverse-v2_tau14_mpi1_seed0 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau14_mpi1_seed2 pid=3507375

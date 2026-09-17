@@ -1,0 +1,2 @@
+step,return,d4rl_score,critic_loss,actor_loss
+1000000,0.01,1.0,4.5542802810668945,19.915002822875977

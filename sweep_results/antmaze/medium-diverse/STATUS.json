@@ -1,20 +1,22 @@
 {
-  "updated_at": "2026-09-17T08:55:38.475523+09:00",
-  "phase": "medium-diverse seeds 0,1 K=1..4",
-  "done": 110,
-  "expected": 112,
-  "running": "1816984 /home/shchoi/miniconda3/envs/offrl/bin/python -u /home/shchoi/MPI_sweep/train_td3bc.py --env antmaze-medium-diverse-v2 --tau 20 --mp",
-  "queue": [
-    "md seeds 2,3 K=1..4",
-    "ld seeds 0,1 K=1..4",
-    "ld seeds 2,3 K=1..4"
+  "updated_at": "2026-09-17T13:03:47.558969+09:00",
+  "done": 182,
+  "expected_seeds": [
+    0,
+    1,
+    2,
+    3
   ],
+  "phase_counts": {
+    "md_s01": 112,
+    "md_s23": 70
+  },
   "best": [
     {
       "k": 1,
-      "tau": 17.0,
-      "seed": 1,
-      "d4rl": 10.0
+      "tau": 20.0,
+      "seed": 2,
+      "d4rl": 80.0
     },
     {
       "k": 2,
@@ -24,7 +26,7 @@
     },
     {
       "k": 3,
-      "tau": 14.0,
+      "tau": 7.0,
       "seed": 0,
       "d4rl": 20.0
     },

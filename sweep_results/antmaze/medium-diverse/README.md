@@ -1,3 +1,3 @@
 # AntMaze medium-diverse MPI T-sweep (offrl)
 
-BAR/implicit · K=1..4 · 14-τ · seeds [0, 1, 2, 3] · snapshot 2026-09-18 04:26 UTC+09:00
+BAR/implicit · K=1..4 · 14-τ · seeds [0, 1, 2, 3] · snapshot 2026-09-18 04:36 UTC+09:00

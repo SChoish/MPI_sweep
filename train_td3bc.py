@@ -34,6 +34,7 @@ import json
 import os
 import pickle
 import signal
+import sys
 import time
 from functools import partial
 from pathlib import Path
@@ -68,6 +69,11 @@ REF_MAX = {
     "hopper": 3234.3,
     "walker2d": 4592.3,
 }
+ANTMAZE_MAX_EPISODE_STEPS = 700
+
+
+def is_antmaze(env_name: str) -> bool:
+    return "antmaze" in env_name
 
 
 class Transition(NamedTuple):
@@ -171,7 +177,13 @@ def qlearning_from_hdf5(path: Path, max_episode_steps: int = 1000) -> dict[str, 
 
 
 def load_transition(env_name: str, data_dir: Path, normalize: bool, eps: float = 1e-3):
-    raw = qlearning_from_hdf5(download_dataset(env_name, data_dir))
+    max_episode_steps = ANTMAZE_MAX_EPISODE_STEPS if is_antmaze(env_name) else 1000
+    raw = qlearning_from_hdf5(
+        download_dataset(env_name, data_dir), max_episode_steps=max_episode_steps
+    )
+    # Canonical sparse-antmaze TD3+BC / IQL reward shift.
+    if is_antmaze(env_name):
+        raw["rewards"] = raw["rewards"] - 1.0
     mean = np.zeros(raw["observations"].shape[-1], dtype=np.float32)
     std = np.ones_like(mean)
     if normalize:
@@ -778,21 +790,70 @@ def d4rl_normalized_score(env_name: str, return_: float) -> float:
         return normalized_score(env_name, return_)
 
 
+def _make_eval_env(env_name: str):
+    """Gymnasium MuJoCo for loco; classic gym+d4rl for AntMaze."""
+    if is_antmaze(env_name):
+        os.environ.setdefault("D4RL_SUPPRESS_IMPORT_ERROR", "1")
+        # Prefer an existing D4RL install (e.g. amo env) without hijacking venv JAX/Flax.
+        amo_sp = Path("/home/choi/miniconda3/envs/amo/lib/python3.10/site-packages")
+        if amo_sp.is_dir():
+            amo_str = str(amo_sp)
+            if amo_str not in sys.path:
+                sys.path.append(amo_str)
+        import gym as classic_gym  # noqa: WPS440 — d4rl registers on classic gym
+
+        import d4rl  # noqa: F401
+
+        return classic_gym.make(env_name)
+    return gym.make(EVAL_ENV[_domain(env_name)])
+
+
+def _reset_obs(env, seed: int):
+    reset_out = env.reset(seed=seed) if "seed" in env.reset.__code__.co_varnames else env.reset()
+    if isinstance(reset_out, tuple):
+        return reset_out[0]
+    return reset_out
+
+
+def _step_env(env, action):
+    step_out = env.step(action)
+    if len(step_out) == 5:
+        obs, reward, terminated, truncated, _ = step_out
+        return obs, float(reward), bool(terminated or truncated)
+    obs, reward, done, _ = step_out
+    return obs, float(reward), bool(done)
+
+
 def evaluate(policy_fn, env_name: str, seed: int, mean, std, episodes: int) -> tuple[float, float]:
-    env = gym.make(EVAL_ENV[_domain(env_name)])
-    returns = []
-    for ep in range(episodes):
-        obs, _ = env.reset(seed=seed + 100 + ep)
-        done = False
-        ep_ret = 0.0
-        while not done:
-            state = (np.asarray(obs, dtype=np.float32) - mean) / std
-            action = np.asarray(policy_fn(state), dtype=np.float32)
-            obs, reward, terminated, truncated, _ = env.step(action)
-            done = bool(terminated or truncated)
-            ep_ret += float(reward)
-        returns.append(ep_ret)
-    env.close()
+    # AntMaze prints "Target Goal:" on reset; keep train logs readable.
+    suppress = is_antmaze(env_name)
+    old_stdout = None
+    if suppress:
+        old_stdout = os.dup(1)
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(devnull, 1)
+        os.close(devnull)
+    try:
+        env = _make_eval_env(env_name)
+        returns = []
+        for ep in range(episodes):
+            ep_seed = seed + 100 + ep
+            if is_antmaze(env_name):
+                np.random.seed(ep_seed)
+            obs = _reset_obs(env, ep_seed)
+            done = False
+            ep_ret = 0.0
+            while not done:
+                state = (np.asarray(obs, dtype=np.float32) - mean) / std
+                action = np.asarray(policy_fn(state), dtype=np.float32)
+                obs, reward, done = _step_env(env, action)
+                ep_ret += reward
+            returns.append(ep_ret)
+        env.close()
+    finally:
+        if old_stdout is not None:
+            os.dup2(old_stdout, 1)
+            os.close(old_stdout)
     avg = float(np.mean(returns))
     return avg, float(d4rl_normalized_score(env_name, avg))
 

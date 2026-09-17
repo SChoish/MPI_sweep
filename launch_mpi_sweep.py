@@ -214,6 +214,12 @@ def build_jobs(args: argparse.Namespace) -> list[Job]:
 
 def worker_environment(gpu: str) -> dict[str, str]:
     env = os.environ.copy()
+    mujoco = os.environ.get("MUJOCO_PY_MUJOCO_PATH", str(Path.home() / ".mujoco" / "mujoco210"))
+    ld = [
+        f"{mujoco}/bin",
+        "/usr/lib/x86_64-linux-gnu",
+        env.get("LD_LIBRARY_PATH", ""),
+    ]
     env.update(
         {
             "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
@@ -224,6 +230,10 @@ def worker_environment(gpu: str) -> dict[str, str]:
             "TF_NUM_INTRAOP_THREADS": "1",
             "TF_NUM_INTEROP_THREADS": "1",
             "EIGEN_NUM_THREADS": "1",
+            "D4RL_SUPPRESS_IMPORT_ERROR": "1",
+            "MUJOCO_GL": env.get("MUJOCO_GL", "egl"),
+            "MUJOCO_PY_MUJOCO_PATH": mujoco,
+            "LD_LIBRARY_PATH": ":".join(p for p in ld if p),
         }
     )
     if gpu == "cpu":

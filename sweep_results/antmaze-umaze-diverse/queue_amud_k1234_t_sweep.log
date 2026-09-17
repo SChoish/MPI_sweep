@@ -1,0 +1,105 @@
+[2026-09-17 01:54:28 KST] start antmaze-umaze-diverse T sweep K=1..4 out=/home/choi/MPI_sweep/results/antmaze_umaze_diverse_t_sweep
+[2026-09-17 01:54:28 KST] === hops=K=1 dry-run count ===
+[dry-run] gpu=0 /home/choi/MPI_sweep/.venv/bin/python -u /home/choi/MPI_sweep/train_td3bc.py --env antmaze-umaze-diverse-v2 --tau 20 --mpi-steps 1 --method bar --integrator implicit --polyak 0.005 --seed 1 --max-timesteps 1000000 --eval-freq 1000000 --eval-episodes 100 --n-jitted-updates 8 --updates-per-dispatch 64 --compilation-cache-dir /home/choi/.cache/mpi-sweep/jax --save-interval 0 --data-dir /home/choi/MPI_sweep/data --save-dir /home/choi/MPI_sweep/results/antmaze_umaze_diverse_t_sweep --q-scale-norm
+[dry-run] gpu=0 /home/choi/MPI_sweep/.venv/bin/python -u /home/choi/MPI_sweep/train_td3bc.py --env antmaze-umaze-diverse-v2 --tau 20 --mpi-steps 1 --method bar --integrator implicit --polyak 0.005 --seed 2 --max-timesteps 1000000 --eval-freq 1000000 --eval-episodes 100 --n-jitted-updates 8 --updates-per-dispatch 64 --compilation-cache-dir /home/choi/.cache/mpi-sweep/jax --save-interval 0 --data-dir /home/choi/MPI_sweep/data --save-dir /home/choi/MPI_sweep/results/antmaze_umaze_diverse_t_sweep --q-scale-norm
+[dry-run] gpu=0 /home/choi/MPI_sweep/.venv/bin/python -u /home/choi/MPI_sweep/train_td3bc.py --env antmaze-umaze-diverse-v2 --tau 20 --mpi-steps 1 --method bar --integrator implicit --polyak 0.005 --seed 3 --max-timesteps 1000000 --eval-freq 1000000 --eval-episodes 100 --n-jitted-updates 8 --updates-per-dispatch 64 --compilation-cache-dir /home/choi/.cache/mpi-sweep/jax --save-interval 0 --data-dir /home/choi/MPI_sweep/data --save-dir /home/choi/MPI_sweep/results/antmaze_umaze_diverse_t_sweep --q-scale-norm
+[2026-09-17 01:54:28 KST] K=1 pending_lines≈58 — launching
+[sweep] method=bar integrator=implicit hops=1 jobs=56 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 12 14 17 20
+[provenance] wrote /home/choi/MPI_sweep/logs/antmaze_umaze_diverse/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/antmaze-umaze-diverse-v2.hdf5
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.05_mpi1_seed0 pid=3394544
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.05_mpi1_seed1 pid=3394545
+[ok] antmaze-umaze-diverse-v2_tau0.05_mpi1_seed0 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.05_mpi1_seed2 pid=3395977
+[ok] antmaze-umaze-diverse-v2_tau0.05_mpi1_seed1 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.05_mpi1_seed3 pid=3395984
+[ok] antmaze-umaze-diverse-v2_tau0.05_mpi1_seed3 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.1_mpi1_seed0 pid=3397122
+[ok] antmaze-umaze-diverse-v2_tau0.05_mpi1_seed2 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.1_mpi1_seed1 pid=3397164
+[ok] antmaze-umaze-diverse-v2_tau0.1_mpi1_seed0 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.1_mpi1_seed2 pid=3398037
+[ok] antmaze-umaze-diverse-v2_tau0.1_mpi1_seed1 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.1_mpi1_seed3 pid=3398048
+[ok] antmaze-umaze-diverse-v2_tau0.1_mpi1_seed2 4.8m
+[ok] antmaze-umaze-diverse-v2_tau0.1_mpi1_seed3 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.2_mpi1_seed0 pid=3399204
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.2_mpi1_seed1 pid=3399205
+[ok] antmaze-umaze-diverse-v2_tau0.2_mpi1_seed0 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.2_mpi1_seed2 pid=3400113
+[ok] antmaze-umaze-diverse-v2_tau0.2_mpi1_seed1 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.2_mpi1_seed3 pid=3400121
+[ok] antmaze-umaze-diverse-v2_tau0.2_mpi1_seed3 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.4_mpi1_seed0 pid=3400870
+[ok] antmaze-umaze-diverse-v2_tau0.2_mpi1_seed2 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.4_mpi1_seed1 pid=3400878
+[ok] antmaze-umaze-diverse-v2_tau0.4_mpi1_seed0 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.4_mpi1_seed2 pid=3401746
+[ok] antmaze-umaze-diverse-v2_tau0.4_mpi1_seed1 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.4_mpi1_seed3 pid=3401974
+[ok] antmaze-umaze-diverse-v2_tau0.4_mpi1_seed2 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.7_mpi1_seed0 pid=3402806
+[ok] antmaze-umaze-diverse-v2_tau0.4_mpi1_seed3 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.7_mpi1_seed1 pid=3402815
+[ok] antmaze-umaze-diverse-v2_tau0.7_mpi1_seed0 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.7_mpi1_seed2 pid=3403633
+[ok] antmaze-umaze-diverse-v2_tau0.7_mpi1_seed1 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.7_mpi1_seed3 pid=3403641
+[ok] antmaze-umaze-diverse-v2_tau0.7_mpi1_seed2 4.7m
+[ok] antmaze-umaze-diverse-v2_tau0.7_mpi1_seed3 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau1.5_mpi1_seed0 pid=3404657
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau1.5_mpi1_seed1 pid=3404658
+[ok] antmaze-umaze-diverse-v2_tau1.5_mpi1_seed0 4.7m
+[ok] antmaze-umaze-diverse-v2_tau1.5_mpi1_seed1 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau1.5_mpi1_seed2 pid=3405481
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau1.5_mpi1_seed3 pid=3405482
+[ok] antmaze-umaze-diverse-v2_tau1.5_mpi1_seed3 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau2.5_mpi1_seed0 pid=3406524
+[ok] antmaze-umaze-diverse-v2_tau1.5_mpi1_seed2 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau2.5_mpi1_seed1 pid=3406562
+[ok] antmaze-umaze-diverse-v2_tau2.5_mpi1_seed0 4.9m
+[ok] antmaze-umaze-diverse-v2_tau2.5_mpi1_seed1 4.9m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau2.5_mpi1_seed2 pid=3407353
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau2.5_mpi1_seed3 pid=3407354
+[ok] antmaze-umaze-diverse-v2_tau2.5_mpi1_seed3 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau4_mpi1_seed0 pid=3408453
+[ok] antmaze-umaze-diverse-v2_tau2.5_mpi1_seed2 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau4_mpi1_seed1 pid=3408622
+[ok] antmaze-umaze-diverse-v2_tau4_mpi1_seed0 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau4_mpi1_seed2 pid=3409287
+[ok] antmaze-umaze-diverse-v2_tau4_mpi1_seed1 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau4_mpi1_seed3 pid=3409326
+[ok] antmaze-umaze-diverse-v2_tau4_mpi1_seed3 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau7_mpi1_seed0 pid=3410171
+[ok] antmaze-umaze-diverse-v2_tau4_mpi1_seed2 5.1m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau7_mpi1_seed1 pid=3410490
+[fail] antmaze-umaze-diverse-v2_tau7_mpi1_seed1 rc=-11 1.1m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau7_mpi1_seed2 pid=3410685
+[ok] antmaze-umaze-diverse-v2_tau7_mpi1_seed0 5.1m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau7_mpi1_seed3 pid=3411309
+[ok] antmaze-umaze-diverse-v2_tau7_mpi1_seed2 4.6m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau10_mpi1_seed0 pid=3411491
+[ok] antmaze-umaze-diverse-v2_tau7_mpi1_seed3 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau10_mpi1_seed1 pid=3412196
+[ok] antmaze-umaze-diverse-v2_tau10_mpi1_seed0 4.4m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau10_mpi1_seed2 pid=3412537
+[ok] antmaze-umaze-diverse-v2_tau10_mpi1_seed1 4.8m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau10_mpi1_seed3 pid=3413195
+[ok] antmaze-umaze-diverse-v2_tau10_mpi1_seed2 4.5m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau12_mpi1_seed0 pid=3413348
+[ok] antmaze-umaze-diverse-v2_tau12_mpi1_seed0 4.3m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau12_mpi1_seed1 pid=3413994
+[ok] antmaze-umaze-diverse-v2_tau10_mpi1_seed3 4.7m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau12_mpi1_seed2 pid=3414090
+[fail] antmaze-umaze-diverse-v2_tau12_mpi1_seed1 rc=1 4.9m
+Traceback (most recent call last):
+  File "/home/choi/MPI_sweep/launch_mpi_sweep.py", line 450, in <module>
+    raise SystemExit(main())
+  File "/home/choi/MPI_sweep/launch_mpi_sweep.py", line 446, in main
+    return run(parse_args(argv))
+  File "/home/choi/MPI_sweep/launch_mpi_sweep.py", line 396, in run
+    print(
+OSError: [Errno 28] No space left on device
+[2026-09-17 03:34:34 KST] K=1 finished rc=1
+[2026-09-17 03:34:34 KST] ABORT after K=1 failure

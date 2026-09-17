@@ -49,8 +49,12 @@ antmaze-large-diverse-v2,1,14.0,2,0.0,0.0,antmaze-large-diverse-v2_tau14_mpi1_se
 antmaze-large-diverse-v2,1,14.0,3,0.0,0.0,antmaze-large-diverse-v2_tau14_mpi1_seed3
 antmaze-large-diverse-v2,1,17.0,0,30.0,0.3,antmaze-large-diverse-v2_tau17_mpi1_seed0
 antmaze-large-diverse-v2,1,17.0,1,0.0,0.0,antmaze-large-diverse-v2_tau17_mpi1_seed1
+antmaze-large-diverse-v2,1,17.0,2,0.0,0.0,antmaze-large-diverse-v2_tau17_mpi1_seed2
+antmaze-large-diverse-v2,1,17.0,3,0.0,0.0,antmaze-large-diverse-v2_tau17_mpi1_seed3
 antmaze-large-diverse-v2,1,20.0,0,30.0,0.3,antmaze-large-diverse-v2_tau20_mpi1_seed0
 antmaze-large-diverse-v2,1,20.0,1,50.0,0.5,antmaze-large-diverse-v2_tau20_mpi1_seed1
+antmaze-large-diverse-v2,1,20.0,2,0.0,0.0,antmaze-large-diverse-v2_tau20_mpi1_seed2
+antmaze-large-diverse-v2,1,20.0,3,0.0,0.0,antmaze-large-diverse-v2_tau20_mpi1_seed3
 antmaze-large-diverse-v2,2,0.05,0,0.0,0.0,antmaze-large-diverse-v2_tau0.05_mpi2_seed0
 antmaze-large-diverse-v2,2,0.05,1,0.0,0.0,antmaze-large-diverse-v2_tau0.05_mpi2_seed1
 antmaze-large-diverse-v2,2,0.1,0,0.0,0.0,antmaze-large-diverse-v2_tau0.1_mpi2_seed0

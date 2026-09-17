@@ -1,0 +1,2 @@
+step,return,d4rl_score,critic_loss,actor_loss,return_pi3,d4rl_pi3,final_actor_loss
+1000000,0.41,41.0,0.016542751342058182,1.132655143737793,0.45,45.0,1.0119237899780273

@@ -153,6 +153,8 @@ antmaze-large-diverse-v2,3,10.0,2,0.0,0.0,antmaze-large-diverse-v2_tau10_mpi3_se
 antmaze-large-diverse-v2,3,10.0,3,0.0,0.0,antmaze-large-diverse-v2_tau10_mpi3_seed3
 antmaze-large-diverse-v2,3,12.0,0,0.0,0.0,antmaze-large-diverse-v2_tau12_mpi3_seed0
 antmaze-large-diverse-v2,3,12.0,1,0.0,0.0,antmaze-large-diverse-v2_tau12_mpi3_seed1
+antmaze-large-diverse-v2,3,12.0,2,0.0,0.0,antmaze-large-diverse-v2_tau12_mpi3_seed2
+antmaze-large-diverse-v2,3,12.0,3,0.0,0.0,antmaze-large-diverse-v2_tau12_mpi3_seed3
 antmaze-large-diverse-v2,3,14.0,0,0.0,0.0,antmaze-large-diverse-v2_tau14_mpi3_seed0
 antmaze-large-diverse-v2,3,14.0,1,0.0,0.0,antmaze-large-diverse-v2_tau14_mpi3_seed1
 antmaze-large-diverse-v2,3,17.0,0,0.0,0.0,antmaze-large-diverse-v2_tau17_mpi3_seed0

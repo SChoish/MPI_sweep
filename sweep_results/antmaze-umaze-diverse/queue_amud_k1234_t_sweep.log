@@ -1006,3 +1006,8 @@ Pinned CUDA12 runtime matches: /home/choi/MPI_sweep/.venv-cuda12-locked/bin/pyth
 [launch] gpu=0 antmaze-umaze-diverse-v2_tau20_mpi4_seed2 pid=3875353
 [ok] antmaze-umaze-diverse-v2_tau20_mpi4_seed1 8.2m
 [launch] gpu=0 antmaze-umaze-diverse-v2_tau20_mpi4_seed3 pid=3875906
+[ok] antmaze-umaze-diverse-v2_tau20_mpi4_seed2 8.3m
+[ok] antmaze-umaze-diverse-v2_tau20_mpi4_seed3 6.7m
+[sweep] complete ok=56 fail=0 pending=0
+[2026-09-18 22:25:43 KST] K=4 finished rc=0
+[2026-09-18 22:25:43 KST] K=1..4 pass finished rc=0 (only successful cells are complete)

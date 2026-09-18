@@ -323,7 +323,7 @@ def iql_worker_command(args, job, slot_index):
                "--seed", str(job.seed)]
     for name in ("polyak", "max_timesteps", "eval_freq", "eval_episodes", "updates_per_dispatch",
                  "compilation_cache_dir", "save_interval", "data_dir", "save_dir", "variants",
-                 "expectile", "awr_beta", "bc_coef", "actor_lr", "critic_lr", "value_lr",
+                 "expectile", "awr_beta", "bc_coef", "td3bc_alpha", "actor_lr", "critic_lr", "value_lr",
                  "discount", "hidden_dims", "log_std_init", "log_std_min", "log_std_max",
                  "mc_samples", "inner_updates", "metric_reduction", "q_action_transform",
                  "batch_size", "reward_scale", "eval_mode", "eval_hops"):

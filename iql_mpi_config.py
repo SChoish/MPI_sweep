@@ -8,7 +8,7 @@ import math
 from dataclasses import asdict, dataclass
 
 VARIANTS = ("awr_gaussian_fr", "qbc_deterministic_w2", "qbc_gaussian_w2")
-SCHEMA = "iql_actor_geometry_v2_gaussian_fr"
+SCHEMA = "iql_actor_geometry_v3_bottleneck_ddpgbc"
 
 
 @dataclass(frozen=True)
@@ -19,6 +19,7 @@ class IQLConfig:
     expectile: float = 0.7
     awr_beta: float = 3.0
     bc_coef: float = 1.0
+    td3bc_alpha: float = 2.5
     actor_lr: float = 3e-4
     critic_lr: float = 3e-4
     value_lr: float = 3e-4
@@ -39,7 +40,7 @@ class IQLConfig:
             raise ValueError("variants must be nonempty and unique")
         if set(self.variants).difference(VARIANTS):
             raise ValueError(f"variants must be selected from {VARIANTS}")
-        for name in ("tau", "awr_beta", "actor_lr", "critic_lr", "value_lr"):
+        for name in ("tau", "awr_beta", "td3bc_alpha", "actor_lr", "critic_lr", "value_lr"):
             if not math.isfinite(getattr(self, name)) or getattr(self, name) <= 0:
                 raise ValueError(f"{name} must be finite and positive")
         if not math.isfinite(self.bc_coef) or self.bc_coef < 0:
@@ -56,6 +57,8 @@ class IQLConfig:
             raise ValueError("log standard deviations must be finite")
         if not self.log_std_min < self.log_std_init < self.log_std_max:
             raise ValueError("require log_std_min < log_std_init < log_std_max")
+        if "qbc_gaussian_w2" in self.variants and not self.log_std_min < 0 < self.log_std_max:
+            raise ValueError("Gaussian DDPG+BC refinement bounds must contain log(sigma=1)=0")
         if self.metric_reduction not in ("sum", "mean"):
             raise ValueError("metric_reduction must be sum or mean")
         if self.q_action_transform not in ("identity", "clip"):
@@ -64,7 +67,7 @@ class IQLConfig:
 
 def add_iql_args(parser):
     parser.add_argument("--variants", default=" ".join(VARIANTS))
-    for name, default in (("expectile", 0.7), ("awr-beta", 3.0), ("bc-coef", 1.0),
+    for name, default in (("expectile", 0.7), ("awr-beta", 3.0), ("bc-coef", 1.0), ("td3bc-alpha", 2.5),
                           ("actor-lr", 3e-4), ("critic-lr", 3e-4), ("value-lr", 3e-4),
                           ("discount", 0.99), ("log-std-init", -1.0),
                           ("log-std-min", -5.0), ("log-std-max", 2.0), ("reward-scale", 1.0)):
@@ -74,7 +77,8 @@ def add_iql_args(parser):
     parser.add_argument("--mc-samples", type=int, default=8)
     parser.add_argument("--inner-updates", type=int, default=1)
     parser.add_argument("--metric-reduction", choices=("sum", "mean"), default="sum")
-    parser.add_argument("--q-action-transform", choices=("identity", "clip"), default="identity")
+    parser.add_argument("--q-action-transform", choices=("identity", "clip"), default="identity",
+                        help="MPI expected-Q action transform; DDPG+BC base always clips its mean.")
     parser.add_argument("--iql-q-scale-norm", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--iql-normalize-state", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--eval-mode", choices=("mean", "sample", "both"), default="both")

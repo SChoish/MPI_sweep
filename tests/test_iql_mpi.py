@@ -121,17 +121,75 @@ def test_expected_q_has_variance_gradient_and_matches_quadratic_integral():
     np.testing.assert_array_equal(jax.grad(lambda s: core.min_q(critic, obs, mean).mean())(std), std*0)
 
 
-def test_qbc_gaussian_bc_is_expected_square():
-    # With a zero critic and lambda=1, Gaussian BC also reduces sigma.
+def test_paper_ddpgbc_base_has_fixed_unit_std_and_matching_refinement_initialization():
     b = batch()
     cfg = IQLConfig(variants=(VARIANTS[2],), mpi_steps=1, hidden_dims=(8,))
     ts = core.create_state(jax.random.PRNGKey(0), b.observations, b.actions, cfg)
-    critic = SimpleNamespace(params={}, apply_fn=lambda p, s, a: (jnp.zeros((*a.shape[:-1], 1)),)*2)
     actor = ts.actors[0][0]
-    updated, _ = core.update_base(actor, critic, ts.value, b, VARIANTS[2], jax.random.PRNGKey(2), cfg, 1.)
-    _, before = core.policy_stats(actor, actor.params, b.observations, True)
-    _, after = core.policy_stats(updated, updated.params, b.observations, True)
-    assert float(after.mean()) < float(before.mean())
+    refined = ts.actors[0][1]
+    reference = core.policy_stats(actor, actor.params, b.observations, True)
+    assert_tree_equal(reference, core.policy_stats(refined, refined.params, b.observations, True))
+    np.testing.assert_array_equal(reference[1], jnp.ones_like(b.actions))
+    assert "log_std" not in actor.params["params"]
+    assert "log_std" in refined.params["params"]
+    for seed in range(3):
+        actor, _ = core.update_base(actor, quadratic_critic(), ts.value, b, VARIANTS[2],
+                                    jax.random.PRNGKey(seed), cfg, 1.)
+    mean, std = core.policy_stats(actor, actor.params, b.observations, True)
+    assert not np.array_equal(mean, reference[0])
+    np.testing.assert_array_equal(std, jnp.ones_like(b.actions))
+    # The paper mean is unsquashed, even though Q inputs/evaluation are clipped.
+    params = jax.tree_util.tree_map(jnp.zeros_like, actor.params)
+    params["params"]["Dense_1"]["bias"] = jnp.full((2,), 2.)
+    mean, _ = actor.apply_fn(params, b.observations)
+    np.testing.assert_array_equal(mean, jnp.full_like(b.actions, 2.))
+
+
+@pytest.mark.parametrize("reduction", ["sum", "mean"])
+def test_paper_ddpgbc_matches_closed_form_loss_and_sgd_gradient(reduction):
+    # Two dimensions expose accidental coordinate averaging. The second mean
+    # is out of bounds: Q must clip it while NLL must retain its raw value.
+    obs = jnp.zeros((2, 1))
+    actions = jnp.array([[-.6, .3], [.8, .7]])
+    b = Transition(obs, actions, jnp.zeros((2, 1)), obs, jnp.ones((2, 1)))
+    def apply(p, states):
+        return jnp.broadcast_to(p["mean"], (len(states), 2)), jnp.ones((len(states), 2))
+    actor = TrainState.create(apply_fn=apply, params={"mean": jnp.array([.2, 1.4])}, tx=optax.sgd(.1))
+    def q_apply(p, states, a):
+        q = jnp.sum(a - .5*a**2, axis=-1, keepdims=True)
+        return q, q
+    critic = SimpleNamespace(params={}, apply_fn=q_apply)
+    value = SimpleNamespace(params={}, apply_fn=lambda p, s: jnp.zeros((len(s), 1)))
+    cfg = IQLConfig(bc_coef=3., metric_reduction=reduction)
+    updated, loss = core.update_base(actor, critic, value, b, VARIANTS[2], jax.random.PRNGKey(0), cfg, 1.)
+    # Q(clip([.2,1.4]))=.68; mean squared residual sum=1.35; unit-normal NLL=1.35/2+log(2pi).
+    expected_loss = -.68 + 3*(1.35/2 + np.log(2*np.pi))
+    np.testing.assert_allclose(loss, expected_loss, rtol=1e-6)
+    # dL/dm = [-.8,0] + 3*([.2,1.4]-[.1,.5]) = [-.5,2.7].
+    np.testing.assert_allclose(updated.params["mean"], [.25, 1.13], rtol=1e-6)
+    # Base extraction is deterministic and independent of MPI sampling flags.
+    alternate = replace(cfg, mc_samples=1, q_action_transform="clip")
+    updated2, loss2 = core.update_base(actor, critic, value, b, VARIANTS[2], jax.random.PRNGKey(9), alternate, 1.)
+    assert_tree_equal(updated, updated2)
+    np.testing.assert_array_equal(loss, loss2)
+
+
+def test_deterministic_td3bc_detaches_actor_q_scale_and_uses_mean_mse():
+    obs = jnp.zeros((2, 1))
+    actions = jnp.zeros((2, 2))
+    b = Transition(obs, actions, jnp.zeros((2, 1)), obs, jnp.ones((2, 1)))
+    actor = TrainState.create(apply_fn=lambda p, s: jnp.broadcast_to(p["mean"], (len(s), 2)),
+                              params={"mean": jnp.array([.2, .4])}, tx=optax.sgd(.1))
+    def apply_q(p, s, a):
+        q = jnp.sum(a, axis=-1, keepdims=True)
+        return q, q + 1
+    critic = SimpleNamespace(params={}, apply_fn=apply_q)
+    value = SimpleNamespace(params={}, apply_fn=lambda p, s: jnp.zeros((len(s), 1)))
+    cfg = IQLConfig(td3bc_alpha=2.5)
+    updated, loss = core.update_base(actor, critic, value, b, VARIANTS[1], jax.random.PRNGKey(0), cfg, 1.)
+    lam = 2.5 / (.6 + 1e-6)
+    np.testing.assert_allclose(loss, -lam*.6 + .1, rtol=1e-6)
+    np.testing.assert_allclose(updated.params["mean"], np.array([.2,.4]) - .1*(np.array([.2,.4])-lam), rtol=1e-6)
 
 
 @pytest.mark.parametrize("variant", (VARIANTS[0], VARIANTS[2]))
@@ -140,8 +198,8 @@ def test_actual_gaussian_refinement_moves_std_and_stops_reference_gradient(varia
     cfg = IQLConfig(variants=(variant,), mpi_steps=1, tau=.5,
                     hidden_dims=(8,), mc_samples=8, inner_updates=2)
     ts = core.create_state(jax.random.PRNGKey(0), b.observations, b.actions, cfg)
-    actor = ts.actors[0][0]
-    mean, std = core.policy_stats(actor, actor.params, b.observations, True)
+    base, actor = ts.actors[0]
+    mean, std = core.policy_stats(base, base.params, b.observations, True)
     def run(reference):
         return core.refine_actor(actor, reference, quadratic_critic(), b,
                                   variant, jax.random.PRNGKey(1), cfg)
@@ -159,8 +217,8 @@ def test_flat_q_preserves_gaussian_reference(variant):
     b = batch()
     cfg = IQLConfig(variants=(variant,), mpi_steps=1, hidden_dims=(8,))
     ts = core.create_state(jax.random.PRNGKey(0), b.observations, b.actions, cfg)
-    actor = ts.actors[0][0]
-    reference = core.policy_stats(actor, actor.params, b.observations, True)
+    base, actor = ts.actors[0]
+    reference = core.policy_stats(base, base.params, b.observations, True)
     critic = SimpleNamespace(params={}, apply_fn=lambda p, s, a: (jnp.zeros((*a.shape[:-1], 1)),)*2)
     new_actor, _ = core.refine_actor(actor, reference, critic, b, variant, jax.random.PRNGKey(1), cfg)
     assert_tree_equal(new_actor.params, actor.params)
@@ -253,6 +311,7 @@ def test_checkpoint_preserves_next_update_and_rejects_changed_geometry(tmp_path)
 
 @pytest.mark.parametrize("kwargs", [{"tau": float("nan")}, {"mpi_steps": -1},
                                    {"mc_samples": 0}, {"expectile": 1.},
+                                   {"td3bc_alpha": 0.}, {"log_std_max": -.5},
                                    {"variants": (VARIANTS[0], VARIANTS[0])}])
 def test_invalid_configuration(kwargs):
     with pytest.raises(ValueError):

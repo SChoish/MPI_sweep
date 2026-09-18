@@ -12,7 +12,7 @@ def test_worker_roundtrip_and_separate_identity(tmp_path):
     args = launcher.parse_args(["--algorithm", "iql", "--hops", "4", "--taus", "0.5 1",
                                 "--seeds", "0", "--domains", "hopper", "--datasets", "medium",
                                 "--save-dir", str(tmp_path), "--inner-updates", "2",
-                                "--metric-reduction", "mean", "--iql-q-scale-norm"])
+                                "--metric-reduction", "mean", "--iql-q-scale-norm", "--td3bc-alpha", "4"])
     launcher.validate_args(args)
     jobs = launcher.build_jobs(args)
     assert len(jobs) == 2
@@ -23,8 +23,12 @@ def test_worker_roundtrip_and_separate_identity(tmp_path):
         config = config_from_args(worker_args)
         assert config.inner_updates == 2 and config.iql_q_scale_norm
         assert config.metric_reduction == "mean"
+        assert config.td3bc_alpha == 4.
         assert run_name(worker_args, config) == job.tag
     args.bc_coef = 2.
+    assert launcher.build_jobs(args)[0].tag != jobs[0].tag
+    args.bc_coef = 1.
+    args.td3bc_alpha = 2.5
     assert launcher.build_jobs(args)[0].tag != jobs[0].tag
 
 

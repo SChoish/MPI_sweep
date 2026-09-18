@@ -220,6 +220,9 @@ def main(argv=None):
                    "normalization": {"mean": mean.tolist(), "std": std.tolist()},
                    "metric": "raw diagonal Gaussian; ambient FR^2 = 4*acos(BC)^2 (MPI A.3)",
                    "q_action_transform": config.q_action_transform,
+                   "gaussian_qbc_base": "Park et al. 2024 Eq.6/C.6.1: -mean(Q(clipped mean)) + bc_coef*mean(NLL); raw Gaussian, sigma=1",
+                   "deterministic_base": "TD3+BC actor loss: detached alpha/mean(abs(IQL Q)) and coordinate-mean MSE",
+                   "gaussian_refinement": "MPI extension: sampled expected Q with learnable mean and std",
                    "evaluation_action_transform": "clip to [-1,1]"}))
     update_fns = {}
     while step < args.max_timesteps:

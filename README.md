@@ -185,10 +185,11 @@ by this package.
 ## Quick start
 
 For the shared-IQL-critic comparison of Gaussian AWR + closed-form FR, deterministic
-Q+BC + W2, and Gaussian expected-Q+BC + W2, see
+TD3+BC actor loss + W2, and Gaussian DDPG+BC (Park et al., mean-Q + NLL BC) + W2, see
 [IQL actor/geometry experiments](IQL_ACTOR_GEOMETRY.md). Preview it with
 `mpi-sweep --algorithm iql --hops 4 --n-tau 1 --seeds 0 --dry-run`.
-The Gaussian W2 path refines both mean and standard deviation.
+The Gaussian DDPG+BC base has fixed std 1; its W2 refinement optimizes expected
+Q and learns both mean and standard deviation.
 
 The installed command and flag names retain their original identifiers for
 backward compatibility; they are interfaces, not the paper's algorithm name.

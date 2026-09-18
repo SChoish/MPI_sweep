@@ -27,13 +27,19 @@ class GaussianActor(nn.Module):
     log_std_init: float = -1.0
     log_std_min: float = -5.0
     log_std_max: float = 2.0
+    squash_mean: bool = True
+    fixed_std: float | None = None
 
     @nn.compact
     def __call__(self, observations):
         x = observations
         for width in self.hidden_dims:
             x = nn.relu(nn.Dense(width)(x))
-        mean = self.max_action * jnp.tanh(nn.Dense(self.action_dim)(x))
+        mean = nn.Dense(self.action_dim)(x)
+        if self.squash_mean:
+            mean = self.max_action * jnp.tanh(mean)
+        if self.fixed_std is not None:
+            return mean, jnp.full_like(mean, self.fixed_std)
         log_std = nn.Dense(self.action_dim, kernel_init=nn.initializers.zeros_init(),
                            bias_init=nn.initializers.constant(self.log_std_init),
                            name="log_std")(x)
@@ -143,7 +149,7 @@ def sampled_q(critic, observations, mean, std, eps, transform="identity", max_ac
 
 
 def create_state(key, observations, actions, config: IQLConfig, max_action=1.0):
-    # Fixed folded keys keep Q/V and the common initial mean independent of
+    # Fixed folded keys keep Q/V and each variant's initial mean independent of
     # the number/order of variants and refinement depth.
     def make(model, tag, lr, *inputs):
         return TrainState.create(apply_fn=model.apply,
@@ -155,12 +161,21 @@ def create_state(key, observations, actions, config: IQLConfig, max_action=1.0):
     for variant in config.variants:
         if variant == "qbc_deterministic_w2":
             model = Actor(actions.shape[-1], max_action, config.hidden_dims)
+        elif variant == "qbc_gaussian_w2":
+            # Park et al. (2024), Eq. (6) / Appendix C.6.1: an unsquashed
+            # Gaussian with sigma=1 at the base. MPI extends this family by
+            # learning sigma from expected Q, initialized at the same sigma=1.
+            model = GaussianActor(actions.shape[-1], max_action, config.hidden_dims,
+                                  0.0, config.log_std_min, config.log_std_max,
+                                  squash_mean=False)
         else:
             model = GaussianActor(actions.shape[-1], max_action, config.hidden_dims,
                                   config.log_std_init, config.log_std_min, config.log_std_max)
-        base = make(model, 3, config.actor_lr, observations)
-        # Same initial parameters, separate persistent optimizer states.
-        banks.append(tuple(base.replace() for _ in range(config.mpi_steps + 1)))
+        refined = make(model, 3, config.actor_lr, observations)
+        base_model = model.clone(fixed_std=1.0) if variant == "qbc_gaussian_w2" else model
+        base = make(base_model, 3, config.actor_lr, observations)
+        # Identical initial distributions, separate persistent optimizer states.
+        banks.append((base, *(refined.replace() for _ in range(config.mpi_steps))))
     return IQLState(tuple(banks), critic, critic.replace(), value)
 
 
@@ -186,7 +201,6 @@ def update_q(state, batch, config):
 
 def update_base(actor, critic, value, batch, variant, key, config, max_action):
     gaussian = variant != "qbc_deterministic_w2"
-    eps = normal_noise(key, config.mc_samples if gaussian else 1, batch.actions.shape)
     q_data = min_q(critic, batch.observations, batch.actions)
     v = value.apply_fn(value.params, batch.observations)[..., 0]
     weights = jax.lax.stop_gradient(jnp.exp(jnp.minimum(config.awr_beta * (q_data - v), jnp.log(100.0))))
@@ -195,10 +209,17 @@ def update_base(actor, critic, value, batch, variant, key, config, max_action):
         mean, std = policy_stats(actor, params, batch.observations, gaussian)
         if variant == "awr_gaussian_fr":
             return jnp.mean(weights * gaussian_nll(mean, std, batch.actions))
-        q = sampled_q(critic, batch.observations, mean, std, eps, config.q_action_transform, max_action)
-        # E[||a-a_D||^2] under the raw Gaussian, exact rather than noisy MC BC.
-        bc = jnp.mean(coordinate_reduce((mean - batch.actions)**2 + std**2, config.metric_reduction))
-        return -jnp.mean(q) / scale + config.bc_coef * bc
+        if variant == "qbc_gaussian_w2":
+            # Eq. (6): Q at the clipped mean, likelihood at the dataset action
+            # under the RAW Gaussian. Neither sampled Q nor expected MSE BC.
+            q = min_q(critic, batch.observations, jnp.clip(mean, -max_action, max_action))
+            bc = jnp.mean(gaussian_nll(mean, std, batch.actions))
+            return -jnp.mean(q) / scale + config.bc_coef * bc
+        q = min_q(critic, batch.observations, mean)
+        # TD3+BC actor-loss form, using the common IQL min-target-Q estimate.
+        # Freeze lambda, and average BC over both batch and action coordinates.
+        lam = jax.lax.stop_gradient(config.td3bc_alpha / (jnp.mean(jnp.abs(q)) + 1e-6))
+        return -lam * jnp.mean(q) + jnp.mean((mean - batch.actions)**2)
     loss, grad = jax.value_and_grad(loss_fn)(actor.params)
     return actor.apply_gradients(grads=grad), loss
 

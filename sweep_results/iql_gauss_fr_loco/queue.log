@@ -1,0 +1,92 @@
+[sweep] jobs=6516 pending=6516 slots=2
+[sweep] start pid=3962002 iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed0
+[sweep] start pid=3962003 iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed1
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+pybullet build time: Jan 29 2025 23:16:28
+pybullet build time: Jan 29 2025 23:16:28
+/home/choi/miniconda3/envs/offrl_backup/lib/python3.10/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.5.0) or chardet (7.4.3)/charset_normalizer (None) doesn't match a supported version!
+  warnings.warn(
+/home/choi/miniconda3/envs/offrl_backup/lib/python3.10/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.5.0) or chardet (7.4.3)/charset_normalizer (None) doesn't match a supported version!
+  warnings.warn(
+============================================================
+MPI Training Started
+Algorithm: iql
+Environment: hopper-medium-v2
+============================================================
+============================================================
+MPI Training Started
+Algorithm: iql
+Environment: hopper-medium-v2
+============================================================
+
+Seed set to: 0 (for reproducibility)
+
+Creating environment: hopper-medium-v2...
+/home/choi/miniconda3/envs/offrl_backup/lib/python3.10/site-packages/gym/spaces/box.py:84: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(f"Box bound precision lowered by casting to {self.dtype}")
+State dimension: 11
+Action dimension: 3
+Max action: 1.0
+
+Loading D4RL dataset for hopper-medium-v2...
+
+load datafile:   0%|          | 0/21 [00:00<?, ?it/s]
+Seed set to: 1 (for reproducibility)
+
+Creating environment: hopper-medium-v2...
+/home/choi/miniconda3/envs/offrl_backup/lib/python3.10/site-packages/gym/spaces/box.py:84: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(f"Box bound precision lowered by casting to {self.dtype}")
+State dimension: 11
+Action dimension: 3
+Max action: 1.0
+
+Loading D4RL dataset for hopper-medium-v2...
+
+load datafile:   0%|          | 0/21 [00:00<?, ?it/s]
+load datafile:  14%|█▍        | 3/21 [00:00<00:01, 15.54it/s]
+load datafile:  14%|█▍        | 3/21 [00:00<00:01, 15.59it/s]
+load datafile:  24%|██▍       | 5/21 [00:00<00:01, 15.54it/s]
+load datafile:  24%|██▍       | 5/21 [00:00<00:01, 15.55it/s]
+load datafile:  81%|████████  | 17/21 [00:00<00:00, 43.20it/s]
+load datafile:  81%|████████  | 17/21 [00:00<00:00, 43.19it/s]
+load datafile: 100%|██████████| 21/21 [00:00<00:00, 31.96it/s]
+
+load datafile: 100%|██████████| 21/21 [00:00<00:00, 31.95it/s]
+Dataset size: 999,998
+Dataset size: 999,998
+State normalization: mean shape=(11,), std shape=(11,)
+State normalization: mean shape=(11,), std shape=(11,)
+
+Dataset size: 999998
+[Wandb] 비활성화됨 (--no_wandb)
+---------------------------------------
+Training MPI (IQL), Env: hopper-medium-v2, Seed: 0
+  Actors: 1, W2 weights (Actor1+): []
+  Actor0: 원래 알고리즘 loss만 사용, Actor1+: Wasserstein (closed form)
+  Actor0 config: type=gaussian, class=GaussianMLP, kwargs={'tanh_mean': True}
+---------------------------------------
+로그 디렉토리 생성: results/iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed0/logs
+초기 로그 기록: results/iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed0/logs/hopper_medium_v2_iql_summary_1_10_seed0_inv2w0.05.json
+run.log: results/iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed0/logs/run_seed0_inv2w0.05.log
+
+Dataset size: 999998
+[Wandb] 비활성화됨 (--no_wandb)
+---------------------------------------
+Training MPI (IQL), Env: hopper-medium-v2, Seed: 1
+  Actors: 1, W2 weights (Actor1+): []
+  Actor0: 원래 알고리즘 loss만 사용, Actor1+: Wasserstein (closed form)
+  Actor0 config: type=gaussian, class=GaussianMLP, kwargs={'tanh_mean': True}
+---------------------------------------
+로그 디렉토리 생성: results/iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed1/logs
+초기 로그 기록: results/iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed1/logs/hopper_medium_v2_iql_summary_1_10_seed1_inv2w0.05.json
+run.log: results/iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed1/logs/run_seed1_inv2w0.05.log
+[sweep] jobs=3924 pending=3924 slots=2 explicit=off
+[sweep] adopt pid=3962002 iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed0
+[sweep] adopt pid=3962002 iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed0
+[sweep] adopt pid=3962003 iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed1
+[sweep] adopt pid=3962003 iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed1

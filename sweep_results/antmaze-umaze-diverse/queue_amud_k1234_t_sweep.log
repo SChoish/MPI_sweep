@@ -905,3 +905,7 @@ Pinned CUDA12 runtime matches: /home/choi/MPI_sweep/.venv-cuda12-locked/bin/pyth
 [launch] gpu=0 antmaze-umaze-diverse-v2_tau0.2_mpi4_seed0 pid=3837746
 [ok] antmaze-umaze-diverse-v2_tau0.1_mpi4_seed3 7.8m
 [launch] gpu=0 antmaze-umaze-diverse-v2_tau0.2_mpi4_seed1 pid=3837949
+[ok] antmaze-umaze-diverse-v2_tau0.2_mpi4_seed0 8.3m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.2_mpi4_seed2 pid=3839074
+[ok] antmaze-umaze-diverse-v2_tau0.2_mpi4_seed1 8.0m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.2_mpi4_seed3 pid=3839250

@@ -868,3 +868,21 @@ Pinned CUDA12 runtime matches: /home/choi/MPI_sweep/.venv-cuda12-locked/bin/pyth
 [launch] gpu=0 antmaze-umaze-diverse-v2_tau20_mpi3_seed1 pid=3828755
 [ok] antmaze-umaze-diverse-v2_tau20_mpi3_seed0 7.3m
 [launch] gpu=0 antmaze-umaze-diverse-v2_tau20_mpi3_seed2 pid=3828936
+[ok] antmaze-umaze-diverse-v2_tau20_mpi3_seed1 7.6m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau20_mpi3_seed3 pid=3830416
+[ok] antmaze-umaze-diverse-v2_tau20_mpi3_seed2 7.4m
+[ok] antmaze-umaze-diverse-v2_tau20_mpi3_seed3 4.2m
+[sweep] complete ok=27 fail=0 pending=0
+[2026-09-18 18:21:37 KST] K=3 finished rc=0
+[2026-09-18 18:21:37 KST] === hops=K=4 dry-run count ===
+[dry-run] gpu=0 /home/choi/MPI_sweep/.venv-cuda12-locked/bin/python -u /home/choi/MPI_sweep/train_td3bc.py --env antmaze-umaze-diverse-v2 --tau 20 --mpi-steps 4 --method bar --integrator implicit --polyak 0.005 --seed 1 --max-timesteps 1000000 --eval-freq 1000000 --eval-episodes 100 --n-jitted-updates 8 --updates-per-dispatch 64 --compilation-cache-dir /home/choi/.cache/mpi-sweep/jax --save-interval 0 --data-dir /home/choi/MPI_sweep/data --save-dir /home/choi/MPI_sweep/results/antmaze_umaze_diverse_t_sweep --q-scale-norm
+[dry-run] gpu=0 /home/choi/MPI_sweep/.venv-cuda12-locked/bin/python -u /home/choi/MPI_sweep/train_td3bc.py --env antmaze-umaze-diverse-v2 --tau 20 --mpi-steps 4 --method bar --integrator implicit --polyak 0.005 --seed 2 --max-timesteps 1000000 --eval-freq 1000000 --eval-episodes 100 --n-jitted-updates 8 --updates-per-dispatch 64 --compilation-cache-dir /home/choi/.cache/mpi-sweep/jax --save-interval 0 --data-dir /home/choi/MPI_sweep/data --save-dir /home/choi/MPI_sweep/results/antmaze_umaze_diverse_t_sweep --q-scale-norm
+[dry-run] gpu=0 /home/choi/MPI_sweep/.venv-cuda12-locked/bin/python -u /home/choi/MPI_sweep/train_td3bc.py --env antmaze-umaze-diverse-v2 --tau 20 --mpi-steps 4 --method bar --integrator implicit --polyak 0.005 --seed 3 --max-timesteps 1000000 --eval-freq 1000000 --eval-episodes 100 --n-jitted-updates 8 --updates-per-dispatch 64 --compilation-cache-dir /home/choi/.cache/mpi-sweep/jax --save-interval 0 --data-dir /home/choi/MPI_sweep/data --save-dir /home/choi/MPI_sweep/results/antmaze_umaze_diverse_t_sweep --q-scale-norm
+[2026-09-18 18:21:38 KST] K=4 pending_lines≈58 — launching
+[sweep] method=bar integrator=implicit hops=4 jobs=56 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 12 14 17 20
+[provenance] wrote /home/choi/MPI_sweep/logs/antmaze_umaze_diverse/SWEEP_PROVENANCE.json
+[preflight] gpu=0 passed; see /home/choi/MPI_sweep/logs/antmaze_umaze_diverse/cuda_preflight_0.log
+[data] ready /home/choi/MPI_sweep/data/antmaze-umaze-diverse-v2.hdf5
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.05_mpi4_seed0 pid=3830831
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau0.05_mpi4_seed1 pid=3830832

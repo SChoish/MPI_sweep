@@ -958,3 +958,7 @@ Pinned CUDA12 runtime matches: /home/choi/MPI_sweep/.venv-cuda12-locked/bin/pyth
 [fail] antmaze-umaze-diverse-v2_tau4_mpi4_seed3 rc=-11 3.0m
 [sweep] native crash; retry 1/3 antmaze-umaze-diverse-v2_tau4_mpi4_seed3 after 20s (queue stays up)
 [launch] gpu=0 antmaze-umaze-diverse-v2_tau4_mpi4_seed3 pid=3854878
+[ok] antmaze-umaze-diverse-v2_tau4_mpi4_seed2 9.5m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau7_mpi4_seed0 pid=3855925
+[ok] antmaze-umaze-diverse-v2_tau4_mpi4_seed3 7.0m
+[launch] gpu=0 antmaze-umaze-diverse-v2_tau7_mpi4_seed1 pid=3858260

@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T16:02:27Z",
-  "stamp_kst": "2026-09-20 01:02 KST",
+  "updated_at": "2026-09-19T16:07:41Z",
+  "stamp_kst": "2026-09-20 01:07 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -8,9 +8,9 @@
     2,
     3
   ],
-  "per_seed": 513,
+  "per_seed": 405,
   "seed_complete": [
-    119,
+    96,
     0,
     0,
     0
@@ -30,23 +30,19 @@
     "12",
     "14",
     "17",
-    "20",
-    "24",
-    "28",
-    "34",
-    "40"
+    "20"
   ],
   "hops": [
     1,
     2,
     3
   ],
-  "planned": 2052,
+  "planned": 1620,
   "counts": {
-    "complete": 119,
-    "running": 6,
-    "remaining": 1927,
-    "extra_dirs": 0
+    "complete": 96,
+    "running": 4,
+    "remaining": 1520,
+    "extra_dirs": 25
   },
   "queue": "2026-09-19T15:34:57+00:00 env=hopper-medium-replay-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 24 28 34 40 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
@@ -56,7 +52,7 @@
       "tau": "12",
       "hops": 3,
       "seed": 0,
-      "step": 176352
+      "step": 403136
     },
     {
       "pid": 748042,
@@ -64,7 +60,7 @@
       "tau": "14",
       "hops": 3,
       "seed": 0,
-      "step": 190112
+      "step": 444736
     },
     {
       "pid": 748061,
@@ -72,7 +68,7 @@
       "tau": "17",
       "hops": 3,
       "seed": 0,
-      "step": 168224
+      "step": 395744
     },
     {
       "pid": 748062,
@@ -80,83 +76,67 @@
       "tau": "20",
       "hops": 3,
       "seed": 0,
-      "step": 167328
-    },
-    {
-      "pid": 749464,
-      "env": "hopper-medium-replay-v2",
-      "tau": "24",
-      "hops": 3,
-      "seed": 0,
-      "step": 159200
-    },
-    {
-      "pid": 751546,
-      "env": "hopper-medium-replay-v2",
-      "tau": "28",
-      "hops": 3,
-      "seed": 0,
-      "step": 143584
+      "step": 404224
     }
   ],
   "by_env": {
     "hopper-medium-v2": {
       "1": {
-        "complete": 19,
+        "complete": 15,
         "live": 0,
-        "status": "19/76 paused",
+        "status": "15/60 paused",
         "min_step": 0
       },
       "2": {
-        "complete": 19,
+        "complete": 15,
         "live": 0,
-        "status": "19/76 paused",
+        "status": "15/60 paused",
         "min_step": 0
       },
       "3": {
-        "complete": 19,
+        "complete": 15,
         "live": 0,
-        "status": "19/76 paused",
+        "status": "15/60 paused",
         "min_step": 0
       }
     },
     "hopper-medium-replay-v2": {
       "1": {
-        "complete": 19,
+        "complete": 15,
         "live": 0,
-        "status": "19/76 paused",
+        "status": "15/60 paused",
         "min_step": 0
       },
       "2": {
-        "complete": 19,
+        "complete": 15,
         "live": 0,
-        "status": "19/76 paused",
+        "status": "15/60 paused",
         "min_step": 0
       },
       "3": {
-        "complete": 12,
-        "live": 6,
-        "status": "12/76 \u00b7 6 live@143k",
-        "min_step": 143584
+        "complete": 11,
+        "live": 4,
+        "status": "11/60 \u00b7 4 live@395k",
+        "min_step": 395744
       }
     },
     "hopper-expert-v2": {
       "1": {
-        "complete": 6,
+        "complete": 5,
         "live": 0,
-        "status": "6/76 paused",
+        "status": "5/60 paused",
         "min_step": 0
       },
       "2": {
-        "complete": 6,
+        "complete": 5,
         "live": 0,
-        "status": "6/76 paused",
+        "status": "5/60 paused",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       }
     },
@@ -164,19 +144,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       }
     },
@@ -184,19 +164,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       }
     },
@@ -204,19 +184,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       }
     },
@@ -224,19 +204,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       }
     },
@@ -244,19 +224,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       }
     },
@@ -264,23 +244,23 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/76",
+        "status": "0/60",
         "min_step": 0
       }
     }
   },
   "save_dir": "/raid/ext_csv/MPI_store/iql_qbc_deterministic_w2_hscale_seed0",
-  "note": "Per-env K=1 then 2 then 3; MART T 19; seeds 0-3. Same save dir."
+  "note": "Per-env K=1 then 2 then 3; MART T through 20; 24/28/34/40 deferred; seeds 0-3. Same save dir."
 }

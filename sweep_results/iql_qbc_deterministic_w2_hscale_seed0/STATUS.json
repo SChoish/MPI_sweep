@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T09:12:26Z",
-  "stamp_kst": "2026-09-19 18:12 KST",
+  "updated_at": "2026-09-19T09:22:36Z",
+  "stamp_kst": "2026-09-19 18:22 KST",
   "variant": "qbc_deterministic_w2",
   "seed": 0,
   "taus": [
@@ -30,35 +30,35 @@
       "env": "hopper-medium-v2",
       "tau": "0.05",
       "hops": 3,
-      "step": 954272
+      "step": 983648
     },
     {
       "pid": 2092950,
       "env": "hopper-medium-v2",
       "tau": "0.4",
       "hops": 3,
-      "step": 949728
+      "step": 979488
     },
     {
       "pid": 2096368,
       "env": "hopper-medium-v2",
       "tau": "1.25",
       "hops": 3,
-      "step": 948320
+      "step": 978208
     },
     {
       "pid": 2097875,
       "env": "hopper-medium-v2",
       "tau": "4",
       "hops": 3,
-      "step": 947680
+      "step": 978080
     },
     {
       "pid": 2100556,
       "env": "hopper-medium-v2",
       "tau": "10",
       "hops": 3,
-      "step": 946272
+      "step": 976352
     }
   ],
   "by_env": {
@@ -78,8 +78,8 @@
       "3": {
         "complete": 1,
         "live": 5,
-        "status": "1/6 \u00b7 5 live@946k",
-        "min_step": 946272
+        "status": "1/6 \u00b7 5 live@976k",
+        "min_step": 976352
       }
     },
     "hopper-medium-replay-v2": {

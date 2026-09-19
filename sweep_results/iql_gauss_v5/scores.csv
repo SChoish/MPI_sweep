@@ -1,1 +1,3 @@
 env,tau,K,seed,geometry,policy,hop,eval_mode,d4rl_score
+hopper-medium-v2_iql_tau0.05_mpi1_seed0_202ed7bafba2,0.05,1,,w2,baseline,1,mean,45.10867293409707
+hopper-medium-v2_iql_tau0.05_mpi1_seed0_202ed7bafba2,0.05,1,,w2,baseline,1,sample,43.63185474851582

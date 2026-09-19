@@ -21,3 +21,5 @@
 [data] linked /home/choi/MPI_sweep/data/walker2d_expert-v2.hdf5 -> /home/choi/.d4rl/datasets/walker2d_expert-v2.hdf5
 [data] ready /home/choi/MPI_sweep/data/walker2d_expert-v2.hdf5
 [launch] gpu=0 hopper-medium-v2_iql_tau0.05_mpi1_seed0_202ed7bafba2 pid=4020402
+[ok] hopper-medium-v2_iql_tau0.05_mpi1_seed0_202ed7bafba2 6.9m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.05_mpi1_seed1_b667deb50606 pid=4022329

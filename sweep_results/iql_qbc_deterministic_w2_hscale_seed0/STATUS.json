@@ -1,14 +1,27 @@
 {
-  "updated_at": "2026-09-19T11:44:59Z",
-  "stamp_kst": "2026-09-19 20:44 KST",
+  "updated_at": "2026-09-19T11:55:12Z",
+  "stamp_kst": "2026-09-19 20:55 KST",
   "variant": "qbc_deterministic_w2",
   "seed": 0,
   "taus": [
     "0.05",
+    "0.1",
+    "0.2",
     "0.4",
+    "0.7",
     "1.25",
+    "1.5",
+    "2.5",
     "4",
+    "7",
     "10",
+    "12",
+    "14",
+    "17",
+    "20",
+    "24",
+    "28",
+    "34",
     "40"
   ],
   "hops": [
@@ -16,56 +29,56 @@
     2,
     3
   ],
-  "planned": 162,
+  "planned": 513,
   "counts": {
-    "complete": 36,
+    "complete": 42,
     "running": 6,
-    "remaining": 120,
+    "remaining": 465,
     "extra_dirs": 0
   },
-  "queue": "2026-09-19T11:41:17+00:00 env=hopper-expert-v2 hop=1 device=cuda taus=0.05 0.4 1.25 4 10 40 \u00b7 watcher gpu_running \u00b7 portal running",
+  "queue": "2026-09-19T11:51:50+00:00 env=hopper-expert-v2 hop=2 device=cuda taus=0.05 0.4 1.25 4 10 40 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 3099014,
+      "pid": 3167396,
       "env": "hopper-expert-v2",
       "tau": "0.05",
-      "hops": 1,
-      "step": 337120
+      "hops": 2,
+      "step": 175712
     },
     {
-      "pid": 3099015,
+      "pid": 3167397,
       "env": "hopper-expert-v2",
       "tau": "0.4",
-      "hops": 1,
-      "step": 335200
+      "hops": 2,
+      "step": 172576
     },
     {
-      "pid": 3099016,
+      "pid": 3167398,
       "env": "hopper-expert-v2",
       "tau": "1.25",
-      "hops": 1,
-      "step": 336032
+      "hops": 2,
+      "step": 170144
     },
     {
-      "pid": 3099017,
+      "pid": 3167399,
       "env": "hopper-expert-v2",
       "tau": "4",
-      "hops": 1,
-      "step": 342240
+      "hops": 2,
+      "step": 171872
     },
     {
-      "pid": 3099018,
+      "pid": 3167400,
       "env": "hopper-expert-v2",
       "tau": "10",
-      "hops": 1,
-      "step": 334944
+      "hops": 2,
+      "step": 176352
     },
     {
-      "pid": 3099019,
+      "pid": 3167401,
       "env": "hopper-expert-v2",
       "tau": "40",
-      "hops": 1,
-      "step": 334048
+      "hops": 2,
+      "step": 170336
     }
   ],
   "by_env": {
@@ -73,19 +86,19 @@
       "1": {
         "complete": 6,
         "live": 0,
-        "status": "6/6",
+        "status": "6/19 paused",
         "min_step": 0
       },
       "2": {
         "complete": 6,
         "live": 0,
-        "status": "6/6",
+        "status": "6/19 paused",
         "min_step": 0
       },
       "3": {
         "complete": 6,
         "live": 0,
-        "status": "6/6",
+        "status": "6/19 paused",
         "min_step": 0
       }
     },
@@ -93,39 +106,39 @@
       "1": {
         "complete": 6,
         "live": 0,
-        "status": "6/6",
+        "status": "6/19 paused",
         "min_step": 0
       },
       "2": {
         "complete": 6,
         "live": 0,
-        "status": "6/6",
+        "status": "6/19 paused",
         "min_step": 0
       },
       "3": {
         "complete": 6,
         "live": 0,
-        "status": "6/6",
+        "status": "6/19 paused",
         "min_step": 0
       }
     },
     "hopper-expert-v2": {
       "1": {
-        "complete": 0,
-        "live": 6,
-        "status": "0/6 \u00b7 6 live@334k",
-        "min_step": 334048
+        "complete": 6,
+        "live": 0,
+        "status": "6/19 paused",
+        "min_step": 0
       },
       "2": {
         "complete": 0,
-        "live": 0,
-        "status": "0/6",
-        "min_step": 0
+        "live": 6,
+        "status": "0/19 \u00b7 6 live@170k",
+        "min_step": 170144
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       }
     },
@@ -133,19 +146,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       }
     },
@@ -153,19 +166,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       }
     },
@@ -173,19 +186,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       }
     },
@@ -193,19 +206,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       }
     },
@@ -213,19 +226,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       }
     },
@@ -233,19 +246,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/6",
+        "status": "0/19",
         "min_step": 0
       }
     }

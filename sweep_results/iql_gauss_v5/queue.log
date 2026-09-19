@@ -57,3 +57,9 @@
 [launch] gpu=0 hopper-medium-v2_iql_tau0.4_mpi1_seed0_99c9ffd65322 pid=4028284
 [ok] hopper-medium-v2_iql_tau0.4_mpi1_seed0_99c9ffd65322 6.9m
 [launch] gpu=0 hopper-medium-v2_iql_tau1.25_mpi1_seed0_158d8ce4e512 pid=4030452
+[v5] 2026-09-19 13:16:14 KST start env=hopper-medium-v2 hops=1 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=1 jobs=4 device=['0'] slots/gpu=1 concurrency=1
+[sweep] tau_grid=0.050000000000000003 0.40000000000000002 1.25 4 10 40
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_medium-v2.hdf5
+[launch] gpu=0 hopper-medium-v2_iql_tau1.25_mpi1_seed0_158d8ce4e512 pid=4031313

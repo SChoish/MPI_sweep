@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-20 00:34:38 UTC+09:00",
+  "updated_at": "2026-09-20 00:39:44 UTC+09:00",
   "schema": "iql_actor_geometry_v5_consistent_gaussian",
   "k": 4,
   "taus": [
@@ -46,9 +46,9 @@
     "walker2d-expert-v2"
   ],
   "total": 684,
-  "started": 20,
-  "done": 16,
-  "queue_ok": 16,
+  "started": 22,
+  "done": 18,
+  "queue_ok": 18,
   "queue_fail": 0,
   "source": "/home/shchoi/MPI_sweep/results/iql_k4_t6",
   "note": "Shared-critic IQL, three variants, K=4, 19 T, loco-9, seeds 0-3."

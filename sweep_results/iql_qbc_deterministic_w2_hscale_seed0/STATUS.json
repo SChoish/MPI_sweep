@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T13:46:30Z",
-  "stamp_kst": "2026-09-19 22:46 KST",
+  "updated_at": "2026-09-19T13:51:42Z",
+  "stamp_kst": "2026-09-19 22:51 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 513,
   "seed_complete": [
-    74,
+    80,
     0,
     0,
     0
@@ -43,60 +43,60 @@
   ],
   "planned": 2052,
   "counts": {
-    "complete": 74,
+    "complete": 80,
     "running": 6,
-    "remaining": 1972,
+    "remaining": 1966,
     "extra_dirs": 0
   },
   "queue": "2026-09-19T13:24:30+00:00 env=hopper-medium-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 24 28 34 40 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 3901888,
+      "pid": 4169160,
       "env": "hopper-medium-v2",
-      "tau": "0.1",
+      "tau": "12",
       "hops": 3,
       "seed": 0,
-      "step": 942816
+      "step": 178272
     },
     {
-      "pid": 3901890,
+      "pid": 4172257,
       "env": "hopper-medium-v2",
-      "tau": "0.2",
+      "tau": "14",
       "hops": 3,
       "seed": 0,
-      "step": 971360
+      "step": 160480
     },
     {
-      "pid": 3901892,
+      "pid": 4172676,
       "env": "hopper-medium-v2",
-      "tau": "0.7",
+      "tau": "17",
       "hops": 3,
       "seed": 0,
-      "step": 936672
+      "step": 146080
     },
     {
-      "pid": 3901894,
+      "pid": 4174021,
       "env": "hopper-medium-v2",
-      "tau": "1.5",
+      "tau": "20",
       "hops": 3,
       "seed": 0,
-      "step": 955168
+      "step": 147360
     },
     {
-      "pid": 3901895,
+      "pid": 4174349,
       "env": "hopper-medium-v2",
-      "tau": "2.5",
+      "tau": "24",
       "hops": 3,
       "seed": 0,
-      "step": 951904
+      "step": 140128
     },
     {
-      "pid": 3901896,
+      "pid": 4174350,
       "env": "hopper-medium-v2",
-      "tau": "7",
+      "tau": "28",
       "hops": 3,
       "seed": 0,
-      "step": 949600
+      "step": 141152
     }
   ],
   "by_env": {
@@ -114,10 +114,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 6,
+        "complete": 12,
         "live": 6,
-        "status": "6/76 \u00b7 6 live@936k",
-        "min_step": 936672
+        "status": "12/76 \u00b7 6 live@140k",
+        "min_step": 140128
       }
     },
     "hopper-medium-replay-v2": {

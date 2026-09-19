@@ -21,6 +21,8 @@ hopper-medium-v2,0.1,2,2,fr,mpi,2,mean,46.562483,hopper-medium-v2_iql_tau0.1_mpi
 hopper-medium-v2,0.1,2,3,fr,mpi,2,mean,38.717360,hopper-medium-v2_iql_tau0.1_mpi2_seed3_340dbca02431
 hopper-medium-v2,0.1,4,0,fr,mpi,4,mean,38.940951,hopper-medium-v2_iql_tau0.1_mpi4_seed0_61b145b91233
 hopper-medium-v2,0.1,4,1,fr,mpi,4,mean,49.362423,hopper-medium-v2_iql_tau0.1_mpi4_seed1_94fad4b6f3b9
+hopper-medium-v2,0.1,4,2,fr,mpi,4,mean,44.505725,hopper-medium-v2_iql_tau0.1_mpi4_seed2_3912bf728e5a
+hopper-medium-v2,0.1,4,3,fr,mpi,4,mean,43.735001,hopper-medium-v2_iql_tau0.1_mpi4_seed3_2e9ad20446ec
 hopper-medium-v2,0.2,1,0,fr,baseline,1,mean,44.210231,hopper-medium-v2_iql_tau0.2_mpi1_seed0_cff0fdedce1f
 hopper-medium-v2,0.2,1,1,fr,baseline,1,mean,43.294903,hopper-medium-v2_iql_tau0.2_mpi1_seed1_69080e4e870e
 hopper-medium-v2,0.2,1,2,fr,baseline,1,mean,40.292481,hopper-medium-v2_iql_tau0.2_mpi1_seed2_56171c04fc8c
@@ -29,6 +31,10 @@ hopper-medium-v2,0.2,2,0,fr,mpi,2,mean,42.075168,hopper-medium-v2_iql_tau0.2_mpi
 hopper-medium-v2,0.2,2,1,fr,mpi,2,mean,41.717146,hopper-medium-v2_iql_tau0.2_mpi2_seed1_30be3f5114e3
 hopper-medium-v2,0.2,2,2,fr,mpi,2,mean,44.776334,hopper-medium-v2_iql_tau0.2_mpi2_seed2_236ddb7e73fa
 hopper-medium-v2,0.2,2,3,fr,mpi,2,mean,40.097934,hopper-medium-v2_iql_tau0.2_mpi2_seed3_4dd12ab6fd82
+hopper-medium-v2,0.2,4,0,fr,mpi,4,mean,39.062309,hopper-medium-v2_iql_tau0.2_mpi4_seed0_fb34f338eefd
+hopper-medium-v2,0.2,4,1,fr,mpi,4,mean,38.984405,hopper-medium-v2_iql_tau0.2_mpi4_seed1_260809460101
+hopper-medium-v2,0.2,4,2,fr,mpi,4,mean,41.173640,hopper-medium-v2_iql_tau0.2_mpi4_seed2_2ae44f2172e9
+hopper-medium-v2,0.2,4,3,fr,mpi,4,mean,39.194401,hopper-medium-v2_iql_tau0.2_mpi4_seed3_38ec33c2d190
 hopper-medium-v2,0.4,1,0,fr,baseline,1,mean,42.321467,hopper-medium-v2_iql_tau0.4_mpi1_seed0_50499bcc0da9
 hopper-medium-v2,0.4,1,1,fr,baseline,1,mean,78.293564,hopper-medium-v2_iql_tau0.4_mpi1_seed1_e03dc757d252
 hopper-medium-v2,0.4,1,2,fr,baseline,1,mean,44.785987,hopper-medium-v2_iql_tau0.4_mpi1_seed2_c91792279298

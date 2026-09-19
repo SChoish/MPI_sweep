@@ -34,3 +34,5 @@
 [launch] gpu=0 hopper-medium-v2_iql_tau0.4_mpi1_seed1_59f57103a5f9 pid=9366
 [ok] hopper-medium-v2_iql_tau0.4_mpi1_seed1_59f57103a5f9 6.9m
 [launch] gpu=0 hopper-medium-v2_iql_tau0.4_mpi1_seed2_914510f2ec02 pid=11013
+[ok] hopper-medium-v2_iql_tau0.4_mpi1_seed2_914510f2ec02 6.9m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.4_mpi1_seed3_e94cfa435528 pid=12865

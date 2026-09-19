@@ -19,3 +19,23 @@ alwaysApply: true
 - 설정의 `worker.state_dir` 아래 최신 `lease.json`/`watcher.log`에서 갱신 시각, `queue_commands`, `phase`, `events`를 확인한다. 실제 프로세스와 새 학습 로그도 확인한 뒤 실행 중이라고 보고한다. 등록 완료, 전환 보류, 실행 확인을 구분한다. 오래된 `gpu_usage`·`gpu_queue_alive` 값은 실행 증거로 쓰지 않는다.
 - 결과 동기화나 캔버스 루프는 학습 프로세스로 등록하지 않는다. 접속 수단이 없으면 실제 경로를 채운 명령을 제공하고 실행 상태는 미확인으로 남긴다. 서버용 명령은 `rg` 없이도 동작하도록 작성한다.
 - 워처 수정은 `server_management`, 실험 큐 수정은 이 저장소에서 한다. 이 저장소의 옛 워처 사본을 고쳐 해결하지 않는다. 런타임 등록에 자동 Git 푸시를 붙이지 않으며 기존 `mpi-sweep-publication.mdc`의 결과 발행 규칙을 유지한다.
+
+## ext_csv 현재 큐의 등록 예시
+
+다음 명령은 큐 실행을 요청받았을 때 호스트에서 사용한다. 룰 설치만으로 실행하지 않는다. 경로가 현재 큐와 일치하는지 먼저 확인한다.
+
+현재 ext_csv IQL deterministic W2 큐 등록 예시:
+
+```bash
+python3 /home/ext_csv/server_management/scripts/hosts/beyondg/register_queue.py \
+  --config /home/ext_csv/server_management/config/ext_csv.json \
+  --cpu-queue /home/ext_csv/server_management/scripts/hosts/beyondg/run_queue_iql_qbc_det_w2_seed0_cpu.sh \
+  --gpu-queue /home/ext_csv/server_management/scripts/hosts/beyondg/run_queue_iql_qbc_det_w2_seed0_gpu.sh \
+  --cwd /home/ext_csv/MPI_sweep \
+  --process train_iql_mpi.py launch_mpi_sweep.py scripts/hosts/beyondg/run_queue_iql_qbc_det_w2_seed0.sh
+```
+
+- 위 두 래퍼는 실제 실험 큐인 `/home/ext_csv/MPI_sweep/scripts/hosts/beyondg/run_queue_iql_qbc_det_w2_seed0.sh`를 실행한다. 래퍼와 공통 큐를 구분하고, 공통 큐까지 프로세스 감지에 포함한다.
+- 동기화 루프를 시작하는 큐는 `worker.ignore_patterns`에 해당 루프의 실제 스크립트 경로를 등록했는지 확인한다. `register_queue.py`는 이 항목을 보존하며 새 루프를 자동 추가하지 않는다. 새 보조 루프를 도입하면 실행을 승인받은 설정 변경에 이 항목도 포함한다. 트레이너나 런처를 제외하지 않는다.
+- 현재 ext_csv의 제외 대상은 `/home/ext_csv/MPI_sweep/scripts/refresh_iql_qbc_det_w2_5m.sh`, ext_csh의 제외 대상은 `/home/ext_csh/MPI_sweep/scripts/run_iql_gauss_fr_periodic.sh`다. 다른 큐로 바뀌면 실제 경로를 다시 확인한다.
+- 큐 파일명에 `seed0`가 있어도 seed 0만 실행한다고 추정하지 않는다. 현재 ext_csv 공통 큐는 seed 0 단계를 마친 뒤 seeds 1/2/3을 실행한다. 실험 범위는 큐 본문과 실행 인자를 읽어 보고한다.

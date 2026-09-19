@@ -55,3 +55,5 @@
 [data] ready /home/choi/MPI_sweep/data/walker2d_medium_replay-v2.hdf5
 [data] ready /home/choi/MPI_sweep/data/walker2d_expert-v2.hdf5
 [launch] gpu=0 hopper-medium-v2_iql_tau0.4_mpi1_seed0_99c9ffd65322 pid=4028284
+[ok] hopper-medium-v2_iql_tau0.4_mpi1_seed0_99c9ffd65322 6.9m
+[launch] gpu=0 hopper-medium-v2_iql_tau1.25_mpi1_seed0_158d8ce4e512 pid=4030452

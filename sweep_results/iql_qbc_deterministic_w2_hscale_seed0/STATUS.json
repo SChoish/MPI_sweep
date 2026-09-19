@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T15:41:21Z",
-  "stamp_kst": "2026-09-20 00:41 KST",
+  "updated_at": "2026-09-19T15:46:38Z",
+  "stamp_kst": "2026-09-20 00:46 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -56,7 +56,7 @@
       "tau": "0.1",
       "hops": 3,
       "seed": 0,
-      "step": 262656
+      "step": 498304
     },
     {
       "pid": 617466,
@@ -64,7 +64,7 @@
       "tau": "0.2",
       "hops": 3,
       "seed": 0,
-      "step": 261184
+      "step": 494208
     },
     {
       "pid": 617467,
@@ -72,7 +72,7 @@
       "tau": "0.7",
       "hops": 3,
       "seed": 0,
-      "step": 262464
+      "step": 496192
     },
     {
       "pid": 617468,
@@ -80,7 +80,7 @@
       "tau": "1.5",
       "hops": 3,
       "seed": 0,
-      "step": 256000
+      "step": 485632
     },
     {
       "pid": 617469,
@@ -88,7 +88,7 @@
       "tau": "2.5",
       "hops": 3,
       "seed": 0,
-      "step": 261120
+      "step": 500512
     },
     {
       "pid": 617470,
@@ -96,7 +96,7 @@
       "tau": "7",
       "hops": 3,
       "seed": 0,
-      "step": 258624
+      "step": 482176
     }
   ],
   "by_env": {
@@ -136,8 +136,8 @@
       "3": {
         "complete": 6,
         "live": 6,
-        "status": "6/76 \u00b7 6 live@256k",
-        "min_step": 256000
+        "status": "6/76 \u00b7 6 live@482k",
+        "min_step": 482176
       }
     },
     "hopper-expert-v2": {

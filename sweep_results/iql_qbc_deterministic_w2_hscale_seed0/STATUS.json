@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T08:52:07Z",
-  "stamp_kst": "2026-09-19 17:52 KST",
+  "updated_at": "2026-09-19T09:02:16Z",
+  "stamp_kst": "2026-09-19 18:02 KST",
   "variant": "qbc_deterministic_w2",
   "seed": 0,
   "taus": [
@@ -23,14 +23,42 @@
     "remaining": 144,
     "extra_dirs": 0
   },
-  "queue": "2026-09-19T17:52:05+09:00 env=hopper-medium-v2 hop=3 device=cpu taus=0.05 0.4 1.25 4 10 40",
+  "queue": "2026-09-19T17:55:16+09:00 env=hopper-medium-v2 hop=3 device=cpu taus=0.05 0.4 1.25 4 10 40 \u00b7 watcher cpu_waiting_gpu \u00b7 portal queued",
   "live": [
     {
-      "pid": 2070497,
+      "pid": 2091796,
       "env": "hopper-medium-v2",
       "tau": "0.05",
       "hops": 3,
-      "step": 975456
+      "step": 924320
+    },
+    {
+      "pid": 2092950,
+      "env": "hopper-medium-v2",
+      "tau": "0.4",
+      "hops": 3,
+      "step": 919456
+    },
+    {
+      "pid": 2096368,
+      "env": "hopper-medium-v2",
+      "tau": "1.25",
+      "hops": 3,
+      "step": 917792
+    },
+    {
+      "pid": 2097875,
+      "env": "hopper-medium-v2",
+      "tau": "4",
+      "hops": 3,
+      "step": 916832
+    },
+    {
+      "pid": 2100556,
+      "env": "hopper-medium-v2",
+      "tau": "10",
+      "hops": 3,
+      "step": 915616
     }
   ],
   "by_env": {
@@ -50,8 +78,8 @@
       "3": {
         "complete": 1,
         "live": 5,
-        "status": "1/6 \u00b7 5 live@913k",
-        "min_step": 913952
+        "status": "1/6 \u00b7 5 live@915k",
+        "min_step": 915616
       }
     },
     "hopper-medium-replay-v2": {
@@ -216,5 +244,5 @@
     }
   },
   "save_dir": "/raid/ext_csv/MPI_store/iql_qbc_deterministic_w2_hscale_seed0",
-  "note": "Per-env K=1 then 2 then 3; coarse T; seed 0; 6 GPU slots."
+  "note": "Per-env K=1 then 2 then 3; coarse T; seed 0. CPU failover while GPU is queued."
 }

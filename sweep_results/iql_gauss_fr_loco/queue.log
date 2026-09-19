@@ -336,3 +336,125 @@ Training MPI (IQL), Env: hopper-medium-replay-v2, Seed: 1
 로그 디렉토리 생성: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed1/logs
 초기 로그 기록: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed1/logs/hopper_medium_replay_v2_iql_summary_1_10_seed1_inv2w0.05.json
 run.log: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed1/logs/run_seed1_inv2w0.05.log
+[Training] Time steps: 1000000
+---------------------------------------
+Evaluation over 10 episodes:
+  Actor 0 - Raw: 3284.738, D4RL score: 101.5
+---------------------------------------
+
+============================================================
+======== Final Evaluation (all actors) ========
+============================================================
+
+======== Final Evaluation: Actor 0 ========
+[Training] Time steps: 1000000
+[FINAL] Deterministic: mean=86.309, std=0.000 over 1x10
+[FINAL] Stochastic:   mean=94.871, std=0.000 over 1x10
+
+로그 저장 완료: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed0/logs/hopper_medium_replay_v2_iql_summary_1_10_seed0_inv2w0.05.json
+run.log: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed0/logs/run_seed0_inv2w0.05.log
+---------------------------------------
+Evaluation over 10 episodes:
+  Actor 0 - Raw: 2857.461, D4RL score: 88.4
+---------------------------------------
+
+============================================================
+======== Final Evaluation (all actors) ========
+============================================================
+
+======== Final Evaluation: Actor 0 ========
+[sweep] ok iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed0
+[sweep] ok iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed0
+[sweep] start pid=4007065 iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed2
+[sweep] start pid=4007065 iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed2
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+pybullet build time: Jan 29 2025 23:16:28
+[FINAL] Deterministic: mean=87.192, std=0.000 over 1x10
+[FINAL] Stochastic:   mean=90.513, std=0.000 over 1x10
+
+로그 저장 완료: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed1/logs/hopper_medium_replay_v2_iql_summary_1_10_seed1_inv2w0.05.json
+run.log: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed1/logs/run_seed1_inv2w0.05.log
+/home/choi/miniconda3/envs/offrl_backup/lib/python3.10/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.5.0) or chardet (7.4.3)/charset_normalizer (None) doesn't match a supported version!
+  warnings.warn(
+============================================================
+MPI Training Started
+Algorithm: iql
+Environment: hopper-medium-replay-v2
+============================================================
+
+Seed set to: 2 (for reproducibility)
+
+Creating environment: hopper-medium-replay-v2...
+/home/choi/miniconda3/envs/offrl_backup/lib/python3.10/site-packages/gym/spaces/box.py:84: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(f"Box bound precision lowered by casting to {self.dtype}")
+State dimension: 11
+Action dimension: 3
+Max action: 1.0
+
+Loading D4RL dataset for hopper-medium-replay-v2...
+
+load datafile:   0%|          | 0/11 [00:00<?, ?it/s]
+load datafile:  36%|███▋      | 4/11 [00:00<00:00, 26.81it/s]
+load datafile:  73%|███████▎  | 8/11 [00:00<00:00, 28.90it/s]
+load datafile: 100%|██████████| 11/11 [00:00<00:00, 38.30it/s]
+Dataset size: 401,598
+State normalization: mean shape=(11,), std shape=(11,)
+
+Dataset size: 401598
+[Wandb] 비활성화됨 (--no_wandb)
+---------------------------------------
+Training MPI (IQL), Env: hopper-medium-replay-v2, Seed: 2
+  Actors: 1, W2 weights (Actor1+): []
+  Actor0: 원래 알고리즘 loss만 사용, Actor1+: Wasserstein (closed form)
+  Actor0 config: type=gaussian, class=GaussianMLP, kwargs={'tanh_mean': True}
+---------------------------------------
+로그 디렉토리 생성: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed2/logs
+초기 로그 기록: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed2/logs/hopper_medium_replay_v2_iql_summary_1_10_seed2_inv2w0.05.json
+run.log: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed2/logs/run_seed2_inv2w0.05.log
+[sweep] ok iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed1
+[sweep] ok iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed1
+[sweep] start pid=4007114 iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed3
+[sweep] start pid=4007114 iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed3
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+pybullet build time: Jan 29 2025 23:16:28
+/home/choi/miniconda3/envs/offrl_backup/lib/python3.10/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.5.0) or chardet (7.4.3)/charset_normalizer (None) doesn't match a supported version!
+  warnings.warn(
+============================================================
+MPI Training Started
+Algorithm: iql
+Environment: hopper-medium-replay-v2
+============================================================
+
+Seed set to: 3 (for reproducibility)
+
+Creating environment: hopper-medium-replay-v2...
+/home/choi/miniconda3/envs/offrl_backup/lib/python3.10/site-packages/gym/spaces/box.py:84: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(f"Box bound precision lowered by casting to {self.dtype}")
+State dimension: 11
+Action dimension: 3
+Max action: 1.0
+
+Loading D4RL dataset for hopper-medium-replay-v2...
+
+load datafile:   0%|          | 0/11 [00:00<?, ?it/s]
+load datafile:  36%|███▋      | 4/11 [00:00<00:00, 26.59it/s]
+load datafile:  73%|███████▎  | 8/11 [00:00<00:00, 28.48it/s]
+load datafile: 100%|██████████| 11/11 [00:00<00:00, 37.79it/s]
+Dataset size: 401,598
+State normalization: mean shape=(11,), std shape=(11,)
+
+Dataset size: 401598
+[Wandb] 비활성화됨 (--no_wandb)
+---------------------------------------
+Training MPI (IQL), Env: hopper-medium-replay-v2, Seed: 3
+  Actors: 1, W2 weights (Actor1+): []
+  Actor0: 원래 알고리즘 loss만 사용, Actor1+: Wasserstein (closed form)
+  Actor0 config: type=gaussian, class=GaussianMLP, kwargs={'tanh_mean': True}
+---------------------------------------
+로그 디렉토리 생성: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed3/logs
+초기 로그 기록: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed3/logs/hopper_medium_replay_v2_iql_summary_1_10_seed3_inv2w0.05.json
+run.log: results/iql_gauss_fr_loco/iql/K1/hopper-medium-replay-v2_seed3/logs/run_seed3_inv2w0.05.log

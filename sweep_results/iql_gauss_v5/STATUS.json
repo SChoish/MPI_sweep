@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-09-19 18:55:03 KST",
+  "updated_at": "2026-09-19 19:00:04 KST",
   "schema": "iql_actor_geometry_v5_consistent_gaussian",
   "explicit": "excluded",
   "variant": "qbc_gaussian_w2",
   "gaussian_qbc_mode": "stochastic",
   "total": 162,
-  "done": 19,
+  "done": 20,
   "source": "/home/choi/MPI_sweep/results/iql_gauss_v5",
   "note": "Gaussian DDPG+BC, seed 0 only, implicit W2 K=1, 2, 4. K=3, Fisher\u2013Rao, and seeds 1\u20133 are not queued."
 }

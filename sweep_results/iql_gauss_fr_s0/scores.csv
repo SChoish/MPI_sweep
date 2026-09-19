@@ -1,5 +1,7 @@
 env,tau,K,seed,geometry,policy,hop,eval_mode,d4rl_score,run
 hopper-medium-v2,0.05,1,0,fr,baseline,1,mean,41.744640,hopper-medium-v2_iql_tau0.05_mpi1_seed0_7113bb26b50b
+hopper-medium-v2,0.05,1,1,fr,baseline,1,mean,45.636570,hopper-medium-v2_iql_tau0.05_mpi1_seed1_5c2072b6c44c
+hopper-medium-v2,0.05,1,2,fr,baseline,1,mean,40.369900,hopper-medium-v2_iql_tau0.05_mpi1_seed2_494d413cc079
 hopper-medium-v2,0.05,2,0,fr,mpi,2,mean,42.383359,hopper-medium-v2_iql_tau0.05_mpi2_seed0_9992410249d6
 hopper-medium-v2,0.4,1,0,fr,baseline,1,mean,42.321467,hopper-medium-v2_iql_tau0.4_mpi1_seed0_50499bcc0da9
 hopper-medium-v2,0.4,2,0,fr,mpi,2,mean,42.351573,hopper-medium-v2_iql_tau0.4_mpi2_seed0_ab52a4824851

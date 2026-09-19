@@ -81,3 +81,5 @@
 [data] ready /home/choi/MPI_sweep/data/hopper_medium-v2.hdf5
 [adopt] gpu=0 hopper-medium-v2_iql_tau4_mpi1_seed2_86bc3efe664f pid=46250
 [launch] gpu=0 hopper-medium-v2_iql_tau4_mpi1_seed3_10ab7ce2fc19 pid=46941
+[ok] hopper-medium-v2_iql_tau4_mpi1_seed2_86bc3efe664f 8.5m
+[launch] gpu=0 hopper-medium-v2_iql_tau7_mpi1_seed0_5fb925376f76 pid=49479

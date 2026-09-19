@@ -25,17 +25,9 @@
     "2.5",
     "4",
     "7",
-    "10",
-    "12",
-    "14",
-    "17",
-    "20",
-    "24",
-    "28",
-    "34",
-    "40"
+    "10"
   ],
-  "total": 2052,
-  "done": 74,
+  "total": 1188,
+  "done": 49,
   "source": "/home/ext_csh/MPI_sweep/results/iql_gauss_fr_s0"
 }

@@ -141,3 +141,5 @@
 [provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
 [data] ready /home/choi/MPI_sweep/data/hopper_medium_replay-v2.hdf5
 [launch] gpu=0 hopper-medium-replay-v2_iql_tau0.05_mpi2_seed0_072dd858e95b pid=4134668
+[ok] hopper-medium-replay-v2_iql_tau0.05_mpi2_seed0_072dd858e95b 18.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.4_mpi2_seed0_b696e213998c pid=4139218

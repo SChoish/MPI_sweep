@@ -25,9 +25,10 @@ test = ["pytest>=8"]
 [project.scripts]
 mpi-sweep = "launch_mpi_sweep:main"
 mpi-train = "train_td3bc:main"
+mpi-iql-train = "train_iql_mpi:main"
 
 [tool.setuptools]
-py-modules = ["d4rl_data", "launch_mpi_sweep", "tau_grids", "train_td3bc"]
+py-modules = ["d4rl_data", "launch_mpi_sweep", "tau_grids", "train_td3bc", "provenance", "iql_mpi", "iql_mpi_config", "train_iql_mpi"]
 license-files = ["LICENSE"]
 
 [tool.pytest.ini_options]

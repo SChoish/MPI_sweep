@@ -1,5 +1,5 @@
 variant,tau,n,mean_d4rl
-awr_gaussian_fr,0.05,2,43.5228
+awr_gaussian_fr,0.05,4,44.6351
 awr_gaussian_fr,0.1,0,
 awr_gaussian_fr,0.2,0,
 awr_gaussian_fr,0.4,2,46.0544
@@ -18,7 +18,7 @@ awr_gaussian_fr,24,0,
 awr_gaussian_fr,28,0,
 awr_gaussian_fr,34,0,
 awr_gaussian_fr,40,2,0.7685
-qbc_deterministic_w2,0.05,2,49.2017
+qbc_deterministic_w2,0.05,4,47.8203
 qbc_deterministic_w2,0.1,0,
 qbc_deterministic_w2,0.2,0,
 qbc_deterministic_w2,0.4,2,48.1582
@@ -37,7 +37,7 @@ qbc_deterministic_w2,24,0,
 qbc_deterministic_w2,28,0,
 qbc_deterministic_w2,34,0,
 qbc_deterministic_w2,40,2,49.5638
-qbc_gaussian_w2,0.05,2,46.1228
+qbc_gaussian_w2,0.05,4,44.5535
 qbc_gaussian_w2,0.1,0,
 qbc_gaussian_w2,0.2,0,
 qbc_gaussian_w2,0.4,2,92.9843

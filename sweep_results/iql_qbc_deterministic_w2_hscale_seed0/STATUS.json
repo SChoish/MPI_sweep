@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T16:07:41Z",
-  "stamp_kst": "2026-09-20 01:07 KST",
+  "updated_at": "2026-09-19T16:12:56Z",
+  "stamp_kst": "2026-09-20 01:12 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -52,7 +52,7 @@
       "tau": "12",
       "hops": 3,
       "seed": 0,
-      "step": 403136
+      "step": 629568
     },
     {
       "pid": 748042,
@@ -60,7 +60,7 @@
       "tau": "14",
       "hops": 3,
       "seed": 0,
-      "step": 444736
+      "step": 946592
     },
     {
       "pid": 748061,
@@ -68,7 +68,7 @@
       "tau": "17",
       "hops": 3,
       "seed": 0,
-      "step": 395744
+      "step": 622656
     },
     {
       "pid": 748062,
@@ -76,7 +76,7 @@
       "tau": "20",
       "hops": 3,
       "seed": 0,
-      "step": 404224
+      "step": 641920
     }
   ],
   "by_env": {
@@ -116,8 +116,8 @@
       "3": {
         "complete": 11,
         "live": 4,
-        "status": "11/60 \u00b7 4 live@395k",
-        "min_step": 395744
+        "status": "11/60 \u00b7 4 live@622k",
+        "min_step": 622656
       }
     },
     "hopper-expert-v2": {

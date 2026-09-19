@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T23:34:56Z",
-  "stamp_kst": "2026-09-20 08:34 KST",
+  "updated_at": "2026-09-19T23:40:22Z",
+  "stamp_kst": "2026-09-20 08:40 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 405,
   "seed_complete": [
-    237,
+    240,
     0,
     0,
     0
@@ -39,36 +39,60 @@
   ],
   "planned": 1620,
   "counts": {
-    "complete": 237,
-    "running": 3,
-    "remaining": 1380,
+    "complete": 240,
+    "running": 6,
+    "remaining": 1374,
     "extra_dirs": 25
   },
-  "queue": "2026-09-19T23:09:27+00:00 env=halfcheetah-expert-v2 hop=1 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 \u00b7 watcher gpu_running \u00b7 portal running",
+  "queue": "2026-09-19T23:37:38+00:00 env=halfcheetah-expert-v2 hop=2 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 3322388,
+      "pid": 3363544,
       "env": "halfcheetah-expert-v2",
-      "tau": "14",
-      "hops": 1,
+      "tau": "0.05",
+      "hops": 2,
       "seed": 0,
-      "step": 679104
+      "step": 144288
     },
     {
-      "pid": 3322466,
+      "pid": 3363546,
       "env": "halfcheetah-expert-v2",
-      "tau": "17",
-      "hops": 1,
+      "tau": "0.1",
+      "hops": 2,
       "seed": 0,
-      "step": 624896
+      "step": 151904
     },
     {
-      "pid": 3322527,
+      "pid": 3363547,
       "env": "halfcheetah-expert-v2",
-      "tau": "20",
-      "hops": 1,
+      "tau": "0.2",
+      "hops": 2,
       "seed": 0,
-      "step": 994784
+      "step": 142240
+    },
+    {
+      "pid": 3363549,
+      "env": "halfcheetah-expert-v2",
+      "tau": "0.4",
+      "hops": 2,
+      "seed": 0,
+      "step": 147104
+    },
+    {
+      "pid": 3363551,
+      "env": "halfcheetah-expert-v2",
+      "tau": "0.7",
+      "hops": 2,
+      "seed": 0,
+      "step": 148512
+    },
+    {
+      "pid": 3363552,
+      "env": "halfcheetah-expert-v2",
+      "tau": "1.25",
+      "hops": 2,
+      "seed": 0,
+      "step": 141600
     }
   ],
   "by_env": {
@@ -174,16 +198,16 @@
     },
     "halfcheetah-expert-v2": {
       "1": {
-        "complete": 12,
-        "live": 3,
-        "status": "12/60 \u00b7 3 live@624k",
-        "min_step": 624896
+        "complete": 15,
+        "live": 0,
+        "status": "15/60 paused",
+        "min_step": 0
       },
       "2": {
         "complete": 0,
-        "live": 0,
-        "status": "0/60",
-        "min_step": 0
+        "live": 6,
+        "status": "0/60 \u00b7 6 live@141k",
+        "min_step": 141600
       },
       "3": {
         "complete": 0,

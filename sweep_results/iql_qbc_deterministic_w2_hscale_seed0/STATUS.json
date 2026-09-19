@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T16:12:56Z",
-  "stamp_kst": "2026-09-20 01:12 KST",
+  "updated_at": "2026-09-19T16:18:10Z",
+  "stamp_kst": "2026-09-20 01:18 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 405,
   "seed_complete": [
-    96,
+    97,
     0,
     0,
     0
@@ -39,8 +39,8 @@
   ],
   "planned": 1620,
   "counts": {
-    "complete": 96,
-    "running": 4,
+    "complete": 97,
+    "running": 3,
     "remaining": 1520,
     "extra_dirs": 25
   },
@@ -52,15 +52,7 @@
       "tau": "12",
       "hops": 3,
       "seed": 0,
-      "step": 629568
-    },
-    {
-      "pid": 748042,
-      "env": "hopper-medium-replay-v2",
-      "tau": "14",
-      "hops": 3,
-      "seed": 0,
-      "step": 946592
+      "step": 855616
     },
     {
       "pid": 748061,
@@ -68,7 +60,7 @@
       "tau": "17",
       "hops": 3,
       "seed": 0,
-      "step": 622656
+      "step": 848832
     },
     {
       "pid": 748062,
@@ -76,7 +68,7 @@
       "tau": "20",
       "hops": 3,
       "seed": 0,
-      "step": 641920
+      "step": 880320
     }
   ],
   "by_env": {
@@ -114,10 +106,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 11,
-        "live": 4,
-        "status": "11/60 \u00b7 4 live@622k",
-        "min_step": 622656
+        "complete": 12,
+        "live": 3,
+        "status": "12/60 \u00b7 3 live@848k",
+        "min_step": 848832
       }
     },
     "hopper-expert-v2": {

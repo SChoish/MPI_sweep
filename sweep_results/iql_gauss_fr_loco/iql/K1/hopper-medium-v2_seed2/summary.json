@@ -1,0 +1,34 @@
+{
+  "status": "completed",
+  "algorithm": "iql",
+  "env": "hopper-medium-v2",
+  "seed": 2,
+  "w2_weights": [],
+  "proximal_tau": 0.05,
+  "use_fb": false,
+  "fb_tau": 0.005,
+  "distance_metric": "w2",
+  "iql_gaussian": true,
+  "experiment_tag": "iql_gauss_fr_loco/iql/K1/hopper-medium-v2_seed2",
+  "num_actors": 1,
+  "max_timesteps": 1000000,
+  "evaluations": {
+    "0": [
+      64.74206324228074
+    ]
+  },
+  "final_scores": {
+    "0": 64.74206324228074
+  },
+  "best_scores": {
+    "0": 64.74206324228074
+  },
+  "final_eval": {
+    "0": {
+      "det_mean": 58.92171859741211,
+      "det_std": 0.0,
+      "stoch_mean": 56.94297409057617,
+      "stoch_std": 0.0
+    }
+  }
+}

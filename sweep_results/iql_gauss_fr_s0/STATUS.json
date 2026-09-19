@@ -1,0 +1,23 @@
+{
+  "schema": "iql_gauss_fr_s0",
+  "variant": "qbc_gaussian_w2",
+  "gaussian_qbc_mode": "stochastic",
+  "geometry": "fr",
+  "seed": 0,
+  "ks": [
+    1,
+    2,
+    4
+  ],
+  "taus": [
+    "0.05",
+    "0.4",
+    "1.25",
+    "4",
+    "10",
+    "40"
+  ],
+  "total": 162,
+  "done": 6,
+  "source": "/home/ext_csh/MPI_sweep/results/iql_gauss_fr_s0"
+}

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-19 22:45:04 KST",
+  "updated_at": "2026-09-19 22:50:04 KST",
   "schema": "iql_actor_geometry_v6_baseline_h",
   "explicit": "excluded",
   "variant": "qbc_gaussian_w2",
@@ -37,7 +37,7 @@
     4
   ],
   "total": 2052,
-  "done": 34,
+  "done": 35,
   "source": "/home/choi/MPI_sweep/results/iql_gauss_v5",
   "note": "Gaussian DDPG+BC, seeds 0-3, implicit W2, K=1/2/4, full T grid. K=3 and Fisher-Rao are not queued."
 }

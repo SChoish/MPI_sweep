@@ -1,1 +1,3 @@
 metric,integrator,K,env,T,seed,status,actor,eval_d4rl,final_det,final_stoch
+iql,imp,1,hopper-medium-v2,,0,completed,0,58.29820497717869,51.118282318115234,56.991939544677734
+iql,imp,1,hopper-medium-v2,,1,completed,0,58.448087764037204,53.093196868896484,69.18567657470703

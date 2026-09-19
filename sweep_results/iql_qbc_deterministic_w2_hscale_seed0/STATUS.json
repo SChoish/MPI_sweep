@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T22:08:27Z",
-  "stamp_kst": "2026-09-20 07:08 KST",
+  "updated_at": "2026-09-19T22:13:49Z",
+  "stamp_kst": "2026-09-20 07:13 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -52,7 +52,7 @@
       "tau": "0.05",
       "hops": 3,
       "seed": 0,
-      "step": 99968
+      "step": 323552
     },
     {
       "pid": 2848280,
@@ -60,7 +60,7 @@
       "tau": "0.1",
       "hops": 3,
       "seed": 0,
-      "step": 111264
+      "step": 366816
     },
     {
       "pid": 2848281,
@@ -68,7 +68,7 @@
       "tau": "0.2",
       "hops": 3,
       "seed": 0,
-      "step": 99968
+      "step": 329376
     },
     {
       "pid": 2848282,
@@ -76,7 +76,7 @@
       "tau": "0.4",
       "hops": 3,
       "seed": 0,
-      "step": 99968
+      "step": 323552
     },
     {
       "pid": 2848283,
@@ -84,7 +84,7 @@
       "tau": "0.7",
       "hops": 3,
       "seed": 0,
-      "step": 105888
+      "step": 350944
     },
     {
       "pid": 2848284,
@@ -92,7 +92,7 @@
       "tau": "1.25",
       "hops": 3,
       "seed": 0,
-      "step": 106784
+      "step": 351520
     }
   ],
   "by_env": {
@@ -192,8 +192,8 @@
       "3": {
         "complete": 0,
         "live": 6,
-        "status": "0/60 \u00b7 6 live@99k",
-        "min_step": 99968
+        "status": "0/60 \u00b7 6 live@323k",
+        "min_step": 323552
       }
     },
     "halfcheetah-expert-v2": {

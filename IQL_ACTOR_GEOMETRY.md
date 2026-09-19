@@ -1,247 +1,221 @@
-# IQL critic with three actor / MPI geometry choices
+# IQL actor geometry: fixed total time, K total steps
 
-This comparison runs all three paths in **one training job with one Q/V pair**.
-The original TD3+BC trainer remains available through `--algorithm td3bc`.
+All selected paths share one actor-independent IQL Q/V pair. `--tau T` is
+the **total** horizon, `--hops K` / `--mpi-steps K` counts **all** steps,
+and `h = T/K`. K=1 is the base actor at T. For K>1, the chain contains one
+dataset-anchored actor at h followed by K-1 proximal refinement actors.
+K=0 is invalid. Independent `--awr-beta`, `--bc-coef`, and `--td3bc-alpha`
+flags are removed: their coefficients are derived from T, K, and geometry.
 
-| CLI variant | Base actor | Refinement |
+## Base losses and their clocks
+
+Write `Q=min(Q1_target,Q2_target)`, `A=Q-V`, `Qbar=Q/C`, and let `d` be
+action dimension. The default `--metric-reduction native` resolves as follows.
+Expectations include dataset states; NLL is evaluated at dataset actions.
+
+| Variant | Dataset-anchored loss at h=T/K | Default C | Distance convention |
+| --- | --- | --- | --- |
+| `awr_gaussian_fr` | `E[min(exp(h*A/C),100) * NLL(a_D;m,sigma)]` | 1 | full-density FR squared |
+| `qbc_gaussian_w2` | `-E[Qbar(s,clip(m))] + (1/h)*E[NLL(a_D;m,I)]` | 1 | coordinate-sum W2 squared |
+| `qbc_deterministic_w2` | `-2h*E[Qbar(s,m)] + E[sum_j((m_j-a_D,j)^2)/d]` | stopped mean absolute Q | coordinate-mean W2 squared |
+
+Thus native coefficients are `beta=T/K`, `alpha_G=K/T`, and
+`alpha_D=2T/K`. At K=1 they are T, 1/T, and 2T, respectively.
+The Gaussian NLL uses a dimension **sum** and, at std 1, equals
+`sum_j((m_j-a_D,j)^2)/2 + constant`; this accounts for the factor of two
+relative to TD3+BC's dimension-mean MSE.
+
+For an explicit sum/mean override, set `M=1` for sum and `M=d` for mean.
+The base coefficients become `beta=h*M`, `alpha_G=1/(h*M)`, and
+`alpha_D=2*h*M/d`. Refinement uses the same metric convention. For example,
+canonical TD3+BC alpha 2.5 corresponds to **T=1.25 with mean W2**, or
+**T=1.25*d with sum W2**. Changing a reduction without this conversion
+changes the experiment.
+
+AWR's `beta` multiplies advantage; if temperature is instead written in a
+**denominator**, that temperature is `1/beta`. The beta/time identification
+comes from Fisher-Rao gradient flow (exponential tilting before projection).
+Clipped AWR weights and Gaussian projection are not an exact finite FR
+proximal solve. The requested AWR base is retained; only its time coefficient
+and the subsequent exact closed-form FR penalty are matched.
+
+The Gaussian DDPG+BC base follows Park et al. Eq. 6 / Appendix C.6.1:
+unsquashed mean, fixed std 1, clipped-mean Q, raw-Gaussian dataset NLL.
+Subsequent MPI actors learn both mean and std through expected Q. This change
+of policy family/energy is an explicit MPI extension, not a claim that the
+paper's fixed-std mean-Q algorithm is an exact stochastic W2 semigroup.
+The AWR family retains its tanh mean and learned state-dependent std;
+it is not the fixed-std AWR family in that paper's data-scaling experiment.
+
+## Refinement and Q normalization
+
+For k=2,...,K, with the latest updated predecessor stopped:
+
+```text
+L_k = -E[Q(s, m_k + sigma_k*epsilon)]/C
+      + E[D_squared(pi_k, stop(pi_(k-1)))]/(2h)
+```
+
+For deterministic policies sigma=0. Gaussian expected Q uses reparameterized
+antithetic normal samples (default 8), so variance receives a Q gradient.
+W2 squared is `sum_j((m-m_ref)^2 + (sigma-sigma_ref)^2)`; the mean convention
+divides this by d. FR uses the MPI Appendix A.3 Gaussian overlap closed form:
+
+```text
+B = product_j sqrt(2*sigma_j*r_j/(sigma_j^2+r_j^2))
+              * exp(-(m_j-m_ref_j)^2/(4*(sigma_j^2+r_j^2)))
+D_FR_squared = 4*acos(B)^2
+```
+
+This is ambient density-space FR between Gaussian endpoints, not intrinsic
+Gaussian-submanifold FR. No KL approximation is used. Evaluation uses a stable
+atan2 expression and an analytic derivative at identical endpoints.
+
+Each variant also has an independent full-T base control. Before updating it,
+compute `C=stop(mean_batch(abs(Q(s,control_mean))) + 1e-6)` when normalization
+is enabled, otherwise C=1. This **one constant is shared by the control,
+first chain step, and every refinement**, including all inner updates. The
+control's update/initialization does not depend on K, making C identical
+across K for identical critic, batch, and seed. K=1 reuses the control as its
+only chain actor, without an extra update. K>1 pays for one extra control
+update per variant; the control is not a chain predecessor.
+
+At K=1 the deterministic loss is the canonical TD3+BC actor-loss form with
+alpha=2T (apart from the numerical epsilon). Using a full-T control scale at
+K>1 is our comparison protocol, not a normalization prescribed by the paper.
+Optional `--iql-q-scale-norm` / `--no-iql-q-scale-norm` overrides apply to both
+base and refinement, including AWR's advantage. The legacy `--q-scale-norm`
+flag affects only the separate TD3+BC trainer.
+
+Normalized time is time for Q/C: relative to raw Q, each hop has effective
+time h/C. Holding C common prevents hidden changes of this clock with K.
+If Q and V are multiplied by c>0 with no Q normalization, preserve the
+objective by `T_new=T_old/c`, `beta_new=beta_old/c`, and
+`alpha_G,new=c*alpha_G,old`. With a fixed C, normalized and raw conventions
+match at `T_normalized=C*T_raw`. Native TD3+BC's Q/C approximately cancels
+positive Q rescaling (up to epsilon); this does not imply invariance to
+additive Q shifts or finite neural training dynamics. Equal numerical T
+across FR/W2 families is not an assertion of equal geometric displacement.
+
+## Source audit and reward scale
+
+Sources checked:
+
+- [Park et al., paper, Eq. 6, Appendix C.6.1, Table 3](https://arxiv.org/html/2406.09329v2).
+- [Official NeurIPS supplemental code ZIP](https://proceedings.neurips.cc/paper_files/paper/2024/file/8ffb4e3118280a66b192b6f06e0e2596-Supplemental-Conference.zip).
+  `neurips/main.py` defaults `dual_type='none'`; `src/agents/trl.py` uses
+  raw `-mean(Q)` plus `alpha*NLL` in that mode. Its optional `dual_type='avg'`
+  scales BC by mean absolute Q, but is not the default. The prior claim that
+  no dedicated official implementation was available was incomplete.
+- [Original IQL actor](https://github.com/ikostrikov/implicit_q_learning/blob/master/actor.py)
+  uses unnormalized advantage with an exponential-weight cap of 100.
+- [Official TD3+BC actor](https://github.com/sfujim/TD3_BC/blob/main/TD3_BC.py)
+  uses detached `alpha/mean(abs(Q))` and coordinate-mean MSE;
+  [its default alpha is 2.5](https://github.com/sfujim/TD3_BC/blob/main/main.py).
+
+Official-code audit identifiers (SHA256): ZIP
+`43de7cc53a67f5ba858572efc68a7c56b4fc127c239da0d0be85f590a19d6ecd`;
+`src/agents/trl.py`
+`d96699e1518d80a87ca0992cca166f647e05b5c87e6b61942d311907fe3f7f09`;
+`src/d4rl_utils.py`
+`aadd0b766ea3adea3376fe8524463d14d19683e117a69f4b9a36916eaa284a71`.
+
+**No Q normalization does not mean raw rewards.** The supplement's
+`src/d4rl_utils.py:normalize_dataset` and the
+[original IQL preprocessing](https://github.com/ikostrikov/implicit_q_learning/blob/master/train_offline.py)
+scale locomotion rewards by `1000/(max trajectory return - min trajectory return)`.
+This is now the default `--iql-reward-normalization iql`. Returns use
+post-qlearning-dataset trajectories, including terminal boundaries, state
+discontinuities from skipped timeouts, and the final tail. Bellman masks
+still distinguish terminal transitions from timeout boundaries. Normalization
+is calculated before state normalization. Dataset actions are clipped at
+`1-1e-5`, also following these loaders.
+
+`--iql-reward-normalization none` is an explicit raw-reward ablation;
+`--reward-scale` multiplies rewards after this normalization. Both settings
+and the actual normalization factor are recorded. State normalization
+(`std+1e-3`, on by default) is separate from reward and Q normalization.
+
+The actor loss/time conversions reproduce coefficient conventions, not the
+full original agents: Q is the common IQL min-target-Q, not TD3's online Q1
+or the supplement's online critic for DDPG. LayerNorm, evaluation protocol,
+and the AWR policy family also differ from the bottleneck experiments.
+The critic always uses dataset-action expectile V, then `r+gamma*V(s')`
+Q targets; actor actions never enter its targets.
+
+## T grids and commands
+
+The default IQL grid is the union of the selected variants' native grids:
+
+| Variant | Source coefficient at K=1 | Total T candidates |
 | --- | --- | --- |
-| `awr_gaussian_fr` | Diagonal Gaussian, advantage-weighted negative log likelihood | Expected Q + closed-form Gaussian FR |
-| `qbc_gaussian_w2` | Park et al. DDPG+BC: raw Gaussian with fixed std 1, negative Q at clipped mean + dataset NLL | Negative expected Q + Gaussian W2, updating mean **and** standard deviation |
-| `qbc_deterministic_w2` | Deterministic, TD3+BC actor loss with detached Q normalization + mean-squared BC | Negative Q + Dirac W2 |
+| AWR | Table 3 beta: 1, 3, 10 | 1, 3, 10 |
+| Gaussian DDPG+BC | Table 3 alpha: 1, 3, 10, 30 | 1, 1/3, 1/10, 1/30 |
+| Deterministic TD3+BC | canonical alpha: 2.5 | 1.25 |
 
-## Objective and update contract
+Table 3's AWR beta=0 is a BC-only control, outside this positive-time MPI
+sweep. The table's locomotion grids are for Hopper/Walker; reusing them on
+HalfCheetah is a candidate-grid extrapolation, not a reported optimum.
+With multiple variants, all selected actors run at every T in the union.
+`--n-tau` takes the first N sorted values. Explicit `--taus` overrides it.
+Overriding native geometry or Q/reward scale requires explicit T candidates.
 
-Write `Q = min(Q1_target, Q2_target)`. Each iteration updates V by expectile
-regression on **dataset actions**, extracts/updates all actors using this same
-target Q and updated V, then fits both online Q networks to
-`r + gamma * not_done * V(next_state)` and updates target Q by EMA. This is
-the update order in the [original IQL learner](https://github.com/ikostrikov/implicit_q_learning/blob/master/learner.py).
-Actors never enter Q/V targets. Fixed initialization keys and a separate
-per-step actor RNG ensure changing actor variants, K, or evaluation frequency
-does not change the critic/minibatch stream on the same numerical stack.
-
-The default base losses are:
-
-```text
-AWR Gaussian: E_D[min(exp(beta * (Q(s,a_D)-V(s))), 100) * -log N(a_D; m, sigma^2)]
-DDPG+BC Gaussian: -E_D[Q(s,clip(m,-1,1))]
-                  + bc_coef * E_D[-log N(a_D; m, I)]
-TD3+BC Dirac:    -lambda * E_D[Q(s,m)] + mean_{batch,coordinate}((m-a_D)^2)
-                lambda = stop_gradient(td3bc_alpha / (mean_batch(abs(Q(s,m))) + 1e-6))
-```
-
-The DDPG+BC base follows Equation (6) and Appendix C.6.1 of
-[Park et al., *Is Value Learning Really the Main Bottleneck in Offline RL?*](https://arxiv.org/html/2406.09329v2#S5.SS1.SSS2):
-Q is evaluated at the clipped **mean**, not a sampled action. The BC term is
-the negative log density of **dataset** actions under the raw Gaussian, summed
-over action dimensions. The mean has no tanh, and std is fixed at 1 with no
-trainable std parameters in the base. Clipping affects only the Q input, not
-the mean in the BC density. Thus NLL = 0.5 * sum_j((m_j-a_D,j)^2) + constant;
-the factor 0.5 and dimension sum are part of the BC coefficient convention.
-`--bc-coef` is the paper's alpha (default 1), independent of refinement tau.
-This replaces the previous expected-squared-error, sampled-Q base.
-
-The deterministic path uses the TD3+BC **actor-loss form**, with
-`--td3bc-alpha 2.5` by default. Its Q comes from the common IQL min-target-Q,
-not the online Q1 used by the original full TD3+BC algorithm. It uses no
-TD3 critic targets, target-policy smoothing, or delayed actor schedule.
-Its BC coefficient is 1; `--bc-coef` controls only Gaussian DDPG+BC.
-
-The existing AWR base retains its bounded tanh mean and learned
-state-dependent diagonal std, bounded in log space by `[-5, 2]` and initialized
-at log-std `-1`. This is the original shared-critic comparison's AWR policy
-family, not the fixed-std AWR used in the bottleneck paper's data-scaling study.
-The AWR loss is a KL-derived extraction/projection objective; it is not labeled
-an exact Fisher-Rao proximal step.
-
-**MPI is an extension, not a reproduction of the bottleneck paper.** For the
-DDPG+BC path, all refinement actors start with the same raw mean as the base
-and std 1, but have learnable state-dependent std heads. Their Q term is
-expected Q under reparameterized samples, so variance can improve as originally
-requested. `--log-std-init` applies to the AWR bank; Gaussian DDPG+BC refinement
-always starts at log-std 0 to match its base. The std bounds apply to both
-refinement families and must contain 0 for the Gaussian DDPG+BC path.
-
-Each bank contains a base actor `pi_0` and **K additional** refinement actors.
-`--tau T` specifies only the total refinement horizon; `h = T/K`. In contrast,
-the historical TD3+BC launcher counts its dataset-anchored actor inside K.
-`--hops 0` / `--mpi-steps 0` train just the three base actors; tau has no effect
-in this case. Each training iteration updates the base actor once and then
-the K persistent refinement actors sequentially:
-
-```text
-reference_k = stop_gradient(distribution of updated pi_(k-1)(s))
-
-W2: loss_k = -E[Q(s,a)] + E[sum_j((m-m_ref)^2 + (sigma-sigma_ref)^2)] / (2h)
-FR: loss_k = -E[Q(s,a)] + E[4 * acos(BC(pi, pi_ref))^2] / (2h)
-```
-
-The deterministic path uses `sigma = sigma_ref = 0` and evaluates Q at m.
-The two Gaussian paths estimate expected Q using reparameterized antithetic
-normal samples (`--mc-samples 8`), preserving the gradient through sigma.
-The FR penalty uses the closed form from MPI Appendix A.3:
-
-```text
-BC = product_j sqrt(2*sigma_j*sigma_ref_j / (sigma_j^2+sigma_ref_j^2))
-               * exp(-(m_j-m_ref_j)^2 / (4*(sigma_j^2+sigma_ref_j^2)))
-d_FR^2 = 4 * acos(BC)^2
-```
-
-This is the exact FR distance of the full density space evaluated between
-Gaussian endpoints. It is symmetric and bounded by pi squared after squaring.
-It is not the intrinsic geodesic distance constrained to remain in the Gaussian
-submanifold. The Bhattacharyya coefficient is combined across all dimensions
-**before** applying acos; squared marginal FR distances are not summed.
-
-The implementation computes `D_B = -log(BC)` using nonnegative `log1p` terms
-and evaluates `acos(exp(-D_B))` through an equivalent atan2 expression. Its
-custom derivative uses the removable limit at `D_B=0` (derivative of squared
-FR is 8) and a near-zero series for numerical stability. The actual distance
-value is the closed form everywhere; no KL approximation is used in refinement.
-
-All refinement actors start from the same initial base distribution with
-separate optimizer states. They remain persistent during training. Each hop
-performs `--inner-updates` Adam updates (default 1) on its proximal loss,
-holding Q, the predecessor reference, and MC noise fixed throughout these
-inner updates. The reference is recentered at the next hop, and gradients
-never propagate into the predecessor or critic. This is amortized neural
-proximal refinement; it is not an exact JKO solver, and it does not guarantee
-objective descent or return improvement. Increasing `inner-updates` changes
-the compute budget and is recorded in the run identity.
-
-## Distance, action bounds, and evaluation
-
-The default `--metric-reduction sum` matches the unnormalized Euclidean W2
-formula above. `--metric-reduction mean` divides W2 and the final squared FR
-distance by the action dimension. It does not change base losses: Gaussian
-NLL always sums dimensions, and TD3+BC always uses coordinate-mean MSE. The legacy TD3+BC
-trainer uses mean-squared transport, so nominal tau values are not directly
-comparable across these conventions.
-
-In MPI, `--q-action-transform identity` evaluates Q at raw Gaussian
-samples, exactly matching the displayed expected-Q objective. These samples
-can leave `[-1,1]`; per-hop `out_of_bounds_fraction` is logged. Selecting
-`--q-action-transform clip` instead optimizes `E[Q(s,clip(m+sigma*eps))]`.
-The Gaussian W2 / FR penalty still applies **before** clipping. It is not
-claimed to be the exact W2 / FR between clipped action distributions.
-The Gaussian DDPG+BC base always uses clipped-mean Q independently of this flag.
-
-Simulator actions are always clipped to `[-1,1]`. `--eval-mode both` (default)
-reports separate mean-action and sampled-policy returns for Gaussian actors;
-deterministic actors have one `mean` row. Evaluation RNG is independent from
-training RNG. Base and final actors are evaluated by default; `--eval-hops all`
-also evaluates intermediate actors. Mean-only evaluation can hide the effect
-of changing variance.
-
-Gaussian DDPG+BC and MPI Q are unnormalized by default, as in the displayed
-objectives. `--iql-q-scale-norm` is an optional departure from the paper's base
-objective: Gaussian DDPG+BC uses dataset-action `mean(abs(Q))`; refinement uses the frozen
-predecessor's sampled `mean(abs(Q))`. This changes the effective energy/time
-scale and is recorded. The historical `--q-scale-norm` launcher flag only
-controls TD3+BC; use `--iql-q-scale-norm` for this comparison.
-The deterministic base always uses its detached TD3+BC lambda, independently
-of this flag and `--metric-reduction`.
-
-Other defaults: expectile 0.7, AWR inverse temperature 3, BC coefficient 1,
-constant actor/Q/V learning rates 3e-4, two 256-unit ReLU layers, gamma .99,
-Q-target EMA .005, and batch size 256. Rewards are raw unless
-`--reward-scale` is specified; state normalization follows the repository
-loader (`std + 1e-3`) unless `--no-iql-normalize-state` is selected. These
-are a controlled common-critic protocol, not a reproduction of the bottleneck
-paper's full data-scaling experiment, architecture (including LayerNorm),
-preprocessing, or hyperparameter selection. The paper's project page does not
-link a dedicated implementation; the port follows its equation and appendix.
-Supported datasets/evaluation environments remain those in `d4rl_data.py`
-and the existing Gymnasium MuJoCo evaluator.
-
-## Commands
-
-Install with `pip install -e ".[test]"` (install the appropriate GPU JAX wheel
-first on a GPU host). Preview one shared-critic job:
+For a matched K comparison, change only K, retaining T candidates and seeds:
 
 ```bash
-python launch_mpi_sweep.py --algorithm iql --hops 4 \
-  --domains hopper --datasets medium-replay --taus 1 --seeds 0 --dry-run
+for K in 1 2 4; do
+  python launch_mpi_sweep.py --algorithm iql --hops "$K" \
+    --domains hopper --datasets medium-replay --seeds "0 1" --gpus 0 \
+    --taus "0.1 0.3333333333333333 1 1.25 3" \
+    --save-dir results/iql_time --log-dir logs/iql_time
+done
 ```
 
-Run it on GPU 0:
+Add `--dry-run` to inspect commands without training. To use a family-specific
+source grid, pass e.g. `--variants qbc_gaussian_w2` and omit `--taus`.
+Direct training: `mpi-iql-train --mpi-steps 1 --tau 1.25`.
 
-```bash
-python launch_mpi_sweep.py --algorithm iql --hops 4 \
-  --domains hopper --datasets medium-replay --taus 1 --seeds 0 --gpus 0 \
-  --save-dir results/iql_geometry --log-dir logs/iql_geometry
-```
+## Evaluation, compute, and restart
 
-Sweep refinement horizons with all three variants, four seeds, and two GPUs:
+`eval.csv` columns are `step,variant,policy,hop,K,T,h,time,eval_mode,return,d4rl_score`.
+`policy=baseline` has K=1, h=T, time=T. `policy=mpi` has h=T/K and time=hop*h.
+Defaults evaluate the full-T baseline and final MPI policy; at K=1 they are
+one policy and are evaluated once. `--eval-hops all` adds intermediate MPI
+policies. Gaussian mean-action and sampled evaluation are separate; simulator
+actions are clipped. `--q-action-transform clip` optionally clips MPI Q inputs,
+but geometry is always measured on the pre-clipping distributions.
 
-```bash
-python launch_mpi_sweep.py --algorithm iql --hops 4 \
-  --taus "0.1 0.5 1 2 5" --seeds "0 1 2 3" --gpus "0 1" \
-  --save-dir results/iql_geometry --log-dir logs/iql_geometry
-```
+Actors and optimizer states persist across training iterations. Each chain
+uses `1+(K-1)*inner_updates` actor optimizer updates, plus one full-T control
+update when K>1. These are amortized neural updates, not exact proximal
+minimizers or equal-compute runs. Holding T fixed aligns the declared
+objective clock; it does not make the finite-update optimization errors equal.
+The learning rates and `inner_updates` are separate from h and are recorded.
 
-The launcher retains the existing nine-task `medium/medium-replay/expert`
-grid. Change `--domains` / `--datasets` to select a supported subset. To run
-one actor family alone, pass e.g. `--variants qbc_gaussian_w2`; separate runs
-still use the same Q/V initialization and data RNG when other settings match.
+Schema `iql_actor_geometry_v4_total_horizon` rejects previous K+1/raw-reward
+checkpoints. Run identities include T, K, scale choices and all training/eval
+settings. `config.json` / `PROVENANCE.json` record resolved coefficients,
+per-hop times, metric conventions, reward factors, compute counts, source
+hashes and dataset identity. Metrics include the common Q scale and first-step
+coefficients. Checkpoints include Q/V, all controls/chains, optimizer states,
+and RNG. Resume verifies the source/dataset/configuration and recovers missing
+final evaluations before writing `COMPLETE.json`. Use a new save directory
+after source changes. Legacy TD3+BC result parsers do not consume this CSV.
 
-Direct entrypoint (K can also be 0 for baselines):
-
-```bash
-mpi-iql-train --env hopper-medium-replay-v2 --mpi-steps 4 --tau 1 --seed 0
-```
-
-## Outputs and restart
-
-Run directories include environment, T, K, seed, and a hash of the actor,
-geometry, training, and evaluation settings. They cannot collide with the
-historical TD3+BC results.
-
-This protocol uses schema `iql_actor_geometry_v3_bottleneck_ddpgbc`;
-previous local-KL and expected-MSE Gaussian BC checkpoints/completion markers
-are not reused. The deterministic base normalization also changed in v3.
-
-- `config.json`, `PROVENANCE.json`: precise configuration, source hashes,
-  package versions, dataset digest, state-normalization statistics and action
-  transform. New runs use the current installed source.
-- `eval.csv`: long-form `step,variant,hop,eval_mode,return,d4rl_score`.
-  `hop=0` is the base; `hop=K` is the refined policy. Do not pass this table
-  to the legacy TD3+BC-only result parser.
-- `metrics.jsonl`: last-minibatch losses at each dispatch; per-hop expected Q,
-  sampled Q gain, mean/std displacement, std magnitude, Q scale, and the
-  fraction of raw sample coordinates outside action bounds. Q gains are
-  estimates from the frozen critic, not measured return improvements.
-- `params_<step>.pkl`: Q/V, target Q, all base/refinement actors, every
-  optimizer state, training RNG, normalization and configuration. Automatic
-  resume rejects changed source, dataset, or mathematical settings. These
-  are trusted local pickle checkpoints.
-- `COMPLETE.json`: written only after the final checkpoint and all requested
-  final actor/evaluation rows exist. A final checkpoint without completed
-  evaluation is resumed through evaluation. SIGINT/SIGTERM saves after the
-  current dispatch and leaves the run incomplete.
-
-Use a new `--save-dir` after changing source. Increase `--max-timesteps` to
-extend an existing constant-LR run without changing its identity. Checkpoint
-and evaluation times may change without altering the training RNG stream.
-
-Run targeted validation:
+Validation command:
 
 ```bash
 pytest tests/test_iql_mpi.py tests/test_iql_launcher.py tests/test_core.py tests/test_launcher.py
 ```
 
-The tests check the paper's DDPG+BC loss and an analytic SGD step (including
-Q-only clipping, NLL dimension sum, fixed std, and independence from MC noise),
-the deterministic TD3+BC detached scale and MSE convention,
-W2 and FR against independent Gaussian overlap integration,
-finite gradients/Hessians at identical policies, the local Fisher metric,
-nonzero variance gradients,
-variance updates on a concave quadratic critic, stopped/recentered references,
-IQL target semantics, critic independence from actor choices, JIT dispatch
-invariance, checkpoint continuation, and launcher/evaluation recovery.
+Tests cover analytic losses/gradients, K=1 base identity, shared Q scales and
+control/critic independence across K, closed-form FR, variance gradients,
+reward trajectory boundaries, coefficient-grid conversion, evaluation clocks,
+and checkpoint/resume. Unit tests and simulator-stub integration are not
+D4RL training-performance evidence.
 
-V3 validation: 48 tests passed on CPU (Python 3.12, JAX 0.11.2, Flax 0.12.9,
-Optax 0.2.8), including two actual training updates, all 10 base/final evaluation
-paths with a stubbed simulator, checkpoint continuation, and final-eval recovery.
-The earlier v2 simulator smoke run does not validate this changed base loss.
-No D4RL training-performance claim follows from the unit/integration tests.
+V4 validation: all 66 targeted tests passed on CPU with Python 3.12,
+JAX 0.11.2, Flax 0.12.9, and Optax 0.2.8. The integration tests execute K=1
+and K=3 training, full-time evaluation metadata, and resume/final-evaluation
+recovery using synthetic data and a stubbed simulator. Launcher dry-run also
+confirmed the four Gaussian DDPG+BC alpha-to-T conversions.

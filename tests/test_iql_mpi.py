@@ -123,7 +123,7 @@ def test_expected_q_has_variance_gradient_and_matches_quadratic_integral():
 
 def test_paper_ddpgbc_base_has_fixed_unit_std_and_matching_refinement_initialization():
     b = batch()
-    cfg = IQLConfig(variants=(VARIANTS[2],), mpi_steps=1, hidden_dims=(8,))
+    cfg = IQLConfig(variants=(VARIANTS[2],), mpi_steps=2, hidden_dims=(8,))
     ts = core.create_state(jax.random.PRNGKey(0), b.observations, b.actions, cfg)
     actor = ts.actors[0][0]
     refined = ts.actors[0][1]
@@ -160,7 +160,8 @@ def test_paper_ddpgbc_matches_closed_form_loss_and_sgd_gradient(reduction):
         return q, q
     critic = SimpleNamespace(params={}, apply_fn=q_apply)
     value = SimpleNamespace(params={}, apply_fn=lambda p, s: jnp.zeros((len(s), 1)))
-    cfg = IQLConfig(bc_coef=3., metric_reduction=reduction)
+    cfg = IQLConfig(mpi_steps=1, tau=(1/3 if reduction == "sum" else 1/6),
+                    metric_reduction=reduction)
     updated, loss = core.update_base(actor, critic, value, b, VARIANTS[2], jax.random.PRNGKey(0), cfg, 1.)
     # Q(clip([.2,1.4]))=.68; mean squared residual sum=1.35; unit-normal NLL=1.35/2+log(2pi).
     expected_loss = -.68 + 3*(1.35/2 + np.log(2*np.pi))
@@ -185,7 +186,7 @@ def test_deterministic_td3bc_detaches_actor_q_scale_and_uses_mean_mse():
         return q, q + 1
     critic = SimpleNamespace(params={}, apply_fn=apply_q)
     value = SimpleNamespace(params={}, apply_fn=lambda p, s: jnp.zeros((len(s), 1)))
-    cfg = IQLConfig(td3bc_alpha=2.5)
+    cfg = IQLConfig(mpi_steps=1, tau=1.25)
     updated, loss = core.update_base(actor, critic, value, b, VARIANTS[1], jax.random.PRNGKey(0), cfg, 1.)
     lam = 2.5 / (.6 + 1e-6)
     np.testing.assert_allclose(loss, -lam*.6 + .1, rtol=1e-6)
@@ -195,7 +196,7 @@ def test_deterministic_td3bc_detaches_actor_q_scale_and_uses_mean_mse():
 @pytest.mark.parametrize("variant", (VARIANTS[0], VARIANTS[2]))
 def test_actual_gaussian_refinement_moves_std_and_stops_reference_gradient(variant):
     b = batch()
-    cfg = IQLConfig(variants=(variant,), mpi_steps=1, tau=.5,
+    cfg = IQLConfig(variants=(variant,), mpi_steps=2, tau=.5,
                     hidden_dims=(8,), mc_samples=8, inner_updates=2)
     ts = core.create_state(jax.random.PRNGKey(0), b.observations, b.actions, cfg)
     base, actor = ts.actors[0]
@@ -215,7 +216,7 @@ def test_actual_gaussian_refinement_moves_std_and_stops_reference_gradient(varia
 @pytest.mark.parametrize("variant", (VARIANTS[0], VARIANTS[2]))
 def test_flat_q_preserves_gaussian_reference(variant):
     b = batch()
-    cfg = IQLConfig(variants=(variant,), mpi_steps=1, hidden_dims=(8,))
+    cfg = IQLConfig(variants=(variant,), mpi_steps=2, hidden_dims=(8,))
     ts = core.create_state(jax.random.PRNGKey(0), b.observations, b.actions, cfg)
     base, actor = ts.actors[0]
     reference = core.policy_stats(base, base.params, b.observations, True)
@@ -248,7 +249,7 @@ def test_iql_value_and_q_use_dataset_and_value_targets():
 def test_shared_critic_and_rng_independent_of_variants_depth_and_dispatch():
     b = batch()
     cfg = IQLConfig(mpi_steps=2, hidden_dims=(8,), mc_samples=2)
-    single_cfg = replace(cfg, variants=(VARIANTS[1],), mpi_steps=0)
+    single_cfg = replace(cfg, variants=(VARIANTS[1],), mpi_steps=1)
     key, rng = jax.random.split(jax.random.PRNGKey(10))
     full = core.create_state(key, b.observations, b.actions, cfg)
     single = core.create_state(key, b.observations, b.actions, single_cfg)
@@ -259,7 +260,7 @@ def test_shared_critic_and_rng_independent_of_variants_depth_and_dispatch():
     assert all(np.isfinite(float(v)) for v in info.values())
     for field in ("critic", "target_critic", "value"):
         assert_tree_equal(getattr(full, field), getattr(single, field))
-    assert_tree_equal(full.actors[1][0], single.actors[0][0])
+    assert_tree_equal(full.baselines[1], single.actors[0][0])
     assert_tree_equal(rk, sk)
     initial = core.create_state(key, b.observations, b.actions, cfg)
     one_fn = jax.jit(partial(core.update_many, config=cfg, batch_size=4, count=1))
@@ -278,8 +279,8 @@ def test_hops_recenter_on_latest_predecessor(monkeypatch):
     def bump(actor):
         params = jax.tree_util.tree_map(lambda x: x + .01, actor.params)
         return actor.replace(params=params)
-    monkeypatch.setattr(core, "update_base", lambda actor, *args: (bump(actor), jnp.array(0.)))
-    def refine(actor, reference, *args):
+    monkeypatch.setattr(core, "update_base", lambda actor, *args, **kwargs: (bump(actor), jnp.array(0.)))
+    def refine(actor, reference, *args, **kwargs):
         refs.append(reference[0])
         return bump(actor), {}
     monkeypatch.setattr(core, "refine_actor", refine)
@@ -311,8 +312,94 @@ def test_checkpoint_preserves_next_update_and_rejects_changed_geometry(tmp_path)
 
 @pytest.mark.parametrize("kwargs", [{"tau": float("nan")}, {"mpi_steps": -1},
                                    {"mc_samples": 0}, {"expectile": 1.},
-                                   {"td3bc_alpha": 0.}, {"log_std_max": -.5},
+                                   {"mpi_steps": 0}, {"log_std_max": -.5},
                                    {"variants": (VARIANTS[0], VARIANTS[0])}])
 def test_invalid_configuration(kwargs):
     with pytest.raises(ValueError):
         IQLConfig(**kwargs)
+
+
+@pytest.mark.parametrize("k", [1, 2, 5])
+@pytest.mark.parametrize("dimension", [1, 3, 6])
+def test_total_time_coefficients_match_native_actor_losses(k, dimension):
+    cfg = IQLConfig(mpi_steps=k, tau=3.)
+    assert cfg.h * k == pytest.approx(3.)
+    assert cfg.coefficients(VARIANTS[0], dimension)["awr_beta"] == 3 / k
+    assert cfg.coefficients(VARIANTS[2], dimension)["bc_coef"] == k / 3
+    assert cfg.coefficients(VARIANTS[1], dimension)["td3bc_alpha"] == 6 / k
+    # Convert the same physical objectives to a common sum or mean geometry.
+    summed = replace(cfg, metric_reduction="sum")
+    averaged = replace(cfg, metric_reduction="mean")
+    assert summed.coefficients(VARIANTS[1], dimension)["td3bc_alpha"] == pytest.approx(6 / (k * dimension))
+    assert averaged.coefficients(VARIANTS[2], dimension)["bc_coef"] == pytest.approx(k / (3 * dimension))
+    assert averaged.coefficients(VARIANTS[0], dimension)["awr_beta"] == pytest.approx(3 * dimension / k)
+
+
+def test_awr_time_and_shared_q_scale_enter_advantage_weights():
+    obs = jnp.zeros((2, 1))
+    actions = jnp.array([[.2], [.4]])
+    b = Transition(obs, actions, obs, obs, jnp.ones_like(obs))
+    def apply(p, s):
+        return jnp.broadcast_to(p["mean"], (len(s), 1)), jnp.ones((len(s), 1))
+    actor = TrainState.create(apply_fn=apply, params={"mean": jnp.array([.1])}, tx=optax.sgd(.1))
+    critic = SimpleNamespace(params={}, apply_fn=lambda p, s, a: (a, a))
+    value = SimpleNamespace(params={}, apply_fn=lambda p, s: jnp.zeros((len(s), 1)))
+    cfg = IQLConfig(tau=3., mpi_steps=2, iql_q_scale_norm=True)
+    new, loss = core.update_base(actor, critic, value, b, VARIANTS[0], jax.random.PRNGKey(0),
+                                 cfg, 1., q_scale=2.)
+    w = np.exp(1.5 * np.array([.2, .4]) / 2)
+    expected = np.mean(w * (.5 * (np.array([.2, .4])-.1)**2 + .5*np.log(2*np.pi)))
+    np.testing.assert_allclose(loss, expected, rtol=1e-6)
+    np.testing.assert_allclose(new.params["mean"], [.1 - .1*np.mean(w*(.1-np.array([.2,.4])))], rtol=1e-6)
+
+
+def test_k1_is_base_and_full_time_controls_and_q_scale_are_independent_of_k():
+    b = batch()
+    cfg = IQLConfig(tau=1.25, mpi_steps=1, hidden_dims=(8,), mc_samples=2)
+    refined_cfg = replace(cfg, mpi_steps=4)
+    key = jax.random.PRNGKey(4)
+    initial = core.create_state(key, b.observations, b.actions, cfg)
+    deep = core.create_state(key, b.observations, b.actions, refined_cfg)
+    assert all(len(bank) == 1 for bank in initial.actors)
+    assert all(len(bank) == 4 for bank in deep.actors)
+    # Direct native base update must be exactly the only K=1 actor update.
+    after_v, _ = core.update_value(initial, b, cfg)
+    shallow = initial
+    f1 = jax.jit(partial(core.update, config=cfg))
+    f4 = jax.jit(partial(core.update, config=refined_cfg))
+    shallow, _ = f1(shallow, b, key)
+    for i, variant in enumerate(cfg.variants):
+        expected, _ = core.update_base(initial.actors[i][0], initial.target_critic,
+                                       after_v.value, b, variant, key, cfg, 1.)
+        # Separate JIT/eager arithmetic can round differently; compare numerical result.
+        for a, e in zip(jax.tree_util.tree_leaves(shallow.actors[i][0].params),
+                        jax.tree_util.tree_leaves(expected.params), strict=True):
+            np.testing.assert_allclose(a, e, rtol=1e-5, atol=1e-7)
+        assert int(shallow.actors[i][0].step) == 1
+        assert_tree_equal(shallow.actors[i][0], shallow.baselines[i])
+    shallow = initial
+    for _ in range(3):
+        shallow, info1 = f1(shallow, b, key)
+        deep, info4 = f4(deep, b, key)
+        assert_tree_equal(shallow.baselines, deep.baselines)
+        assert_tree_equal(shallow.critic, deep.critic)
+        for variant in cfg.variants:
+            c = info1[f"{variant}/hop1/q_scale"]
+            for hop in range(1, 5):
+                np.testing.assert_array_equal(c, info4[f"{variant}/hop{hop}/q_scale"])
+    assert all(int(a.step) == 3 for bank in deep.actors for a in bank)
+
+
+def test_normalized_refinement_requires_shared_scale_and_uses_it_in_gradient():
+    b = batch()
+    cfg = IQLConfig(variants=(VARIANTS[1],), mpi_steps=2, tau=.4, actor_lr=.1)
+    actor = TrainState.create(apply_fn=lambda p, s: jnp.broadcast_to(p["m"], (len(s), 2)),
+                              params={"m": jnp.array([.2, .4])}, tx=optax.sgd(.1))
+    critic = SimpleNamespace(params={}, apply_fn=lambda p, s, a: (jnp.sum(a, axis=-1, keepdims=True),)*2)
+    ref = (jnp.zeros_like(b.actions), jnp.zeros_like(b.actions))
+    with pytest.raises(ValueError, match="common"):
+        core.refine_actor(actor, ref, critic, b, VARIANTS[1], jax.random.PRNGKey(0), cfg)
+    new, info = core.refine_actor(actor, ref, critic, b, VARIANTS[1], jax.random.PRNGKey(0), cfg, q_scale=2.)
+    # L=-sum(m)/2 + mean_j(m_j^2)/(2*.2); gradient=-.5 + m/.4.
+    np.testing.assert_allclose(new.params["m"], [.2, .35], rtol=1e-6)
+    assert float(info["q_scale"]) == 2.

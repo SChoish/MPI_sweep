@@ -1,7 +1,8 @@
 """Three actor/geometry paths sharing one actor-independent IQL critic.
 
-Each path has a base actor and K persistent refinement actors. Each minibatch
-updates the base, then the refinement actors in order with stopped references.
+Each chain contains K actors at times h, ..., K*h=T: a dataset-anchored base
+at h=T/K and K-1 refinements. A separate full-T base control fixes the comparison
+and, when enabled, the Q normalizer independently of K. K=1 reuses that control.
 These are amortized neural proximal updates, not exact minimizers or a return
 improvement guarantee. FR uses the Gaussian Bhattacharyya closed form for
 the ambient density-space Fisher-Rao distance (MPI Appendix A.3).
@@ -63,6 +64,7 @@ class IQLState(NamedTuple):
     critic: TrainState
     target_critic: TrainState
     value: TrainState
+    baselines: tuple[TrainState, ...] = ()
 
 
 def coordinate_reduce(x, reduction="sum"):
@@ -157,7 +159,7 @@ def create_state(key, observations, actions, config: IQLConfig, max_action=1.0):
                                  tx=optax.adam(lr))
     critic = make(TwinCritic(config.hidden_dims), 1, config.critic_lr, observations, actions)
     value = make(Value(config.hidden_dims), 2, config.value_lr, observations)
-    banks = []
+    banks, baselines = [], []
     for variant in config.variants:
         if variant == "qbc_deterministic_w2":
             model = Actor(actions.shape[-1], max_action, config.hidden_dims)
@@ -175,8 +177,9 @@ def create_state(key, observations, actions, config: IQLConfig, max_action=1.0):
         base_model = model.clone(fixed_std=1.0) if variant == "qbc_gaussian_w2" else model
         base = make(base_model, 3, config.actor_lr, observations)
         # Identical initial distributions, separate persistent optimizer states.
-        banks.append((base, *(refined.replace() for _ in range(config.mpi_steps))))
-    return IQLState(tuple(banks), critic, critic.replace(), value)
+        banks.append((base, *(refined.replace() for _ in range(config.mpi_steps - 1))))
+        baselines.append(base.replace())
+    return IQLState(tuple(banks), critic, critic.replace(), value, tuple(baselines))
 
 
 def update_value(state, batch, config):
@@ -199,12 +202,32 @@ def update_q(state, batch, config):
     return state._replace(critic=critic, target_critic=target_update(critic, state.target_critic, config.polyak)), loss
 
 
-def update_base(actor, critic, value, batch, variant, key, config, max_action):
+def actor_q_scale(control, critic, batch, variant, config, max_action=1.0):
+    """One stopped normalizer from the pre-update full-T control, shared by all K steps.
+
+    Its trajectory is independent of K, so dividing Q does not introduce a
+    hidden K-dependent clock. At K=1 this is the native TD3+BC normalizer.
+    """
+    if not config.normalize_q(variant):
+        return jnp.asarray(1.)
+    mean, _ = policy_stats(control, control.params, batch.observations,
+                           variant != "qbc_deterministic_w2")
+    actions = jnp.clip(mean, -max_action, max_action)
+    q = min_q(critic, batch.observations, actions)
+    return jax.lax.stop_gradient(jnp.mean(jnp.abs(q)) + 1e-6)
+
+
+def update_base(actor, critic, value, batch, variant, key, config, max_action,
+                *, horizon=None, q_scale=None):
     gaussian = variant != "qbc_deterministic_w2"
-    q_data = min_q(critic, batch.observations, batch.actions)
-    v = value.apply_fn(value.params, batch.observations)[..., 0]
-    weights = jax.lax.stop_gradient(jnp.exp(jnp.minimum(config.awr_beta * (q_data - v), jnp.log(100.0))))
-    scale = jax.lax.stop_gradient(jnp.mean(jnp.abs(q_data)) + 1e-6) if config.iql_q_scale_norm else 1.0
+    coefficients = config.coefficients(variant, batch.actions.shape[-1], horizon)
+    scale = (actor_q_scale(actor, critic, batch, variant, config, max_action)
+             if q_scale is None else jax.lax.stop_gradient(q_scale))
+    if variant == "awr_gaussian_fr":
+        q_data = min_q(critic, batch.observations, batch.actions)
+        v = value.apply_fn(value.params, batch.observations)[..., 0]
+        weights = jax.lax.stop_gradient(jnp.exp(jnp.minimum(
+            coefficients["awr_beta"] * (q_data - v) / scale, jnp.log(100.0))))
     def loss_fn(params):
         mean, std = policy_stats(actor, params, batch.observations, gaussian)
         if variant == "awr_gaussian_fr":
@@ -214,31 +237,35 @@ def update_base(actor, critic, value, batch, variant, key, config, max_action):
             # under the RAW Gaussian. Neither sampled Q nor expected MSE BC.
             q = min_q(critic, batch.observations, jnp.clip(mean, -max_action, max_action))
             bc = jnp.mean(gaussian_nll(mean, std, batch.actions))
-            return -jnp.mean(q) / scale + config.bc_coef * bc
+            return -jnp.mean(q) / scale + coefficients["bc_coef"] * bc
         q = min_q(critic, batch.observations, mean)
         # TD3+BC actor-loss form, using the common IQL min-target-Q estimate.
         # Freeze lambda, and average BC over both batch and action coordinates.
-        lam = jax.lax.stop_gradient(config.td3bc_alpha / (jnp.mean(jnp.abs(q)) + 1e-6))
+        lam = coefficients["td3bc_alpha"] / scale
         return -lam * jnp.mean(q) + jnp.mean((mean - batch.actions)**2)
     loss, grad = jax.value_and_grad(loss_fn)(actor.params)
     return actor.apply_gradients(grads=grad), loss
 
 
-def refine_actor(actor, reference, critic, batch, variant, key, config, max_action=1.0):
+def refine_actor(actor, reference, critic, batch, variant, key, config, max_action=1.0,
+                 *, q_scale=None):
     gaussian = variant != "qbc_deterministic_w2"
     ref_mean, ref_std = jax.tree_util.tree_map(jax.lax.stop_gradient, reference)
     eps = normal_noise(key, config.mc_samples if gaussian else 1, batch.actions.shape)
     q_ref = sampled_q(critic, batch.observations, ref_mean, ref_std, eps,
                       config.q_action_transform, max_action)
-    scale = jax.lax.stop_gradient(jnp.mean(jnp.abs(q_ref)) + 1e-6) if config.iql_q_scale_norm else 1.0
-    h = config.tau / config.mpi_steps
+    if q_scale is None and config.normalize_q(variant):
+        raise ValueError("normalized MPI requires the common full-T control q_scale")
+    scale = jax.lax.stop_gradient(1.0 if q_scale is None else q_scale)
+    h = config.h
+    reduction = config.reduction(variant)
     def loss_fn(params):
         mean, std = policy_stats(actor, params, batch.observations, gaussian)
         q = sampled_q(critic, batch.observations, mean, std, eps, config.q_action_transform, max_action)
         if variant == "awr_gaussian_fr":
-            distance = gaussian_fr_squared(mean, std, ref_mean, ref_std, config.metric_reduction)
+            distance = gaussian_fr_squared(mean, std, ref_mean, ref_std, reduction)
         else:
-            distance = gaussian_w2_squared(mean, std, ref_mean, ref_std, config.metric_reduction)
+            distance = gaussian_w2_squared(mean, std, ref_mean, ref_std, reduction)
         return -jnp.mean(q) / scale + jnp.mean(distance) / (2 * h)
     def body(_, current):
         _, grad = jax.value_and_grad(loss_fn)(current.params)
@@ -260,22 +287,37 @@ def update(state, batch: Transition, key, config: IQLConfig, max_action=1.0):
     # Match IQL's order: update V; extract policies from old target Q/new V;
     # update online Q toward r + gamma V(s'); finally update the target Q EMA.
     state, v_loss = update_value(state, batch, config)
-    banks, metrics = [], {"value_loss": v_loss}
-    for variant, bank in zip(config.variants, state.actors, strict=True):
+    banks, baselines, metrics = [], [], {"value_loss": v_loss}
+    for variant, bank, control in zip(config.variants, state.actors, state.baselines, strict=True):
         actor_key = jax.random.fold_in(key, VARIANTS.index(variant))
-        base, base_loss = update_base(bank[0], state.target_critic, state.value, batch,
-                                      variant, jax.random.fold_in(actor_key, 0), config, max_action)
+        scale = actor_q_scale(control, state.target_critic, batch, variant, config, max_action)
+        baseline, baseline_loss = update_base(
+            control, state.target_critic, state.value, batch, variant,
+            jax.random.fold_in(actor_key, 0), config, max_action, horizon=config.tau, q_scale=scale)
+        if config.mpi_steps == 1:
+            base, base_loss = baseline, baseline_loss
+        else:
+            base, base_loss = update_base(
+                bank[0], state.target_critic, state.value, batch, variant,
+                jax.random.fold_in(actor_key, 0), config, max_action, q_scale=scale)
         actors = [base]
-        metrics[f"{variant}/base_loss"] = base_loss
+        baselines.append(baseline)
+        metrics.update({f"{variant}/baseline_loss": baseline_loss,
+                        f"{variant}/hop1/loss": base_loss,
+                        f"{variant}/hop1/q_scale": scale,
+                        f"{variant}/h": jnp.asarray(config.h)})
+        for name, coefficient in config.coefficients(variant, batch.actions.shape[-1]).items():
+            metrics[f"{variant}/hop1/{name}"] = jnp.asarray(coefficient)
         for hop in range(1, len(bank)):
             reference = policy_stats(actors[-1], actors[-1].params, batch.observations,
                                      variant != "qbc_deterministic_w2")
             actor, info = refine_actor(bank[hop], reference, state.target_critic, batch,
-                                       variant, jax.random.fold_in(actor_key, hop), config, max_action)
+                                       variant, jax.random.fold_in(actor_key, hop), config, max_action,
+                                       q_scale=scale)
             actors.append(actor)
-            metrics.update({f"{variant}/hop{hop}/{k}": v for k, v in info.items()})
+            metrics.update({f"{variant}/hop{hop+1}/{k}": v for k, v in info.items()})
         banks.append(tuple(actors))
-    state = state._replace(actors=tuple(banks))
+    state = state._replace(actors=tuple(banks), baselines=tuple(baselines))
     state, q_loss = update_q(state, batch, config)
     metrics["critic_loss"] = q_loss
     return state, metrics

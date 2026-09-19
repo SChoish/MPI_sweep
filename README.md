@@ -189,7 +189,11 @@ TD3+BC actor loss + W2, and Gaussian DDPG+BC (Park et al., mean-Q + NLL BC) + W2
 [IQL actor/geometry experiments](IQL_ACTOR_GEOMETRY.md). Preview it with
 `mpi-sweep --algorithm iql --hops 4 --n-tau 1 --seeds 0 --dry-run`.
 The Gaussian DDPG+BC base has fixed std 1; its W2 refinement optimizes expected
-Q and learns both mean and standard deviation.
+Q and learns both mean and standard deviation. In this IQL protocol, K counts
+all steps: K=1 is the base at T, and K>1 uses T/K for the dataset-anchored
+first step and each of the remaining K-1 steps. Actor coefficients are derived
+from T/K; Q normalization follows each base algorithm and is shared across
+the chain. Locomotion rewards use the official IQL return-range normalization.
 
 The installed command and flag names retain their original identifiers for
 backward compatibility; they are interfaces, not the paper's algorithm name.

@@ -15,23 +15,25 @@ import jax.numpy as jnp
 import numpy as np
 
 import provenance
-from d4rl_data import DATASET_FILES, dataset_path
+from d4rl_data import DATASET_FILES, dataset_path, download_dataset
 from iql_mpi import create_state, policy_stats, update_many
 from iql_mpi_config import (SCHEMA, add_iql_args, canonical, config_from_args,
                             is_complete, run_name, run_signature, signature_hash)
-from train_td3bc import evaluate, install_stop_handler, latest_checkpoint, load_transition
+from train_td3bc import (Transition, evaluate, install_stop_handler, latest_checkpoint,
+                         qlearning_from_hdf5)
 
 ROOT = Path(__file__).resolve().parent
 SOURCE_NAMES = ("iql_mpi.py", "iql_mpi_config.py", "train_iql_mpi.py", "train_td3bc.py", "d4rl_data.py")
-EVAL_FIELDS = ("step", "variant", "hop", "eval_mode", "return", "d4rl_score")
+EVAL_FIELDS = ("step", "variant", "policy", "hop", "K", "T", "h", "time",
+               "eval_mode", "return", "d4rl_score")
 
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--env", default="hopper-medium-v2")
     parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--tau", type=float, default=1.0, help="Total refinement horizon T; each of K hops uses T/K")
-    parser.add_argument("--mpi-steps", type=int, default=4, help="Refinement hops AFTER the base actor; 0 gives baselines only")
+    parser.add_argument("--tau", type=float, default=1.0, help="Total horizon T, including the first dataset-anchored step")
+    parser.add_argument("--mpi-steps", type=int, default=4, help="Total steps K >= 1; K=1 is the base algorithm at T")
     parser.add_argument("--polyak", type=float, default=0.005)
     parser.add_argument("--max-timesteps", type=int, default=1_000_000)
     parser.add_argument("--eval-freq", type=int, default=1_000_000)
@@ -60,6 +62,63 @@ def validate_args(args):
         raise ValueError("reward_scale must be finite and positive")
 
 
+def normalize_iql_rewards(raw, mode="iql", reward_scale=1.0):
+    """Official IQL / Park et al. locomotion return-range normalization.
+
+    Use unnormalized observations to find skipped-timeout boundaries; terminal
+    masks for Bellman targets remain unchanged. Include the last trajectory.
+    """
+    factor, return_range = 1.0, None
+    if mode == "iql":
+        boundary = np.asarray(raw["not_dones"]).reshape(-1) == 0
+        boundary[:-1] |= np.linalg.norm(
+            raw["observations"][1:] - raw["next_observations"][:-1], axis=-1) > 1e-6
+        boundary[-1] = True
+        starts = np.r_[0, np.flatnonzero(boundary)[:-1] + 1]
+        returns = np.add.reduceat(raw["rewards"].reshape(-1).astype(np.float64), starts)
+        return_range = float(np.max(returns) - np.min(returns))
+        if not np.isfinite(return_range) or return_range <= 0:
+            raise ValueError("IQL reward normalization needs a positive trajectory-return range; "
+                             "use --iql-reward-normalization none for a deliberate raw-reward experiment")
+        factor = 1000.0 / return_range
+    elif mode != "none":
+        raise ValueError(f"unknown reward normalization {mode}")
+    rewards = (raw["rewards"] * (factor * reward_scale)).astype(np.float32)
+    return rewards, {"mode": mode, "return_range": return_range, "factor": factor,
+                     "extra_reward_scale": reward_scale}
+
+
+def load_iql_transition(args):
+    raw = qlearning_from_hdf5(download_dataset(args.env, args.data_dir))
+    raw["rewards"], reward_info = normalize_iql_rewards(
+        raw, args.iql_reward_normalization, args.reward_scale)
+    # The official IQL and bottleneck loaders also clip dataset actions by eps.
+    if np.max(np.abs(raw["actions"])) > 1.0 + 1e-5:
+        raise ValueError("this locomotion protocol expects actions in [-1, 1]")
+    raw["actions"] = np.clip(raw["actions"], -1. + 1e-5, 1. - 1e-5)
+    mean = np.zeros(raw["observations"].shape[-1], dtype=np.float32)
+    std = np.ones_like(mean)
+    if args.iql_normalize_state:
+        mean = raw["observations"].mean(axis=0)
+        std = raw["observations"].std(axis=0) + 1e-3
+        raw["observations"] = (raw["observations"] - mean) / std
+        raw["next_observations"] = (raw["next_observations"] - mean) / std
+    return Transition(**{k: jnp.asarray(v) for k, v in raw.items()}), mean, std, reward_info
+
+
+def resolved_protocol(config, action_dim):
+    return {"T": config.tau, "K": config.mpi_steps, "h": config.h,
+            "chain_times": [k * config.h for k in range(1, config.mpi_steps + 1)],
+            "q_scale_source": "pre-update full-T baseline; stopped and shared across the chain",
+            "extra_baseline_updates_per_variant": int(config.mpi_steps > 1),
+            "chain_actor_updates_per_variant": 1 + (config.mpi_steps - 1) * config.inner_updates,
+            "variants": {v: {"metric_reduction": config.reduction(v),
+                              "q_scale_norm": config.normalize_q(v),
+                              "first_step_coefficients": config.coefficients(v, action_dim),
+                              "baseline_coefficients": config.coefficients(v, action_dim, config.tau)}
+                         for v in config.variants}}
+
+
 def save_checkpoint(path, state, rng, step, mean, std, signature, sources, data_hash):
     payload = {"schema": SCHEMA, "step": int(step), "signature": signature,
                "sources": sources, "dataset_sha256": data_hash,
@@ -85,19 +144,23 @@ def restore_checkpoint(path, state, signature, sources, data_hash):
 
 
 def evaluation_specs(config, args):
-    hops = range(config.mpi_steps + 1) if args.eval_hops == "all" else sorted({0, config.mpi_steps})
+    policies = [("baseline", 1)]
+    if config.mpi_steps > 1:
+        hops = range(1, config.mpi_steps + 1) if args.eval_hops == "all" else (config.mpi_steps,)
+        policies.extend(("mpi", hop) for hop in hops)
     for index, variant in enumerate(config.variants):
         modes = ("mean",) if variant == "qbc_deterministic_w2" else (
             ("mean", "sample") if args.eval_mode == "both" else (args.eval_mode,))
-        for hop in hops:
+        for policy, hop in policies:
             for mode in modes:
-                yield index, variant, hop, mode
+                yield index, variant, policy, hop, mode
 
 
 def evaluate_all(state, config, args, step, mean, std):
     rows = []
-    for index, variant, hop, mode in evaluation_specs(config, args):
-        actor = state.actors[index][hop]
+    for index, variant, policy_name, hop, mode in evaluation_specs(config, args):
+        actor = state.baselines[index] if policy_name == "baseline" else state.actors[index][hop-1]
+        k, h = (1, config.tau) if policy_name == "baseline" else (config.mpi_steps, config.h)
         gaussian = variant != "qbc_deterministic_w2"
         # Separate evaluation RNG: changing evaluation frequency cannot alter training.
         # Same standard-normal stream across Gaussian branches/hops at this step.
@@ -116,7 +179,8 @@ def evaluate_all(state, config, args, step, mean, std):
         ret, score = evaluate(policy, args.env, args.seed, mean, std, args.eval_episodes)
         if not np.isfinite([ret, score]).all():
             raise FloatingPointError(f"nonfinite evaluation for {variant}/{hop}/{mode}")
-        rows.append(dict(zip(EVAL_FIELDS, (step, variant, hop, mode, ret, score), strict=True)))
+        rows.append(dict(zip(EVAL_FIELDS, (step, variant, policy_name, hop, k, config.tau,
+                                          h, hop*h, mode, ret, score), strict=True)))
     return rows
 
 
@@ -141,14 +205,14 @@ def record_evaluation(out_dir, state, config, args, step, mean, std):
     new_rows = evaluate_all(state, config, args, step, mean, std)
     write_rows(out_dir / "eval.csv", rows + new_rows)
     for row in new_rows:
-        print(f"[eval] step={step} {row['variant']} hop={row['hop']} "
+        print(f"[eval] step={step} {row['variant']} {row['policy']} hop={row['hop']} time={row['time']:g} "
               f"mode={row['eval_mode']} d4rl={row['d4rl_score']:.2f}", flush=True)
 
 
 def mark_complete(out_dir, config, args, signature):
-    expected = {(v, str(h), m) for _, v, h, m in evaluation_specs(config, args)}
+    expected = {(v, p, str(h), m) for _, v, p, h, m in evaluation_specs(config, args)}
     final_rows = [r for r in read_rows(out_dir / "eval.csv") if int(r["step"]) == args.max_timesteps]
-    actual = {(r["variant"], r["hop"], r["eval_mode"]) for r in final_rows}
+    actual = {(r["variant"], r["policy"], r["hop"], r["eval_mode"]) for r in final_rows}
     if actual != expected or len(final_rows) != len(expected):
         raise ValueError("incomplete or duplicate final actor evaluations")
     checkpoint = out_dir / f"params_{args.max_timesteps}.pkl"
@@ -175,7 +239,8 @@ def main(argv=None):
             raise ValueError("existing run has different configuration or source; use a new save directory")
     elif any(out_dir.iterdir()):
         raise ValueError("nonempty run directory without config; use a new save directory")
-    provenance.write_json(config_path, {"signature": signature, "sources": sources, "args": vars(args)})
+    if not config_path.exists():
+        provenance.write_json(config_path, {"signature": signature, "sources": sources, "args": vars(args)})
     if is_complete(out_dir, args.max_timesteps):
         print(f"[complete] {out_dir}")
         return 0
@@ -183,8 +248,11 @@ def main(argv=None):
     args.compilation_cache_dir.mkdir(parents=True, exist_ok=True)
     jax.config.update("jax_compilation_cache_dir", str(args.compilation_cache_dir))
     stop = install_stop_handler(out_dir)
-    data, mean, std = load_transition(args.env, args.data_dir, args.iql_normalize_state)
-    data = data._replace(rewards=data.rewards * args.reward_scale)
+    data, mean, std, reward_info = load_iql_transition(args)
+    protocol = resolved_protocol(config, data.actions.shape[-1])
+    provenance.write_json(config_path, {"signature": signature, "sources": sources,
+                                       "args": vars(args), "resolved_protocol": protocol,
+                                       "reward_normalization": reward_info})
     if float(jnp.max(jnp.abs(data.actions))) > 1.0 + 1e-5:
         raise ValueError("this locomotion protocol expects actions in [-1, 1]")
     data_hash = provenance.sha256_file(dataset_path(args.env, args.data_dir))
@@ -218,6 +286,7 @@ def main(argv=None):
             extra={"signature": signature, "dataset_sha256": data_hash,
                    "dataset": provenance.dataset_identity(dataset_path(args.env, args.data_dir)),
                    "normalization": {"mean": mean.tolist(), "std": std.tolist()},
+                   "reward_normalization": reward_info, "resolved_protocol": protocol,
                    "metric": "raw diagonal Gaussian; ambient FR^2 = 4*acos(BC)^2 (MPI A.3)",
                    "q_action_transform": config.q_action_transform,
                    "gaussian_qbc_base": "Park et al. 2024 Eq.6/C.6.1: -mean(Q(clipped mean)) + bc_coef*mean(NLL); raw Gaussian, sigma=1",
@@ -250,8 +319,8 @@ def main(argv=None):
         if evaluate_now:
             record_evaluation(out_dir, state, config, args, step, mean, std)
     # A crash during evaluation can leave a valid final checkpoint without rows.
-    expected = {(v, str(h), m) for _, v, h, m in evaluation_specs(config, args)}
-    actual = {(r["variant"], r["hop"], r["eval_mode"]) for r in read_rows(out_dir / "eval.csv")
+    expected = {(v, p, str(h), m) for _, v, p, h, m in evaluation_specs(config, args)}
+    actual = {(r["variant"], r["policy"], r["hop"], r["eval_mode"]) for r in read_rows(out_dir / "eval.csv")
               if int(r["step"]) == args.max_timesteps}
     if actual != expected:
         record_evaluation(out_dir, state, config, args, step, mean, std)

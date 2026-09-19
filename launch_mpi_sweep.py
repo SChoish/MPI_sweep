@@ -194,12 +194,13 @@ def selected_envs(args: argparse.Namespace) -> list[str]:
 
 
 def selected_taus(args: argparse.Namespace) -> list[str]:
-    values = _split(args.taus) if args.taus else mpi_tau_grid(args.n_tau)
+    values = (_split(args.taus) if args.taus else
+              iql_config.default_t_grid(args) if args.algorithm == "iql" else mpi_tau_grid(args.n_tau))
     if not values:
         raise ValueError("the tau grid is empty")
     if any(not math.isfinite(float(value)) or float(value) <= 0.0 for value in values):
         raise ValueError("all tau values must be positive")
-    return [f"{float(value):g}" for value in values]
+    return [format(float(value), ".17g" if args.algorithm == "iql" else "g") for value in values]
 
 
 def is_complete(save_dir: Path, tag: str, max_timesteps: int) -> bool:
@@ -323,13 +324,14 @@ def iql_worker_command(args, job, slot_index):
                "--seed", str(job.seed)]
     for name in ("polyak", "max_timesteps", "eval_freq", "eval_episodes", "updates_per_dispatch",
                  "compilation_cache_dir", "save_interval", "data_dir", "save_dir", "variants",
-                 "expectile", "awr_beta", "bc_coef", "td3bc_alpha", "actor_lr", "critic_lr", "value_lr",
+                 "expectile", "actor_lr", "critic_lr", "value_lr",
                  "discount", "hidden_dims", "log_std_init", "log_std_min", "log_std_max",
                  "mc_samples", "inner_updates", "metric_reduction", "q_action_transform",
-                 "batch_size", "reward_scale", "eval_mode", "eval_hops"):
+                 "batch_size", "reward_scale", "iql_reward_normalization", "eval_mode", "eval_hops"):
         command.extend(["--" + name.replace("_", "-"), str(getattr(args, name))])
     for name in ("iql_q_scale_norm", "iql_normalize_state"):
-        command.append("--" + ("" if getattr(args, name) else "no-") + name.replace("_", "-"))
+        if getattr(args, name) is not None:
+            command.append("--" + ("" if getattr(args, name) else "no-") + name.replace("_", "-"))
     if args.cpu_affinity or args.cpu_jobs > 0:
         start = args.cpu_start + slot_index * args.cpus_per_job
         command = ["taskset", "-c", f"{start}-{start + args.cpus_per_job - 1}", *command]

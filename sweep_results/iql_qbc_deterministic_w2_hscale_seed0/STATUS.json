@@ -1,0 +1,255 @@
+{
+  "updated_at": "2026-09-19T05:18:34Z",
+  "stamp_kst": "2026-09-19 14:18 KST",
+  "variant": "qbc_deterministic_w2",
+  "seed": 0,
+  "taus": [
+    "0.05",
+    "0.4",
+    "1.25",
+    "4",
+    "10",
+    "40"
+  ],
+  "hops": [
+    1,
+    2,
+    3
+  ],
+  "planned": 162,
+  "counts": {
+    "complete": 0,
+    "running": 0,
+    "remaining": 162,
+    "extra_dirs": 0
+  },
+  "queue": "",
+  "live": [
+    {
+      "pid": 65673,
+      "env": "hopper-medium-replay-v2",
+      "tau": "0.05",
+      "hops": 2,
+      "step": 0
+    },
+    {
+      "pid": 65674,
+      "env": "hopper-medium-replay-v2",
+      "tau": "0.4",
+      "hops": 2,
+      "step": 0
+    },
+    {
+      "pid": 65675,
+      "env": "hopper-medium-replay-v2",
+      "tau": "1.25",
+      "hops": 2,
+      "step": 0
+    },
+    {
+      "pid": 65677,
+      "env": "hopper-medium-replay-v2",
+      "tau": "10",
+      "hops": 2,
+      "step": 0
+    },
+    {
+      "pid": 65676,
+      "env": "hopper-medium-replay-v2",
+      "tau": "4",
+      "hops": 2,
+      "step": 0
+    },
+    {
+      "pid": 65678,
+      "env": "hopper-medium-replay-v2",
+      "tau": "40",
+      "hops": 2,
+      "step": 0
+    }
+  ],
+  "by_env": {
+    "hopper-medium-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "hopper-medium-replay-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "hopper-expert-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "halfcheetah-medium-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "halfcheetah-medium-replay-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "halfcheetah-expert-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "walker2d-medium-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "walker2d-medium-replay-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "walker2d-expert-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    }
+  },
+  "save_dir": "/raid/ext_csv/MPI_store/iql_qbc_deterministic_w2_hscale_seed0",
+  "note": "Per-env K=1 then 2 then 3; coarse T; seed 0; 6 GPU slots."
+}

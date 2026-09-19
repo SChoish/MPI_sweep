@@ -103,3 +103,5 @@
 [provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
 [data] ready /home/choi/MPI_sweep/data/hopper_medium-v2.hdf5
 [launch] gpu=0 hopper-medium-v2_iql_tau0.05_mpi4_seed0_c4e1061ee32d pid=4072041
+[ok] hopper-medium-v2_iql_tau0.05_mpi4_seed0_c4e1061ee32d 35.0m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.4_mpi4_seed0_acefb2bd9a56 pid=4080548

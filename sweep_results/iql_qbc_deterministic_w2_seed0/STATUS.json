@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T04:58:16Z",
-  "stamp_kst": "2026-09-19 13:58 KST",
+  "updated_at": "2026-09-19T05:08:26Z",
+  "stamp_kst": "2026-09-19 14:08 KST",
   "variant": "qbc_deterministic_w2",
   "seed": 0,
   "taus": [
@@ -18,54 +18,54 @@
   ],
   "planned": 162,
   "counts": {
-    "complete": 18,
+    "complete": 24,
     "running": 12,
-    "remaining": 132,
+    "remaining": 126,
     "extra_dirs": 3
   },
-  "queue": "2026-09-19T04:55:53+00:00 env=hopper-medium-replay-v2 hop=1 device=cuda taus=0.05 0.4 1.25 4 10 40",
+  "queue": "2026-09-19T05:04:17+00:00 env=hopper-medium-replay-v2 hop=2 device=cuda taus=0.05 0.4 1.25 4 10 40",
   "live": [
     {
-      "pid": 62268,
+      "pid": 65673,
       "env": "hopper-medium-replay-v2",
       "tau": "0.05",
-      "hops": 1,
-      "step": 723168
+      "hops": 2,
+      "step": 253504
     },
     {
-      "pid": 62269,
+      "pid": 65674,
       "env": "hopper-medium-replay-v2",
       "tau": "0.4",
-      "hops": 1,
-      "step": 423744
+      "hops": 2,
+      "step": 230080
     },
     {
-      "pid": 62270,
+      "pid": 65675,
       "env": "hopper-medium-replay-v2",
       "tau": "1.25",
-      "hops": 1,
-      "step": 624128
+      "hops": 2,
+      "step": 252672
     },
     {
-      "pid": 62272,
+      "pid": 65677,
       "env": "hopper-medium-replay-v2",
       "tau": "10",
-      "hops": 1,
-      "step": 422976
+      "hops": 2,
+      "step": 250944
     },
     {
-      "pid": 62271,
+      "pid": 65676,
       "env": "hopper-medium-replay-v2",
       "tau": "4",
-      "hops": 1,
-      "step": 427392
+      "hops": 2,
+      "step": 241536
     },
     {
-      "pid": 62273,
+      "pid": 65678,
       "env": "hopper-medium-replay-v2",
       "tau": "40",
-      "hops": 1,
-      "step": 421184
+      "hops": 2,
+      "step": 245632
     }
   ],
   "by_env": {
@@ -91,16 +91,16 @@
     },
     "hopper-medium-replay-v2": {
       "1": {
-        "complete": 0,
-        "live": 6,
-        "status": "0/6 \u00b7 6 live@421k",
-        "min_step": 421184
+        "complete": 6,
+        "live": 0,
+        "status": "6/6",
+        "min_step": 0
       },
       "2": {
         "complete": 0,
-        "live": 0,
-        "status": "0/6",
-        "min_step": 0
+        "live": 6,
+        "status": "0/6 \u00b7 6 live@230k",
+        "min_step": 230080
       },
       "3": {
         "complete": 0,

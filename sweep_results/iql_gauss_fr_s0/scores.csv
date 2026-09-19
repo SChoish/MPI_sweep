@@ -7,6 +7,10 @@ hopper-medium-v2,0.05,2,0,fr,mpi,2,mean,42.383359,hopper-medium-v2_iql_tau0.05_m
 hopper-medium-v2,0.05,2,1,fr,mpi,2,mean,45.253392,hopper-medium-v2_iql_tau0.05_mpi2_seed1_14316a01c572
 hopper-medium-v2,0.05,2,2,fr,mpi,2,mean,42.900206,hopper-medium-v2_iql_tau0.05_mpi2_seed2_28e571ee8bd7
 hopper-medium-v2,0.05,2,3,fr,mpi,2,mean,38.909635,hopper-medium-v2_iql_tau0.05_mpi2_seed3_b16f9d556b6d
+hopper-medium-v2,0.05,4,0,fr,mpi,4,mean,40.906111,hopper-medium-v2_iql_tau0.05_mpi4_seed0_1849f8f0ce2c
+hopper-medium-v2,0.05,4,1,fr,mpi,4,mean,44.596693,hopper-medium-v2_iql_tau0.05_mpi4_seed1_0ce6a4aed944
+hopper-medium-v2,0.05,4,2,fr,mpi,4,mean,41.140847,hopper-medium-v2_iql_tau0.05_mpi4_seed2_25f14aae3c65
+hopper-medium-v2,0.05,4,3,fr,mpi,4,mean,43.399059,hopper-medium-v2_iql_tau0.05_mpi4_seed3_31df57e159f6
 hopper-medium-v2,0.1,1,0,fr,baseline,1,mean,41.205700,hopper-medium-v2_iql_tau0.1_mpi1_seed0_197c690dc45d
 hopper-medium-v2,0.1,1,1,fr,baseline,1,mean,40.452629,hopper-medium-v2_iql_tau0.1_mpi1_seed1_b59345c8e895
 hopper-medium-v2,0.1,1,2,fr,baseline,1,mean,39.948700,hopper-medium-v2_iql_tau0.1_mpi1_seed2_afe6ff6fbda5
@@ -15,6 +19,8 @@ hopper-medium-v2,0.1,2,0,fr,mpi,2,mean,40.875521,hopper-medium-v2_iql_tau0.1_mpi
 hopper-medium-v2,0.1,2,1,fr,mpi,2,mean,42.641863,hopper-medium-v2_iql_tau0.1_mpi2_seed1_25c19c196fa4
 hopper-medium-v2,0.1,2,2,fr,mpi,2,mean,46.562483,hopper-medium-v2_iql_tau0.1_mpi2_seed2_d18781da3602
 hopper-medium-v2,0.1,2,3,fr,mpi,2,mean,38.717360,hopper-medium-v2_iql_tau0.1_mpi2_seed3_340dbca02431
+hopper-medium-v2,0.1,4,0,fr,mpi,4,mean,38.940951,hopper-medium-v2_iql_tau0.1_mpi4_seed0_61b145b91233
+hopper-medium-v2,0.1,4,1,fr,mpi,4,mean,49.362423,hopper-medium-v2_iql_tau0.1_mpi4_seed1_94fad4b6f3b9
 hopper-medium-v2,0.2,1,0,fr,baseline,1,mean,44.210231,hopper-medium-v2_iql_tau0.2_mpi1_seed0_cff0fdedce1f
 hopper-medium-v2,0.2,1,1,fr,baseline,1,mean,43.294903,hopper-medium-v2_iql_tau0.2_mpi1_seed1_69080e4e870e
 hopper-medium-v2,0.2,1,2,fr,baseline,1,mean,40.292481,hopper-medium-v2_iql_tau0.2_mpi1_seed2_56171c04fc8c

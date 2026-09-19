@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-20 01:05:17 UTC+09:00",
+  "updated_at": "2026-09-20 01:10:23 UTC+09:00",
   "schema": "iql_actor_geometry_v5_consistent_gaussian",
   "k": 4,
   "taus": [
@@ -13,7 +13,11 @@
     "2.5",
     "4",
     "7",
-    "10"
+    "10",
+    "12",
+    "14",
+    "17",
+    "20"
   ],
   "variants": [
     "awr_gaussian_fr",
@@ -37,11 +41,11 @@
     "walker2d-medium-replay-v2",
     "walker2d-expert-v2"
   ],
-  "total": 396,
-  "started": 22,
-  "done": 18,
+  "total": 540,
+  "started": 20,
+  "done": 16,
   "queue_ok": 18,
   "queue_fail": 0,
   "source": "/home/shchoi/MPI_sweep/results/iql_k4_t6",
-  "note": "Shared-critic IQL, three variants, K=4, T<=10, loco-9, seeds 0-3. T>10 deferred."
+  "note": "Shared-critic IQL K=4 loco-9 seeds 0-3. All variants T<=10; Det-W2 MPI also T=12,14,17,20."
 }

@@ -10,6 +10,10 @@ awr_gaussian_fr,2.5,0,
 awr_gaussian_fr,4,2,14.7532
 awr_gaussian_fr,7,0,
 awr_gaussian_fr,10,2,2.5086
+awr_gaussian_fr,12,0,
+awr_gaussian_fr,14,0,
+awr_gaussian_fr,17,0,
+awr_gaussian_fr,20,0,
 qbc_deterministic_w2,0.05,4,47.8203
 qbc_deterministic_w2,0.1,4,45.4209
 qbc_deterministic_w2,0.2,0,
@@ -21,6 +25,10 @@ qbc_deterministic_w2,2.5,0,
 qbc_deterministic_w2,4,2,52.3071
 qbc_deterministic_w2,7,0,
 qbc_deterministic_w2,10,2,93.9223
+qbc_deterministic_w2,12,0,
+qbc_deterministic_w2,14,0,
+qbc_deterministic_w2,17,0,
+qbc_deterministic_w2,20,0,
 qbc_gaussian_w2,0.05,4,44.5535
 qbc_gaussian_w2,0.1,4,48.8604
 qbc_gaussian_w2,0.2,0,
@@ -32,3 +40,7 @@ qbc_gaussian_w2,2.5,0,
 qbc_gaussian_w2,4,2,0.7076
 qbc_gaussian_w2,7,0,
 qbc_gaussian_w2,10,2,0.6557
+qbc_gaussian_w2,12,0,
+qbc_gaussian_w2,14,0,
+qbc_gaussian_w2,17,0,
+qbc_gaussian_w2,20,0,

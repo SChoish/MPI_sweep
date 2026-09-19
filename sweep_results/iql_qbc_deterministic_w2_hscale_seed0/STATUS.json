@@ -1,8 +1,20 @@
 {
-  "updated_at": "2026-09-19T12:05:24Z",
-  "stamp_kst": "2026-09-19 21:05 KST",
+  "updated_at": "2026-09-19T12:13:25Z",
+  "stamp_kst": "2026-09-19 21:13 KST",
   "variant": "qbc_deterministic_w2",
-  "seed": 0,
+  "seeds": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "per_seed": 513,
+  "seed_complete": [
+    48,
+    0,
+    0,
+    0
+  ],
   "taus": [
     "0.05",
     "0.1",
@@ -29,76 +41,33 @@
     2,
     3
   ],
-  "planned": 513,
+  "planned": 2052,
   "counts": {
-    "complete": 42,
-    "running": 6,
-    "remaining": 465,
+    "complete": 48,
+    "running": 0,
+    "remaining": 2004,
     "extra_dirs": 0
   },
   "queue": "2026-09-19T11:51:50+00:00 env=hopper-expert-v2 hop=2 device=cuda taus=0.05 0.4 1.25 4 10 40 \u00b7 watcher gpu_running \u00b7 portal running",
-  "live": [
-    {
-      "pid": 3167396,
-      "env": "hopper-expert-v2",
-      "tau": "0.05",
-      "hops": 2,
-      "step": 787104
-    },
-    {
-      "pid": 3167397,
-      "env": "hopper-expert-v2",
-      "tau": "0.4",
-      "hops": 2,
-      "step": 775264
-    },
-    {
-      "pid": 3167398,
-      "env": "hopper-expert-v2",
-      "tau": "1.25",
-      "hops": 2,
-      "step": 754528
-    },
-    {
-      "pid": 3167399,
-      "env": "hopper-expert-v2",
-      "tau": "4",
-      "hops": 2,
-      "step": 768224
-    },
-    {
-      "pid": 3167400,
-      "env": "hopper-expert-v2",
-      "tau": "10",
-      "hops": 2,
-      "step": 776736
-    },
-    {
-      "pid": 3167401,
-      "env": "hopper-expert-v2",
-      "tau": "40",
-      "hops": 2,
-      "step": 767072
-    }
-  ],
+  "live": [],
   "by_env": {
     "hopper-medium-v2": {
       "1": {
         "complete": 6,
         "live": 0,
-        "status": "6/19 paused",
+        "status": "6/76 paused",
         "min_step": 0
       },
       "2": {
         "complete": 6,
         "live": 0,
-        "status": "6/19 paused",
+        "status": "6/76 paused",
         "min_step": 0
       },
       "3": {
         "complete": 6,
         "live": 0,
-        "status": "6/19 paused",
+        "status": "6/76 paused",
         "min_step": 0
       }
     },
@@ -106,19 +75,19 @@
       "1": {
         "complete": 6,
         "live": 0,
-        "status": "6/19 paused",
+        "status": "6/76 paused",
         "min_step": 0
       },
       "2": {
         "complete": 6,
         "live": 0,
-        "status": "6/19 paused",
+        "status": "6/76 paused",
         "min_step": 0
       },
       "3": {
         "complete": 6,
         "live": 0,
-        "status": "6/19 paused",
+        "status": "6/76 paused",
         "min_step": 0
       }
     },
@@ -126,19 +95,19 @@
       "1": {
         "complete": 6,
         "live": 0,
-        "status": "6/19 paused",
+        "status": "6/76 paused",
         "min_step": 0
       },
       "2": {
-        "complete": 0,
-        "live": 6,
-        "status": "0/19 \u00b7 6 live@754k",
-        "min_step": 754528
+        "complete": 6,
+        "live": 0,
+        "status": "6/76 paused",
+        "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       }
     },
@@ -146,19 +115,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       }
     },
@@ -166,19 +135,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       }
     },
@@ -186,19 +155,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       }
     },
@@ -206,19 +175,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       }
     },
@@ -226,19 +195,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       }
     },
@@ -246,23 +215,23 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/19",
+        "status": "0/76",
         "min_step": 0
       }
     }
   },
   "save_dir": "/raid/ext_csv/MPI_store/iql_qbc_deterministic_w2_hscale_seed0",
-  "note": "Per-env K=1 then 2 then 3; coarse T; seed 0. CPU failover while GPU is queued."
+  "note": "Per-env K=1 then 2 then 3; MART T 19; seeds 0-3. Same save dir."
 }

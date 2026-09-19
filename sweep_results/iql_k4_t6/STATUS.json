@@ -1,0 +1,55 @@
+{
+  "updated_at": "2026-09-19 21:10:40 UTC+09:00",
+  "schema": "iql_actor_geometry_v5_consistent_gaussian",
+  "k": 4,
+  "taus": [
+    "0.05",
+    "0.1",
+    "0.2",
+    "0.4",
+    "0.7",
+    "1.25",
+    "1.5",
+    "2.5",
+    "4",
+    "7",
+    "10",
+    "12",
+    "14",
+    "17",
+    "20",
+    "24",
+    "28",
+    "34",
+    "40"
+  ],
+  "variants": [
+    "awr_gaussian_fr",
+    "qbc_deterministic_w2",
+    "qbc_gaussian_w2"
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "envs": [
+    "hopper-medium-v2",
+    "hopper-medium-replay-v2",
+    "hopper-expert-v2",
+    "halfcheetah-medium-v2",
+    "halfcheetah-medium-replay-v2",
+    "halfcheetah-expert-v2",
+    "walker2d-medium-v2",
+    "walker2d-medium-replay-v2",
+    "walker2d-expert-v2"
+  ],
+  "total": 684,
+  "started": 16,
+  "done": 12,
+  "queue_ok": 12,
+  "queue_fail": 0,
+  "source": "/home/shchoi/MPI_sweep/results/iql_k4_t6",
+  "note": "Shared-critic IQL, three variants, K=4, 19 T, loco-9, seeds 0-3."
+}

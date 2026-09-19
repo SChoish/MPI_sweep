@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-20 01:46:11 UTC+09:00",
+  "updated_at": "2026-09-20 01:51:18 UTC+09:00",
   "schema": "iql_actor_geometry_v5_consistent_gaussian",
   "k": 4,
   "taus": [
@@ -43,7 +43,7 @@
   ],
   "total": 540,
   "started": 20,
-  "done": 16,
+  "done": 18,
   "queue_ok": 18,
   "queue_fail": 0,
   "source": "/home/shchoi/MPI_sweep/results/iql_k4_t6",

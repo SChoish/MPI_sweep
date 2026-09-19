@@ -9,9 +9,10 @@ from dataclasses import asdict, dataclass
 
 VARIANTS = ("awr_gaussian_fr", "qbc_deterministic_w2", "qbc_gaussian_w2")
 SCHEMA = "iql_actor_geometry_v4_total_horizon"
-# Positive-time points from Park et al. Table 3 (Hopper/Walker) and TD3+BC.
+# DDPG+BC uses MART's small-T spacing over the requested [1/50, 5] range.
+# Other families retain their existing defaults; these are experiment grids.
 NATIVE_T_GRIDS = {"awr_gaussian_fr": (1., 3., 10.),
-                  "qbc_gaussian_w2": (1/30, 1/10, 1/3, 1.),
+                  "qbc_gaussian_w2": (.02, .05, .1, .2, .4, .7, 1.5, 2.5, 4., 5.),
                   "qbc_deterministic_w2": (1.25,)}
 
 

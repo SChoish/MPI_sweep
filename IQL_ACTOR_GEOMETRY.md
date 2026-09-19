@@ -147,16 +147,24 @@ Q targets; actor actions never enter its targets.
 
 The default IQL grid is the union of the selected variants' native grids:
 
-| Variant | Source coefficient at K=1 | Total T candidates |
+| Variant | Grid basis | Total T candidates |
 | --- | --- | --- |
-| AWR | Table 3 beta: 1, 3, 10 | 1, 3, 10 |
-| Gaussian DDPG+BC | Table 3 alpha: 1, 3, 10, 30 | 1, 1/3, 1/10, 1/30 |
-| Deterministic TD3+BC | canonical alpha: 2.5 | 1.25 |
+| AWR | Existing positive-beta defaults | 1, 3, 10 |
+| Gaussian DDPG+BC | MART small-T spacing, range 1/50 to 5 | 0.02, 0.05, 0.1, 0.2, 0.4, 0.7, 1.5, 2.5, 4, 5 |
+| Deterministic TD3+BC | Existing canonical alpha=2.5 control | 1.25 |
 
-Table 3's AWR beta=0 is a BC-only control, outside this positive-time MPI
-sweep. The table's locomotion grids are for Hopper/Walker; reusing them on
-HalfCheetah is a candidate-grid extrapolation, not a reported optimum.
-With multiple variants, all selected actors run at every T in the union.
+The DDPG+BC grid is a range sweep, not the inverse of the bottleneck paper's
+four alpha candidates. It retains the existing TD3+BC/MART points up to 4
+and adds the requested endpoints 0.02 and 5. The
+[MART supplement](https://github.com/SChoish/PART/blob/main/supplement.tex)
+uses 0.05 through 40; its small-T spacing is the reference here, without
+claiming a calibrated Q-scale conversion between the two algorithms.
+At K=1 the new range corresponds to alpha_G from 50 down to 0.2.
+Each K uses the same total-T grid and still sets alpha_G=K/T in its first step.
+AWR beta=0 is a BC-only control outside this positive-time sweep.
+With multiple variants, all selected actors run at every T in the union;
+select only `qbc_gaussian_w2` for the ten-point 0.02--5 sweep. Selecting all
+three also includes their existing T=1, 1.25, 3, and 10 points.
 `--n-tau` takes the first N sorted values. Explicit `--taus` overrides it.
 Overriding native geometry or Q/reward scale requires explicit T candidates.
 
@@ -166,13 +174,13 @@ For a matched K comparison, change only K, retaining T candidates and seeds:
 for K in 1 2 4; do
   python launch_mpi_sweep.py --algorithm iql --hops "$K" \
     --domains hopper --datasets medium-replay --seeds "0 1" --gpus 0 \
-    --taus "0.1 0.3333333333333333 1 1.25 3" \
+    --variants qbc_gaussian_w2 \
     --save-dir results/iql_time --log-dir logs/iql_time
 done
 ```
 
 Add `--dry-run` to inspect commands without training. To use a family-specific
-source grid, pass e.g. `--variants qbc_gaussian_w2` and omit `--taus`.
+default grid, pass e.g. `--variants qbc_gaussian_w2` and omit `--taus`.
 Direct training: `mpi-iql-train --mpi-steps 1 --tau 1.25`.
 
 ## Evaluation, compute, and restart
@@ -217,5 +225,5 @@ D4RL training-performance evidence.
 V4 validation: all 66 targeted tests passed on CPU with Python 3.12,
 JAX 0.11.2, Flax 0.12.9, and Optax 0.2.8. The integration tests execute K=1
 and K=3 training, full-time evaluation metadata, and resume/final-evaluation
-recovery using synthetic data and a stubbed simulator. Launcher dry-run also
-confirmed the four Gaussian DDPG+BC alpha-to-T conversions.
+recovery using synthetic data and a stubbed simulator. The subsequent grid
+revision changes only DDPG+BC's default T candidates, not these actor updates.

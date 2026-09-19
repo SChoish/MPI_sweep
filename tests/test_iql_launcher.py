@@ -105,10 +105,10 @@ def test_training_cli_resume_final_eval_recovery(tmp_path, monkeypatch, hops, ex
 
 @pytest.mark.parametrize("variant,expected", [
     ("awr_gaussian_fr", [1., 3., 10.]),
-    ("qbc_gaussian_w2", [1/30, .1, 1/3, 1.]),
+    ("qbc_gaussian_w2", [.02, .05, .1, .2, .4, .7, 1.5, 2.5, 4., 5.]),
     ("qbc_deterministic_w2", [1.25]),
 ])
-def test_paper_alpha_grids_are_converted_to_total_time(variant, expected):
+def test_default_time_grids_are_independent_of_depth(variant, expected):
     args = launcher.parse_args(["--algorithm", "iql", "--hops", "1", "--variants", variant])
     assert [float(x) for x in launcher.selected_taus(args)] == expected
     args.hops = 4

@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T11:24:36Z",
-  "stamp_kst": "2026-09-19 20:24 KST",
+  "updated_at": "2026-09-19T11:34:47Z",
+  "stamp_kst": "2026-09-19 20:34 KST",
   "variant": "qbc_deterministic_w2",
   "seed": 0,
   "taus": [
@@ -23,49 +23,49 @@
     "remaining": 126,
     "extra_dirs": 0
   },
-  "queue": "2026-09-19T11:16:14+00:00 env=hopper-medium-replay-v2 hop=3 device=cuda taus=0.05 0.4 1.25 4 10 40 \u00b7 watcher gpu_running \u00b7 portal running",
+  "queue": "2026-09-19T11:29:00+00:00 env=hopper-medium-replay-v2 hop=3 device=cuda taus=0.05 0.4 1.25 4 10 40 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 2928336,
+      "pid": 3024084,
       "env": "hopper-medium-replay-v2",
       "tau": "0.05",
       "hops": 3,
-      "step": 369760
+      "step": 756448
     },
     {
-      "pid": 2928339,
+      "pid": 3024085,
       "env": "hopper-medium-replay-v2",
       "tau": "0.4",
       "hops": 3,
-      "step": 354528
+      "step": 745696
     },
     {
-      "pid": 2928340,
+      "pid": 3024087,
       "env": "hopper-medium-replay-v2",
       "tau": "1.25",
       "hops": 3,
-      "step": 371872
+      "step": 749024
     },
     {
-      "pid": 2928341,
+      "pid": 3024088,
       "env": "hopper-medium-replay-v2",
       "tau": "4",
       "hops": 3,
-      "step": 358432
+      "step": 751072
     },
     {
-      "pid": 2928342,
+      "pid": 3024090,
       "env": "hopper-medium-replay-v2",
       "tau": "10",
       "hops": 3,
-      "step": 370016
+      "step": 743200
     },
     {
-      "pid": 2928343,
+      "pid": 3024091,
       "env": "hopper-medium-replay-v2",
       "tau": "40",
       "hops": 3,
-      "step": 360352
+      "step": 752800
     }
   ],
   "by_env": {
@@ -105,8 +105,8 @@
       "3": {
         "complete": 0,
         "live": 6,
-        "status": "0/6 \u00b7 6 live@354k",
-        "min_step": 354528
+        "status": "0/6 \u00b7 6 live@743k",
+        "min_step": 743200
       }
     },
     "hopper-expert-v2": {

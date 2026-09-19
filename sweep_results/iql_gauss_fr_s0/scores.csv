@@ -43,6 +43,10 @@ hopper-medium-v2,0.4,2,0,fr,mpi,2,mean,42.351573,hopper-medium-v2_iql_tau0.4_mpi
 hopper-medium-v2,0.4,2,1,fr,mpi,2,mean,0.732878,hopper-medium-v2_iql_tau0.4_mpi2_seed1_af89e31da44d
 hopper-medium-v2,0.4,2,2,fr,mpi,2,mean,0.676500,hopper-medium-v2_iql_tau0.4_mpi2_seed2_3fcf814ca976
 hopper-medium-v2,0.4,2,3,fr,mpi,2,mean,0.676514,hopper-medium-v2_iql_tau0.4_mpi2_seed3_43eceae06ce6
+hopper-medium-v2,0.4,4,0,fr,mpi,4,mean,42.036450,hopper-medium-v2_iql_tau0.4_mpi4_seed0_0e0ca4db595e
+hopper-medium-v2,0.4,4,1,fr,mpi,4,mean,40.972495,hopper-medium-v2_iql_tau0.4_mpi4_seed1_d8b0643b7692
+hopper-medium-v2,0.4,4,2,fr,mpi,4,mean,39.724102,hopper-medium-v2_iql_tau0.4_mpi4_seed2_0beebff2264e
+hopper-medium-v2,0.4,4,3,fr,mpi,4,mean,39.885157,hopper-medium-v2_iql_tau0.4_mpi4_seed3_402b065a8ebb
 hopper-medium-v2,0.7,1,0,fr,baseline,1,mean,0.720197,hopper-medium-v2_iql_tau0.7_mpi1_seed0_88a705222b7a
 hopper-medium-v2,0.7,1,1,fr,baseline,1,mean,0.733834,hopper-medium-v2_iql_tau0.7_mpi1_seed1_b079904be9fc
 hopper-medium-v2,0.7,1,2,fr,baseline,1,mean,0.787631,hopper-medium-v2_iql_tau0.7_mpi1_seed2_b6515b0833a0
@@ -51,6 +55,8 @@ hopper-medium-v2,0.7,2,0,fr,mpi,2,mean,0.676980,hopper-medium-v2_iql_tau0.7_mpi2
 hopper-medium-v2,0.7,2,1,fr,mpi,2,mean,0.732878,hopper-medium-v2_iql_tau0.7_mpi2_seed1_15633c497315
 hopper-medium-v2,0.7,2,2,fr,mpi,2,mean,0.676500,hopper-medium-v2_iql_tau0.7_mpi2_seed2_fc813ce81a3f
 hopper-medium-v2,0.7,2,3,fr,mpi,2,mean,0.580994,hopper-medium-v2_iql_tau0.7_mpi2_seed3_926542f9edec
+hopper-medium-v2,0.7,4,0,fr,mpi,4,mean,0.676980,hopper-medium-v2_iql_tau0.7_mpi4_seed0_779e382ab04e
+hopper-medium-v2,0.7,4,1,fr,mpi,4,mean,0.732878,hopper-medium-v2_iql_tau0.7_mpi4_seed1_fede4e99b4a9
 hopper-medium-v2,1.25,1,0,fr,baseline,1,mean,0.720197,hopper-medium-v2_iql_tau1.25_mpi1_seed0_542e8b37be58
 hopper-medium-v2,1.25,1,1,fr,baseline,1,mean,0.723499,hopper-medium-v2_iql_tau1.25_mpi1_seed1_59c866c68736
 hopper-medium-v2,1.25,1,2,fr,baseline,1,mean,0.676500,hopper-medium-v2_iql_tau1.25_mpi1_seed2_a1f3dd046b74

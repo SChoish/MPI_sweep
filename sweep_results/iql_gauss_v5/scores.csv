@@ -125,6 +125,8 @@ hopper-medium-v2,2.5,1,0,w2,baseline,1,mean,0.7949734337356391
 hopper-medium-v2,2.5,1,0,w2,baseline,1,sample,0.7949402922125463
 hopper-medium-v2,2.5,1,1,w2,baseline,1,mean,0.6782855379033763
 hopper-medium-v2,2.5,1,1,w2,baseline,1,sample,0.7011405877702074
+hopper-medium-v2,2.5,1,2,w2,baseline,1,mean,0.5824460250398272
+hopper-medium-v2,2.5,1,2,w2,baseline,1,sample,0.5824460250398272
 hopper-medium-v2,40.0,2,0,w2,baseline,1,mean,0.7339870051617758
 hopper-medium-v2,40.0,2,0,w2,baseline,1,sample,0.7339870051617758
 hopper-medium-v2,40.0,2,0,w2,mpi,1,mean,0.7339870051617758

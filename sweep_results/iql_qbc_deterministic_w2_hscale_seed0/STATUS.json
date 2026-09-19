@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T05:38:45Z",
-  "stamp_kst": "2026-09-19 14:38 KST",
+  "updated_at": "2026-09-19T05:48:50Z",
+  "stamp_kst": "2026-09-19 14:48 KST",
   "variant": "qbc_deterministic_w2",
   "seed": 0,
   "taus": [
@@ -19,62 +19,62 @@
   "planned": 162,
   "counts": {
     "complete": 0,
-    "running": 0,
-    "remaining": 162,
+    "running": 6,
+    "remaining": 156,
     "extra_dirs": 0
   },
-  "queue": "",
+  "queue": "2026-09-19T05:39:47+00:00 env=hopper-medium-v2 hop=1 device=cuda taus=0.05 0.4 1.25 4 10 40",
   "live": [
     {
-      "pid": 77798,
-      "env": "hopper-medium-replay-v2",
+      "pid": 88016,
+      "env": "hopper-medium-v2",
       "tau": "0.05",
-      "hops": 3,
-      "step": 0
+      "hops": 1,
+      "step": 866880
     },
     {
-      "pid": 77799,
-      "env": "hopper-medium-replay-v2",
+      "pid": 88017,
+      "env": "hopper-medium-v2",
       "tau": "0.4",
-      "hops": 3,
-      "step": 0
+      "hops": 1,
+      "step": 877376
     },
     {
-      "pid": 77800,
-      "env": "hopper-medium-replay-v2",
+      "pid": 88018,
+      "env": "hopper-medium-v2",
       "tau": "1.25",
-      "hops": 3,
-      "step": 0
+      "hops": 1,
+      "step": 875712
     },
     {
-      "pid": 77802,
-      "env": "hopper-medium-replay-v2",
+      "pid": 88020,
+      "env": "hopper-medium-v2",
       "tau": "10",
-      "hops": 3,
-      "step": 0
+      "hops": 1,
+      "step": 887808
     },
     {
-      "pid": 77801,
-      "env": "hopper-medium-replay-v2",
+      "pid": 88019,
+      "env": "hopper-medium-v2",
       "tau": "4",
-      "hops": 3,
-      "step": 0
+      "hops": 1,
+      "step": 882304
     },
     {
-      "pid": 77803,
-      "env": "hopper-medium-replay-v2",
+      "pid": 88021,
+      "env": "hopper-medium-v2",
       "tau": "40",
-      "hops": 3,
-      "step": 0
+      "hops": 1,
+      "step": 858304
     }
   ],
   "by_env": {
     "hopper-medium-v2": {
       "1": {
         "complete": 0,
-        "live": 0,
-        "status": "0/6",
-        "min_step": 0
+        "live": 6,
+        "status": "0/6 \u00b7 6 live@858k",
+        "min_step": 858304
       },
       "2": {
         "complete": 0,

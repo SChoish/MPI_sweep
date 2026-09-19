@@ -57,6 +57,8 @@ hopper-medium-v2,0.7,2,2,fr,mpi,2,mean,0.676500,hopper-medium-v2_iql_tau0.7_mpi2
 hopper-medium-v2,0.7,2,3,fr,mpi,2,mean,0.580994,hopper-medium-v2_iql_tau0.7_mpi2_seed3_926542f9edec
 hopper-medium-v2,0.7,4,0,fr,mpi,4,mean,0.676980,hopper-medium-v2_iql_tau0.7_mpi4_seed0_779e382ab04e
 hopper-medium-v2,0.7,4,1,fr,mpi,4,mean,0.732878,hopper-medium-v2_iql_tau0.7_mpi4_seed1_fede4e99b4a9
+hopper-medium-v2,0.7,4,2,fr,mpi,4,mean,0.634168,hopper-medium-v2_iql_tau0.7_mpi4_seed2_0a3ed3ac5977
+hopper-medium-v2,0.7,4,3,fr,mpi,4,mean,0.804393,hopper-medium-v2_iql_tau0.7_mpi4_seed3_696d6c0a6c7a
 hopper-medium-v2,1.25,1,0,fr,baseline,1,mean,0.720197,hopper-medium-v2_iql_tau1.25_mpi1_seed0_542e8b37be58
 hopper-medium-v2,1.25,1,1,fr,baseline,1,mean,0.723499,hopper-medium-v2_iql_tau1.25_mpi1_seed1_59c866c68736
 hopper-medium-v2,1.25,1,2,fr,baseline,1,mean,0.676500,hopper-medium-v2_iql_tau1.25_mpi1_seed2_a1f3dd046b74
@@ -65,6 +67,10 @@ hopper-medium-v2,1.25,2,0,fr,mpi,2,mean,0.676980,hopper-medium-v2_iql_tau1.25_mp
 hopper-medium-v2,1.25,2,1,fr,mpi,2,mean,0.676648,hopper-medium-v2_iql_tau1.25_mpi2_seed1_faca43d63e9d
 hopper-medium-v2,1.25,2,2,fr,mpi,2,mean,0.676500,hopper-medium-v2_iql_tau1.25_mpi2_seed2_c574438786df
 hopper-medium-v2,1.25,2,3,fr,mpi,2,mean,0.580994,hopper-medium-v2_iql_tau1.25_mpi2_seed3_85e452c86985
+hopper-medium-v2,1.25,4,0,fr,mpi,4,mean,0.676980,hopper-medium-v2_iql_tau1.25_mpi4_seed0_0e88a495e396
+hopper-medium-v2,1.25,4,1,fr,mpi,4,mean,0.676648,hopper-medium-v2_iql_tau1.25_mpi4_seed1_d4336eb69361
+hopper-medium-v2,1.25,4,2,fr,mpi,4,mean,0.580089,hopper-medium-v2_iql_tau1.25_mpi4_seed2_e3055e446fb3
+hopper-medium-v2,1.25,4,3,fr,mpi,4,mean,0.804393,hopper-medium-v2_iql_tau1.25_mpi4_seed3_f2724d4ae650
 hopper-medium-v2,1.5,1,0,fr,baseline,1,mean,0.720197,hopper-medium-v2_iql_tau1.5_mpi1_seed0_928c7ddd93f1
 hopper-medium-v2,1.5,1,1,fr,baseline,1,mean,0.733834,hopper-medium-v2_iql_tau1.5_mpi1_seed1_4ad545e43abf
 hopper-medium-v2,1.5,1,2,fr,baseline,1,mean,0.676500,hopper-medium-v2_iql_tau1.5_mpi1_seed2_c1a0d8f3d644

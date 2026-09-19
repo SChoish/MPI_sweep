@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-09-19 12:50:03 KST",
+  "updated_at": "2026-09-19 12:55:04 KST",
   "schema": "iql_actor_geometry_v5_consistent_gaussian",
   "explicit": "excluded",
   "variant": "qbc_gaussian_w2",
   "gaussian_qbc_mode": "stochastic",
-  "total": 4536,
+  "total": 648,
   "done": 1,
   "source": "/home/choi/MPI_sweep/results/iql_gauss_v5",
-  "note": "Replaces the local PyTorch hybrid queue. K=1 is one T-grid, not repeated per geometry."
+  "note": "Gaussian DDPG+BC, seed 0 only, implicit W2 K=1..4. Fisher\u2013Rao and seeds 1\u20133 are not queued."
 }

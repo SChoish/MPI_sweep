@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T17:36:53Z",
-  "stamp_kst": "2026-09-20 02:36 KST",
+  "updated_at": "2026-09-19T17:42:09Z",
+  "stamp_kst": "2026-09-20 02:42 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 405,
   "seed_complete": [
-    120,
+    125,
     0,
     0,
     0
@@ -39,60 +39,60 @@
   ],
   "planned": 1620,
   "counts": {
-    "complete": 120,
+    "complete": 125,
     "running": 6,
-    "remaining": 1494,
+    "remaining": 1489,
     "extra_dirs": 25
   },
   "queue": "2026-09-19T17:16:27+00:00 env=hopper-expert-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
-    {
-      "pid": 1216994,
-      "env": "hopper-expert-v2",
-      "tau": "0.05",
-      "hops": 3,
-      "seed": 0,
-      "step": 914784
-    },
-    {
-      "pid": 1216995,
-      "env": "hopper-expert-v2",
-      "tau": "0.1",
-      "hops": 3,
-      "seed": 0,
-      "step": 914464
-    },
-    {
-      "pid": 1216996,
-      "env": "hopper-expert-v2",
-      "tau": "0.2",
-      "hops": 3,
-      "seed": 0,
-      "step": 847808
-    },
-    {
-      "pid": 1216997,
-      "env": "hopper-expert-v2",
-      "tau": "0.4",
-      "hops": 3,
-      "seed": 0,
-      "step": 923040
-    },
-    {
-      "pid": 1216998,
-      "env": "hopper-expert-v2",
-      "tau": "0.7",
-      "hops": 3,
-      "seed": 0,
-      "step": 940704
-    },
     {
       "pid": 1216999,
       "env": "hopper-expert-v2",
       "tau": "1.25",
       "hops": 3,
       "seed": 0,
-      "step": 799200
+      "step": 1000000
+    },
+    {
+      "pid": 1355669,
+      "env": "hopper-expert-v2",
+      "tau": "1.5",
+      "hops": 3,
+      "seed": 0,
+      "step": 135520
+    },
+    {
+      "pid": 1356147,
+      "env": "hopper-expert-v2",
+      "tau": "2.5",
+      "hops": 3,
+      "seed": 0,
+      "step": 127392
+    },
+    {
+      "pid": 1357485,
+      "env": "hopper-expert-v2",
+      "tau": "4",
+      "hops": 3,
+      "seed": 0,
+      "step": 124320
+    },
+    {
+      "pid": 1357574,
+      "env": "hopper-expert-v2",
+      "tau": "7",
+      "hops": 3,
+      "seed": 0,
+      "step": 111968
+    },
+    {
+      "pid": 1365555,
+      "env": "hopper-expert-v2",
+      "tau": "10",
+      "hops": 3,
+      "seed": 0,
+      "step": 49152
     }
   ],
   "by_env": {
@@ -150,10 +150,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 0,
+        "complete": 5,
         "live": 6,
-        "status": "0/60 \u00b7 6 live@799k",
-        "min_step": 799200
+        "status": "5/60 \u00b7 6 live@49k",
+        "min_step": 49152
       }
     },
     "halfcheetah-medium-v2": {

@@ -1,0 +1,255 @@
+{
+  "updated_at": "2026-09-19T04:27:51Z",
+  "stamp_kst": "2026-09-19 13:27 KST",
+  "variant": "qbc_deterministic_w2",
+  "seed": 0,
+  "taus": [
+    "0.05",
+    "0.4",
+    "1.25",
+    "4",
+    "10",
+    "40"
+  ],
+  "hops": [
+    1,
+    2,
+    3
+  ],
+  "planned": 162,
+  "counts": {
+    "complete": 6,
+    "running": 18,
+    "remaining": 138,
+    "extra_dirs": 3
+  },
+  "queue": "2026-09-19T04:20:22+00:00 env=hopper-medium-v2 hop=2 device=cuda taus=0.05 0.4 1.25 4 10 40",
+  "live": [
+    {
+      "pid": 48423,
+      "env": "hopper-medium-v2",
+      "tau": "0.05",
+      "hops": 2,
+      "step": 576864
+    },
+    {
+      "pid": 48424,
+      "env": "hopper-medium-v2",
+      "tau": "0.4",
+      "hops": 2,
+      "step": 584096
+    },
+    {
+      "pid": 48425,
+      "env": "hopper-medium-v2",
+      "tau": "1.25",
+      "hops": 2,
+      "step": 580064
+    },
+    {
+      "pid": 48427,
+      "env": "hopper-medium-v2",
+      "tau": "10",
+      "hops": 2,
+      "step": 569120
+    },
+    {
+      "pid": 48426,
+      "env": "hopper-medium-v2",
+      "tau": "4",
+      "hops": 2,
+      "step": 581920
+    },
+    {
+      "pid": 48428,
+      "env": "hopper-medium-v2",
+      "tau": "40",
+      "hops": 2,
+      "step": 590880
+    }
+  ],
+  "by_env": {
+    "hopper-medium-v2": {
+      "1": {
+        "complete": 6,
+        "live": 0,
+        "status": "6/6",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 6,
+        "status": "0/6 \u00b7 6 live@569k",
+        "min_step": 569120
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "hopper-medium-replay-v2": {
+      "1": {
+        "complete": 0,
+        "live": 6,
+        "status": "0/6 \u00b7 6 live@233k",
+        "min_step": 233408
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "hopper-expert-v2": {
+      "1": {
+        "complete": 0,
+        "live": 1,
+        "status": "0/6 \u00b7 1 live@289k",
+        "min_step": 289536
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "halfcheetah-medium-v2": {
+      "1": {
+        "complete": 0,
+        "live": 1,
+        "status": "0/6 \u00b7 1 live@287k",
+        "min_step": 287104
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "halfcheetah-medium-replay-v2": {
+      "1": {
+        "complete": 0,
+        "live": 1,
+        "status": "0/6 \u00b7 1 live@297k",
+        "min_step": 297472
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "halfcheetah-expert-v2": {
+      "1": {
+        "complete": 0,
+        "live": 1,
+        "status": "0/6 \u00b7 1 live@279k",
+        "min_step": 279360
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "walker2d-medium-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "walker2d-medium-replay-v2": {
+      "1": {
+        "complete": 0,
+        "live": 1,
+        "status": "0/6 \u00b7 1 live@3k",
+        "min_step": 3648
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    },
+    "walker2d-expert-v2": {
+      "1": {
+        "complete": 0,
+        "live": 1,
+        "status": "0/6 \u00b7 1 live@23k",
+        "min_step": 23296
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/6",
+        "min_step": 0
+      }
+    }
+  },
+  "save_dir": "/raid/ext_csv/MPI_store/iql_qbc_deterministic_w2_seed0",
+  "note": "Per-env K=1 then 2 then 3; coarse T; seed 0; 6 GPU slots."
+}

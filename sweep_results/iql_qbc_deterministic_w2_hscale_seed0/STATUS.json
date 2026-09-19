@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T17:57:57Z",
-  "stamp_kst": "2026-09-20 02:57 KST",
+  "updated_at": "2026-09-19T18:03:15Z",
+  "stamp_kst": "2026-09-20 03:03 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 405,
   "seed_complete": [
-    126,
+    130,
     0,
     0,
     0
@@ -39,52 +39,20 @@
   ],
   "planned": 1620,
   "counts": {
-    "complete": 126,
-    "running": 6,
-    "remaining": 1488,
+    "complete": 130,
+    "running": 5,
+    "remaining": 1485,
     "extra_dirs": 25
   },
   "queue": "2026-09-19T17:16:27+00:00 env=hopper-expert-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
-    {
-      "pid": 1355669,
-      "env": "hopper-expert-v2",
-      "tau": "1.5",
-      "hops": 3,
-      "seed": 0,
-      "step": 875200
-    },
-    {
-      "pid": 1356147,
-      "env": "hopper-expert-v2",
-      "tau": "2.5",
-      "hops": 3,
-      "seed": 0,
-      "step": 867264
-    },
-    {
-      "pid": 1357485,
-      "env": "hopper-expert-v2",
-      "tau": "4",
-      "hops": 3,
-      "seed": 0,
-      "step": 839552
-    },
-    {
-      "pid": 1357574,
-      "env": "hopper-expert-v2",
-      "tau": "7",
-      "hops": 3,
-      "seed": 0,
-      "step": 824896
-    },
     {
       "pid": 1365555,
       "env": "hopper-expert-v2",
       "tau": "10",
       "hops": 3,
       "seed": 0,
-      "step": 741088
+      "step": 1000000
     },
     {
       "pid": 1376807,
@@ -92,7 +60,31 @@
       "tau": "12",
       "hops": 3,
       "seed": 0,
-      "step": 624832
+      "step": 887552
+    },
+    {
+      "pid": 1485388,
+      "env": "hopper-expert-v2",
+      "tau": "14",
+      "hops": 3,
+      "seed": 0,
+      "step": 66752
+    },
+    {
+      "pid": 1485604,
+      "env": "hopper-expert-v2",
+      "tau": "17",
+      "hops": 3,
+      "seed": 0,
+      "step": 55808
+    },
+    {
+      "pid": 1492163,
+      "env": "hopper-expert-v2",
+      "tau": "20",
+      "hops": 3,
+      "seed": 0,
+      "step": 36032
     }
   ],
   "by_env": {
@@ -150,10 +142,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 6,
-        "live": 6,
-        "status": "6/60 \u00b7 6 live@624k",
-        "min_step": 624832
+        "complete": 10,
+        "live": 5,
+        "status": "10/60 \u00b7 5 live@36k",
+        "min_step": 36032
       }
     },
     "halfcheetah-medium-v2": {

@@ -150,6 +150,14 @@ def sampled_q(critic, observations, mean, std, eps, transform="identity", max_ac
     return qs.reshape(actions.shape[:-1])
 
 
+def policy_q(critic, observations, mean, std, eps, variant, config, max_action=1.0):
+    """The same Q energy for Gaussian Q+BC's base and every refinement."""
+    if config.mean_q(variant):
+        return min_q(critic, observations, jnp.clip(mean, -max_action, max_action))[None]
+    return sampled_q(critic, observations, mean, std, eps,
+                     config.q_action_transform, max_action)
+
+
 def create_state(key, observations, actions, config: IQLConfig, max_action=1.0):
     # Fixed folded keys keep Q/V and each variant's initial mean independent of
     # the number/order of variants and refinement depth.
@@ -164,20 +172,18 @@ def create_state(key, observations, actions, config: IQLConfig, max_action=1.0):
         if variant == "qbc_deterministic_w2":
             model = Actor(actions.shape[-1], max_action, config.hidden_dims)
         elif variant == "qbc_gaussian_w2":
-            # Park et al. (2024), Eq. (6) / Appendix C.6.1: an unsquashed
-            # Gaussian with sigma=1 at the base. MPI extends this family by
-            # learning sigma from expected Q, initialized at the same sigma=1.
+            # Keep policy family identical at K=1, the full-T control, and
+            # every hop. Paper mode retains unit std throughout the chain.
             model = GaussianActor(actions.shape[-1], max_action, config.hidden_dims,
                                   0.0, config.log_std_min, config.log_std_max,
-                                  squash_mean=False)
+                                  squash_mean=False,
+                                  fixed_std=1.0 if config.mean_q(variant) else None)
         else:
             model = GaussianActor(actions.shape[-1], max_action, config.hidden_dims,
                                   config.log_std_init, config.log_std_min, config.log_std_max)
-        refined = make(model, 3, config.actor_lr, observations)
-        base_model = model.clone(fixed_std=1.0) if variant == "qbc_gaussian_w2" else model
-        base = make(base_model, 3, config.actor_lr, observations)
+        base = make(model, 3, config.actor_lr, observations)
         # Identical initial distributions, separate persistent optimizer states.
-        banks.append((base, *(refined.replace() for _ in range(config.mpi_steps - 1))))
+        banks.append(tuple(base.replace() for _ in range(config.mpi_steps)))
         baselines.append(base.replace())
     return IQLState(tuple(banks), critic, critic.replace(), value, tuple(baselines))
 
@@ -223,6 +229,7 @@ def update_base(actor, critic, value, batch, variant, key, config, max_action,
     coefficients = config.coefficients(variant, batch.actions.shape[-1], horizon)
     scale = (actor_q_scale(actor, critic, batch, variant, config, max_action)
              if q_scale is None else jax.lax.stop_gradient(q_scale))
+    eps = normal_noise(key, config.mc_samples, batch.actions.shape) if variant == "qbc_gaussian_w2" else None
     if variant == "awr_gaussian_fr":
         q_data = min_q(critic, batch.observations, batch.actions)
         v = value.apply_fn(value.params, batch.observations)[..., 0]
@@ -233,9 +240,9 @@ def update_base(actor, critic, value, batch, variant, key, config, max_action,
         if variant == "awr_gaussian_fr":
             return jnp.mean(weights * gaussian_nll(mean, std, batch.actions))
         if variant == "qbc_gaussian_w2":
-            # Eq. (6): Q at the clipped mean, likelihood at the dataset action
-            # under the RAW Gaussian. Neither sampled Q nor expected MSE BC.
-            q = min_q(critic, batch.observations, jnp.clip(mean, -max_action, max_action))
+            # Retain dataset log-likelihood BC in both modes. Stochastic mode
+            # is an extension of Eq. (6), not the paper's fixed-std algorithm.
+            q = policy_q(critic, batch.observations, mean, std, eps, variant, config, max_action)
             bc = jnp.mean(gaussian_nll(mean, std, batch.actions))
             return -jnp.mean(q) / scale + coefficients["bc_coef"] * bc
         q = min_q(critic, batch.observations, mean)
@@ -252,8 +259,7 @@ def refine_actor(actor, reference, critic, batch, variant, key, config, max_acti
     gaussian = variant != "qbc_deterministic_w2"
     ref_mean, ref_std = jax.tree_util.tree_map(jax.lax.stop_gradient, reference)
     eps = normal_noise(key, config.mc_samples if gaussian else 1, batch.actions.shape)
-    q_ref = sampled_q(critic, batch.observations, ref_mean, ref_std, eps,
-                      config.q_action_transform, max_action)
+    q_ref = policy_q(critic, batch.observations, ref_mean, ref_std, eps, variant, config, max_action)
     if q_scale is None and config.normalize_q(variant):
         raise ValueError("normalized MPI requires the common full-T control q_scale")
     scale = jax.lax.stop_gradient(1.0 if q_scale is None else q_scale)
@@ -261,8 +267,8 @@ def refine_actor(actor, reference, critic, batch, variant, key, config, max_acti
     reduction = config.reduction(variant)
     def loss_fn(params):
         mean, std = policy_stats(actor, params, batch.observations, gaussian)
-        q = sampled_q(critic, batch.observations, mean, std, eps, config.q_action_transform, max_action)
-        if variant == "awr_gaussian_fr":
+        q = policy_q(critic, batch.observations, mean, std, eps, variant, config, max_action)
+        if config.geometry(variant) == "fr":
             distance = gaussian_fr_squared(mean, std, ref_mean, ref_std, reduction)
         else:
             distance = gaussian_w2_squared(mean, std, ref_mean, ref_std, reduction)
@@ -272,7 +278,7 @@ def refine_actor(actor, reference, critic, batch, variant, key, config, max_acti
         return current.apply_gradients(grads=grad)
     actor = jax.lax.fori_loop(0, config.inner_updates, body, actor)
     mean, std = policy_stats(actor, actor.params, batch.observations, gaussian)
-    q = sampled_q(critic, batch.observations, mean, std, eps, config.q_action_transform, max_action)
+    q = policy_q(critic, batch.observations, mean, std, eps, variant, config, max_action)
     raw = mean[None] + std[None] * eps
     metrics = {"loss": loss_fn(actor.params), "q": jnp.mean(q),
                "q_gain": jnp.mean(q - q_ref), "q_scale": jnp.asarray(scale),
@@ -331,4 +337,43 @@ def update_many(state, data, rng, config, batch_size, count):
         current, metrics = update(current, batch, actor_key, config)
         return (current, key), metrics
     (state, rng), metrics = jax.lax.scan(body, (state, rng), None, length=count)
-    return state, rng, jax.tree_util.tree_map(lambda x: x[-1], metrics)
+    metrics = jax.tree_util.tree_map(lambda x: x[-1], metrics)
+    # Diagnostics get a separate folded stream and run only at dispatch end.
+    # They cannot change the training RNG, minibatches, or optimizer state.
+    diagnostic_key = jax.random.fold_in(rng, 0xD1A6)
+    batch = sample_batch(data, diagnostic_key, batch_size)
+    metrics.update(actor_diagnostics(state, batch, jax.random.fold_in(diagnostic_key, 1), config))
+    return state, rng, metrics
+
+
+def actor_diagnostics(state, batch, key, config, max_action=1.0):
+    """Current-policy/current-critic diagnostics; no policy or critic update."""
+    metrics = {}
+    for variant, bank, control in zip(config.variants, state.actors, state.baselines, strict=True):
+        gaussian = variant != "qbc_deterministic_w2"
+        eps = normal_noise(jax.random.fold_in(key, VARIANTS.index(variant)),
+                           config.mc_samples if gaussian else 1, batch.actions.shape)
+        scale = actor_q_scale(control, state.target_critic, batch, variant, config, max_action)
+        policies = [(f"hop{k+1}", a) for k, a in enumerate(bank)]
+        if config.mpi_steps > 1:
+            policies.append(("baseline", control))
+        for label, actor in policies:
+            mean, std = policy_stats(actor, actor.params, batch.observations, gaussian)
+            # Sum over states so each mean gradient is a statewise gradient;
+            # average only the Monte Carlo samples.
+            def q_sum(m):
+                return policy_q(state.target_critic, batch.observations, m, std, eps,
+                                variant, config, max_action).mean(axis=0).sum() / scale
+            q, g = jax.value_and_grad(q_sum)(mean)
+            raw = mean[None] + std[None] * eps
+            info = {"q_mean": q / len(mean),
+                    "q_mean_grad_norm": jnp.mean(jnp.linalg.norm(g, axis=-1)),
+                    "mean_data_mse": jnp.mean((mean - batch.actions)**2),
+                    "out_of_bounds_fraction": jnp.mean(jnp.abs(raw) > max_action)}
+            if gaussian:
+                info.update({"std_mean": jnp.mean(std), "std_min": jnp.min(std),
+                             "std_max": jnp.max(std), "variance_mean": jnp.mean(std**2),
+                             "std_floor_fraction": jnp.mean(std <= jnp.exp(config.log_std_min) * (1 + 1e-5)),
+                             "fr_mean_velocity_norm": jnp.mean(jnp.linalg.norm(std**2 * g, axis=-1))})
+            metrics.update({f"{variant}/{label}/diagnostic_{name}": value for name, value in info.items()})
+    return metrics

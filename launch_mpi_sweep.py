@@ -337,6 +337,7 @@ def iql_worker_command(args, job, slot_index):
                  "expectile", "actor_lr", "critic_lr", "value_lr",
                  "discount", "hidden_dims", "log_std_init", "log_std_min", "log_std_max",
                  "mc_samples", "inner_updates", "metric_reduction", "q_action_transform",
+                 "gaussian_qbc_mode", "gaussian_refinement_geometry",
                  "batch_size", "reward_scale", "iql_reward_normalization", "eval_mode", "eval_hops"):
         command.extend(["--" + name.replace("_", "-"), str(getattr(args, name))])
     for name in ("iql_q_scale_norm", "iql_normalize_state"):

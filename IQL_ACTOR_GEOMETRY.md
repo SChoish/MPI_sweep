@@ -16,14 +16,18 @@ Expectations include dataset states; NLL is evaluated at dataset actions.
 | Variant | Dataset-anchored loss at h=T/K | Default C | Distance convention |
 | --- | --- | --- | --- |
 | `awr_gaussian_fr` | `E[min(exp(h*A/C),100) * NLL(a_D;m,sigma)]` | 1 | full-density FR squared |
-| `qbc_gaussian_w2` | `-E[Qbar(s,clip(m))] + (1/h)*E[NLL(a_D;m,I)]` | 1 | coordinate-sum W2 squared |
+| `qbc_gaussian_w2` (default stochastic mode) | `-E_epsilon[Qbar(s,m+sigma*epsilon)] + (1/h)*E[NLL(a_D;m,sigma)]` | 1 | coordinate-sum W2 squared |
 | `qbc_deterministic_w2` | `-2h*E[Qbar(s,m)] + E[sum_j((m_j-a_D,j)^2)/d]` | stopped mean absolute Q | coordinate-mean W2 squared |
 
 Thus native coefficients are `beta=T/K`, `alpha_G=K/T`, and
 `alpha_D=2T/K`. At K=1 they are T, 1/T, and 2T, respectively.
-The Gaussian NLL uses a dimension **sum** and, at std 1, equals
+The Gaussian NLL uses a dimension **sum** and, only at fixed std 1, equals
 `sum_j((m_j-a_D,j)^2)/2 + constant`; this accounts for the factor of two
-relative to TD3+BC's dimension-mean MSE.
+relative to TD3+BC's dimension-mean MSE. With learned std, NLL is not a W2
+distance to a dataset Dirac. The first step is the specified Q+likelihood-BC
+extraction loss; subsequent steps use a W2 (or selected FR) predecessor
+penalty. T fixes this coefficient schedule, not an exact homogeneous
+Gaussian W2 flow across the BC-to-refinement transition.
 
 For an explicit sum/mean override, set `M=1` for sum and `M=d` for mean.
 The base coefficients become `beta=h*M`, `alpha_G=1/(h*M)`, and
@@ -39,11 +43,21 @@ Clipped AWR weights and Gaussian projection are not an exact finite FR
 proximal solve. The requested AWR base is retained; only its time coefficient
 and the subsequent exact closed-form FR penalty are matched.
 
-The Gaussian DDPG+BC base follows Park et al. Eq. 6 / Appendix C.6.1:
-unsquashed mean, fixed std 1, clipped-mean Q, raw-Gaussian dataset NLL.
-Subsequent MPI actors learn both mean and std through expected Q. This change
-of policy family/energy is an explicit MPI extension, not a claim that the
-paper's fixed-std mean-Q algorithm is an exact stochastic W2 semigroup.
+Gaussian Q+BC has two explicit protocols. Each keeps the same policy family
+and Q energy at K=1, in the independent full-T baseline, and at every hop:
+
+- `--gaussian-qbc-mode stochastic` (default): unsquashed Gaussian mean,
+  learned state-dependent std initialized to 1, reparameterized expected Q,
+  and raw-Gaussian dataset NLL. This is the stochastic Q+BC extension, not
+  the bottleneck paper's DDPG+BC reproduction. The selected Q action transform
+  (`identity` or `clip`) applies identically to base and refinement.
+- `--gaussian-qbc-mode paper`: the Park et al. Eq. 6 / Appendix C.6.1 actor
+  loss at the base, with clipped-mean Q and fixed std 1 throughout the chain.
+  No hop introduces a variance parameter or switches to expected Q.
+  Its W2 refinement is mean-only, as expected for equal fixed covariances.
+
+The old v4 combination (paper base followed by stochastic refinements) is
+not available in v5, because it confounds K with the Q energy and policy family.
 The AWR family retains its tanh mean and learned state-dependent std;
 it is not the fixed-std AWR family in that paper's data-scaling experiment.
 
@@ -58,6 +72,7 @@ L_k = -E[Q(s, m_k + sigma_k*epsilon)]/C
 
 For deterministic policies sigma=0. Gaussian expected Q uses reparameterized
 antithetic normal samples (default 8), so variance receives a Q gradient.
+Paper-mode Gaussian Q+BC instead uses Q at the clipped mean in this loss.
 W2 squared is `sum_j((m-m_ref)^2 + (sigma-sigma_ref)^2)`; the mean convention
 divides this by d. FR uses the MPI Appendix A.3 Gaussian overlap closed form:
 
@@ -70,6 +85,13 @@ D_FR_squared = 4*acos(B)^2
 This is ambient density-space FR between Gaussian endpoints, not intrinsic
 Gaussian-submanifold FR. No KL approximation is used. Evaluation uses a stable
 atan2 expression and an analytic derivative at identical endpoints.
+
+`--gaussian-refinement-geometry fr|w2` changes only the Gaussian refinement
+penalty; `native` uses FR for AWR and W2 for Q+BC. It leaves the base loss,
+initialization, Q energy, variance handling, normalization, RNG streams and
+optimizer schedule unchanged. Use the same variant and all other flags for
+a geometry comparison. This is a refinement-geometry intervention, not a
+claim that the native AWR/NLL base is itself the selected proximal step.
 
 Each variant also has an independent full-T base control. Before updating it,
 compute `C=stop(mean_batch(abs(Q(s,control_mean))) + 1e-6)` when normalization
@@ -171,7 +193,7 @@ Overriding native geometry or Q/reward scale requires explicit T candidates.
 For a matched K comparison, change only K, retaining T candidates and seeds:
 
 ```bash
-for K in 1 2 4; do
+for K in 1 2 3 4; do
   python launch_mpi_sweep.py --algorithm iql --hops "$K" \
     --domains hopper --datasets medium-replay --seeds "0 1" --gpus 0 \
     --variants qbc_gaussian_w2 \
@@ -183,15 +205,40 @@ Add `--dry-run` to inspect commands without training. To use a family-specific
 default grid, pass e.g. `--variants qbc_gaussian_w2` and omit `--taus`.
 Direct training: `mpi-iql-train --mpi-steps 1 --tau 1.25`.
 
+For the deterministic IQL horizon sweep, explicitly pass the same T grid as
+the TD3/MART comparison, for example `--variants qbc_deterministic_w2 --taus
+"0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 24 28 34 40"`.
+The single default T=1.25 is a canonical baseline, not a horizon sweep.
+Use the same task set as the target MART figure; its twelve-task panel needs
+`--datasets "medium medium-replay medium-expert expert" --seeds "0 1 2 3"`.
+
+For a Gaussian geometry control, run the same selected variant with
+`--gaussian-refinement-geometry fr` and `--gaussian-refinement-geometry w2`.
+Keep its T grid, K, seed, Q normalization, action transform and Q+BC mode fixed.
+Compare each family to its own full-T control; numerical T does not equate
+different geometries. Paper-mode and stochastic-mode results are separate.
+
 ## Evaluation, compute, and restart
 
-`eval.csv` columns are `step,variant,policy,hop,K,T,h,time,eval_mode,return,d4rl_score`.
+`eval.csv` columns are `step,variant,refinement_geometry,gaussian_qbc_mode,
+policy,hop,K,T,h,time,eval_mode,return,d4rl_score`.
 `policy=baseline` has K=1, h=T, time=T. `policy=mpi` has h=T/K and time=hop*h.
-Defaults evaluate the full-T baseline and final MPI policy; at K=1 they are
-one policy and are evaluated once. `--eval-hops all` adds intermediate MPI
+Defaults evaluate the full-T baseline and first/final MPI policies; at K=1
+there is one policy, evaluated once. `--eval-hops all` adds intermediate MPI
 policies. Gaussian mean-action and sampled evaluation are separate; simulator
-actions are clipped. `--q-action-transform clip` optionally clips MPI Q inputs,
-but geometry is always measured on the pre-clipping distributions.
+actions are clipped. `--q-action-transform clip` clips expected-Q inputs at
+both the stochastic Q+BC base and refinements; geometry remains on the
+pre-clipping distributions. Paper-mode mean-Q is always clipped.
+
+At the end of each dispatch, `diagnostic_*` metrics use a separate folded RNG
+and sampled batch. They record each evaluated actor's mean-action distance
+from data, out-of-bounds fraction, normalized expected-Q mean gradient norm,
+and (for Gaussians) std range/mean, variance mean, std-floor fraction and
+`||Sigma * g||`, where `g=grad_m E[Q/C]`. The latter is the unscaled local
+FR mean velocity; it omits h and any coordinate-mean metric factor. These
+current-policy/current-critic measurements do not feed into optimization.
+Training already records predecessor mean/std shift and predicted Q gain.
+A small predicted movement or large predicted Q gain is not a return guarantee.
 
 Actors and optimizer states persist across training iterations. Each chain
 uses `1+(K-1)*inner_updates` actor optimizer updates, plus one full-T control
@@ -200,8 +247,11 @@ minimizers or equal-compute runs. Holding T fixed aligns the declared
 objective clock; it does not make the finite-update optimization errors equal.
 The learning rates and `inner_updates` are separate from h and are recorded.
 
-Schema `iql_actor_geometry_v4_total_horizon` rejects previous K+1/raw-reward
-checkpoints. Run identities include T, K, scale choices and all training/eval
+Schema `iql_actor_geometry_v5_consistent_gaussian` rejects v4 hybrid and older
+checkpoints. Existing result files are preserved and are not relabeled as v5.
+The native AWR and deterministic objectives are unchanged; Gaussian v4/v5
+results must not be pooled as the same algorithm. Run identities include
+Gaussian Q+BC mode, actual refinement geometry, T, K, scale and all training/eval
 settings. `config.json` / `PROVENANCE.json` record resolved coefficients,
 per-hop times, metric conventions, reward factors, compute counts, source
 hashes and dataset identity. Metrics include the common Q scale and first-step
@@ -222,8 +272,11 @@ reward trajectory boundaries, coefficient-grid conversion, evaluation clocks,
 and checkpoint/resume. Unit tests and simulator-stub integration are not
 D4RL training-performance evidence.
 
-V4 validation: all 66 targeted tests passed on CPU with Python 3.12,
-JAX 0.11.2, Flax 0.12.9, and Optax 0.2.8. The integration tests execute K=1
-and K=3 training, full-time evaluation metadata, and resume/final-evaluation
-recovery using synthetic data and a stubbed simulator. The subsequent grid
-revision changes only DDPG+BC's default T candidates, not these actor updates.
+V5 validation: all 75 tests passed on CPU across the targeted test commands,
+including unchanged TD3/launcher checks. New analytic checks verify the
+stochastic base's variance gradient, consistent base/refinement action
+transforms, paper-mode fixed variance, and a geometry-only intervention.
+K=1/K=4 checks compare critic/control parameters and shared Q scales with
+native and forced normalization. Synthetic K=1/K=3 CLI runs verify first/final
+evaluation records and checkpoint/final-evaluation recovery. No long D4RL
+training or simulator-return validation was run for this revision.

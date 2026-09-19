@@ -123,7 +123,7 @@ def test_expected_q_has_variance_gradient_and_matches_quadratic_integral():
 
 def test_paper_ddpgbc_base_has_fixed_unit_std_and_matching_refinement_initialization():
     b = batch()
-    cfg = IQLConfig(variants=(VARIANTS[2],), mpi_steps=2, hidden_dims=(8,))
+    cfg = IQLConfig(variants=(VARIANTS[2],), mpi_steps=2, hidden_dims=(8,), gaussian_qbc_mode="paper")
     ts = core.create_state(jax.random.PRNGKey(0), b.observations, b.actions, cfg)
     actor = ts.actors[0][0]
     refined = ts.actors[0][1]
@@ -131,7 +131,7 @@ def test_paper_ddpgbc_base_has_fixed_unit_std_and_matching_refinement_initializa
     assert_tree_equal(reference, core.policy_stats(refined, refined.params, b.observations, True))
     np.testing.assert_array_equal(reference[1], jnp.ones_like(b.actions))
     assert "log_std" not in actor.params["params"]
-    assert "log_std" in refined.params["params"]
+    assert "log_std" not in refined.params["params"]
     for seed in range(3):
         actor, _ = core.update_base(actor, quadratic_critic(), ts.value, b, VARIANTS[2],
                                     jax.random.PRNGKey(seed), cfg, 1.)
@@ -143,6 +143,9 @@ def test_paper_ddpgbc_base_has_fixed_unit_std_and_matching_refinement_initializa
     params["params"]["Dense_1"]["bias"] = jnp.full((2,), 2.)
     mean, _ = actor.apply_fn(params, b.observations)
     np.testing.assert_array_equal(mean, jnp.full_like(b.actions, 2.))
+    refined, _ = core.refine_actor(refined, reference, quadratic_critic(), b, VARIANTS[2],
+                                   jax.random.PRNGKey(3), cfg)
+    np.testing.assert_array_equal(refined.apply_fn(refined.params, b.observations)[1], reference[1])
 
 
 @pytest.mark.parametrize("reduction", ["sum", "mean"])
@@ -161,7 +164,7 @@ def test_paper_ddpgbc_matches_closed_form_loss_and_sgd_gradient(reduction):
     critic = SimpleNamespace(params={}, apply_fn=q_apply)
     value = SimpleNamespace(params={}, apply_fn=lambda p, s: jnp.zeros((len(s), 1)))
     cfg = IQLConfig(mpi_steps=1, tau=(1/3 if reduction == "sum" else 1/6),
-                    metric_reduction=reduction)
+                    metric_reduction=reduction, gaussian_qbc_mode="paper")
     updated, loss = core.update_base(actor, critic, value, b, VARIANTS[2], jax.random.PRNGKey(0), cfg, 1.)
     # Q(clip([.2,1.4]))=.68; mean squared residual sum=1.35; unit-normal NLL=1.35/2+log(2pi).
     expected_loss = -.68 + 3*(1.35/2 + np.log(2*np.pi))
@@ -173,6 +176,54 @@ def test_paper_ddpgbc_matches_closed_form_loss_and_sgd_gradient(reduction):
     updated2, loss2 = core.update_base(actor, critic, value, b, VARIANTS[2], jax.random.PRNGKey(9), alternate, 1.)
     assert_tree_equal(updated, updated2)
     np.testing.assert_array_equal(loss, loss2)
+
+
+def test_stochastic_qbc_base_and_refinement_share_quadratic_q_variance_gradient(monkeypatch):
+    # Choose data residuals +/- sigma, so both mean and log-std NLL gradients
+    # vanish. At the identical proximal reference the distance gradient also
+    # vanishes. Both steps must therefore equal the analytic expected-Q step.
+    obs = jnp.zeros((2, 1))
+    mean, std = jnp.array([.2, .4]), jnp.array([.5, .8])
+    b = Transition(obs, jnp.stack((mean-std, mean+std)), obs, obs, jnp.ones_like(obs))
+    def apply(p, states):
+        shape = (len(states), 2)
+        return jnp.broadcast_to(p["mean"], shape), jnp.broadcast_to(jnp.exp(p["log_std"]), shape)
+    actor = TrainState.create(apply_fn=apply, params={"mean": mean, "log_std": jnp.log(std)}, tx=optax.sgd(.1))
+    monkeypatch.setattr(core, "normal_noise", lambda key, samples, shape:
+                        jnp.stack((jnp.ones(shape), -jnp.ones(shape))))
+    cfg = IQLConfig(variants=(VARIANTS[2],), mpi_steps=1, tau=.4)
+    value = SimpleNamespace(params={}, apply_fn=lambda p, s: jnp.zeros((len(s), 1)))
+    base, loss = core.update_base(actor, quadratic_critic(), value, b, VARIANTS[2],
+                                  jax.random.PRNGKey(0), cfg, 1.)
+    expected_loss = .5 * float(jnp.sum(mean**2 + std**2)) + (1/.4) * (
+        float(jnp.log(std).sum()) + 1 + np.log(2*np.pi))
+    np.testing.assert_allclose(loss, expected_loss, rtol=1e-6)
+    np.testing.assert_allclose(base.params["mean"], .9*mean, rtol=1e-6)
+    np.testing.assert_allclose(base.params["log_std"], jnp.log(std)-.1*std**2, rtol=1e-6)
+    refined, _ = core.refine_actor(actor, apply(actor.params, obs), quadratic_critic(), b,
+                                   VARIANTS[2], jax.random.PRNGKey(1), cfg)
+    for name in actor.params:
+        np.testing.assert_allclose(refined.params[name], base.params[name], rtol=1e-6)
+
+
+@pytest.mark.parametrize("transform", ["identity", "clip"])
+def test_stochastic_qbc_uses_same_action_transform_in_base_and_refinement(monkeypatch, transform):
+    # Zero mean gradient from BC and a zero-distance reference isolate Q.
+    # Mean outside the box must receive Q gradient iff transform=identity.
+    obs = jnp.zeros((2, 1))
+    b = Transition(obs, jnp.full_like(obs, 2.), obs, obs, jnp.ones_like(obs))
+    actor = TrainState.create(apply_fn=lambda p, s: (jnp.broadcast_to(p["mean"], (len(s), 1)), jnp.full((len(s), 1), .2)),
+                              params={"mean": jnp.array([2.])}, tx=optax.sgd(.1))
+    monkeypatch.setattr(core, "normal_noise", lambda key, samples, shape: jnp.zeros((2, *shape)))
+    cfg = IQLConfig(variants=(VARIANTS[2],), mpi_steps=1, q_action_transform=transform)
+    value = SimpleNamespace(params={}, apply_fn=lambda p, s: jnp.zeros((len(s), 1)))
+    base, _ = core.update_base(actor, quadratic_critic(), value, b, VARIANTS[2],
+                               jax.random.PRNGKey(0), cfg, 1.)
+    refined, _ = core.refine_actor(actor, actor.apply_fn(actor.params, obs), quadratic_critic(), b,
+                                   VARIANTS[2], jax.random.PRNGKey(0), cfg)
+    expected = [1.8] if transform == "identity" else [2.]
+    np.testing.assert_allclose(base.params["mean"], expected, rtol=1e-6)
+    np.testing.assert_allclose(refined.params["mean"], expected, rtol=1e-6)
 
 
 def test_deterministic_td3bc_detaches_actor_q_scale_and_uses_mean_mse():
@@ -313,7 +364,9 @@ def test_checkpoint_preserves_next_update_and_rejects_changed_geometry(tmp_path)
 @pytest.mark.parametrize("kwargs", [{"tau": float("nan")}, {"mpi_steps": -1},
                                    {"mc_samples": 0}, {"expectile": 1.},
                                    {"mpi_steps": 0}, {"log_std_max": -.5},
-                                   {"variants": (VARIANTS[0], VARIANTS[0])}])
+                                   {"variants": (VARIANTS[0], VARIANTS[0])},
+                                   {"gaussian_qbc_mode": "hybrid"},
+                                   {"gaussian_refinement_geometry": "kl"}])
 def test_invalid_configuration(kwargs):
     with pytest.raises(ValueError):
         IQLConfig(**kwargs)
@@ -353,9 +406,10 @@ def test_awr_time_and_shared_q_scale_enter_advantage_weights():
     np.testing.assert_allclose(new.params["mean"], [.1 - .1*np.mean(w*(.1-np.array([.2,.4])))], rtol=1e-6)
 
 
-def test_k1_is_base_and_full_time_controls_and_q_scale_are_independent_of_k():
+@pytest.mark.parametrize("qnorm", [None, True])
+def test_k1_is_base_and_full_time_controls_and_q_scale_are_independent_of_k(qnorm):
     b = batch()
-    cfg = IQLConfig(tau=1.25, mpi_steps=1, hidden_dims=(8,), mc_samples=2)
+    cfg = IQLConfig(tau=1.25, mpi_steps=1, hidden_dims=(8,), mc_samples=2, iql_q_scale_norm=qnorm)
     refined_cfg = replace(cfg, mpi_steps=4)
     key = jax.random.PRNGKey(4)
     initial = core.create_state(key, b.observations, b.actions, cfg)
@@ -369,8 +423,9 @@ def test_k1_is_base_and_full_time_controls_and_q_scale_are_independent_of_k():
     f4 = jax.jit(partial(core.update, config=refined_cfg))
     shallow, _ = f1(shallow, b, key)
     for i, variant in enumerate(cfg.variants):
+        actor_key = jax.random.fold_in(jax.random.fold_in(key, VARIANTS.index(variant)), 0)
         expected, _ = core.update_base(initial.actors[i][0], initial.target_critic,
-                                       after_v.value, b, variant, key, cfg, 1.)
+                                       after_v.value, b, variant, actor_key, cfg, 1.)
         # Separate JIT/eager arithmetic can round differently; compare numerical result.
         for a, e in zip(jax.tree_util.tree_leaves(shallow.actors[i][0].params),
                         jax.tree_util.tree_leaves(expected.params), strict=True):
@@ -403,3 +458,58 @@ def test_normalized_refinement_requires_shared_scale_and_uses_it_in_gradient():
     # L=-sum(m)/2 + mean_j(m_j^2)/(2*.2); gradient=-.5 + m/.4.
     np.testing.assert_allclose(new.params["m"], [.2, .35], rtol=1e-6)
     assert float(info["q_scale"]) == 2.
+
+
+def test_geometry_control_changes_only_refinement_not_base_family_energy_or_critic():
+    b = batch()
+    cfg = IQLConfig(variants=(VARIANTS[0], VARIANTS[2]), mpi_steps=3,
+                    hidden_dims=(8,), mc_samples=2)
+    other = replace(cfg, gaussian_refinement_geometry="fr")
+    key = jax.random.PRNGKey(4)
+    a = core.create_state(key, b.observations, b.actions, cfg)
+    c = core.create_state(key, b.observations, b.actions, other)
+    assert_tree_equal(a, c)
+    for bank, baseline in zip(a.actors, a.baselines, strict=True):
+        for actor in bank:
+            assert_tree_equal(actor.params, baseline.params)
+            assert "log_std" in actor.params["params"]
+    a, _ = jax.jit(partial(core.update, config=cfg))(a, b, key)
+    c, _ = jax.jit(partial(core.update, config=other))(c, b, key)
+    assert_tree_equal(a.baselines, c.baselines)
+    assert_tree_equal(a.actors[0], c.actors[0])  # AWR stays FR in both runs.
+    assert_tree_equal(a.actors[1][0], c.actors[1][0])
+    assert_tree_equal((a.critic, a.target_critic, a.value), (c.critic, c.target_critic, c.value))
+    assert any(not np.array_equal(x, y) for x, y in zip(
+        jax.tree_util.tree_leaves(a.actors[1][1].params),
+        jax.tree_util.tree_leaves(c.actors[1][1].params), strict=True))
+
+
+def test_paper_refinement_uses_clipped_mean_q_independent_of_mc_settings():
+    b = batch()
+    cfg = IQLConfig(variants=(VARIANTS[2],), mpi_steps=2,
+                    hidden_dims=(8,), gaussian_qbc_mode="paper")
+    state = core.create_state(jax.random.PRNGKey(0), b.observations, b.actions, cfg)
+    actor = state.actors[0][1]
+    mean, std = actor.apply_fn(actor.params, b.observations)
+    reference = (mean + .05, std)
+    a, _ = core.refine_actor(actor, reference, quadratic_critic(), b, VARIANTS[2],
+                             jax.random.PRNGKey(1), cfg)
+    c, _ = core.refine_actor(actor, reference, quadratic_critic(), b, VARIANTS[2],
+                             jax.random.PRNGKey(9), replace(cfg, mc_samples=1, q_action_transform="clip"))
+    assert_tree_equal(a, c)
+
+
+def test_fr_diagnostics_measure_variance_scaled_mean_gradient_without_updating_state():
+    b = batch()
+    cfg = IQLConfig(variants=(VARIANTS[0],), mpi_steps=1, hidden_dims=(8,), mc_samples=2)
+    state = core.create_state(jax.random.PRNGKey(0), b.observations, b.actions, cfg)
+    # Linear Q gives the same action gradient everywhere, independently of MC.
+    critic = SimpleNamespace(params={}, apply_fn=lambda p, s, a: (jnp.sum(a, axis=-1, keepdims=True),)*2)
+    state = state._replace(target_critic=critic)
+    params = jax.tree_util.tree_map(lambda x: np.array(x, copy=True), state.actors[0][0].params)
+    info = core.actor_diagnostics(state, b, jax.random.PRNGKey(1), cfg)
+    prefix = f"{VARIANTS[0]}/hop1/diagnostic_"
+    np.testing.assert_allclose(info[prefix+"q_mean_grad_norm"], np.sqrt(2), rtol=1e-6)
+    np.testing.assert_allclose(info[prefix+"fr_mean_velocity_norm"], np.exp(-2)*np.sqrt(2), rtol=1e-6)
+    np.testing.assert_allclose(info[prefix+"std_mean"], np.exp(-1), rtol=1e-6)
+    assert_tree_equal(params, state.actors[0][0].params)

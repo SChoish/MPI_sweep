@@ -185,15 +185,21 @@ by this package.
 ## Quick start
 
 For the shared-IQL-critic comparison of Gaussian AWR + closed-form FR, deterministic
-TD3+BC actor loss + W2, and Gaussian DDPG+BC (Park et al., mean-Q + NLL BC) + W2, see
+TD3+BC actor loss + W2, and stochastic Gaussian Q+BC + W2, see
 [IQL actor/geometry experiments](IQL_ACTOR_GEOMETRY.md). Preview it with
 `mpi-sweep --algorithm iql --hops 4 --n-tau 1 --seeds 0 --dry-run`.
-The Gaussian DDPG+BC base has fixed std 1; its W2 refinement optimizes expected
-Q and learns both mean and standard deviation. In this IQL protocol, K counts
+Gaussian Q+BC uses expected Q and learns mean and standard deviation from
+K=1 through every refinement. `--gaussian-qbc-mode paper` instead uses the
+Park et al. mean-Q + NLL base and keeps mean-Q/fixed std 1 at every hop.
+`--gaussian-refinement-geometry fr|w2` changes only the Gaussian refinement
+distance for a matched geometry control. In this IQL protocol, K counts
 all steps: K=1 is the base at T, and K>1 uses T/K for the dataset-anchored
 first step and each of the remaining K-1 steps. Actor coefficients are derived
 from T/K; Q normalization follows each base algorithm and is shared across
 the chain. Locomotion rewards use the official IQL return-range normalization.
+Default evaluation includes the full-T control and the first/final chain actors.
+The v5 run schema separates these consistent Gaussian protocols from v4's
+fixed-std base / learned-std refinement hybrid.
 
 The installed command and flag names retain their original identifiers for
 backward compatibility; they are interfaces, not the paper's algorithm name.

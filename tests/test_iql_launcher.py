@@ -12,7 +12,8 @@ def test_worker_roundtrip_and_separate_identity(tmp_path):
     args = launcher.parse_args(["--algorithm", "iql", "--hops", "4", "--taus", "0.5 1",
                                 "--seeds", "0", "--domains", "hopper", "--datasets", "medium",
                                 "--save-dir", str(tmp_path), "--inner-updates", "2",
-                                "--metric-reduction", "mean", "--iql-q-scale-norm"])
+                                "--metric-reduction", "mean", "--iql-q-scale-norm",
+                                "--gaussian-qbc-mode", "paper", "--gaussian-refinement-geometry", "fr"])
     launcher.validate_args(args)
     jobs = launcher.build_jobs(args)
     assert len(jobs) == 2
@@ -23,11 +24,19 @@ def test_worker_roundtrip_and_separate_identity(tmp_path):
         config = config_from_args(worker_args)
         assert config.inner_updates == 2 and config.iql_q_scale_norm
         assert config.metric_reduction == "mean"
+        assert config.gaussian_qbc_mode == "paper" and config.gaussian_refinement_geometry == "fr"
         assert config.h == float(job.tau) / 4
         assert run_name(worker_args, config) == job.tag
     args.iql_reward_normalization = "none"
     assert launcher.build_jobs(args)[0].tag != jobs[0].tag
     args.iql_reward_normalization = "iql"
+    args.iql_q_scale_norm = True
+    args.gaussian_qbc_mode = "stochastic"
+    assert launcher.build_jobs(args)[0].tag != jobs[0].tag
+    args.gaussian_qbc_mode = "paper"
+    args.gaussian_refinement_geometry = "w2"
+    assert launcher.build_jobs(args)[0].tag != jobs[0].tag
+    args.gaussian_refinement_geometry = "fr"
     args.iql_q_scale_norm = False
     assert launcher.build_jobs(args)[0].tag != jobs[0].tag
 
@@ -56,7 +65,7 @@ def test_eval_alone_never_skips_iql_job(tmp_path):
     assert not is_complete(directory, 1_000_000)
 
 
-@pytest.mark.parametrize("hops,expected_rows", [(1, 5), (3, 10)])
+@pytest.mark.parametrize("hops,expected_rows", [(1, 5), (3, 15)])
 def test_training_cli_resume_final_eval_recovery(tmp_path, monkeypatch, hops, expected_rows):
     import h5py
     import numpy as np
@@ -88,8 +97,11 @@ def test_training_cli_resume_final_eval_recovery(tmp_path, monkeypatch, hops, ex
     assert is_complete(directory, 2)
     assert len(trainer.read_rows(directory / "eval.csv")) == expected_rows
     rows = trainer.read_rows(directory / "eval.csv")
-    assert {float(r["time"]) for r in rows} == {1.}
+    assert {float(r["time"]) for r in rows} == {1., 1./hops}
     assert {int(r["K"]) for r in rows} == {1, hops}
+    assert {int(r["hop"]) for r in rows} == {1, hops}
+    assert {r["gaussian_qbc_mode"] for r in rows} == {"na", "stochastic"}
+    assert {r["refinement_geometry"] for r in rows} == {"fr", "w2"}
     resolved = json.loads((directory / "config.json").read_text())
     assert resolved["resolved_protocol"]["K"] == hops
     assert resolved["reward_normalization"]["factor"] > 0

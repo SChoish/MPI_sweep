@@ -8,7 +8,7 @@ import math
 from dataclasses import asdict, dataclass
 
 VARIANTS = ("awr_gaussian_fr", "qbc_deterministic_w2", "qbc_gaussian_w2")
-SCHEMA = "iql_actor_geometry_v4_total_horizon"
+SCHEMA = "iql_actor_geometry_v5_consistent_gaussian"
 # DDPG+BC uses MART's small-T spacing over the requested [1/50, 5] range.
 # Other families retain their existing defaults; these are experiment grids.
 NATIVE_T_GRIDS = {"awr_gaussian_fr": (1., 3., 10.),
@@ -36,6 +36,8 @@ class IQLConfig:
     metric_reduction: str = "native"
     q_action_transform: str = "identity"
     iql_q_scale_norm: bool | None = None
+    gaussian_qbc_mode: str = "stochastic"
+    gaussian_refinement_geometry: str = "native"
 
     def __post_init__(self):
         if not self.variants or len(set(self.variants)) != len(self.variants):
@@ -63,6 +65,20 @@ class IQLConfig:
             raise ValueError("metric_reduction must be native, sum or mean")
         if self.q_action_transform not in ("identity", "clip"):
             raise ValueError("q_action_transform must be identity or clip")
+        if self.gaussian_qbc_mode not in ("stochastic", "paper"):
+            raise ValueError("gaussian_qbc_mode must be stochastic or paper")
+        if self.gaussian_refinement_geometry not in ("native", "fr", "w2"):
+            raise ValueError("gaussian_refinement_geometry must be native, fr or w2")
+
+    def mean_q(self, variant):
+        return variant == "qbc_gaussian_w2" and self.gaussian_qbc_mode == "paper"
+
+    def geometry(self, variant):
+        if variant == "qbc_deterministic_w2":
+            return "w2"
+        if self.gaussian_refinement_geometry != "native":
+            return self.gaussian_refinement_geometry
+        return "fr" if variant == "awr_gaussian_fr" else "w2"
 
     @property
     def h(self):
@@ -112,14 +128,19 @@ def add_iql_args(parser):
     parser.add_argument("--inner-updates", type=int, default=1)
     parser.add_argument("--metric-reduction", choices=("native", "sum", "mean"), default="native")
     parser.add_argument("--q-action-transform", choices=("identity", "clip"), default="identity",
-                        help="MPI expected-Q action transform; DDPG+BC base always clips its mean.")
+                        help="Expected-Q transform at EVERY stochastic Q+BC step and Gaussian refinement; paper mode always clips its mean.")
+    parser.add_argument("--gaussian-qbc-mode", choices=("stochastic", "paper"), default="stochastic",
+                        help="stochastic: expected Q and learned std at all steps; paper: clipped-mean Q and fixed std=1 at all steps.")
+    parser.add_argument("--gaussian-refinement-geometry", choices=("native", "fr", "w2"), default="native",
+                        help="Override only Gaussian refinement distances for a matched FR/W2 control; base losses stay fixed.")
     parser.add_argument("--iql-q-scale-norm", action=argparse.BooleanOptionalAction, default=None,
                         help="Default: only deterministic TD3+BC normalizes Q. Override applies to base AND MPI.")
     parser.add_argument("--iql-reward-normalization", choices=("iql", "none"), default="iql",
                         help="IQL locomotion rewards: multiply by 1000/(max return - min return).")
     parser.add_argument("--iql-normalize-state", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--eval-mode", choices=("mean", "sample", "both"), default="both")
-    parser.add_argument("--eval-hops", choices=("endpoints", "all"), default="endpoints")
+    parser.add_argument("--eval-hops", choices=("endpoints", "all"), default="endpoints",
+                        help="endpoints: full-T baseline plus first/final chain actors; all also evaluates intermediate hops.")
 
 
 def config_from_args(args, *, tau=None, hops=None):

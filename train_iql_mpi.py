@@ -24,8 +24,8 @@ from train_td3bc import (Transition, evaluate, install_stop_handler, latest_chec
 
 ROOT = Path(__file__).resolve().parent
 SOURCE_NAMES = ("iql_mpi.py", "iql_mpi_config.py", "train_iql_mpi.py", "train_td3bc.py", "d4rl_data.py")
-EVAL_FIELDS = ("step", "variant", "policy", "hop", "K", "T", "h", "time",
-               "eval_mode", "return", "d4rl_score")
+EVAL_FIELDS = ("step", "variant", "refinement_geometry", "gaussian_qbc_mode",
+               "policy", "hop", "K", "T", "h", "time", "eval_mode", "return", "d4rl_score")
 
 
 def parse_args(argv=None):
@@ -113,6 +113,8 @@ def resolved_protocol(config, action_dim):
             "extra_baseline_updates_per_variant": int(config.mpi_steps > 1),
             "chain_actor_updates_per_variant": 1 + (config.mpi_steps - 1) * config.inner_updates,
             "variants": {v: {"metric_reduction": config.reduction(v),
+                              "refinement_geometry": config.geometry(v),
+                              "gaussian_qbc_mode": config.gaussian_qbc_mode if v == "qbc_gaussian_w2" else None,
                               "q_scale_norm": config.normalize_q(v),
                               "first_step_coefficients": config.coefficients(v, action_dim),
                               "baseline_coefficients": config.coefficients(v, action_dim, config.tau)}
@@ -146,7 +148,7 @@ def restore_checkpoint(path, state, signature, sources, data_hash):
 def evaluation_specs(config, args):
     policies = [("baseline", 1)]
     if config.mpi_steps > 1:
-        hops = range(1, config.mpi_steps + 1) if args.eval_hops == "all" else (config.mpi_steps,)
+        hops = range(1, config.mpi_steps + 1) if args.eval_hops == "all" else (1, config.mpi_steps)
         policies.extend(("mpi", hop) for hop in hops)
     for index, variant in enumerate(config.variants):
         modes = ("mean",) if variant == "qbc_deterministic_w2" else (
@@ -179,7 +181,9 @@ def evaluate_all(state, config, args, step, mean, std):
         ret, score = evaluate(policy, args.env, args.seed, mean, std, args.eval_episodes)
         if not np.isfinite([ret, score]).all():
             raise FloatingPointError(f"nonfinite evaluation for {variant}/{hop}/{mode}")
-        rows.append(dict(zip(EVAL_FIELDS, (step, variant, policy_name, hop, k, config.tau,
+        rows.append(dict(zip(EVAL_FIELDS, (step, variant, config.geometry(variant),
+                                          config.gaussian_qbc_mode if variant == "qbc_gaussian_w2" else "na",
+                                          policy_name, hop, k, config.tau,
                                           h, hop*h, mode, ret, score), strict=True)))
     return rows
 
@@ -289,9 +293,13 @@ def main(argv=None):
                    "reward_normalization": reward_info, "resolved_protocol": protocol,
                    "metric": "raw diagonal Gaussian; ambient FR^2 = 4*acos(BC)^2 (MPI A.3)",
                    "q_action_transform": config.q_action_transform,
-                   "gaussian_qbc_base": "Park et al. 2024 Eq.6/C.6.1: -mean(Q(clipped mean)) + bc_coef*mean(NLL); raw Gaussian, sigma=1",
+                   "gaussian_qbc_mode": config.gaussian_qbc_mode,
+                   "gaussian_qbc_base": ("Park et al. Eq.6 actor-loss form: clipped-mean Q + NLL, fixed std=1"
+                                         if config.gaussian_qbc_mode == "paper" else
+                                         "stochastic extension: expected Q + dataset NLL; learned mean and std from K=1"),
                    "deterministic_base": "TD3+BC actor loss: detached alpha/mean(abs(IQL Q)) and coordinate-mean MSE",
-                   "gaussian_refinement": "MPI extension: sampled expected Q with learnable mean and std",
+                   "gaussian_refinement": "same policy family/Q energy as Gaussian Q+BC base; AWR uses expected Q after extraction",
+                   "gaussian_refinement_geometry": config.gaussian_refinement_geometry,
                    "evaluation_action_transform": "clip to [-1,1]"}))
     update_fns = {}
     while step < args.max_timesteps:

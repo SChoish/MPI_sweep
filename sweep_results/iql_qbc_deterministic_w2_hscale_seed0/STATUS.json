@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T09:32:45Z",
-  "stamp_kst": "2026-09-19 18:32 KST",
+  "updated_at": "2026-09-19T09:42:55Z",
+  "stamp_kst": "2026-09-19 18:42 KST",
   "variant": "qbc_deterministic_w2",
   "seed": 0,
   "taus": [
@@ -19,8 +19,8 @@
   "planned": 162,
   "counts": {
     "complete": 18,
-    "running": 5,
-    "remaining": 139,
+    "running": 6,
+    "remaining": 138,
     "extra_dirs": 0
   },
   "queue": "2026-09-19T18:30:33+09:00 env=hopper-medium-replay-v2 hop=1 device=cpu taus=0.05 0.4 1.25 4 10 40 \u00b7 watcher cpu_waiting_gpu \u00b7 portal queued",
@@ -30,42 +30,42 @@
       "env": "hopper-medium-replay-v2",
       "tau": "0.05",
       "hops": 1,
-      "step": 16704
+      "step": 103648
     },
     {
       "pid": 2290176,
       "env": "hopper-medium-replay-v2",
       "tau": "0.4",
       "hops": 1,
-      "step": 14592
+      "step": 101728
     },
     {
       "pid": 2291438,
       "env": "hopper-medium-replay-v2",
       "tau": "1.25",
       "hops": 1,
-      "step": 10880
+      "step": 98944
     },
     {
       "pid": 2292769,
       "env": "hopper-medium-replay-v2",
       "tau": "4",
       "hops": 1,
-      "step": 7424
+      "step": 95808
     },
     {
       "pid": 2296520,
       "env": "hopper-medium-replay-v2",
       "tau": "10",
       "hops": 1,
-      "step": 3648
+      "step": 93376
     },
     {
       "pid": 2297636,
       "env": "hopper-medium-replay-v2",
       "tau": "40",
       "hops": 1,
-      "step": 0
+      "step": 91072
     }
   ],
   "by_env": {
@@ -92,9 +92,9 @@
     "hopper-medium-replay-v2": {
       "1": {
         "complete": 0,
-        "live": 5,
-        "status": "0/6 \u00b7 5 live@3k",
-        "min_step": 3648
+        "live": 6,
+        "status": "0/6 \u00b7 6 live@91k",
+        "min_step": 91072
       },
       "2": {
         "complete": 0,

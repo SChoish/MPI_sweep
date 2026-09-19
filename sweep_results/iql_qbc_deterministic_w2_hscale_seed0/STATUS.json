@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T06:29:20Z",
-  "stamp_kst": "2026-09-19 15:29 KST",
+  "updated_at": "2026-09-19T08:24:37Z",
+  "stamp_kst": "2026-09-19 17:24 KST",
   "variant": "qbc_deterministic_w2",
   "seed": 0,
   "taus": [
@@ -18,56 +18,13 @@
   ],
   "planned": 162,
   "counts": {
-    "complete": 12,
-    "running": 6,
+    "complete": 13,
+    "running": 5,
     "remaining": 144,
     "extra_dirs": 0
   },
   "queue": "2026-09-19T06:08:43+00:00 env=hopper-medium-v2 hop=3 device=cuda taus=0.05 0.4 1.25 4 10 40",
-  "live": [
-    {
-      "pid": 106266,
-      "env": "hopper-medium-v2",
-      "tau": "0.05",
-      "hops": 3,
-      "step": 912224
-    },
-    {
-      "pid": 106267,
-      "env": "hopper-medium-v2",
-      "tau": "0.4",
-      "hops": 3,
-      "step": 895936
-    },
-    {
-      "pid": 106268,
-      "env": "hopper-medium-v2",
-      "tau": "1.25",
-      "hops": 3,
-      "step": 896640
-    },
-    {
-      "pid": 106270,
-      "env": "hopper-medium-v2",
-      "tau": "10",
-      "hops": 3,
-      "step": 851648
-    },
-    {
-      "pid": 106269,
-      "env": "hopper-medium-v2",
-      "tau": "4",
-      "hops": 3,
-      "step": 838656
-    },
-    {
-      "pid": 106271,
-      "env": "hopper-medium-v2",
-      "tau": "40",
-      "hops": 3,
-      "step": 989408
-    }
-  ],
+  "live": [],
   "by_env": {
     "hopper-medium-v2": {
       "1": {
@@ -83,10 +40,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 0,
-        "live": 6,
-        "status": "0/6 \u00b7 6 live@838k",
-        "min_step": 838656
+        "complete": 1,
+        "live": 5,
+        "status": "1/6 \u00b7 5 live@913k",
+        "min_step": 913952
       }
     },
     "hopper-medium-replay-v2": {

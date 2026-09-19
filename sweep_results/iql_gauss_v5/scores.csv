@@ -141,3 +141,5 @@ hopper-medium-v2,4.0,4,0,w2,mpi,1,mean,0.8038443429832984
 hopper-medium-v2,4.0,4,0,w2,mpi,1,sample,0.8045781043988879
 hopper-medium-v2,4.0,4,0,w2,mpi,4,mean,0.8038443429832984
 hopper-medium-v2,4.0,4,0,w2,mpi,4,sample,0.8047875326248011
+hopper-medium-v2,7.0,1,0,w2,baseline,1,mean,0.7339870051617758
+hopper-medium-v2,7.0,1,0,w2,baseline,1,sample,0.7339870051617758

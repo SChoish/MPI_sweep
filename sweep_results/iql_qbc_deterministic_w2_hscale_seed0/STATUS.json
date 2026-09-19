@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T05:18:34Z",
-  "stamp_kst": "2026-09-19 14:18 KST",
+  "updated_at": "2026-09-19T05:28:39Z",
+  "stamp_kst": "2026-09-19 14:28 KST",
   "variant": "qbc_deterministic_w2",
   "seed": 0,
   "taus": [
@@ -26,45 +26,45 @@
   "queue": "",
   "live": [
     {
-      "pid": 65673,
+      "pid": 77798,
       "env": "hopper-medium-replay-v2",
       "tau": "0.05",
-      "hops": 2,
+      "hops": 3,
       "step": 0
     },
     {
-      "pid": 65674,
+      "pid": 77799,
       "env": "hopper-medium-replay-v2",
       "tau": "0.4",
-      "hops": 2,
+      "hops": 3,
       "step": 0
     },
     {
-      "pid": 65675,
+      "pid": 77800,
       "env": "hopper-medium-replay-v2",
       "tau": "1.25",
-      "hops": 2,
+      "hops": 3,
       "step": 0
     },
     {
-      "pid": 65677,
+      "pid": 77802,
       "env": "hopper-medium-replay-v2",
       "tau": "10",
-      "hops": 2,
+      "hops": 3,
       "step": 0
     },
     {
-      "pid": 65676,
+      "pid": 77801,
       "env": "hopper-medium-replay-v2",
       "tau": "4",
-      "hops": 2,
+      "hops": 3,
       "step": 0
     },
     {
-      "pid": 65678,
+      "pid": 77803,
       "env": "hopper-medium-replay-v2",
       "tau": "40",
-      "hops": 2,
+      "hops": 3,
       "step": 0
     }
   ],

@@ -1,0 +1,21 @@
+---
+description: Include server watcher registration and verification whenever creating, changing, or launching an experiment queue.
+alwaysApply: true
+---
+
+# 큐 실행 시 서버 워처 등록
+
+큐 생성·변경·실행 작업에는 아래 절차를 항상 적용한다. 관계없는 작업에서 큐나 워처를 조작하지 않는다.
+
+- 워처의 기준 구현은 `SChoish/server_management`이며 서버 checkout은 보통 `/home/<계정>/server_management`다. 해당 저장소의 `.cursor/rules/queue-watcher-registration.mdc`와 `README.md`를 읽는다. 접근할 수 없으면 아래 필수 절차를 따르되 구현과 실행 상태를 확인했다고 주장하지 않는다.
+- 대상 계정과 호스트/컨테이너를 확인하고, 실행 중인 **호스트 워처가 실제 읽는 설정 파일**을 사용한다. `ext_csh`와 `ext_csv`를 혼동하거나 다른 계정의 큐를 바꾸지 않는다.
+- CPU/GPU 큐 스크립트 한 쌍을 준비한다. 실험 조건, 체크포인트·결과 경로, 재개 규약을 맞추고 Python/Conda 및 장치 환경 설정은 각 스크립트 안에 둔다. 필요한 파일은 호스트와 컨테이너 양쪽에서 접근 가능해야 한다.
+- 큐 실행 요청을 받으면 `server_management/scripts/hosts/beyondg/register_queue.py`로 등록하고 반영 여부까지 확인한다. 필수 인자는 `--config`, `--cpu-queue`, `--gpu-queue`, `--cwd`, `--process`다. `--process`에는 실제 트레이너와 분리 실행되는 런처 경로를 모두 넣는다. IQL MPI의 경우 `train_iql_mpi.py launch_mpi_sweep.py`가 해당한다.
+- 코드 작성만 요청받았으면 등록 명령 또는 실행 래퍼를 함께 준비한다. 등록 자체가 워처를 통해 학습을 시작할 수 있으므로 코드 작성만으로 런타임 설정을 변경하지 않는다.
+- 직접 `nohup` 실행만 하고 끝내지 않는다. 등록이 성공하면 실제 CPU/GPU 실행은 호스트 워처가 담당한다. 별도로 같은 큐를 중복 실행하거나 등록 실패를 무시하지 않는다.
+- 워처는 GPU 컨테이너 바깥 호스트에서 실행한다. 컨테이너에서 등록하려면 같은 설정 파일이 호스트와 공유되는지 확인한다. 기본은 호스트에서 등록한다.
+- 설정은 다음 주기(기본 30초)에 자동 반영된다. 큐마다 워처를 재시작하지 않는다. 최초 코드 설치, 워처 중단, 서버 ID·SSH·state_dir 변경 때만 필요한 호스트 시작/재시작을 수행한다.
+- 이전 큐나 자식 프로세스가 실행 중이면 새 대상 반영은 보류된다. 보류 상태를 보고하고, 전환을 재촉하려고 기존 학습을 강제 종료하거나 워처를 재시작하지 않는다. 여러 번 등록하면 마지막 등록만 다음 대상이 되므로 여러 실험의 순서는 하나의 큐 스크립트로 구성한다.
+- 설정의 `worker.state_dir` 아래 최신 `lease.json`/`watcher.log`에서 갱신 시각, `queue_commands`, `phase`, `events`를 확인한다. 실제 프로세스와 새 학습 로그도 확인한 뒤 실행 중이라고 보고한다. 등록 완료, 전환 보류, 실행 확인을 구분한다. 오래된 `gpu_usage`·`gpu_queue_alive` 값은 실행 증거로 쓰지 않는다.
+- 결과 동기화나 캔버스 루프는 학습 프로세스로 등록하지 않는다. 접속 수단이 없으면 실제 경로를 채운 명령을 제공하고 실행 상태는 미확인으로 남긴다. 서버용 명령은 `rg` 없이도 동작하도록 작성한다.
+- 워처 수정은 `server_management`, 실험 큐 수정은 이 저장소에서 한다. 이 저장소의 옛 워처 사본을 고쳐 해결하지 않는다. 런타임 등록에 자동 Git 푸시를 붙이지 않으며 기존 `mpi-sweep-publication.mdc`의 결과 발행 규칙을 유지한다.

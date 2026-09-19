@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T21:09:28Z",
-  "stamp_kst": "2026-09-20 06:09 KST",
+  "updated_at": "2026-09-19T21:14:49Z",
+  "stamp_kst": "2026-09-20 06:14 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -52,7 +52,7 @@
       "tau": "14",
       "hops": 1,
       "seed": 0,
-      "step": 399776
+      "step": 942240
     },
     {
       "pid": 2505839,
@@ -60,7 +60,7 @@
       "tau": "17",
       "hops": 1,
       "seed": 0,
-      "step": 383712
+      "step": 905760
     },
     {
       "pid": 2505840,
@@ -68,7 +68,7 @@
       "tau": "20",
       "hops": 1,
       "seed": 0,
-      "step": 379616
+      "step": 912992
     }
   ],
   "by_env": {
@@ -156,8 +156,8 @@
       "1": {
         "complete": 12,
         "live": 3,
-        "status": "12/60 \u00b7 3 live@379k",
-        "min_step": 379616
+        "status": "12/60 \u00b7 3 live@905k",
+        "min_step": 905760
       },
       "2": {
         "complete": 0,

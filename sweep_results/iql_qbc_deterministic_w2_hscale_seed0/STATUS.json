@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T16:18:10Z",
-  "stamp_kst": "2026-09-20 01:18 KST",
+  "updated_at": "2026-09-19T16:23:24Z",
+  "stamp_kst": "2026-09-20 01:23 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 405,
   "seed_complete": [
-    97,
+    100,
     0,
     0,
     0
@@ -39,36 +39,60 @@
   ],
   "planned": 1620,
   "counts": {
-    "complete": 97,
-    "running": 3,
-    "remaining": 1520,
+    "complete": 100,
+    "running": 6,
+    "remaining": 1514,
     "extra_dirs": 25
   },
-  "queue": "2026-09-19T15:34:57+00:00 env=hopper-medium-replay-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 24 28 34 40 \u00b7 watcher gpu_running \u00b7 portal running",
+  "queue": "2026-09-19T16:22:14+00:00 env=hopper-expert-v2 hop=1 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 747966,
-      "env": "hopper-medium-replay-v2",
-      "tau": "12",
-      "hops": 3,
+      "pid": 889913,
+      "env": "hopper-expert-v2",
+      "tau": "0.1",
+      "hops": 1,
       "seed": 0,
-      "step": 855616
+      "step": 87424
     },
     {
-      "pid": 748061,
-      "env": "hopper-medium-replay-v2",
-      "tau": "17",
-      "hops": 3,
+      "pid": 889914,
+      "env": "hopper-expert-v2",
+      "tau": "0.2",
+      "hops": 1,
       "seed": 0,
-      "step": 848832
+      "step": 82944
     },
     {
-      "pid": 748062,
-      "env": "hopper-medium-replay-v2",
-      "tau": "20",
-      "hops": 3,
+      "pid": 889915,
+      "env": "hopper-expert-v2",
+      "tau": "0.7",
+      "hops": 1,
       "seed": 0,
-      "step": 880320
+      "step": 86016
+    },
+    {
+      "pid": 889916,
+      "env": "hopper-expert-v2",
+      "tau": "1.5",
+      "hops": 1,
+      "seed": 0,
+      "step": 84928
+    },
+    {
+      "pid": 889917,
+      "env": "hopper-expert-v2",
+      "tau": "2.5",
+      "hops": 1,
+      "seed": 0,
+      "step": 86720
+    },
+    {
+      "pid": 889918,
+      "env": "hopper-expert-v2",
+      "tau": "7",
+      "hops": 1,
+      "seed": 0,
+      "step": 86592
     }
   ],
   "by_env": {
@@ -106,18 +130,18 @@
         "min_step": 0
       },
       "3": {
-        "complete": 12,
-        "live": 3,
-        "status": "12/60 \u00b7 3 live@848k",
-        "min_step": 848832
+        "complete": 15,
+        "live": 0,
+        "status": "15/60 paused",
+        "min_step": 0
       }
     },
     "hopper-expert-v2": {
       "1": {
         "complete": 5,
-        "live": 0,
-        "status": "5/60 paused",
-        "min_step": 0
+        "live": 6,
+        "status": "5/60 \u00b7 6 live@82k",
+        "min_step": 82944
       },
       "2": {
         "complete": 5,

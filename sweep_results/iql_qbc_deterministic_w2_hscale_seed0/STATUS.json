@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T19:06:49Z",
-  "stamp_kst": "2026-09-20 04:06 KST",
+  "updated_at": "2026-09-19T19:12:07Z",
+  "stamp_kst": "2026-09-20 04:12 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 405,
   "seed_complete": [
-    150,
+    156,
     0,
     0,
     0
@@ -39,60 +39,60 @@
   ],
   "planned": 1620,
   "counts": {
-    "complete": 150,
+    "complete": 156,
     "running": 6,
-    "remaining": 1464,
+    "remaining": 1458,
     "extra_dirs": 25
   },
   "queue": "2026-09-19T18:50:16+00:00 env=halfcheetah-medium-v2 hop=2 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 1765060,
+      "pid": 1868798,
       "env": "halfcheetah-medium-v2",
-      "tau": "0.05",
+      "tau": "1.5",
       "hops": 2,
       "seed": 0,
-      "step": 941536
+      "step": 184224
     },
     {
-      "pid": 1765062,
+      "pid": 1868799,
       "env": "halfcheetah-medium-v2",
-      "tau": "0.1",
+      "tau": "2.5",
       "hops": 2,
       "seed": 0,
-      "step": 943328
+      "step": 190624
     },
     {
-      "pid": 1765064,
+      "pid": 1868800,
       "env": "halfcheetah-medium-v2",
-      "tau": "0.2",
+      "tau": "4",
       "hops": 2,
       "seed": 0,
-      "step": 941792
+      "step": 187168
     },
     {
-      "pid": 1765065,
+      "pid": 1868801,
       "env": "halfcheetah-medium-v2",
-      "tau": "0.4",
+      "tau": "7",
       "hops": 2,
       "seed": 0,
-      "step": 943968
+      "step": 187424
     },
     {
-      "pid": 1765070,
+      "pid": 1868910,
       "env": "halfcheetah-medium-v2",
-      "tau": "0.7",
+      "tau": "10",
       "hops": 2,
       "seed": 0,
-      "step": 942880
+      "step": 188448
     },
     {
-      "pid": 1765073,
+      "pid": 1868946,
       "env": "halfcheetah-medium-v2",
-      "tau": "1.25",
+      "tau": "12",
       "hops": 2,
       "seed": 0,
-      "step": 935648
+      "step": 189536
     }
   ],
   "by_env": {
@@ -164,10 +164,10 @@
         "min_step": 0
       },
       "2": {
-        "complete": 0,
+        "complete": 6,
         "live": 6,
-        "status": "0/60 \u00b7 6 live@935k",
-        "min_step": 935648
+        "status": "6/60 \u00b7 6 live@184k",
+        "min_step": 184224
       },
       "3": {
         "complete": 0,

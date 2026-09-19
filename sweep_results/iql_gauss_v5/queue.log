@@ -151,3 +151,7 @@
 [launch] gpu=0 hopper-medium-v2_iql_tau0.7_mpi2_seed2_bd07887e6ebe pid=138147
 [ok] hopper-medium-v2_iql_tau0.7_mpi2_seed1_4f21f126f52e 36.9m
 [launch] gpu=0 hopper-medium-v2_iql_tau0.7_mpi2_seed3_e83037323b07 pid=138148
+[ok] hopper-medium-v2_iql_tau0.7_mpi2_seed2_bd07887e6ebe 36.7m
+[launch] gpu=0 hopper-medium-v2_iql_tau1.25_mpi2_seed0_bae93d5ce1a6 pid=146026
+[ok] hopper-medium-v2_iql_tau0.7_mpi2_seed3_e83037323b07 36.9m
+[launch] gpu=0 hopper-medium-v2_iql_tau1.25_mpi2_seed1_7ee64df5b783 pid=146268

@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T16:28:39Z",
-  "stamp_kst": "2026-09-20 01:28 KST",
+  "updated_at": "2026-09-19T16:33:55Z",
+  "stamp_kst": "2026-09-20 01:33 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 405,
   "seed_complete": [
-    100,
+    106,
     0,
     0,
     0
@@ -39,60 +39,44 @@
   ],
   "planned": 1620,
   "counts": {
-    "complete": 100,
-    "running": 6,
-    "remaining": 1514,
+    "complete": 106,
+    "running": 4,
+    "remaining": 1510,
     "extra_dirs": 25
   },
   "queue": "2026-09-19T16:22:14+00:00 env=hopper-expert-v2 hop=1 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 889913,
+      "pid": 947097,
       "env": "hopper-expert-v2",
-      "tau": "0.1",
+      "tau": "12",
       "hops": 1,
       "seed": 0,
-      "step": 605312
+      "step": 115552
     },
     {
-      "pid": 889914,
+      "pid": 947288,
       "env": "hopper-expert-v2",
-      "tau": "0.2",
+      "tau": "14",
       "hops": 1,
       "seed": 0,
-      "step": 600064
+      "step": 120544
     },
     {
-      "pid": 889915,
+      "pid": 948123,
       "env": "hopper-expert-v2",
-      "tau": "0.7",
+      "tau": "17",
       "hops": 1,
       "seed": 0,
-      "step": 592992
+      "step": 103136
     },
     {
-      "pid": 889916,
+      "pid": 948444,
       "env": "hopper-expert-v2",
-      "tau": "1.5",
+      "tau": "20",
       "hops": 1,
       "seed": 0,
-      "step": 597408
-    },
-    {
-      "pid": 889917,
-      "env": "hopper-expert-v2",
-      "tau": "2.5",
-      "hops": 1,
-      "seed": 0,
-      "step": 598176
-    },
-    {
-      "pid": 889918,
-      "env": "hopper-expert-v2",
-      "tau": "7",
-      "hops": 1,
-      "seed": 0,
-      "step": 600704
+      "step": 102368
     }
   ],
   "by_env": {
@@ -138,10 +122,10 @@
     },
     "hopper-expert-v2": {
       "1": {
-        "complete": 5,
-        "live": 6,
-        "status": "5/60 \u00b7 6 live@592k",
-        "min_step": 592992
+        "complete": 11,
+        "live": 4,
+        "status": "11/60 \u00b7 4 live@102k",
+        "min_step": 102368
       },
       "2": {
         "complete": 5,

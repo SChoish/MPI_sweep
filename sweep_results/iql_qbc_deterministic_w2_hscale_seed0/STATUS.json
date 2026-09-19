@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T14:17:44Z",
-  "stamp_kst": "2026-09-19 23:17 KST",
+  "updated_at": "2026-09-19T14:22:57Z",
+  "stamp_kst": "2026-09-19 23:22 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -56,7 +56,7 @@
       "tau": "34",
       "hops": 3,
       "seed": 0,
-      "step": 531360
+      "step": 953120
     }
   ],
   "by_env": {
@@ -76,8 +76,8 @@
       "3": {
         "complete": 18,
         "live": 1,
-        "status": "18/76 \u00b7 1 live@531k",
-        "min_step": 531360
+        "status": "18/76 \u00b7 1 live@953k",
+        "min_step": 953120
       }
     },
     "hopper-medium-replay-v2": {

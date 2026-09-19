@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T12:34:03Z",
-  "stamp_kst": "2026-09-19 21:34 KST",
+  "updated_at": "2026-09-19T12:39:13Z",
+  "stamp_kst": "2026-09-19 21:39 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 513,
   "seed_complete": [
-    54,
+    60,
     0,
     0,
     0
@@ -43,69 +43,29 @@
   ],
   "planned": 2052,
   "counts": {
-    "complete": 54,
-    "running": 6,
-    "remaining": 1992,
+    "complete": 60,
+    "running": 1,
+    "remaining": 1991,
     "extra_dirs": 0
   },
   "queue": "2026-09-19T12:14:55+00:00 env=hopper-medium-v2 hop=1 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 24 28 34 40 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 3374623,
+      "pid": 3439787,
       "env": "hopper-medium-v2",
-      "tau": "12",
+      "tau": "34",
       "hops": 1,
       "seed": 0,
-      "step": 898752
-    },
-    {
-      "pid": 3375559,
-      "env": "hopper-medium-v2",
-      "tau": "14",
-      "hops": 1,
-      "seed": 0,
-      "step": 842944
-    },
-    {
-      "pid": 3375631,
-      "env": "hopper-medium-v2",
-      "tau": "17",
-      "hops": 1,
-      "seed": 0,
-      "step": 836800
-    },
-    {
-      "pid": 3375702,
-      "env": "hopper-medium-v2",
-      "tau": "20",
-      "hops": 1,
-      "seed": 0,
-      "step": 842048
-    },
-    {
-      "pid": 3376042,
-      "env": "hopper-medium-v2",
-      "tau": "24",
-      "hops": 1,
-      "seed": 0,
-      "step": 844928
-    },
-    {
-      "pid": 3377782,
-      "env": "hopper-medium-v2",
-      "tau": "28",
-      "hops": 1,
-      "seed": 0,
-      "step": 807808
+      "step": 751648
     }
   ],
   "by_env": {
     "hopper-medium-v2": {
       "1": {
-        "complete": 12,
-        "live": 6,
-        "status": "12/76 \u00b7 6 live@807k",
-        "min_step": 807808
+        "complete": 18,
+        "live": 1,
+        "status": "18/76 \u00b7 1 live@751k",
+        "min_step": 751648
       },
       "2": {
         "complete": 6,

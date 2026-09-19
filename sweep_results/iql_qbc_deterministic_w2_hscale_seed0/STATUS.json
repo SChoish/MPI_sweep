@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T19:59:59Z",
-  "stamp_kst": "2026-09-20 04:59 KST",
+  "updated_at": "2026-09-19T20:05:19Z",
+  "stamp_kst": "2026-09-20 05:05 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 405,
   "seed_complete": [
-    165,
+    171,
     0,
     0,
     0
@@ -39,60 +39,60 @@
   ],
   "planned": 1620,
   "counts": {
-    "complete": 165,
+    "complete": 171,
     "running": 6,
-    "remaining": 1449,
+    "remaining": 1443,
     "extra_dirs": 25
   },
   "queue": "2026-09-19T19:39:41+00:00 env=halfcheetah-medium-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 2038650,
+      "pid": 2165920,
       "env": "halfcheetah-medium-v2",
-      "tau": "0.05",
+      "tau": "1.5",
       "hops": 3,
       "seed": 0,
-      "step": 903840
+      "step": 133408
     },
     {
-      "pid": 2038651,
+      "pid": 2169157,
       "env": "halfcheetah-medium-v2",
-      "tau": "0.1",
+      "tau": "2.5",
       "hops": 3,
       "seed": 0,
-      "step": 834688
+      "step": 104544
     },
     {
-      "pid": 2038652,
+      "pid": 2169477,
       "env": "halfcheetah-medium-v2",
-      "tau": "0.2",
+      "tau": "4",
       "hops": 3,
       "seed": 0,
-      "step": 901472
+      "step": 99968
     },
     {
-      "pid": 2038653,
+      "pid": 2171627,
       "env": "halfcheetah-medium-v2",
-      "tau": "0.4",
+      "tau": "7",
       "hops": 3,
       "seed": 0,
-      "step": 825344
+      "step": 87040
     },
     {
-      "pid": 2038654,
+      "pid": 2176273,
       "env": "halfcheetah-medium-v2",
-      "tau": "0.7",
+      "tau": "10",
       "hops": 3,
       "seed": 0,
-      "step": 873088
+      "step": 36928
     },
     {
-      "pid": 2038655,
+      "pid": 2177913,
       "env": "halfcheetah-medium-v2",
-      "tau": "1.25",
+      "tau": "12",
       "hops": 3,
       "seed": 0,
-      "step": 926432
+      "step": 12352
     }
   ],
   "by_env": {
@@ -170,10 +170,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 0,
+        "complete": 6,
         "live": 6,
-        "status": "0/60 \u00b7 6 live@825k",
-        "min_step": 825344
+        "status": "6/60 \u00b7 6 live@12k",
+        "min_step": 12352
       }
     },
     "halfcheetah-medium-replay-v2": {

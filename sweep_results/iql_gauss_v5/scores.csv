@@ -9,3 +9,5 @@ hopper-medium-v2_iql_tau0.4_mpi1_seed0_99c9ffd65322,0.4,1,,w2,baseline,1,mean,40
 hopper-medium-v2_iql_tau0.4_mpi1_seed0_99c9ffd65322,0.4,1,,w2,baseline,1,sample,45.45707060467598
 hopper-medium-v2_iql_tau1.25_mpi1_seed0_158d8ce4e512,1.25,1,,w2,baseline,1,mean,0.8038443429832984
 hopper-medium-v2_iql_tau1.25_mpi1_seed0_158d8ce4e512,1.25,1,,w2,baseline,1,sample,0.804080521081753
+hopper-medium-v2_iql_tau4_mpi1_seed0_523988686f19,4.0,1,,w2,baseline,1,mean,0.5838164472620713
+hopper-medium-v2_iql_tau4_mpi1_seed0_523988686f19,4.0,1,,w2,baseline,1,sample,0.5847906717176871

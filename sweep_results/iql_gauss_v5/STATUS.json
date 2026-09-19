@@ -1,11 +1,43 @@
 {
-  "updated_at": "2026-09-19 21:05:07 KST",
-  "schema": "iql_actor_geometry_v5_consistent_gaussian",
+  "updated_at": "2026-09-19 21:10:04 KST",
+  "schema": "iql_actor_geometry_v6_baseline_h",
   "explicit": "excluded",
   "variant": "qbc_gaussian_w2",
   "gaussian_qbc_mode": "stochastic",
-  "total": 162,
-  "done": 31,
+  "seeds": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "taus": [
+    "0.05",
+    "0.1",
+    "0.2",
+    "0.4",
+    "0.7",
+    "1.25",
+    "1.5",
+    "2.5",
+    "4",
+    "7",
+    "10",
+    "12",
+    "14",
+    "17",
+    "20",
+    "24",
+    "28",
+    "34",
+    "40"
+  ],
+  "hops": [
+    1,
+    2,
+    4
+  ],
+  "total": 2052,
+  "done": 20,
   "source": "/home/choi/MPI_sweep/results/iql_gauss_v5",
-  "note": "Gaussian DDPG+BC, seed 0 only, implicit W2 K=1, 2, 4. K=3, Fisher\u2013Rao, and seeds 1\u20133 are not queued."
+  "note": "Gaussian DDPG+BC, seeds 0-3, implicit W2, K=1/2/4, full T grid. K=3 and Fisher-Rao are not queued."
 }

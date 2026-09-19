@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-19T05:48:50Z",
-  "stamp_kst": "2026-09-19 14:48 KST",
+  "updated_at": "2026-09-19T05:58:57Z",
+  "stamp_kst": "2026-09-19 14:58 KST",
   "variant": "qbc_deterministic_w2",
   "seed": 0,
   "taus": [
@@ -18,69 +18,69 @@
   ],
   "planned": 162,
   "counts": {
-    "complete": 0,
+    "complete": 6,
     "running": 6,
-    "remaining": 156,
+    "remaining": 150,
     "extra_dirs": 0
   },
-  "queue": "2026-09-19T05:39:47+00:00 env=hopper-medium-v2 hop=1 device=cuda taus=0.05 0.4 1.25 4 10 40",
+  "queue": "2026-09-19T05:50:20+00:00 env=hopper-medium-v2 hop=2 device=cuda taus=0.05 0.4 1.25 4 10 40",
   "live": [
     {
-      "pid": 88016,
+      "pid": 98772,
       "env": "hopper-medium-v2",
       "tau": "0.05",
-      "hops": 1,
-      "step": 866880
+      "hops": 2,
+      "step": 486208
     },
     {
-      "pid": 88017,
+      "pid": 98773,
       "env": "hopper-medium-v2",
       "tau": "0.4",
-      "hops": 1,
-      "step": 877376
+      "hops": 2,
+      "step": 475968
     },
     {
-      "pid": 88018,
+      "pid": 98774,
       "env": "hopper-medium-v2",
       "tau": "1.25",
-      "hops": 1,
-      "step": 875712
+      "hops": 2,
+      "step": 487360
     },
     {
-      "pid": 88020,
+      "pid": 98776,
       "env": "hopper-medium-v2",
       "tau": "10",
-      "hops": 1,
-      "step": 887808
+      "hops": 2,
+      "step": 510752
     },
     {
-      "pid": 88019,
+      "pid": 98775,
       "env": "hopper-medium-v2",
       "tau": "4",
-      "hops": 1,
-      "step": 882304
+      "hops": 2,
+      "step": 481344
     },
     {
-      "pid": 88021,
+      "pid": 98777,
       "env": "hopper-medium-v2",
       "tau": "40",
-      "hops": 1,
-      "step": 858304
+      "hops": 2,
+      "step": 448704
     }
   ],
   "by_env": {
     "hopper-medium-v2": {
       "1": {
-        "complete": 0,
-        "live": 6,
-        "status": "0/6 \u00b7 6 live@858k",
-        "min_step": 858304
+        "complete": 6,
+        "live": 0,
+        "status": "6/6",
+        "min_step": 0
       },
       "2": {
         "complete": 0,
-        "live": 0,
-        "status": "0/6",
-        "min_step": 0
+        "live": 6,
+        "status": "0/6 \u00b7 6 live@448k",
+        "min_step": 448704
       },
       "3": {
         "complete": 0,

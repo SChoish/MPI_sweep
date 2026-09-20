@@ -76,10 +76,22 @@ class MainResultsTests(unittest.TestCase):
         self.assertIn("2.00 ± 1.41", mod.cell(rows))
         self.assertNotIn("±", mod.cell(rows[:1]))
 
+    def test_td3_complete_k_filter_preserves_iql(self):
+        section = "TD3+BC MPI · Implicit"
+        data = {(section, "env", .4, k, 0): {} for k in range(1, 5)}
+        data[(section, "env", .1, 1, 0)] = {}
+        data[("TD3+BC MPI · Explicit", "env", .4, 2, 0)] = {}
+        data[("AWR–FR", "env", .1, 4, 0)] = {}
+        visible = mod.visible_results(data)
+        self.assertEqual(len(visible), 5)
+        self.assertNotIn((section, "env", .1, 1, 0), visible)
+        self.assertIn(("AWR–FR", "env", .1, 4, 0), visible)
+
     def test_raw_td3_matrix_and_deterministic_render(self):
-        folder = self.root / "sweep_results/K=2/Imp"
-        folder.mkdir(parents=True)
-        (folder / "seed0.csv").write_text("tau,hopper-medium-v2\n0.4,42\n")
+        for k in range(1, 5):
+            folder = self.root / f"sweep_results/K={k}/Imp"
+            folder.mkdir(parents=True)
+            (folder / "seed0.csv").write_text("tau,hopper-medium-v2\n0.4,42\n")
         mod.build(self.root)
         first = (self.root / "MAIN_RESULTS.md").read_bytes()
         mod.build(self.root)

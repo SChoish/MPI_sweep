@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-20T01:41:12Z",
-  "stamp_kst": "2026-09-20 10:41 KST",
+  "updated_at": "2026-09-20T01:46:44Z",
+  "stamp_kst": "2026-09-20 10:46 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 405,
   "seed_complete": [
-    270,
+    276,
     0,
     0,
     0
@@ -39,60 +39,60 @@
   ],
   "planned": 1620,
   "counts": {
-    "complete": 270,
+    "complete": 276,
     "running": 6,
-    "remaining": 1344,
+    "remaining": 1338,
     "extra_dirs": 25
   },
   "queue": "2026-09-20T01:33:39+00:00 env=walker2d-medium-v2 hop=1 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 4045643,
+      "pid": 4111850,
       "env": "walker2d-medium-v2",
-      "tau": "0.05",
+      "tau": "1.5",
       "hops": 1,
       "seed": 0,
-      "step": 707104
+      "step": 237568
     },
     {
-      "pid": 4045644,
+      "pid": 4111933,
       "env": "walker2d-medium-v2",
-      "tau": "0.1",
+      "tau": "2.5",
       "hops": 1,
       "seed": 0,
-      "step": 698496
+      "step": 201856
     },
     {
-      "pid": 4045645,
+      "pid": 4112018,
       "env": "walker2d-medium-v2",
-      "tau": "0.2",
+      "tau": "4",
       "hops": 1,
       "seed": 0,
-      "step": 703904
+      "step": 209920
     },
     {
-      "pid": 4045646,
+      "pid": 4112019,
       "env": "walker2d-medium-v2",
-      "tau": "0.4",
+      "tau": "7",
       "hops": 1,
       "seed": 0,
-      "step": 724576
+      "step": 198048
     },
     {
-      "pid": 4045647,
+      "pid": 4112121,
       "env": "walker2d-medium-v2",
-      "tau": "0.7",
+      "tau": "10",
       "hops": 1,
       "seed": 0,
-      "step": 716704
+      "step": 218176
     },
     {
-      "pid": 4045648,
+      "pid": 4112714,
       "env": "walker2d-medium-v2",
-      "tau": "1.25",
+      "tau": "12",
       "hops": 1,
       "seed": 0,
-      "step": 685440
+      "step": 203456
     }
   ],
   "by_env": {
@@ -218,10 +218,10 @@
     },
     "walker2d-medium-v2": {
       "1": {
-        "complete": 0,
+        "complete": 6,
         "live": 6,
-        "status": "0/60 \u00b7 6 live@685k",
-        "min_step": 685440
+        "status": "6/60 \u00b7 6 live@198k",
+        "min_step": 198048
       },
       "2": {
         "complete": 0,

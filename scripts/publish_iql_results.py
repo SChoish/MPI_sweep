@@ -20,6 +20,13 @@ import tempfile
 import time
 
 FINAL_STEP = 1_000_000
+# Supported record layouts. Keep the original training schema/signature in exports;
+# this list does not rename runs or assert that their algorithms are equivalent.
+SUPPORTED_SCHEMAS = frozenset({
+    "iql_actor_geometry_v5_consistent_gaussian",
+    "iql_actor_geometry_v6_baseline_h",
+    "iql_actor_geometry_v6_chain_q_scale",
+})
 PROFILES = {
     "ext_csv": ("/raid/ext_csv/MPI_store/iql_qbc_gaussian_w2_hc_walker_s0123",
                 "iql_qbc_gaussian_w2_hc_walker_s0123", "qbc_gaussian_w2"),
@@ -48,9 +55,8 @@ def verified_run(directory, variant, machine):
     complete = json.loads((directory / "COMPLETE.json").read_text())
     signature = config["signature"]
     algorithm = signature["algorithm"]
-    if signature["schema"] not in ("iql_actor_geometry_v5_consistent_gaussian",
-                                    "iql_actor_geometry_v6_baseline_h"):
-        raise ValueError("unsupported training schema")
+    if signature["schema"] not in SUPPORTED_SCHEMAS:
+        raise ValueError(f"unsupported training schema: {signature['schema']}")
     if (complete["schema"] != signature["schema"] or complete["step"] != FINAL_STEP
             or complete["signature"] != signature_hash(signature)):
         raise ValueError("completion/signature mismatch")

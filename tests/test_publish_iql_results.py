@@ -21,8 +21,8 @@ class PublisherTests(unittest.TestCase):
         self.source = self.root / "raw"
         self.source.mkdir()
 
-    def run_fixture(self, k=3, seed=0):
-        signature = dict(schema="iql_actor_geometry_v5_consistent_gaussian",
+    def run_fixture(self, k=3, seed=0, schema="iql_actor_geometry_v5_consistent_gaussian"):
+        signature = dict(schema=schema,
                          algorithm=dict(variants=["qbc_gaussian_w2"], mpi_steps=k,
                                         tau=.4, gaussian_qbc_mode="stochastic"),
                          env="halfcheetah-medium-v2", seed=seed,
@@ -79,6 +79,44 @@ class PublisherTests(unittest.TestCase):
         scores, _, _ = mod.export(self.source, "qbc_gaussian_w2", "ext_csv")
         row = next(csv.DictReader(io.StringIO(scores)))
         self.assertEqual((row["policy"], row["K"]), ("baseline", "1"))
+
+    def test_supported_schemas_preserve_raw_evidence_and_final_actor(self):
+        for seed, schema in enumerate(sorted(mod.SUPPORTED_SCHEMAS)):
+            for k in (1, 3):
+                with self.subTest(schema=schema, k=k):
+                    directory = self.run_fixture(k=k, seed=seed, schema=schema)
+                    before = {p.name: p.read_bytes() for p in directory.iterdir()}
+                    row, evidence = mod.verified_run(directory, "qbc_gaussian_w2", "ext_csv")
+                    self.assertEqual(row["schema"], schema)
+                    self.assertEqual(row["d4rl_score"], "45.123456789")
+                    self.assertEqual(row["hop"], k)
+                    self.assertEqual(evidence["signature"], json.loads(before["config.json"])["signature"])
+                    self.assertEqual(evidence["completion"], json.loads(before["COMPLETE.json"]))
+                    self.assertEqual(before, {p.name: p.read_bytes() for p in directory.iterdir()})
+        scores, manifest, count = mod.export(self.source, "qbc_gaussian_w2", "ext_csv")
+        self.assertEqual(count, 6)
+        self.assertEqual({r["schema"] for r in csv.DictReader(io.StringIO(scores))}, mod.SUPPORTED_SCHEMAS)
+        self.assertEqual({r["signature"]["schema"] for r in json.loads(manifest)["runs"]}, mod.SUPPORTED_SCHEMAS)
+
+    def test_chain_q_scale_still_rejects_mismatched_completion_and_corrupt_eval(self):
+        directory = self.run_fixture(schema="iql_actor_geometry_v6_chain_q_scale")
+        marker_path = directory / "COMPLETE.json"
+        original_marker = marker_path.read_bytes()
+        marker = json.loads(original_marker)
+        marker["schema"] = "iql_actor_geometry_v6_baseline_h"
+        marker_path.write_text(json.dumps(marker))
+        with self.assertRaisesRegex(ValueError, "completion/signature mismatch"):
+            mod.export(self.source, "qbc_gaussian_w2", "ext_csv")
+        marker_path.write_bytes(original_marker)
+        with (directory / "eval.csv").open("a") as stream:
+            stream.write("\n")
+        with self.assertRaisesRegex(ValueError, "evaluation hash mismatch"):
+            mod.export(self.source, "qbc_gaussian_w2", "ext_csv")
+
+    def test_unrecognized_schema_remains_rejected(self):
+        self.run_fixture(schema="iql_actor_geometry_unrecognized")
+        with self.assertRaisesRegex(ValueError, "unsupported training schema: iql_actor_geometry_unrecognized"):
+            mod.export(self.source, "qbc_gaussian_w2", "ext_csv")
 
     def test_missing_checkpoint_and_changed_evaluation_are_not_published(self):
         directory = self.run_fixture()

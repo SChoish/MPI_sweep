@@ -35,6 +35,14 @@ The existing `scores.csv` continues to work without installing this publisher.
 
 ## Evidence and selection
 
+- Supported training record schemas are `iql_actor_geometry_v5_consistent_gaussian`,
+  `iql_actor_geometry_v6_baseline_h`, and `iql_actor_geometry_v6_chain_q_scale`.
+  The original schema, signature, source hashes, and completion marker are retained.
+  Do not relabel training configs or markers to make the exporter accept a run.
+  All schemas must pass the same completion and evaluation checks below; unknown
+  schema names remain errors. After an unsupported-schema failure on the first
+  install tick, rerun the start command to fetch the updated publisher and start
+  the watch process only after validation succeeds.
 - `COMPLETE.json` must match config signature/schema and the 1M-step evaluation
   file hash. The final checkpoint must exist with the recorded nonzero size.
   Checkpoints are never deserialized, uploaded, or repeatedly rehashed; their

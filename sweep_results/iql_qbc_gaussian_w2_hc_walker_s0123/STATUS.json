@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-20T19:54:35Z",
-  "stamp_kst": "2026-09-21 04:54 KST",
+  "updated_at": "2026-09-20T20:00:21Z",
+  "stamp_kst": "2026-09-21 05:00 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -13,7 +13,7 @@
     59,
     60,
     59,
-    58
+    59
   ],
   "taus": [
     "0.05",
@@ -34,8 +34,8 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 236,
-    "running": 4,
+    "complete": 237,
+    "running": 3,
     "remaining": 480,
     "extra_dirs": 4
   },
@@ -47,7 +47,7 @@
       "tau": "4",
       "hops": 3,
       "seed": 2,
-      "step": 671744
+      "step": 676800
     },
     {
       "pid": 2063323,
@@ -55,7 +55,7 @@
       "tau": "4",
       "hops": 3,
       "seed": 3,
-      "step": 570720
+      "step": 575712
     },
     {
       "pid": 2063324,
@@ -63,25 +63,17 @@
       "tau": "7",
       "hops": 3,
       "seed": 0,
-      "step": 371616
-    },
-    {
-      "pid": 2951243,
-      "env": "halfcheetah-medium-replay-v2",
-      "tau": "10",
-      "hops": 3,
-      "seed": 3,
-      "step": 945824
+      "step": 376608
     }
   ],
   "eta": {
-    "label": "2.6\uc77c \u00b7 09/23 18:53 KST",
-    "hours": 62.0,
-    "finish_kst": "2026-09-23 18:53 KST",
+    "label": "3.4\uc77c \u00b7 09/24 15:38 KST",
+    "hours": 82.6,
+    "finish_kst": "2026-09-24 15:38 KST",
     "cell_min": 30.9,
-    "slots": 4,
-    "cells_per_hour": 7.8,
-    "assumption": "4 live slots \u00b7 median 30.9 min/cell from [ok] \u22658m \u00b7 leftover 481.4 cells"
+    "slots": 3,
+    "cells_per_hour": 5.8,
+    "assumption": "3 live slots \u00b7 median 30.9 min/cell from [ok] \u22658m \u00b7 leftover 481.4 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -118,10 +110,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 36,
-        "live": 4,
-        "status": "36/40 \u00b7 4 live@371k",
-        "min_step": 371616
+        "complete": 37,
+        "live": 3,
+        "status": "37/40 \u00b7 3 live@376k",
+        "min_step": 376608
       }
     },
     "halfcheetah-expert-v2": {

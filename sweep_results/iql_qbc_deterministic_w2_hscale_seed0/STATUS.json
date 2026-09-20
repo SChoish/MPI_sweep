@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-20T00:57:01Z",
-  "stamp_kst": "2026-09-20 09:57 KST",
+  "updated_at": "2026-09-20T01:02:33Z",
+  "stamp_kst": "2026-09-20 10:02 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -52,7 +52,7 @@
       "tau": "1.5",
       "hops": 3,
       "seed": 0,
-      "step": 367776
+      "step": 614528
     },
     {
       "pid": 3787113,
@@ -60,7 +60,7 @@
       "tau": "2.5",
       "hops": 3,
       "seed": 0,
-      "step": 362336
+      "step": 609536
     },
     {
       "pid": 3787493,
@@ -68,7 +68,7 @@
       "tau": "4",
       "hops": 3,
       "seed": 0,
-      "step": 341920
+      "step": 587872
     },
     {
       "pid": 3787494,
@@ -76,7 +76,7 @@
       "tau": "7",
       "hops": 3,
       "seed": 0,
-      "step": 346720
+      "step": 593888
     },
     {
       "pid": 3787639,
@@ -84,7 +84,7 @@
       "tau": "10",
       "hops": 3,
       "seed": 0,
-      "step": 345376
+      "step": 593888
     },
     {
       "pid": 3793469,
@@ -92,7 +92,7 @@
       "tau": "12",
       "hops": 3,
       "seed": 0,
-      "step": 299776
+      "step": 546976
     }
   ],
   "by_env": {
@@ -212,8 +212,8 @@
       "3": {
         "complete": 6,
         "live": 6,
-        "status": "6/60 \u00b7 6 live@299k",
-        "min_step": 299776
+        "status": "6/60 \u00b7 6 live@546k",
+        "min_step": 546976
       }
     },
     "walker2d-medium-v2": {

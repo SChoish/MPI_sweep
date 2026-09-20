@@ -11,7 +11,7 @@
   "ks": [
     1,
     2,
-    4
+    3
   ],
   "taus": [
     "0.05",
@@ -23,6 +23,6 @@
     "10"
   ],
   "total": 756,
-  "done": 12,
+  "done": 18,
   "source": "/home/ext_csh/MPI_sweep/results/iql_awr_fr"
 }

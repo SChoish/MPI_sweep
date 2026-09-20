@@ -17,12 +17,12 @@
     "0.05",
     "0.1",
     "0.4",
-    "1.25",
+    "1.5",
     "2.5",
     "4",
     "10"
   ],
   "total": 756,
-  "done": 18,
+  "done": 14,
   "source": "/home/ext_csh/MPI_sweep/results/iql_awr_fr"
 }

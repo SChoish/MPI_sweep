@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-20T20:23:17Z",
-  "stamp_kst": "2026-09-21 05:23 KST",
+  "updated_at": "2026-09-20T20:29:02Z",
+  "stamp_kst": "2026-09-21 05:29 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -47,7 +47,7 @@
       "tau": "4",
       "hops": 3,
       "seed": 2,
-      "step": 696768
+      "step": 701856
     },
     {
       "pid": 2063323,
@@ -55,7 +55,7 @@
       "tau": "4",
       "hops": 3,
       "seed": 3,
-      "step": 595424
+      "step": 600448
     },
     {
       "pid": 2063324,
@@ -63,13 +63,13 @@
       "tau": "7",
       "hops": 3,
       "seed": 0,
-      "step": 396640
+      "step": 401664
     }
   ],
   "eta": {
-    "label": "3.4\uc77c \u00b7 09/24 16:00 KST",
+    "label": "3.4\uc77c \u00b7 09/24 16:06 KST",
     "hours": 82.6,
-    "finish_kst": "2026-09-24 16:00 KST",
+    "finish_kst": "2026-09-24 16:06 KST",
     "cell_min": 30.9,
     "slots": 3,
     "cells_per_hour": 5.8,
@@ -112,8 +112,8 @@
       "3": {
         "complete": 37,
         "live": 3,
-        "status": "37/40 \u00b7 3 live@396k",
-        "min_step": 396640
+        "status": "37/40 \u00b7 3 live@401k",
+        "min_step": 401664
       }
     },
     "halfcheetah-expert-v2": {

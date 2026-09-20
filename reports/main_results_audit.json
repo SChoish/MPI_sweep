@@ -2019,6 +2019,20 @@
     "method": "Gaussian Q+BC–W2",
     "env": "hopper-medium-v2",
     "T": 4.0,
+    "K": 2,
+    "seed": 1,
+    "score": 0.6777133575543894,
+    "machine": "choi (계정)",
+    "source": "sweep_results/iql_gauss_v5/scores.csv",
+    "line": 324,
+    "priority": 0,
+    "selected": true,
+    "conflict": false
+  },
+  {
+    "method": "Gaussian Q+BC–W2",
+    "env": "hopper-medium-v2",
+    "T": 4.0,
     "K": 4,
     "seed": 0,
     "score": 0.708818420617189,
@@ -2052,7 +2066,7 @@
     "score": 0.7339870051617758,
     "machine": "choi (계정)",
     "source": "sweep_results/iql_gauss_v5/scores.csv",
-    "line": 320,
+    "line": 326,
     "priority": 2,
     "selected": true,
     "conflict": false
@@ -2066,7 +2080,7 @@
     "score": 0.6777133575543894,
     "machine": "choi (계정)",
     "source": "sweep_results/iql_gauss_v5/scores.csv",
-    "line": 322,
+    "line": 328,
     "priority": 2,
     "selected": true,
     "conflict": false
@@ -2080,7 +2094,7 @@
     "score": 1.0708842628578614,
     "machine": "choi (계정)",
     "source": "sweep_results/iql_gauss_v5/scores.csv",
-    "line": 324,
+    "line": 330,
     "priority": 2,
     "selected": true,
     "conflict": false
@@ -2094,7 +2108,7 @@
     "score": 0.7340185537001946,
     "machine": "choi (계정)",
     "source": "sweep_results/iql_gauss_v5/scores.csv",
-    "line": 326,
+    "line": 332,
     "priority": 2,
     "selected": true,
     "conflict": false

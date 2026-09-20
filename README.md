@@ -1,5 +1,8 @@
 # PART: Proximal Actor Refinement through Target Routing
 
+**[Main experiment results — AWR–FR / Gaussian Q+BC–W2 / TD3+BC MPI](MAIN_RESULTS.md)**  
+환경별 T × K=1–4 점수·시드·머신 출처를 자동 갱신합니다.
+
 Reproducible PART sweeps for offline TD3+BC, with proximal-loss and
 action-metric-matched projected-linearized realizations implemented in
 JAX/Flax. Released paths, configuration keys, and scripts retain the

@@ -673,6 +673,62 @@
   },
   {
     "method": "AWR–FR",
+    "env": "hopper-medium-replay-v2",
+    "T": 10.0,
+    "K": 1,
+    "seed": 0,
+    "score": 98.75576901344017,
+    "machine": "shchoi (계정)",
+    "source": "sweep_results/iql_k4_t6/scores_long.csv",
+    "line": 146,
+    "priority": -1,
+    "selected": true,
+    "conflict": false
+  },
+  {
+    "method": "AWR–FR",
+    "env": "hopper-medium-replay-v2",
+    "T": 10.0,
+    "K": 1,
+    "seed": 1,
+    "score": 96.05265816959106,
+    "machine": "shchoi (계정)",
+    "source": "sweep_results/iql_k4_t6/scores_long.csv",
+    "line": 152,
+    "priority": -1,
+    "selected": true,
+    "conflict": false
+  },
+  {
+    "method": "AWR–FR",
+    "env": "hopper-medium-replay-v2",
+    "T": 10.0,
+    "K": 4,
+    "seed": 0,
+    "score": 102.95275025406316,
+    "machine": "shchoi (계정)",
+    "source": "sweep_results/iql_k4_t6/scores_long.csv",
+    "line": 150,
+    "priority": 1,
+    "selected": true,
+    "conflict": false
+  },
+  {
+    "method": "AWR–FR",
+    "env": "hopper-medium-replay-v2",
+    "T": 10.0,
+    "K": 4,
+    "seed": 1,
+    "score": 102.22344252758593,
+    "machine": "shchoi (계정)",
+    "source": "sweep_results/iql_k4_t6/scores_long.csv",
+    "line": 156,
+    "priority": 1,
+    "selected": true,
+    "conflict": false
+  },
+  {
+    "method": "AWR–FR",
     "env": "hopper-medium-v2",
     "T": 0.05,
     "K": 1,
@@ -680,7 +736,7 @@
     "score": 42.805613368319094,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 146,
+    "line": 158,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -694,7 +750,7 @@
     "score": 41.16381722495494,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 152,
+    "line": 164,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -708,7 +764,7 @@
     "score": 41.40965763716599,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 158,
+    "line": 170,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -722,7 +778,7 @@
     "score": 40.00801221740897,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 164,
+    "line": 176,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -736,7 +792,7 @@
     "score": 43.105647714074635,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 150,
+    "line": 162,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -750,7 +806,7 @@
     "score": 43.94003945656589,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 156,
+    "line": 168,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -764,7 +820,7 @@
     "score": 50.47332654768206,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 162,
+    "line": 174,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -778,7 +834,7 @@
     "score": 41.021580349725426,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 168,
+    "line": 180,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -792,7 +848,7 @@
     "score": 45.15952935724497,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 170,
+    "line": 182,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -806,7 +862,7 @@
     "score": 41.89701990053346,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 176,
+    "line": 188,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -820,7 +876,7 @@
     "score": 42.24401620785801,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 182,
+    "line": 194,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -834,7 +890,7 @@
     "score": 44.099864943603244,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 188,
+    "line": 200,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -848,7 +904,7 @@
     "score": 43.79753830602548,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 174,
+    "line": 186,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -862,7 +918,7 @@
     "score": 46.26251498540091,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 180,
+    "line": 192,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -876,7 +932,7 @@
     "score": 42.429255484299034,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 186,
+    "line": 198,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -890,7 +946,7 @@
     "score": 42.04482657829091,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 192,
+    "line": 204,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -904,7 +960,7 @@
     "score": 42.94700444819054,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 194,
+    "line": 206,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -918,7 +974,7 @@
     "score": 41.02412867791946,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 200,
+    "line": 212,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -932,7 +988,7 @@
     "score": 41.82677795603298,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 206,
+    "line": 218,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -946,7 +1002,7 @@
     "score": 45.80126302977748,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 212,
+    "line": 224,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -960,7 +1016,7 @@
     "score": 41.09571642349856,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 198,
+    "line": 210,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -974,7 +1030,7 @@
     "score": 44.55604171836648,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 204,
+    "line": 216,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -988,7 +1044,7 @@
     "score": 44.22189539900131,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 210,
+    "line": 222,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1002,7 +1058,7 @@
     "score": 41.935726688905575,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 216,
+    "line": 228,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1016,7 +1072,7 @@
     "score": 49.43323681208628,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 218,
+    "line": 230,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1030,7 +1086,7 @@
     "score": 43.44719858002136,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 224,
+    "line": 236,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1044,7 +1100,7 @@
     "score": 43.02299310622177,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 230,
+    "line": 242,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1058,7 +1114,7 @@
     "score": 43.2977553345157,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 236,
+    "line": 248,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1072,7 +1128,7 @@
     "score": 44.90054351040785,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 222,
+    "line": 234,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1086,7 +1142,7 @@
     "score": 47.20829971447961,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 228,
+    "line": 240,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1100,7 +1156,7 @@
     "score": 43.91744556103186,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 234,
+    "line": 246,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1114,7 +1170,7 @@
     "score": 40.80499163996361,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 240,
+    "line": 252,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1128,7 +1184,7 @@
     "score": 44.7855044053647,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 242,
+    "line": 254,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1142,7 +1198,7 @@
     "score": 45.956510732081185,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 248,
+    "line": 260,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1156,7 +1212,7 @@
     "score": 43.15164190315987,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 254,
+    "line": 266,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1170,7 +1226,7 @@
     "score": 43.53742459358526,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 260,
+    "line": 272,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1184,7 +1240,7 @@
     "score": 46.67940603502498,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 246,
+    "line": 258,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1198,7 +1254,7 @@
     "score": 52.96453957034052,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 252,
+    "line": 264,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1212,7 +1268,7 @@
     "score": 48.7737211713476,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 258,
+    "line": 270,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1226,7 +1282,7 @@
     "score": 45.05287658223826,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 264,
+    "line": 276,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1240,7 +1296,7 @@
     "score": 44.22672941932074,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 266,
+    "line": 278,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1254,7 +1310,7 @@
     "score": 51.12993683569863,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 272,
+    "line": 284,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1268,7 +1324,7 @@
     "score": 56.25806912933587,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 278,
+    "line": 290,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1282,7 +1338,7 @@
     "score": 43.67027346373822,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 284,
+    "line": 296,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1296,7 +1352,7 @@
     "score": 69.10787076533526,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 270,
+    "line": 282,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1310,7 +1366,7 @@
     "score": 56.61906176381978,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 276,
+    "line": 288,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1324,7 +1380,7 @@
     "score": 59.554187265998,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 282,
+    "line": 294,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1338,7 +1394,7 @@
     "score": 63.958596122103195,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 288,
+    "line": 300,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1352,7 +1408,7 @@
     "score": 50.2869734924652,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 290,
+    "line": 302,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1366,7 +1422,7 @@
     "score": 49.78871338583469,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 296,
+    "line": 308,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1380,7 +1436,7 @@
     "score": 48.22478116060683,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 302,
+    "line": 314,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1394,7 +1450,7 @@
     "score": 51.439717755256986,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 308,
+    "line": 320,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1408,7 +1464,7 @@
     "score": 70.32605959073835,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 294,
+    "line": 306,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1422,7 +1478,7 @@
     "score": 71.56674250817156,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 300,
+    "line": 312,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1436,7 +1492,7 @@
     "score": 68.65370541411315,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 306,
+    "line": 318,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1450,7 +1506,7 @@
     "score": 62.790683900320474,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 312,
+    "line": 324,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1464,7 +1520,7 @@
     "score": 51.16650265457755,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 314,
+    "line": 326,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1478,7 +1534,7 @@
     "score": 50.80449399445969,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 320,
+    "line": 332,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1492,7 +1548,7 @@
     "score": 48.27551337283257,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 326,
+    "line": 338,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1506,7 +1562,7 @@
     "score": 48.33922194882742,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 332,
+    "line": 344,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1520,7 +1576,7 @@
     "score": 87.20461094582099,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 318,
+    "line": 330,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1534,7 +1590,7 @@
     "score": 0.7328777955165108,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 324,
+    "line": 336,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1548,7 +1604,7 @@
     "score": 90.53134461313543,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 330,
+    "line": 342,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1562,7 +1618,7 @@
     "score": 0.7330635130395451,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 336,
+    "line": 348,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1576,7 +1632,7 @@
     "score": 50.99560568719712,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 338,
+    "line": 350,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1590,7 +1646,7 @@
     "score": 57.27723602748005,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 344,
+    "line": 356,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1604,7 +1660,7 @@
     "score": 34.87774108829401,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 350,
+    "line": 362,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1618,7 +1674,7 @@
     "score": 50.52587803939542,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 356,
+    "line": 368,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1632,7 +1688,7 @@
     "score": 28.773466331495285,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 342,
+    "line": 354,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1646,7 +1702,7 @@
     "score": 0.7328777955165108,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 348,
+    "line": 360,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1660,7 +1716,7 @@
     "score": 76.91347720754648,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 354,
+    "line": 366,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1674,7 +1730,7 @@
     "score": 0.7330635130395451,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 360,
+    "line": 372,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1688,7 +1744,7 @@
     "score": 44.26715553226365,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 362,
+    "line": 374,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1702,7 +1758,7 @@
     "score": 51.03883295990222,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 368,
+    "line": 380,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1716,7 +1772,7 @@
     "score": 49.64884610780116,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 374,
+    "line": 386,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1730,7 +1786,7 @@
     "score": 45.45756816368486,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 380,
+    "line": 392,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -1744,7 +1800,7 @@
     "score": 0.8041205840305515,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 366,
+    "line": 378,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1758,7 +1814,7 @@
     "score": 4.213032602531235,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 372,
+    "line": 384,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1772,7 +1828,7 @@
     "score": 85.65077886391023,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 378,
+    "line": 390,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1786,7 +1842,7 @@
     "score": 0.7330635130395451,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 384,
+    "line": 396,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -1912,7 +1968,7 @@
     "score": 43.1785011511427,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 476,
+    "line": 488,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -1940,7 +1996,7 @@
     "score": 39.57008999804014,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 482,
+    "line": 494,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -1968,7 +2024,7 @@
     "score": 39.32703040581626,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 488,
+    "line": 500,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -1996,7 +2052,7 @@
     "score": 40.65904138624298,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 494,
+    "line": 506,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -2094,7 +2150,7 @@
     "score": 49.77401974247888,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 480,
+    "line": 492,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2108,7 +2164,7 @@
     "score": 42.47160800748735,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 486,
+    "line": 498,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2122,7 +2178,7 @@
     "score": 41.50356494961216,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 492,
+    "line": 504,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2136,7 +2192,7 @@
     "score": 44.46471216635482,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 498,
+    "line": 510,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2164,7 +2220,7 @@
     "score": 40.01036334199039,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 500,
+    "line": 512,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -2192,7 +2248,7 @@
     "score": 39.14598675327601,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 506,
+    "line": 518,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -2220,7 +2276,7 @@
     "score": 40.966146563365804,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 512,
+    "line": 524,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -2248,7 +2304,7 @@
     "score": 47.519517537903674,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 518,
+    "line": 530,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -2318,7 +2374,7 @@
     "score": 51.84545600486058,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 504,
+    "line": 516,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2332,7 +2388,7 @@
     "score": 51.0936330134956,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 510,
+    "line": 522,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2346,7 +2402,7 @@
     "score": 43.26268356453342,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 516,
+    "line": 528,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2360,7 +2416,7 @@
     "score": 49.239804964982355,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 522,
+    "line": 534,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2388,7 +2444,7 @@
     "score": 42.66693901351911,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 524,
+    "line": 536,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -2416,7 +2472,7 @@
     "score": 41.63024554243167,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 530,
+    "line": 542,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -2444,7 +2500,7 @@
     "score": 41.441905140327925,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 536,
+    "line": 548,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -2472,7 +2528,7 @@
     "score": 39.44039084722708,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 542,
+    "line": 554,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -2542,7 +2598,7 @@
     "score": 58.73649854634515,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 528,
+    "line": 540,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2556,7 +2612,7 @@
     "score": 49.95445224353626,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 534,
+    "line": 546,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2570,7 +2626,7 @@
     "score": 55.07293376503163,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 540,
+    "line": 552,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2584,7 +2640,7 @@
     "score": 53.897292653521625,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 546,
+    "line": 558,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2612,7 +2668,7 @@
     "score": 0.8068117513764181,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 548,
+    "line": 560,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -2640,7 +2696,7 @@
     "score": 11.531409423496203,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 554,
+    "line": 566,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -2738,7 +2794,7 @@
     "score": 98.84605435624641,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 552,
+    "line": 564,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2752,7 +2808,7 @@
     "score": 87.12248663130684,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 558,
+    "line": 570,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2878,7 +2934,7 @@
     "score": 0.708818420617189,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 560,
+    "line": 572,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -2892,7 +2948,7 @@
     "score": 0.7956136023008828,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 566,
+    "line": 578,
     "priority": -1,
     "selected": true,
     "conflict": false
@@ -2906,7 +2962,7 @@
     "score": 63.66319200566524,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 564,
+    "line": 576,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -2920,7 +2976,7 @@
     "score": 13.849375114963777,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 570,
+    "line": 582,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -3172,7 +3228,7 @@
     "score": 0.6769798031669644,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 572,
+    "line": 584,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -3200,7 +3256,7 @@
     "score": 0.634333105829486,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 578,
+    "line": 590,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -3298,7 +3354,7 @@
     "score": 0.708818420617189,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 576,
+    "line": 588,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -3312,7 +3368,7 @@
     "score": 0.7064314867740057,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 582,
+    "line": 594,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -3452,7 +3508,7 @@
     "score": 0.7326837906838056,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 584,
+    "line": 596,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -3480,7 +3536,7 @@
     "score": 0.634333105829486,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 590,
+    "line": 602,
     "priority": -1,
     "selected": false,
     "conflict": false
@@ -3578,7 +3634,7 @@
     "score": 0.6769798031669644,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 588,
+    "line": 600,
     "priority": 1,
     "selected": true,
     "conflict": false
@@ -3592,7 +3648,7 @@
     "score": 0.634333105829486,
     "machine": "shchoi (계정)",
     "source": "sweep_results/iql_k4_t6/scores_long.csv",
-    "line": 594,
+    "line": 606,
     "priority": 1,
     "selected": true,
     "conflict": false

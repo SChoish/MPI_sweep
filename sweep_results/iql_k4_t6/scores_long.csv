@@ -11,6 +11,12 @@ halfcheetah-expert-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,1,mean,92.62137795100992,1
 halfcheetah-expert-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,1,sample,73.9247525157883,8897.711362397487,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed1_d9c556fe8920
 halfcheetah-expert-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,4,mean,91.54898884333731,11085.791841562332,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed1_d9c556fe8920
 halfcheetah-expert-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,4,sample,71.44975564692632,8590.436072047127,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed1_d9c556fe8920
+halfcheetah-expert-v2,0.05,4,2,awr_gaussian_fr,fr,baseline,1,mean,92.31270441641718,11180.608496652127,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed2_58f348cce99b
+halfcheetah-expert-v2,0.05,4,2,awr_gaussian_fr,fr,baseline,1,sample,77.47245621070643,9338.165124843767,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed2_58f348cce99b
+halfcheetah-expert-v2,0.05,4,2,awr_gaussian_fr,fr,mpi,1,mean,92.17478693207967,11163.48579416415,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed2_58f348cce99b
+halfcheetah-expert-v2,0.05,4,2,awr_gaussian_fr,fr,mpi,1,sample,85.10530000461179,10285.796341060071,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed2_58f348cce99b
+halfcheetah-expert-v2,0.05,4,2,awr_gaussian_fr,fr,mpi,4,mean,92.00659636849474,11142.604634713021,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed2_58f348cce99b
+halfcheetah-expert-v2,0.05,4,2,awr_gaussian_fr,fr,mpi,4,sample,73.52312437285113,8847.848509726227,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed2_58f348cce99b
 halfcheetah-medium-replay-v2,0.05,4,0,awr_gaussian_fr,fr,baseline,1,mean,32.966633944425624,3812.6876459808846,halfcheetah-medium-replay-v2_iql_tau0.05_mpi4_seed0_1b945d488c54
 halfcheetah-medium-replay-v2,0.05,4,0,awr_gaussian_fr,fr,baseline,1,sample,31.182985229454225,3591.2444661243,halfcheetah-medium-replay-v2_iql_tau0.05_mpi4_seed0_1b945d488c54
 halfcheetah-medium-replay-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,1,mean,38.66047911941806,4519.588713762952,halfcheetah-medium-replay-v2_iql_tau0.05_mpi4_seed0_1b945d488c54

@@ -4,8 +4,8 @@
   "hostname": "DGX-H200-02",
   "source": "/raid/ext_csv/MPI_store/iql_qbc_gaussian_w2_hc_walker_s0123",
   "final_step": 1000000,
-  "complete_runs": 235,
-  "pending_directories": 6,
+  "complete_runs": 236,
+  "pending_directories": 5,
   "excluded": [
     {
       "run": "halfcheetah-medium-v2_iql_tau1.25_mpi1_seed0_e1b7d62b0777",
@@ -4976,6 +4976,66 @@
         "checkpoint_sha256": "d21770ccca9268a70f49c7e3ac308ed75595befcc83cb57116ef0afbffc952f0",
         "checkpoint_bytes": 6965815,
         "eval_sha256": "77693a254310c978ec647988e6473ebe7de01f0d5ee0f7db4287e99f8d3cfcbf",
+        "evaluation_rows": 6
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "halfcheetah-medium-replay-v2_iql_tau10_mpi3_seed0_79af2945a1cf",
+      "signature": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "algorithm": {
+          "variants": [
+            "qbc_gaussian_w2"
+          ],
+          "mpi_steps": 3,
+          "tau": 10.0,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "halfcheetah-medium-replay-v2",
+        "seed": 0,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "both",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "49a29ac70e250749a166fe6b15ccf803a2fced19148f36363dc62855c13bc8b8",
+        "iql_mpi_config.py": "8752a614830d0f24338fb8597d18f47cd9668ca0783af0fd393b2fba516a980b",
+        "train_iql_mpi.py": "15332ca14199adf4823432ccedc5674ad12b82c77f8d2903b87d002dfba04902",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "step": 1000000,
+        "signature": "79af2945a1cf",
+        "checkpoint_sha256": "02554da592564f73ad2c2b97f389a0b8d04040d26f22622190c0fdd8d8ba1d56",
+        "checkpoint_bytes": 7848404,
+        "eval_sha256": "9be6224c0ab8db021d4832719aa4f9a9d2559dc7ab38e4e04befbb15074d5289",
         "evaluation_rows": 6
       },
       "checkpoint_size_checked": true,

@@ -13,10 +13,16 @@ hopper-medium-replay-v2,0.1,1,2,fr,baseline,1,mean,35.494148,hopper-medium-repla
 hopper-medium-replay-v2,0.1,1,3,fr,baseline,1,mean,32.866784,hopper-medium-replay-v2_iql_tau0.1_mpi1_seed3_a2b5e2059976
 hopper-medium-replay-v2,0.1,2,0,fr,mpi,2,mean,20.634266,hopper-medium-replay-v2_iql_tau0.1_mpi2_seed0_37d9e27cc30a
 hopper-medium-replay-v2,0.1,2,1,fr,mpi,2,mean,23.660791,hopper-medium-replay-v2_iql_tau0.1_mpi2_seed1_e240e6ca012b
+hopper-medium-replay-v2,0.1,2,2,fr,mpi,2,mean,45.638328,hopper-medium-replay-v2_iql_tau0.1_mpi2_seed2_c1c27ba732d0
+hopper-medium-replay-v2,0.1,2,3,fr,mpi,2,mean,26.062978,hopper-medium-replay-v2_iql_tau0.1_mpi2_seed3_5d99f201fd4b
 hopper-medium-replay-v2,0.4,1,0,fr,baseline,1,mean,54.484327,hopper-medium-replay-v2_iql_tau0.4_mpi1_seed0_847cefee2801
 hopper-medium-replay-v2,0.4,1,1,fr,baseline,1,mean,21.281155,hopper-medium-replay-v2_iql_tau0.4_mpi1_seed1_aee398aad868
 hopper-medium-replay-v2,0.4,1,2,fr,baseline,1,mean,45.409054,hopper-medium-replay-v2_iql_tau0.4_mpi1_seed2_3f84739b6b11
 hopper-medium-replay-v2,0.4,1,3,fr,baseline,1,mean,21.489956,hopper-medium-replay-v2_iql_tau0.4_mpi1_seed3_40723a0154f1
+hopper-medium-replay-v2,0.4,2,0,fr,mpi,2,mean,49.747929,hopper-medium-replay-v2_iql_tau0.4_mpi2_seed0_7a5f66c297cd
+hopper-medium-replay-v2,0.4,2,1,fr,mpi,2,mean,48.708804,hopper-medium-replay-v2_iql_tau0.4_mpi2_seed1_2fded0ecf69c
+hopper-medium-replay-v2,0.4,2,2,fr,mpi,2,mean,33.156953,hopper-medium-replay-v2_iql_tau0.4_mpi2_seed2_df2f3d1f0a10
+hopper-medium-replay-v2,0.4,2,3,fr,mpi,2,mean,34.475566,hopper-medium-replay-v2_iql_tau0.4_mpi2_seed3_5002344eaf29
 hopper-medium-replay-v2,1.5,1,0,fr,baseline,1,mean,66.516548,hopper-medium-replay-v2_iql_tau1.5_mpi1_seed0_3d9ac89fcb53
 hopper-medium-replay-v2,1.5,1,1,fr,baseline,1,mean,101.422446,hopper-medium-replay-v2_iql_tau1.5_mpi1_seed1_280535dbd71c
 hopper-medium-replay-v2,1.5,1,2,fr,baseline,1,mean,100.745353,hopper-medium-replay-v2_iql_tau1.5_mpi1_seed2_f3cadfe6793c

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-20 20:07:59 UTC+09:00",
+  "updated_at": "2026-09-20 20:13:12 UTC+09:00",
   "schema": "iql_actor_geometry_v5_consistent_gaussian",
   "k": 4,
   "taus": [
@@ -42,7 +42,7 @@
     "walker2d-expert-v2"
   ],
   "total": 540,
-  "started": 88,
+  "started": 90,
   "done": 88,
   "queue_ok": 84,
   "queue_fail": 0,

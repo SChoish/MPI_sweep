@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-20T13:13:16Z",
-  "stamp_kst": "2026-09-20 22:13 KST",
+  "updated_at": "2026-09-20T13:18:50Z",
+  "stamp_kst": "2026-09-20 22:18 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -47,7 +47,7 @@
       "tau": "2.5",
       "hops": 2,
       "seed": 0,
-      "step": 590240
+      "step": 822336
     },
     {
       "pid": 1606248,
@@ -55,7 +55,7 @@
       "tau": "2.5",
       "hops": 2,
       "seed": 1,
-      "step": 605440
+      "step": 855296
     },
     {
       "pid": 1622528,
@@ -63,7 +63,7 @@
       "tau": "2.5",
       "hops": 2,
       "seed": 2,
-      "step": 568736
+      "step": 821888
     },
     {
       "pid": 1623966,
@@ -71,7 +71,7 @@
       "tau": "2.5",
       "hops": 2,
       "seed": 3,
-      "step": 556576
+      "step": 811968
     },
     {
       "pid": 1640500,
@@ -79,7 +79,7 @@
       "tau": "4",
       "hops": 2,
       "seed": 0,
-      "step": 412416
+      "step": 628928
     },
     {
       "pid": 1675029,
@@ -87,17 +87,17 @@
       "tau": "4",
       "hops": 2,
       "seed": 1,
-      "step": 359136
+      "step": 600448
     }
   ],
   "eta": {
-    "label": "18.4\uc2dc\uac04 \u00b7 09/21 16:34 KST",
-    "hours": 18.4,
-    "finish_kst": "2026-09-21 16:34 KST",
+    "label": "18.3\uc2dc\uac04 \u00b7 09/21 16:37 KST",
+    "hours": 18.3,
+    "finish_kst": "2026-09-21 16:37 KST",
     "cell_min": 12.4,
     "slots": 6,
     "cells_per_hour": 29.0,
-    "assumption": "6 live slots \u00b7 median 12.4 min/cell from [ok] \u22658m \u00b7 leftover 532.9 cells"
+    "assumption": "6 live slots \u00b7 median 12.4 min/cell from [ok] \u22658m \u00b7 leftover 531.5 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -130,8 +130,8 @@
       "2": {
         "complete": 24,
         "live": 6,
-        "status": "24/40 \u00b7 6 live@359k",
-        "min_step": 359136
+        "status": "24/40 \u00b7 6 live@600k",
+        "min_step": 600448
       },
       "3": {
         "complete": 0,

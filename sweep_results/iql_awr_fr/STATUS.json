@@ -1,0 +1,28 @@
+{
+  "schema": "iql_awr_fr",
+  "variant": "awr_gaussian_fr",
+  "geometry": "fr",
+  "seed": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "ks": [
+    1,
+    2,
+    4
+  ],
+  "taus": [
+    "0.05",
+    "0.1",
+    "0.4",
+    "1.25",
+    "2.5",
+    "4",
+    "10"
+  ],
+  "total": 756,
+  "done": 6,
+  "source": "/home/ext_csh/MPI_sweep/results/iql_awr_fr"
+}

@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-20T01:24:37Z",
-  "stamp_kst": "2026-09-20 10:24 KST",
+  "updated_at": "2026-09-20T01:30:08Z",
+  "stamp_kst": "2026-09-20 10:30 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -52,7 +52,7 @@
       "tau": "14",
       "hops": 3,
       "seed": 0,
-      "step": 595232
+      "step": 840896
     },
     {
       "pid": 3956277,
@@ -60,7 +60,7 @@
       "tau": "17",
       "hops": 3,
       "seed": 0,
-      "step": 599072
+      "step": 845696
     },
     {
       "pid": 3956278,
@@ -68,7 +68,7 @@
       "tau": "20",
       "hops": 3,
       "seed": 0,
-      "step": 699904
+      "step": 945760
     }
   ],
   "by_env": {
@@ -188,8 +188,8 @@
       "3": {
         "complete": 12,
         "live": 3,
-        "status": "12/60 \u00b7 3 live@595k",
-        "min_step": 595232
+        "status": "12/60 \u00b7 3 live@840k",
+        "min_step": 840896
       }
     },
     "walker2d-medium-v2": {

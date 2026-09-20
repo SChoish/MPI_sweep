@@ -5,6 +5,9 @@ halfcheetah-medium-v2,0.05,1,2,fr,baseline,1,mean,42.253156,halfcheetah-medium-v
 halfcheetah-medium-v2,0.05,2,0,fr,mpi,2,mean,42.439893,halfcheetah-medium-v2_iql_tau0.05_mpi2_seed0_66c3ce9a82e6
 halfcheetah-medium-v2,0.05,2,1,fr,mpi,2,mean,43.405609,halfcheetah-medium-v2_iql_tau0.05_mpi2_seed1_0099ca60046b
 halfcheetah-medium-v2,0.05,2,2,fr,mpi,2,mean,42.376282,halfcheetah-medium-v2_iql_tau0.05_mpi2_seed2_8c441ebe4852
+halfcheetah-medium-v2,0.05,3,0,fr,mpi,3,mean,42.412515,halfcheetah-medium-v2_iql_tau0.05_mpi3_seed0_525c4b229d4b
+halfcheetah-medium-v2,0.05,3,1,fr,mpi,3,mean,42.353212,halfcheetah-medium-v2_iql_tau0.05_mpi3_seed1_f9d9b35fe6ca
+halfcheetah-medium-v2,0.05,3,2,fr,mpi,3,mean,42.145641,halfcheetah-medium-v2_iql_tau0.05_mpi3_seed2_d21aed711b4b
 hopper-expert-v2,0.05,1,0,fr,baseline,1,mean,110.410351,hopper-expert-v2_iql_tau0.05_mpi1_seed0_ce60b78caee2
 hopper-expert-v2,0.05,1,1,fr,baseline,1,mean,104.143043,hopper-expert-v2_iql_tau0.05_mpi1_seed1_f7cd31e16cdc
 hopper-expert-v2,0.05,1,2,fr,baseline,1,mean,100.833957,hopper-expert-v2_iql_tau0.05_mpi1_seed2_3298af1f406a

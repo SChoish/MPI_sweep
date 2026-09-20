@@ -68,6 +68,46 @@ class MainResultsTests(unittest.TestCase):
         self.assertFalse(selected)
         self.assertEqual(len(warnings), 2)
 
+    def awr_export(self, **changes):
+        row = self.row(K=2, hop=2, step="", run="hopper-medium-v2_iql_tau0.4_mpi2_seed0_0123456789ab")
+        row.update(changes)
+        return row
+
+    def test_ext_csh_reported_final_contract_without_invented_step(self):
+        status = dict(schema="iql_awr_fr", variant="awr_gaussian_fr", geometry="fr", done=1)
+        self.write("iql_awr_fr", [self.awr_export()], status)
+        selected, _, warnings, _, audit = mod.collect(self.root)
+        self.assertEqual(len(selected), 1)
+        self.assertFalse(warnings)
+        self.assertIsNone(audit[0]["step"])
+        self.assertEqual(audit[0]["completion"], "publisher_final_export")
+        status["done"] = 2
+        self.write("iql_awr_fr", [self.awr_export()], status)
+        self.assertFalse(mod.collect(self.root)[0])
+
+    def test_ext_csh_contract_rejects_intermediate_or_mislabeled_run(self):
+        status = dict(schema="iql_awr_fr", variant="awr_gaussian_fr", geometry="fr", done=1)
+        for changes in (dict(hop=1), dict(seed=3), dict(geometry="w2"), dict(eval_mode="sample")):
+            with self.subTest(changes=changes):
+                self.write("iql_awr_fr", [self.awr_export(**changes)], status)
+                self.assertFalse(mod.collect(self.root)[0])
+
+    def test_explicit_final_step_precedes_rounded_export_not_highest_score(self):
+        status = dict(schema="iql_awr_fr", variant="awr_gaussian_fr", geometry="fr", done=1)
+        self.write("iql_awr_fr", [self.awr_export(d4rl_score=99)], status)
+        self.write("iql_verified", [self.row(K=2, hop=2, d4rl_score=40.123456789)])
+        selected, _, warnings, *_ = mod.collect(self.root)
+        self.assertFalse(warnings)
+        self.assertEqual(next(iter(selected.values()))["score"], 40.123456789)
+
+    def test_status_only_reports_missing_scores_without_fabricating_them(self):
+        folder = self.root / "sweep_results/iql_ext_csv"
+        folder.mkdir(parents=True)
+        (folder / "STATUS.json").write_text(json.dumps(dict(variant="qbc_gaussian_w2", counts={"complete": 92})))
+        selected, _, warnings, *_ = mod.collect(self.root)
+        self.assertFalse(selected)
+        self.assertIn("완료 92개 보고, 점수 CSV 미게시", warnings[0])
+
     def test_machine_and_std(self):
         self.assertEqual(mod.machine({}, {"source": "/home/choi/results"}), "choi (계정)")
         self.assertEqual(mod.machine({"machine": "gpu-host"}, {}), "gpu-host")
@@ -88,6 +128,7 @@ class MainResultsTests(unittest.TestCase):
         self.assertIn(("AWR–FR", "env", .1, 4, 0), visible)
 
     def test_raw_td3_matrix_and_deterministic_render(self):
+        (self.root / "README.md").write_text("# Main experiment results\nold\n")
         for k in range(1, 5):
             folder = self.root / f"sweep_results/K={k}/Imp"
             folder.mkdir(parents=True)
@@ -96,6 +137,7 @@ class MainResultsTests(unittest.TestCase):
         first = (self.root / "MAIN_RESULTS.md").read_bytes()
         mod.build(self.root)
         self.assertEqual(first, (self.root / "MAIN_RESULTS.md").read_bytes())
+        self.assertEqual(first, (self.root / "README.md").read_bytes())
         self.assertIn("42.00", first.decode())
         self.assertIn("미확인", first.decode())
 

@@ -20,6 +20,37 @@ GRID = [.05, .1, .2, .4, .7, 1.25, 1.5, 2.5, 4, 7, 10]
 LEGACY_FINAL = {"iql_gauss_v5", "iql_k4_t6"}
 
 
+def reported_final_export(folder, status, rows):
+    """Recognize the existing ext_csh final-score export without inventing steps.
+
+    This is publisher-reported completion, not remote checkpoint verification.
+    Require the exact export contract and one final mean score per reported run.
+    """
+    if folder.name in LEGACY_FINAL:
+        return True
+    if (folder.name != "iql_awr_fr" or status.get("schema") != "iql_awr_fr"
+            or status.get("variant") != "awr_gaussian_fr" or status.get("geometry") != "fr"
+            or not rows or status.get("done") != len(rows)):
+        return False
+    runs = set()
+    try:
+        for row in rows:
+            k, seed = int(row["K"]), int(row["seed"])
+            match = re.fullmatch(r"(.+)_iql_tau([0-9.eE+-]+)_mpi([123])_seed([0-3])_([0-9a-f]{12})", row["run"])
+            if (not match or match[1] != row["env"] or number(match[2]) != number(row["tau"])
+                    or int(match[3]) != k or int(match[4]) != seed
+                    or row["geometry"] != "fr" or row["eval_mode"] != "mean"
+                    or int(row["hop"]) != k
+                    or row["policy"] != ("baseline" if k == 1 else "mpi")
+                    or row["run"] in runs):
+                return False
+            number(row["d4rl_score"])
+            runs.add(row["run"])
+    except (KeyError, ValueError, TypeError):
+        return False
+    return True
+
+
 def read_json(path):
     return json.loads(path.read_text()) if path.exists() else {}
 
@@ -47,21 +78,28 @@ def collect(root):
     sources = set()
     planned = set()
 
-    def add(section, env, t, k, seed, score, host, path, line, priority=0):
+    def add(section, env, t, k, seed, score, host, path, line, priority=0,
+            completion="legacy_matrix", step=None):
         if k not in (1, 2, 3, 4) or seed not in (0, 1, 2, 3):
             return
         if t <= 0:
             raise ValueError("T must be positive")
         key = (section, env, t, k, seed)
         candidates[key].append(dict(score=score, machine=host, source=str(path.relative_to(root)),
-                                    line=line, priority=priority))
+                                    line=line, priority=priority, completion=completion, step=step))
         sources.add(str(path.relative_to(root)))
 
     for folder in sorted((root / "sweep_results").glob("iql*")):
         status = read_json(folder / "STATUS.json")
-        for path in sorted(folder.glob("scores*.csv")):
+        paths = sorted(folder.glob("scores*.csv"))
+        completed = status.get("done") or status.get("counts", {}).get("complete", 0)
+        if not paths and completed and status.get("variant") in VARIANTS:
+            warnings.add(f"{folder.relative_to(root)}: 완료 {completed}개 보고, 점수 CSV 미게시")
+        for path in paths:
             with path.open(newline="") as f:
-                for line, row in enumerate(csv.DictReader(f), 2):
+                rows = list(csv.DictReader(f))
+                legacy_export = reported_final_export(folder, status, rows)
+                for line, row in enumerate(rows, 2):
                     variant = row.get("variant") or status.get("variant")
                     if variant not in VARIANTS:
                         continue
@@ -104,11 +142,13 @@ def collect(root):
                         step = row.get("step") or row.get("timesteps")
                         if step and number(step) != 1_000_000:
                             continue
-                        if not step and folder.name not in LEGACY_FINAL:
+                        if not step and not legacy_export:
                             warnings.add(f"{path.relative_to(root)}: step 없는 신규 소스는 집계 보류")
                             continue
                         score = number(row["d4rl_score"])
-                        add(section, env, t, k, seed, score, machine(row, status), path, line, priority)
+                        add(section, env, t, k, seed, score, machine(row, status), path, line, priority,
+                            completion="reported_step" if step else "publisher_final_export",
+                            step=int(number(step)) if step else None)
                     except (ValueError, TypeError, KeyError):
                         warnings.add(f"{path.relative_to(root)}:{line}: 필수 필드/수치 확인 필요")
 
@@ -138,8 +178,9 @@ def collect(root):
     audit = []
     for key, rows in sorted(candidates.items()):
         # Never pick the highest score. Conflicts with equal priority are withheld.
-        rank = max(r["priority"] for r in rows)
-        top = [r for r in rows if r["priority"] == rank]
+        # Explicit step metadata wins over rounded legacy exports at the same actor priority.
+        rank = max((r["priority"], r["step"] is not None) for r in rows)
+        top = [r for r in rows if (r["priority"], r["step"] is not None) == rank]
         conflict = any(abs(r["score"] - top[0]["score"]) > 1e-8 for r in top)
         chosen = None if conflict else min(top, key=lambda r: (r["source"], r["line"]))
         if conflict:
@@ -182,9 +223,9 @@ def build(root):
            "자동 생성: `python3 scripts/build_main_results.py`. 방법 → 환경 → T 순서이며 K=1~4를 같은 표에서 비교합니다.", "",
            "- 각 칸: **정규화 점수 평균 ± 표본 표준편차(ddof=1)**, 확보한 시드 수, 시드별 점수·실행 머신·원본 링크. 시드는 0~3입니다.",
            "- 4시드 미만의 평균은 진행 중 참고값입니다. n=1은 표준편차를 표시하지 않습니다. `—`는 채택 가능한 게시 점수가 없다는 뜻이며 실행 중 여부를 뜻하지 않습니다.",
-           "- IQL은 mean-action 평가의 최종 actor만 사용합니다. 기존 두 publisher의 step 없는 CSV는 최종 점수 export로 취급하며, 신규 소스는 step=1000000이 필요합니다. 원격 체크포인트 존재까지 검증하는 표는 아닙니다.",
+           "- IQL은 mean-action 평가의 최종 actor만 사용합니다. 기존 iql_gauss_v5·iql_k4_t6와 완료 수·run 식별자가 일치하는 ext_csh iql_awr_fr는 게시자의 최종점수 export로 읽습니다. 이들 step 미기록 값은 추정하지 않으며 감사 JSON에 publisher_final_export로 구분합니다. 그 외 소스는 step=1000000이 필요합니다.",
            "- K=1은 standalone 결과 우선. shchoi v5의 full-T baseline은 보완에만 사용합니다. v6의 h-baseline과 중간 actor는 제외합니다. K=4도 머신과 무관하게 같은 표에 합칩니다.",
-           "- 중복은 점수 최대값으로 고르지 않습니다. standalone K1 / shared-bank K4 우선순위 적용 후 동순위 점수 충돌은 보류합니다. 전체 후보는 [집계 감사 JSON](reports/main_results_audit.json)에 기록합니다.",
+           "- 중복은 점수 최대값으로 고르지 않습니다. standalone K1 / shared-bank K4, 명시된 최종 step 순서로 우선하며 동순위 점수 충돌은 보류합니다. 전체 후보는 [집계 감사 JSON](reports/main_results_audit.json)에 기록합니다.",
            "- 머신은 명시된 hostname/machine 우선입니다. STATUS의 `/home/<account>`만 있으면 `(계정)`으로 표시합니다. 과거 TD3+BC 행렬에는 머신 정보가 없어 `미확인`으로 남깁니다.",
            "- TD3+BC MPI는 같은 integrator·환경·T에서 K=1~4가 모두 있는 행만 표시합니다. 현재 Explicit는 이 조건을 충족하지 않아 생략하며, 원본과 감사 JSON은 유지합니다.",
            "- T는 총 horizon, h=T/K. K=1 기준 AWR 역온도=T, Gaussian BC 계수=1/T. TD3+BC implicit actor 계수 α=2T(Q 정규화 적용).", "",
@@ -225,7 +266,12 @@ def build(root):
             "GitHub Actions는 main의 결과 push에 반응합니다. 다른 Actions가 GITHUB_TOKEN으로 push한 경우 push 이벤트가 재발화되지 않을 수 있어 시간별 재집계도 수행합니다.", ""]
     out += [f"- [{s}]({quote(s, safe='/')})" for s in sources]
     out += ["", "### 확인 필요", ""] + (["- " + x for x in warnings] or ["현재 파싱 경고 없음."])
-    (root / "MAIN_RESULTS.md").write_text("\n".join(out) + "\n")
+    rendered = "\n".join(out) + "\n"
+    (root / "MAIN_RESULTS.md").write_text(rendered)
+    # The owner also uses the generated table as the repository landing page.
+    readme = root / "README.md"
+    if readme.exists() and readme.read_text().startswith("# Main experiment results\n"):
+        readme.write_text(rendered)
     (root / "reports").mkdir(exist_ok=True)
     (root / "reports/main_results_audit.json").write_text(json.dumps(audit, ensure_ascii=False, indent=2) + "\n")
     print(f"MAIN_RESULTS.md: {len(selected)} seed scores, {len(warnings)} warnings")

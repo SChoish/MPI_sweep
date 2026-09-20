@@ -21,3 +21,5 @@ hopper-medium-v2,2.5,1,2,fr,baseline,1,mean,51.026349,hopper-medium-v2_iql_tau2.
 hopper-medium-v2,2.5,1,3,fr,baseline,1,mean,49.559959,hopper-medium-v2_iql_tau2.5_mpi1_seed3_f2e7efcaf30d
 hopper-medium-v2,4,1,0,fr,baseline,1,mean,56.363498,hopper-medium-v2_iql_tau4_mpi1_seed0_e3ae240c8c69
 hopper-medium-v2,4,1,1,fr,baseline,1,mean,35.130542,hopper-medium-v2_iql_tau4_mpi1_seed1_8462f5f8192c
+hopper-medium-v2,4,1,2,fr,baseline,1,mean,49.993586,hopper-medium-v2_iql_tau4_mpi1_seed2_6b9be18a8f9d
+hopper-medium-v2,4,1,3,fr,baseline,1,mean,58.060838,hopper-medium-v2_iql_tau4_mpi1_seed3_fb394efcbd9b

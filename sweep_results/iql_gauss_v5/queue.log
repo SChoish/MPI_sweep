@@ -219,3 +219,5 @@
 [launch] gpu=0 hopper-medium-v2_iql_tau7_mpi2_seed2_7108e32bac13 pid=220989
 [ok] hopper-medium-v2_iql_tau7_mpi2_seed1_c84a2480a1c9 21.4m
 [launch] gpu=0 hopper-medium-v2_iql_tau7_mpi2_seed3_7da12d8c423e pid=221565
+[ok] hopper-medium-v2_iql_tau7_mpi2_seed2_7108e32bac13 36.2m
+[launch] gpu=0 hopper-medium-v2_iql_tau10_mpi2_seed1_9ead138aba93 pid=228841

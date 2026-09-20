@@ -965,4 +965,4 @@ GitHub Actions는 main의 결과 push에 반응합니다. 다른 Actions가 GITH
 
 ### 확인 필요
 
-현재 파싱 경고 없음.
+- sweep_results/iql_awr_fr/scores.csv: step 없는 신규 소스는 집계 보류

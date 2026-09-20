@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-20T01:52:16Z",
-  "stamp_kst": "2026-09-20 10:52 KST",
+  "updated_at": "2026-09-20T01:57:44Z",
+  "stamp_kst": "2026-09-20 10:57 KST",
   "variant": "qbc_deterministic_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 405,
   "seed_complete": [
-    276,
+    282,
     0,
     0,
     0
@@ -39,60 +39,36 @@
   ],
   "planned": 1620,
   "counts": {
-    "complete": 276,
-    "running": 6,
-    "remaining": 1338,
+    "complete": 282,
+    "running": 3,
+    "remaining": 1335,
     "extra_dirs": 25
   },
   "queue": "2026-09-20T01:33:39+00:00 env=walker2d-medium-v2 hop=1 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 12 14 17 20 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 4111850,
+      "pid": 4171098,
       "env": "walker2d-medium-v2",
-      "tau": "1.5",
+      "tau": "14",
       "hops": 1,
       "seed": 0,
-      "step": 790304
+      "step": 522336
     },
     {
-      "pid": 4111933,
+      "pid": 4171863,
       "env": "walker2d-medium-v2",
-      "tau": "2.5",
+      "tau": "17",
       "hops": 1,
       "seed": 0,
-      "step": 729824
+      "step": 363552
     },
     {
-      "pid": 4112018,
+      "pid": 4171864,
       "env": "walker2d-medium-v2",
-      "tau": "4",
+      "tau": "20",
       "hops": 1,
       "seed": 0,
-      "step": 774816
-    },
-    {
-      "pid": 4112019,
-      "env": "walker2d-medium-v2",
-      "tau": "7",
-      "hops": 1,
-      "seed": 0,
-      "step": 764000
-    },
-    {
-      "pid": 4112121,
-      "env": "walker2d-medium-v2",
-      "tau": "10",
-      "hops": 1,
-      "seed": 0,
-      "step": 771040
-    },
-    {
-      "pid": 4112714,
-      "env": "walker2d-medium-v2",
-      "tau": "12",
-      "hops": 1,
-      "seed": 0,
-      "step": 756384
+      "step": 373984
     }
   ],
   "by_env": {
@@ -218,10 +194,10 @@
     },
     "walker2d-medium-v2": {
       "1": {
-        "complete": 6,
-        "live": 6,
-        "status": "6/60 \u00b7 6 live@729k",
-        "min_step": 729824
+        "complete": 12,
+        "live": 3,
+        "status": "12/60 \u00b7 3 live@363k",
+        "min_step": 363552
       },
       "2": {
         "complete": 0,

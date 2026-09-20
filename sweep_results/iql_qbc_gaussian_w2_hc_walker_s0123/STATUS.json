@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-20T17:26:39Z",
-  "stamp_kst": "2026-09-21 02:26 KST",
+  "updated_at": "2026-09-20T17:32:18Z",
+  "stamp_kst": "2026-09-21 02:32 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -42,12 +42,20 @@
   "queue": "2026-09-20T15:06:58+00:00 env=halfcheetah-medium-replay-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
+      "pid": 1222490,
+      "env": "",
+      "tau": "",
+      "hops": null,
+      "seed": null,
+      "step": 0
+    },
+    {
       "pid": 3403317,
       "env": "halfcheetah-medium-replay-v2",
       "tau": "0.2",
       "hops": 3,
       "seed": 1,
-      "step": 915552
+      "step": 920608
     },
     {
       "pid": 3403318,
@@ -55,7 +63,7 @@
       "tau": "0.2",
       "hops": 3,
       "seed": 2,
-      "step": 916064
+      "step": 921120
     },
     {
       "pid": 3403319,
@@ -63,7 +71,7 @@
       "tau": "0.2",
       "hops": 3,
       "seed": 3,
-      "step": 917088
+      "step": 922144
     },
     {
       "pid": 978776,
@@ -71,7 +79,7 @@
       "tau": "2.5",
       "hops": 3,
       "seed": 0,
-      "step": 431104
+      "step": 637696
     },
     {
       "pid": 982394,
@@ -79,7 +87,7 @@
       "tau": "2.5",
       "hops": 3,
       "seed": 1,
-      "step": 387040
+      "step": 568416
     },
     {
       "pid": 1018007,
@@ -87,17 +95,17 @@
       "tau": "2.5",
       "hops": 3,
       "seed": 2,
-      "step": 289664
+      "step": 464704
     }
   ],
   "eta": {
-    "label": "36.4\uc2dc\uac04 \u00b7 09/22 14:53 KST",
-    "hours": 36.4,
-    "finish_kst": "2026-09-22 14:53 KST",
+    "label": "31.3\uc2dc\uac04 \u00b7 09/22 09:48 KST",
+    "hours": 31.3,
+    "finish_kst": "2026-09-22 09:48 KST",
     "cell_min": 26.5,
-    "slots": 6,
-    "cells_per_hour": 13.6,
-    "assumption": "6 live slots \u00b7 median 26.5 min/cell from [ok] \u22658m \u00b7 leftover 495.1 cells"
+    "slots": 7,
+    "cells_per_hour": 15.8,
+    "assumption": "7 live slots \u00b7 median 26.5 min/cell from [ok] \u22658m \u00b7 leftover 495.6 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -136,8 +144,8 @@
       "3": {
         "complete": 21,
         "live": 6,
-        "status": "21/40 \u00b7 6 live@289k",
-        "min_step": 289664
+        "status": "21/40 \u00b7 6 live@464k",
+        "min_step": 464704
       }
     },
     "halfcheetah-expert-v2": {

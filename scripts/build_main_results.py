@@ -166,8 +166,17 @@ def cell(rows):
     return f"**{score}** ({len(vals)}/4)" + "<br>" + "<br>".join(detail)
 
 
+def visible_results(selected):
+    """TD3 rows require all four K values within the same environment/integrator."""
+    return {key: value for key, value in selected.items()
+            if not key[0].startswith("TD3+BC MPI") or all(
+                any((*key[:3], k, seed) in selected for seed in range(4))
+                for k in range(1, 5))}
+
+
 def build(root):
     selected, planned, warnings, sources, audit = collect(root)
+    selected = visible_results(selected)
     sections = [*VARIANTS.values(), "TD3+BC MPI · Implicit", "TD3+BC MPI · Explicit"]
     out = ["# Main experiment results", "",
            "자동 생성: `python3 scripts/build_main_results.py`. 방법 → 환경 → T 순서이며 K=1~4를 같은 표에서 비교합니다.", "",
@@ -177,21 +186,31 @@ def build(root):
            "- K=1은 standalone 결과 우선. shchoi v5의 full-T baseline은 보완에만 사용합니다. v6의 h-baseline과 중간 actor는 제외합니다. K=4도 머신과 무관하게 같은 표에 합칩니다.",
            "- 중복은 점수 최대값으로 고르지 않습니다. standalone K1 / shared-bank K4 우선순위 적용 후 동순위 점수 충돌은 보류합니다. 전체 후보는 [집계 감사 JSON](reports/main_results_audit.json)에 기록합니다.",
            "- 머신은 명시된 hostname/machine 우선입니다. STATUS의 `/home/<account>`만 있으면 `(계정)`으로 표시합니다. 과거 TD3+BC 행렬에는 머신 정보가 없어 `미확인`으로 남깁니다.",
+           "- TD3+BC MPI는 같은 integrator·환경·T에서 K=1~4가 모두 있는 행만 표시합니다. 현재 Explicit는 이 조건을 충족하지 않아 생략하며, 원본과 감사 JSON은 유지합니다.",
            "- T는 총 horizon, h=T/K. K=1 기준 AWR 역온도=T, Gaussian BC 계수=1/T. TD3+BC implicit actor 계수 α=2T(Q 정규화 적용).", "",
            "| 방법 | 게시된 시드 점수 | 4시드 확보 셀 |", "|---|---:|---:|"]
     for section in sections:
         keys = [k for k in selected if k[0] == section]
+        if section.startswith("TD3+BC MPI") and not keys:
+            continue
         groups = defaultdict(int)
         for key in keys:
             groups[key[:-1]] += 1
         out.append(f"| {section} | {len(keys)} | {sum(n == 4 for n in groups.values())} |")
     for section in sections:
+        if section.startswith("TD3+BC MPI") and not any(k[0] == section for k in selected):
+            continue
         out += ["", f"## {section}", ""]
+        if section.startswith("TD3+BC MPI"):
+            horizons = sorted({k[2] for k in selected if k[0] == section})
+            out += ["K=1~4 모두 게시된 환경·T만 표시합니다. T: " + ", ".join(f"{t:g}" for t in horizons) + ".", ""]
         envs = list(ENVS) + sorted({e for s, e, _ in planned if s == section} - set(ENVS))
         for env in envs:
             ts = {t for s, e, t in planned if s == section and e == env}
             if section in VARIANTS.values():
                 ts |= set(GRID)
+            if section.startswith("TD3+BC MPI"):
+                ts = {t for t in ts if any(k[:3] == (section, env, t) for k in selected)}
             if not ts:
                 continue
             out += ["<details open>" if any(k[0] == section and k[1] == env for k in selected) else "<details>",

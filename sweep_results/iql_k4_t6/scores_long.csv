@@ -1,4 +1,16 @@
 env,tau,K,seed,variant,geometry,policy,hop,eval_mode,d4rl_score,return,run
+halfcheetah-medium-v2,0.05,4,0,awr_gaussian_fr,fr,baseline,1,mean,42.95140255005271,5052.31453641245,halfcheetah-medium-v2_iql_tau0.05_mpi4_seed0_a74ce162e176
+halfcheetah-medium-v2,0.05,4,0,awr_gaussian_fr,fr,baseline,1,sample,40.07537492990617,4695.25056063355,halfcheetah-medium-v2_iql_tau0.05_mpi4_seed0_a74ce162e176
+halfcheetah-medium-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,1,mean,40.806070638623545,4785.967740472704,halfcheetah-medium-v2_iql_tau0.05_mpi4_seed0_a74ce162e176
+halfcheetah-medium-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,1,sample,40.91953376472268,4800.05439062358,halfcheetah-medium-v2_iql_tau0.05_mpi4_seed0_a74ce162e176
+halfcheetah-medium-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,4,mean,43.15861153153328,5078.039902269951,halfcheetah-medium-v2_iql_tau0.05_mpi4_seed0_a74ce162e176
+halfcheetah-medium-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,4,sample,40.033557680351365,4690.0588742680975,halfcheetah-medium-v2_iql_tau0.05_mpi4_seed0_a74ce162e176
+halfcheetah-medium-v2,0.05,4,1,awr_gaussian_fr,fr,baseline,1,mean,41.608770351789076,4885.624346317422,halfcheetah-medium-v2_iql_tau0.05_mpi4_seed1_625b3764c561
+halfcheetah-medium-v2,0.05,4,1,awr_gaussian_fr,fr,baseline,1,sample,41.017733357597784,4812.246045810141,halfcheetah-medium-v2_iql_tau0.05_mpi4_seed1_625b3764c561
+halfcheetah-medium-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,1,mean,42.60299259828918,5009.058817410946,halfcheetah-medium-v2_iql_tau0.05_mpi4_seed1_625b3764c561
+halfcheetah-medium-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,1,sample,40.61257442909588,4761.944839792572,halfcheetah-medium-v2_iql_tau0.05_mpi4_seed1_625b3764c561
+halfcheetah-medium-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,4,mean,43.145363314698905,5076.395112441882,halfcheetah-medium-v2_iql_tau0.05_mpi4_seed1_625b3764c561
+halfcheetah-medium-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,4,sample,40.59775622188656,4760.105132849909,halfcheetah-medium-v2_iql_tau0.05_mpi4_seed1_625b3764c561
 hopper-expert-v2,0.05,4,0,awr_gaussian_fr,fr,baseline,1,mean,81.50751269430921,2632.448629643347,hopper-expert-v2_iql_tau0.05_mpi4_seed0_6ffd57eb22fc
 hopper-expert-v2,0.05,4,0,awr_gaussian_fr,fr,baseline,1,sample,79.87850349096436,2579.431347265385,hopper-expert-v2_iql_tau0.05_mpi4_seed0_6ffd57eb22fc
 hopper-expert-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,1,mean,84.27165930064831,2722.409779562857,hopper-expert-v2_iql_tau0.05_mpi4_seed0_6ffd57eb22fc

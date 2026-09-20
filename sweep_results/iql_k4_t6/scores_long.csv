@@ -5,6 +5,12 @@ hopper-expert-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,1,mean,84.27165930064831,2722.4
 hopper-expert-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,1,sample,77.87825386568159,2514.3317769300647,hopper-expert-v2_iql_tau0.05_mpi4_seed0_6ffd57eb22fc
 hopper-expert-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,4,mean,93.60180075373523,3026.065979312348,hopper-expert-v2_iql_tau0.05_mpi4_seed0_6ffd57eb22fc
 hopper-expert-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,4,sample,50.271664842988365,1615.8553762423212,hopper-expert-v2_iql_tau0.05_mpi4_seed0_6ffd57eb22fc
+hopper-expert-v2,0.05,4,1,awr_gaussian_fr,fr,baseline,1,mean,95.51253308617052,3088.2521446264677,hopper-expert-v2_iql_tau0.05_mpi4_seed1_d2cae4f21563
+hopper-expert-v2,0.05,4,1,awr_gaussian_fr,fr,baseline,1,sample,90.40317108666488,2921.964264028363,hopper-expert-v2_iql_tau0.05_mpi4_seed1_d2cae4f21563
+hopper-expert-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,1,mean,105.79756454029085,3422.985929892807,hopper-expert-v2_iql_tau0.05_mpi4_seed1_d2cae4f21563
+hopper-expert-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,1,sample,84.49647502410883,2729.7265698358883,hopper-expert-v2_iql_tau0.05_mpi4_seed1_d2cae4f21563
+hopper-expert-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,4,mean,101.51341122911882,3283.555062723661,hopper-expert-v2_iql_tau0.05_mpi4_seed1_d2cae4f21563
+hopper-expert-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,4,sample,77.38024863341968,2498.123836563418,hopper-expert-v2_iql_tau0.05_mpi4_seed1_d2cae4f21563
 hopper-medium-replay-v2,0.05,4,0,awr_gaussian_fr,fr,baseline,1,mean,30.671243443708573,977.9454897180676,hopper-medium-replay-v2_iql_tau0.05_mpi4_seed0_02e67f8f672b
 hopper-medium-replay-v2,0.05,4,0,awr_gaussian_fr,fr,baseline,1,sample,13.911950691255035,432.5021892828424,hopper-medium-replay-v2_iql_tau0.05_mpi4_seed0_02e67f8f672b
 hopper-medium-replay-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,1,mean,31.539813554584107,1006.2137319961305,hopper-medium-replay-v2_iql_tau0.05_mpi4_seed0_02e67f8f672b

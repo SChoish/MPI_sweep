@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-20T20:57:43Z",
-  "stamp_kst": "2026-09-21 05:57 KST",
+  "updated_at": "2026-09-20T21:03:27Z",
+  "stamp_kst": "2026-09-21 06:03 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -12,8 +12,8 @@
   "seed_complete": [
     59,
     60,
-    59,
-    59
+    60,
+    60
   ],
   "taus": [
     "0.05",
@@ -34,46 +34,30 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 237,
-    "running": 3,
+    "complete": 239,
+    "running": 1,
     "remaining": 480,
     "extra_dirs": 4
   },
   "queue": "2026-09-20T20:50:52+00:00 env=halfcheetah-medium-replay-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 3921514,
-      "env": "halfcheetah-medium-replay-v2",
-      "tau": "4",
-      "hops": 3,
-      "seed": 2,
-      "step": 938016
-    },
-    {
-      "pid": 3921515,
-      "env": "halfcheetah-medium-replay-v2",
-      "tau": "4",
-      "hops": 3,
-      "seed": 3,
-      "step": 852416
-    },
-    {
       "pid": 3921516,
       "env": "halfcheetah-medium-replay-v2",
       "tau": "7",
       "hops": 3,
       "seed": 0,
-      "step": 645568
+      "step": 923872
     }
   ],
   "eta": {
-    "label": "3.4\uc77c \u00b7 09/24 16:27 KST",
-    "hours": 82.5,
-    "finish_kst": "2026-09-24 16:27 KST",
+    "label": "10.3\uc77c \u00b7 10/01 13:17 KST",
+    "hours": 247.2,
+    "finish_kst": "2026-10-01 13:17 KST",
     "cell_min": 30.9,
-    "slots": 3,
-    "cells_per_hour": 5.8,
-    "assumption": "3 live slots \u00b7 median 30.9 min/cell from [ok] \u22658m \u00b7 leftover 480.6 cells"
+    "slots": 1,
+    "cells_per_hour": 1.9,
+    "assumption": "1 live slots \u00b7 median 30.9 min/cell from [ok] \u22658m \u00b7 leftover 480.1 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -110,10 +94,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 37,
-        "live": 3,
-        "status": "37/40 \u00b7 3 live@645k",
-        "min_step": 645568
+        "complete": 39,
+        "live": 1,
+        "status": "39/40 \u00b7 1 live@923k",
+        "min_step": 923872
       }
     },
     "halfcheetah-expert-v2": {

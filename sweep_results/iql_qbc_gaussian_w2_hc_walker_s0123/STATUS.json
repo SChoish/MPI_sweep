@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-20T04:06:41Z",
-  "stamp_kst": "2026-09-20 13:06 KST",
+  "updated_at": "2026-09-20T04:11:49Z",
+  "stamp_kst": "2026-09-20 13:11 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -8,12 +8,12 @@
     2,
     3
   ],
-  "per_seed": 198,
+  "per_seed": 180,
   "seed_complete": [
-    13,
-    13,
     12,
-    12
+    12,
+    11,
+    11
   ],
   "taus": [
     "0.05",
@@ -21,7 +21,6 @@
     "0.2",
     "0.4",
     "0.7",
-    "1.25",
     "1.5",
     "2.5",
     "4",
@@ -33,12 +32,12 @@
     2,
     3
   ],
-  "planned": 792,
+  "planned": 720,
   "counts": {
-    "complete": 50,
+    "complete": 46,
     "running": 6,
-    "remaining": 736,
-    "extra_dirs": 0
+    "remaining": 668,
+    "extra_dirs": 4
   },
   "queue": "2026-09-20T03:33:13+00:00 env=halfcheetah-medium-v2 hop=2 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
@@ -48,7 +47,7 @@
       "tau": "0.1",
       "hops": 2,
       "seed": 2,
-      "step": 417856
+      "step": 650112
     },
     {
       "pid": 706009,
@@ -56,7 +55,7 @@
       "tau": "0.1",
       "hops": 2,
       "seed": 3,
-      "step": 387040
+      "step": 610752
     },
     {
       "pid": 706010,
@@ -64,7 +63,7 @@
       "tau": "0.2",
       "hops": 2,
       "seed": 0,
-      "step": 365856
+      "step": 593888
     },
     {
       "pid": 706134,
@@ -72,7 +71,7 @@
       "tau": "0.2",
       "hops": 2,
       "seed": 1,
-      "step": 363808
+      "step": 591456
     },
     {
       "pid": 706135,
@@ -80,7 +79,7 @@
       "tau": "0.2",
       "hops": 2,
       "seed": 2,
-      "step": 381920
+      "step": 601408
     },
     {
       "pid": 713396,
@@ -88,36 +87,36 @@
       "tau": "0.2",
       "hops": 2,
       "seed": 3,
-      "step": 289472
+      "step": 509472
     }
   ],
   "eta": {
-    "label": "24.9\uc2dc\uac04 \u00b7 09/21 13:58 KST",
-    "hours": 24.9,
-    "finish_kst": "2026-09-21 13:58 KST",
+    "label": "22.5\uc2dc\uac04 \u00b7 09/21 11:43 KST",
+    "hours": 22.5,
+    "finish_kst": "2026-09-21 11:43 KST",
     "cell_min": 12.1,
     "slots": 6,
     "cells_per_hour": 29.8,
-    "assumption": "6 live slots \u00b7 median 12.1 min/cell from [ok] \u22658m \u00b7 leftover 739.8 cells"
+    "assumption": "6 live slots \u00b7 median 12.1 min/cell from [ok] \u22658m \u00b7 leftover 670.4 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
       "1": {
-        "complete": 44,
+        "complete": 40,
         "live": 0,
-        "status": "44/44",
+        "status": "40/40",
         "min_step": 0
       },
       "2": {
         "complete": 6,
         "live": 6,
-        "status": "6/44 \u00b7 6 live@289k",
-        "min_step": 289472
+        "status": "6/40 \u00b7 6 live@509k",
+        "min_step": 509472
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       }
     },
@@ -125,19 +124,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       }
     },
@@ -145,19 +144,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       }
     },
@@ -165,19 +164,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       }
     },
@@ -185,19 +184,19 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       }
     },
@@ -205,23 +204,23 @@
       "1": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       },
       "2": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       },
       "3": {
         "complete": 0,
         "live": 0,
-        "status": "0/44",
+        "status": "0/40",
         "min_step": 0
       }
     }
   },
   "save_dir": "/raid/ext_csv/MPI_store/iql_qbc_gaussian_w2_hc_walker_s0123",
-  "note": "Gaussian Q+BC\u2013W2 stochastic; HalfCheetah+Walker; K=1 then 2 then 3; T through 10; seeds 0-3."
+  "note": "Gaussian Q+BC\u2013W2 stochastic; HalfCheetah+Walker; K=1 then 2 then 3; T 0.05\u201310 no 1.25; seeds 0-3."
 }

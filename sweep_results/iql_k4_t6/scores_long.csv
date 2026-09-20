@@ -1,4 +1,16 @@
 env,tau,K,seed,variant,geometry,policy,hop,eval_mode,d4rl_score,return,run
+halfcheetah-expert-v2,0.05,4,0,awr_gaussian_fr,fr,baseline,1,mean,93.45586905470985,11322.534432223578,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed0_df4d65619700
+halfcheetah-expert-v2,0.05,4,0,awr_gaussian_fr,fr,baseline,1,sample,80.22068267648608,9679.362358604016,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed0_df4d65619700
+halfcheetah-expert-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,1,mean,93.19745204435954,11290.451497943593,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed0_df4d65619700
+halfcheetah-expert-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,1,sample,85.12308518466675,10288.004402991008,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed0_df4d65619700
+halfcheetah-expert-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,4,mean,92.10286860404136,11154.557005038188,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed0_df4d65619700
+halfcheetah-expert-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,4,sample,66.08251248570099,7924.0832287383455,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed0_df4d65619700
+halfcheetah-expert-v2,0.05,4,1,awr_gaussian_fr,fr,baseline,1,mean,92.34179619630693,11184.220293186052,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed1_d9c556fe8920
+halfcheetah-expert-v2,0.05,4,1,awr_gaussian_fr,fr,baseline,1,sample,78.14734257333613,9421.953474493635,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed1_d9c556fe8920
+halfcheetah-expert-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,1,mean,92.62137795100992,11218.930868352367,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed1_d9c556fe8920
+halfcheetah-expert-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,1,sample,73.9247525157883,8897.711362397487,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed1_d9c556fe8920
+halfcheetah-expert-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,4,mean,91.54898884333731,11085.791841562332,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed1_d9c556fe8920
+halfcheetah-expert-v2,0.05,4,1,awr_gaussian_fr,fr,mpi,4,sample,71.44975564692632,8590.436072047127,halfcheetah-expert-v2_iql_tau0.05_mpi4_seed1_d9c556fe8920
 halfcheetah-medium-replay-v2,0.05,4,0,awr_gaussian_fr,fr,baseline,1,mean,32.966633944425624,3812.6876459808846,halfcheetah-medium-replay-v2_iql_tau0.05_mpi4_seed0_1b945d488c54
 halfcheetah-medium-replay-v2,0.05,4,0,awr_gaussian_fr,fr,baseline,1,sample,31.182985229454225,3591.2444661243,halfcheetah-medium-replay-v2_iql_tau0.05_mpi4_seed0_1b945d488c54
 halfcheetah-medium-replay-v2,0.05,4,0,awr_gaussian_fr,fr,mpi,1,mean,38.66047911941806,4519.588713762952,halfcheetah-medium-replay-v2_iql_tau0.05_mpi4_seed0_1b945d488c54

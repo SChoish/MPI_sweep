@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-20T11:12:16Z",
-  "stamp_kst": "2026-09-20 20:12 KST",
+  "updated_at": "2026-09-20T11:17:43Z",
+  "stamp_kst": "2026-09-20 20:17 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -13,7 +13,7 @@
     39,
     39,
     39,
-    39
+    40
   ],
   "taus": [
     "0.05",
@@ -34,8 +34,8 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 156,
-    "running": 4,
+    "complete": 157,
+    "running": 3,
     "remaining": 560,
     "extra_dirs": 4
   },
@@ -47,7 +47,7 @@
       "tau": "10",
       "hops": 1,
       "seed": 0,
-      "step": 303008
+      "step": 780832
     },
     {
       "pid": 4190190,
@@ -55,7 +55,7 @@
       "tau": "10",
       "hops": 1,
       "seed": 1,
-      "step": 248832
+      "step": 701088
     },
     {
       "pid": 4193740,
@@ -63,25 +63,17 @@
       "tau": "10",
       "hops": 1,
       "seed": 2,
-      "step": 244736
-    },
-    {
-      "pid": 6682,
-      "env": "halfcheetah-medium-replay-v2",
-      "tau": "10",
-      "hops": 1,
-      "seed": 3,
-      "step": 400192
+      "step": 739360
     }
   ],
   "eta": {
-    "label": "28.4\uc2dc\uac04 \u00b7 09/22 00:34 KST",
-    "hours": 28.4,
-    "finish_kst": "2026-09-22 00:34 KST",
+    "label": "37.7\uc2dc\uac04 \u00b7 09/22 09:59 KST",
+    "hours": 37.7,
+    "finish_kst": "2026-09-22 09:59 KST",
     "cell_min": 12.1,
-    "slots": 4,
-    "cells_per_hour": 19.8,
-    "assumption": "4 live slots \u00b7 median 12.1 min/cell from [ok] \u22658m \u00b7 leftover 562.8 cells"
+    "slots": 3,
+    "cells_per_hour": 14.9,
+    "assumption": "3 live slots \u00b7 median 12.1 min/cell from [ok] \u22658m \u00b7 leftover 560.8 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -106,10 +98,10 @@
     },
     "halfcheetah-medium-replay-v2": {
       "1": {
-        "complete": 36,
-        "live": 4,
-        "status": "36/40 \u00b7 4 live@244k",
-        "min_step": 244736
+        "complete": 37,
+        "live": 3,
+        "status": "37/40 \u00b7 3 live@701k",
+        "min_step": 701088
       },
       "2": {
         "complete": 0,

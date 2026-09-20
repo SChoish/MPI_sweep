@@ -1,4 +1,7 @@
 env,tau,K,seed,geometry,policy,hop,eval_mode,d4rl_score,run
+hopper-expert-v2,0.05,1,0,fr,baseline,1,mean,110.410351,hopper-expert-v2_iql_tau0.05_mpi1_seed0_ce60b78caee2
+hopper-expert-v2,0.05,1,1,fr,baseline,1,mean,104.143043,hopper-expert-v2_iql_tau0.05_mpi1_seed1_f7cd31e16cdc
+hopper-expert-v2,0.05,1,2,fr,baseline,1,mean,100.833957,hopper-expert-v2_iql_tau0.05_mpi1_seed2_3298af1f406a
 hopper-medium-replay-v2,0.05,1,0,fr,baseline,1,mean,14.582230,hopper-medium-replay-v2_iql_tau0.05_mpi1_seed0_c8b91c2f98ce
 hopper-medium-replay-v2,0.05,1,1,fr,baseline,1,mean,25.316521,hopper-medium-replay-v2_iql_tau0.05_mpi1_seed1_bec0693342ed
 hopper-medium-replay-v2,0.05,1,2,fr,baseline,1,mean,27.591277,hopper-medium-replay-v2_iql_tau0.05_mpi1_seed2_c19bde091a76

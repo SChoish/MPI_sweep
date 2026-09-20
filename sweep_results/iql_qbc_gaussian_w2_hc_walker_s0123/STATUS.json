@@ -1,0 +1,218 @@
+{
+  "updated_at": "2026-09-20T03:40:58Z",
+  "stamp_kst": "2026-09-20 12:40 KST",
+  "variant": "qbc_gaussian_w2",
+  "seeds": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "per_seed": 198,
+  "seed_complete": [
+    11,
+    11,
+    11,
+    11
+  ],
+  "taus": [
+    "0.05",
+    "0.1",
+    "0.2",
+    "0.4",
+    "0.7",
+    "1.25",
+    "1.5",
+    "2.5",
+    "4",
+    "7",
+    "10"
+  ],
+  "hops": [
+    1,
+    2,
+    3
+  ],
+  "planned": 792,
+  "counts": {
+    "complete": 44,
+    "running": 6,
+    "remaining": 742,
+    "extra_dirs": 0
+  },
+  "queue": "2026-09-20T03:33:13+00:00 env=halfcheetah-medium-v2 hop=2 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.25 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
+  "live": [
+    {
+      "pid": 560023,
+      "env": "halfcheetah-medium-v2",
+      "tau": "0.05",
+      "hops": 2,
+      "seed": 0,
+      "step": 307040
+    },
+    {
+      "pid": 560024,
+      "env": "halfcheetah-medium-v2",
+      "tau": "0.05",
+      "hops": 2,
+      "seed": 1,
+      "step": 314912
+    },
+    {
+      "pid": 560025,
+      "env": "halfcheetah-medium-v2",
+      "tau": "0.05",
+      "hops": 2,
+      "seed": 2,
+      "step": 313696
+    },
+    {
+      "pid": 560026,
+      "env": "halfcheetah-medium-v2",
+      "tau": "0.05",
+      "hops": 2,
+      "seed": 3,
+      "step": 320672
+    },
+    {
+      "pid": 560027,
+      "env": "halfcheetah-medium-v2",
+      "tau": "0.1",
+      "hops": 2,
+      "seed": 0,
+      "step": 301408
+    },
+    {
+      "pid": 560028,
+      "env": "halfcheetah-medium-v2",
+      "tau": "0.1",
+      "hops": 2,
+      "seed": 1,
+      "step": 304096
+    }
+  ],
+  "by_env": {
+    "halfcheetah-medium-v2": {
+      "1": {
+        "complete": 44,
+        "live": 0,
+        "status": "44/44",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 6,
+        "status": "0/44 \u00b7 6 live@301k",
+        "min_step": 301408
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      }
+    },
+    "halfcheetah-medium-replay-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      }
+    },
+    "halfcheetah-expert-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      }
+    },
+    "walker2d-medium-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      }
+    },
+    "walker2d-medium-replay-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      }
+    },
+    "walker2d-expert-v2": {
+      "1": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      },
+      "2": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      },
+      "3": {
+        "complete": 0,
+        "live": 0,
+        "status": "0/44",
+        "min_step": 0
+      }
+    }
+  },
+  "save_dir": "/raid/ext_csv/MPI_store/iql_qbc_gaussian_w2_hc_walker_s0123",
+  "note": "Gaussian Q+BC\u2013W2 stochastic; HalfCheetah+Walker; K=1 then 2 then 3; T through 10; seeds 0-3."
+}

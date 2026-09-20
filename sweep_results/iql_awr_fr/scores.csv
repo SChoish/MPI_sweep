@@ -27,6 +27,8 @@ hopper-medium-v2,1.5,1,0,fr,baseline,1,mean,44.460259,hopper-medium-v2_iql_tau1.
 hopper-medium-v2,1.5,1,1,fr,baseline,1,mean,55.429132,hopper-medium-v2_iql_tau1.5_mpi1_seed1_71f40c61ed4b
 hopper-medium-v2,1.5,1,2,fr,baseline,1,mean,49.949658,hopper-medium-v2_iql_tau1.5_mpi1_seed2_9426e5df2373
 hopper-medium-v2,1.5,1,3,fr,baseline,1,mean,50.497085,hopper-medium-v2_iql_tau1.5_mpi1_seed3_9a6506d327eb
+hopper-medium-v2,1.5,2,2,fr,mpi,2,mean,0.732467,hopper-medium-v2_iql_tau1.5_mpi2_seed2_3600c52040dd
+hopper-medium-v2,1.5,2,3,fr,mpi,2,mean,66.679207,hopper-medium-v2_iql_tau1.5_mpi2_seed3_0f1b098f2d17
 hopper-medium-v2,10,1,0,fr,baseline,1,mean,46.567555,hopper-medium-v2_iql_tau10_mpi1_seed0_3a961b4dee21
 hopper-medium-v2,10,1,1,fr,baseline,1,mean,48.532688,hopper-medium-v2_iql_tau10_mpi1_seed1_7cda57bd62da
 hopper-medium-v2,10,1,2,fr,baseline,1,mean,47.397934,hopper-medium-v2_iql_tau10_mpi1_seed2_e9a4db0bfb9b
@@ -35,6 +37,10 @@ hopper-medium-v2,2.5,1,0,fr,baseline,1,mean,46.745157,hopper-medium-v2_iql_tau2.
 hopper-medium-v2,2.5,1,1,fr,baseline,1,mean,52.355531,hopper-medium-v2_iql_tau2.5_mpi1_seed1_e5c7a62faf47
 hopper-medium-v2,2.5,1,2,fr,baseline,1,mean,51.026349,hopper-medium-v2_iql_tau2.5_mpi1_seed2_6069984ce951
 hopper-medium-v2,2.5,1,3,fr,baseline,1,mean,49.559959,hopper-medium-v2_iql_tau2.5_mpi1_seed3_f2e7efcaf30d
+hopper-medium-v2,2.5,2,0,fr,mpi,2,mean,0.732684,hopper-medium-v2_iql_tau2.5_mpi2_seed0_471dde9b275e
+hopper-medium-v2,2.5,2,1,fr,mpi,2,mean,74.910032,hopper-medium-v2_iql_tau2.5_mpi2_seed1_92c7720db565
+hopper-medium-v2,2.5,2,2,fr,mpi,2,mean,0.732467,hopper-medium-v2_iql_tau2.5_mpi2_seed2_e941f499c735
+hopper-medium-v2,2.5,2,3,fr,mpi,2,mean,55.249561,hopper-medium-v2_iql_tau2.5_mpi2_seed3_65cfa2fc3b6f
 hopper-medium-v2,4,1,0,fr,baseline,1,mean,56.363498,hopper-medium-v2_iql_tau4_mpi1_seed0_e3ae240c8c69
 hopper-medium-v2,4,1,1,fr,baseline,1,mean,35.130542,hopper-medium-v2_iql_tau4_mpi1_seed1_8462f5f8192c
 hopper-medium-v2,4,1,2,fr,baseline,1,mean,49.993586,hopper-medium-v2_iql_tau4_mpi1_seed2_6b9be18a8f9d

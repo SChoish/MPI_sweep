@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-21 04:41:51 UTC+09:00",
+  "updated_at": "2026-09-21 04:47:07 UTC+09:00",
   "schema": "iql_actor_geometry_v5_consistent_gaussian",
   "k": 4,
   "taus": [
@@ -42,9 +42,9 @@
     "walker2d-expert-v2"
   ],
   "total": 540,
-  "started": 140,
-  "done": 138,
-  "queue_ok": 134,
+  "started": 142,
+  "done": 140,
+  "queue_ok": 136,
   "queue_fail": 0,
   "source": "/home/shchoi/MPI_sweep/results/iql_k4_t6",
   "note": "IQL K=4 loco-9 seeds 0-3. AWR-FR T=0.05,0.1,0.4,1.5,2.5,4,10; then Gauss-W2 T<=10. Remaining Det-W2 jobs dropped."

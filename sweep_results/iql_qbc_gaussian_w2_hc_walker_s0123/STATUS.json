@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-21T05:18:23Z",
-  "stamp_kst": "2026-09-21 14:18 KST",
+  "updated_at": "2026-09-21T05:24:18Z",
+  "stamp_kst": "2026-09-21 14:24 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -13,7 +13,7 @@
     79,
     79,
     80,
-    78
+    79
   ],
   "taus": [
     "0.05",
@@ -34,8 +34,8 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 316,
-    "running": 4,
+    "complete": 317,
+    "running": 3,
     "remaining": 400,
     "extra_dirs": 4
   },
@@ -47,7 +47,7 @@
       "tau": "2.5",
       "hops": 2,
       "seed": 3,
-      "step": 422016
+      "step": 429440
     },
     {
       "pid": 1202465,
@@ -55,7 +55,7 @@
       "tau": "4",
       "hops": 2,
       "seed": 0,
-      "step": 420992
+      "step": 428416
     },
     {
       "pid": 1202466,
@@ -63,25 +63,17 @@
       "tau": "4",
       "hops": 2,
       "seed": 1,
-      "step": 323168
-    },
-    {
-      "pid": 2432121,
-      "env": "halfcheetah-expert-v2",
-      "tau": "10",
-      "hops": 2,
-      "seed": 3,
-      "step": 683072
+      "step": 330592
     }
   ],
   "eta": {
-    "label": "40.9\uc2dc\uac04 \u00b7 09/23 07:11 KST",
-    "hours": 40.9,
-    "finish_kst": "2026-09-23 07:11 KST",
+    "label": "2.3\uc77c \u00b7 09/23 20:52 KST",
+    "hours": 54.5,
+    "finish_kst": "2026-09-23 20:52 KST",
     "cell_min": 24.4,
-    "slots": 4,
-    "cells_per_hour": 9.8,
-    "assumption": "4 live slots \u00b7 median 24.4 min/cell from [ok] \u22658m \u00b7 leftover 402.2 cells"
+    "slots": 3,
+    "cells_per_hour": 7.4,
+    "assumption": "3 live slots \u00b7 median 24.4 min/cell from [ok] \u22658m \u00b7 leftover 401.8 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -132,10 +124,10 @@
         "min_step": 0
       },
       "2": {
-        "complete": 36,
-        "live": 4,
-        "status": "36/40 \u00b7 4 live@323k",
-        "min_step": 323168
+        "complete": 37,
+        "live": 3,
+        "status": "37/40 \u00b7 3 live@330k",
+        "min_step": 330592
       },
       "3": {
         "complete": 0,

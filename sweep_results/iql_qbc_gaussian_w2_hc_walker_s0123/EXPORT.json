@@ -4,7 +4,7 @@
   "hostname": "DGX-H200-02",
   "source": "/raid/ext_csv/MPI_store/iql_qbc_gaussian_w2_hc_walker_s0123",
   "final_step": 1000000,
-  "complete_runs": 317,
+  "complete_runs": 320,
   "pending_directories": 4,
   "excluded": [
     {
@@ -3962,6 +3962,66 @@
       "checkpoint_rehashed": false
     },
     {
+      "run": "halfcheetah-expert-v2_iql_tau2.5_mpi2_seed3_ca272855e2f6",
+      "signature": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "algorithm": {
+          "variants": [
+            "qbc_gaussian_w2"
+          ],
+          "mpi_steps": 2,
+          "tau": 2.5,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "halfcheetah-expert-v2",
+        "seed": 3,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "both",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "49a29ac70e250749a166fe6b15ccf803a2fced19148f36363dc62855c13bc8b8",
+        "iql_mpi_config.py": "8752a614830d0f24338fb8597d18f47cd9668ca0783af0fd393b2fba516a980b",
+        "train_iql_mpi.py": "15332ca14199adf4823432ccedc5674ad12b82c77f8d2903b87d002dfba04902",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "step": 1000000,
+        "signature": "ca272855e2f6",
+        "checkpoint_sha256": "b7c4608d5b6237866d11764f85a12ebb76a56640b850a250ff2cfe4b65f1270d",
+        "checkpoint_bytes": 6965808,
+        "eval_sha256": "44e70459110034fc23b3913636037b65455cce84a513a4fee64892550c422ec8",
+        "evaluation_rows": 6
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
       "run": "halfcheetah-expert-v2_iql_tau4_mpi1_seed0_7f058fa27223",
       "signature": {
         "schema": "iql_actor_geometry_v6_chain_q_scale",
@@ -4197,6 +4257,126 @@
         "checkpoint_bytes": 6083218,
         "eval_sha256": "3bbc95fd4954f29377724c9d29ec8cc78c95598fbaa3db9979ec48259218342e",
         "evaluation_rows": 2
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "halfcheetah-expert-v2_iql_tau4_mpi2_seed0_b13fcd601d7a",
+      "signature": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "algorithm": {
+          "variants": [
+            "qbc_gaussian_w2"
+          ],
+          "mpi_steps": 2,
+          "tau": 4.0,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "halfcheetah-expert-v2",
+        "seed": 0,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "both",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "49a29ac70e250749a166fe6b15ccf803a2fced19148f36363dc62855c13bc8b8",
+        "iql_mpi_config.py": "8752a614830d0f24338fb8597d18f47cd9668ca0783af0fd393b2fba516a980b",
+        "train_iql_mpi.py": "15332ca14199adf4823432ccedc5674ad12b82c77f8d2903b87d002dfba04902",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "step": 1000000,
+        "signature": "b13fcd601d7a",
+        "checkpoint_sha256": "c1d5eba30fd7cfa122999695614edafb66978a543aee4529057cc278b3b7072c",
+        "checkpoint_bytes": 6965808,
+        "eval_sha256": "eac680114fec95c504c131587555cd7708edfa0d3faab1033c68ffb0a203d385",
+        "evaluation_rows": 6
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "halfcheetah-expert-v2_iql_tau4_mpi2_seed1_2cdd486b1e2e",
+      "signature": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "algorithm": {
+          "variants": [
+            "qbc_gaussian_w2"
+          ],
+          "mpi_steps": 2,
+          "tau": 4.0,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "halfcheetah-expert-v2",
+        "seed": 1,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "both",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "49a29ac70e250749a166fe6b15ccf803a2fced19148f36363dc62855c13bc8b8",
+        "iql_mpi_config.py": "8752a614830d0f24338fb8597d18f47cd9668ca0783af0fd393b2fba516a980b",
+        "train_iql_mpi.py": "15332ca14199adf4823432ccedc5674ad12b82c77f8d2903b87d002dfba04902",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "step": 1000000,
+        "signature": "2cdd486b1e2e",
+        "checkpoint_sha256": "b6c35cfce871db7b8d6b9ffdc47cdd3c3a8d16a1872d6bc973527efd6554f4ea",
+        "checkpoint_bytes": 6965808,
+        "eval_sha256": "2ac44a0a964a25b8aec5ffdedf808e48e8b6cdfc664cbbf60f28033a2a999089",
+        "evaluation_rows": 6
       },
       "checkpoint_size_checked": true,
       "checkpoint_rehashed": false

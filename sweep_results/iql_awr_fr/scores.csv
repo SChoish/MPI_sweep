@@ -17,9 +17,12 @@ halfcheetah-medium-v2,0.1,1,2,fr,baseline,1,mean,42.829581,halfcheetah-medium-v2
 halfcheetah-medium-v2,0.1,1,3,fr,baseline,1,mean,42.334157,halfcheetah-medium-v2_iql_tau0.1_mpi1_seed3_a0a94caa618e
 halfcheetah-medium-v2,0.1,2,0,fr,mpi,2,mean,43.498979,halfcheetah-medium-v2_iql_tau0.1_mpi2_seed0_b5f44f44baae
 halfcheetah-medium-v2,0.1,2,1,fr,mpi,2,mean,42.638165,halfcheetah-medium-v2_iql_tau0.1_mpi2_seed1_90e664f1fb3c
+halfcheetah-medium-v2,0.1,2,2,fr,mpi,2,mean,42.837086,halfcheetah-medium-v2_iql_tau0.1_mpi2_seed2_c503fa8c5e09
+halfcheetah-medium-v2,0.1,2,3,fr,mpi,2,mean,41.902001,halfcheetah-medium-v2_iql_tau0.1_mpi2_seed3_ea67da323963
 halfcheetah-medium-v2,0.1,3,0,fr,mpi,3,mean,42.706807,halfcheetah-medium-v2_iql_tau0.1_mpi3_seed0_f65f70c6fb74
 halfcheetah-medium-v2,0.1,3,1,fr,mpi,3,mean,40.871895,halfcheetah-medium-v2_iql_tau0.1_mpi3_seed1_85af7cfa7600
 halfcheetah-medium-v2,0.4,1,0,fr,baseline,1,mean,43.233550,halfcheetah-medium-v2_iql_tau0.4_mpi1_seed0_91cdd2b0d49d
+halfcheetah-medium-v2,0.4,2,0,fr,mpi,2,mean,-2.610853,halfcheetah-medium-v2_iql_tau0.4_mpi2_seed0_10294ffabdbe
 hopper-expert-v2,0.05,1,0,fr,baseline,1,mean,110.410351,hopper-expert-v2_iql_tau0.05_mpi1_seed0_ce60b78caee2
 hopper-expert-v2,0.05,1,1,fr,baseline,1,mean,104.143043,hopper-expert-v2_iql_tau0.05_mpi1_seed1_f7cd31e16cdc
 hopper-expert-v2,0.05,1,2,fr,baseline,1,mean,100.833957,hopper-expert-v2_iql_tau0.05_mpi1_seed2_3298af1f406a

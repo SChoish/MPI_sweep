@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-21T13:21:05Z",
-  "stamp_kst": "2026-09-21 22:21 KST",
+  "updated_at": "2026-09-21T13:33:22Z",
+  "stamp_kst": "2026-09-21 22:33 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -10,10 +10,10 @@
   ],
   "per_seed": 180,
   "seed_complete": [
+    110,
     109,
     109,
-    109,
-    109
+    110
   ],
   "taus": [
     "0.05",
@@ -34,28 +34,20 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 436,
-    "running": 4,
+    "complete": 438,
+    "running": 2,
     "remaining": 280,
     "extra_dirs": 4
   },
   "queue": "2026-09-21T13:13:40+00:00 env=walker2d-medium-v2 hop=2 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 2500008,
-      "env": "walker2d-medium-v2",
-      "tau": "10",
-      "hops": 2,
-      "seed": 0,
-      "step": 504096
-    },
-    {
       "pid": 2500009,
       "env": "walker2d-medium-v2",
       "tau": "10",
       "hops": 2,
       "seed": 1,
-      "step": 399008
+      "step": 955040
     },
     {
       "pid": 2500013,
@@ -63,25 +55,17 @@
       "tau": "10",
       "hops": 2,
       "seed": 2,
-      "step": 412224
-    },
-    {
-      "pid": 2500015,
-      "env": "walker2d-medium-v2",
-      "tau": "10",
-      "hops": 2,
-      "seed": 3,
-      "step": 633920
+      "step": 972704
     }
   ],
   "eta": {
-    "label": "27.1\uc2dc\uac04 \u00b7 09/23 01:29 KST",
-    "hours": 27.1,
-    "finish_kst": "2026-09-23 01:29 KST",
+    "label": "2.2\uc77c \u00b7 09/24 04:28 KST",
+    "hours": 53.9,
+    "finish_kst": "2026-09-24 04:28 KST",
     "cell_min": 23.1,
-    "slots": 4,
-    "cells_per_hour": 10.4,
-    "assumption": "4 live slots \u00b7 median 23.1 min/cell from [ok] \u22658m \u00b7 leftover 282.1 cells"
+    "slots": 2,
+    "cells_per_hour": 5.2,
+    "assumption": "2 live slots \u00b7 median 23.1 min/cell from [ok] \u22658m \u00b7 leftover 280.1 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -152,10 +136,10 @@
         "min_step": 0
       },
       "2": {
-        "complete": 36,
-        "live": 4,
-        "status": "36/40 \u00b7 4 live@399k",
-        "min_step": 399008
+        "complete": 38,
+        "live": 2,
+        "status": "38/40 \u00b7 2 live@955k",
+        "min_step": 955040
       },
       "3": {
         "complete": 0,

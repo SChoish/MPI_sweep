@@ -5,7 +5,7 @@
   "source": "/raid/ext_csv/MPI_store/iql_qbc_gaussian_w2_hc_walker_s0123",
   "final_step": 1000000,
   "complete_runs": 323,
-  "pending_directories": 4,
+  "pending_directories": 7,
   "excluded": [
     {
       "run": "halfcheetah-medium-v2_iql_tau1.25_mpi1_seed0_e1b7d62b0777",

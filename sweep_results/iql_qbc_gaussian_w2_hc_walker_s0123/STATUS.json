@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-21T23:03:02Z",
-  "stamp_kst": "2026-09-22 08:03 KST",
+  "updated_at": "2026-09-21T23:09:58Z",
+  "stamp_kst": "2026-09-22 08:09 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -10,10 +10,10 @@
   ],
   "per_seed": 180,
   "seed_complete": [
-    145,
+    146,
     145,
     144,
-    144
+    145
   ],
   "taus": [
     "0.05",
@@ -34,9 +34,9 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 578,
-    "running": 6,
-    "remaining": 136,
+    "complete": 580,
+    "running": 5,
+    "remaining": 135,
     "extra_dirs": 4
   },
   "queue": "2026-09-21T21:08:17+00:00 env=walker2d-medium-replay-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
@@ -47,23 +47,7 @@
       "tau": "0.7",
       "hops": 3,
       "seed": 2,
-      "step": 784800
-    },
-    {
-      "pid": 1956703,
-      "env": "walker2d-medium-replay-v2",
-      "tau": "0.7",
-      "hops": 3,
-      "seed": 3,
-      "step": 865728
-    },
-    {
-      "pid": 1956746,
-      "env": "walker2d-medium-replay-v2",
-      "tau": "1.5",
-      "hops": 3,
-      "seed": 0,
-      "step": 834880
+      "step": 1000000
     },
     {
       "pid": 1962278,
@@ -71,7 +55,7 @@
       "tau": "1.5",
       "hops": 3,
       "seed": 1,
-      "step": 764256
+      "step": 1000000
     },
     {
       "pid": 1964000,
@@ -79,7 +63,7 @@
       "tau": "1.5",
       "hops": 3,
       "seed": 2,
-      "step": 729056
+      "step": 994272
     },
     {
       "pid": 1974309,
@@ -87,17 +71,33 @@
       "tau": "1.5",
       "hops": 3,
       "seed": 3,
-      "step": 703904
+      "step": 988640
+    },
+    {
+      "pid": 2075969,
+      "env": "walker2d-medium-replay-v2",
+      "tau": "2.5",
+      "hops": 3,
+      "seed": 0,
+      "step": 22720
+    },
+    {
+      "pid": 2076520,
+      "env": "walker2d-medium-replay-v2",
+      "tau": "2.5",
+      "hops": 3,
+      "seed": 1,
+      "step": 0
     }
   ],
   "eta": {
-    "label": "9.2\uc2dc\uac04 \u00b7 09/22 17:13 KST",
-    "hours": 9.2,
-    "finish_kst": "2026-09-22 17:13 KST",
-    "cell_min": 24.1,
+    "label": "10.0\uc2dc\uac04 \u00b7 09/22 18:12 KST",
+    "hours": 10.0,
+    "finish_kst": "2026-09-22 18:12 KST",
+    "cell_min": 26.4,
     "slots": 6,
-    "cells_per_hour": 15.0,
-    "assumption": "6 live slots \u00b7 median 24.1 min/cell from [ok] \u22658m \u00b7 leftover 137.3 cells"
+    "cells_per_hour": 13.6,
+    "assumption": "6 live slots \u00b7 median 26.4 min/cell from [ok] \u22658m \u00b7 leftover 137.0 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -194,10 +194,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 18,
-        "live": 6,
-        "status": "18/40 \u00b7 6 live@703k",
-        "min_step": 703904
+        "complete": 20,
+        "live": 5,
+        "status": "20/40 \u00b7 5 live@22k",
+        "min_step": 22720
       }
     },
     "walker2d-expert-v2": {

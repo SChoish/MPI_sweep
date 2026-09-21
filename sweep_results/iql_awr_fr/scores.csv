@@ -1,4 +1,7 @@
 env,tau,K,seed,geometry,policy,hop,eval_mode,d4rl_score,run
+halfcheetah-medium-replay-v2,0.05,1,0,fr,baseline,1,mean,20.901473,halfcheetah-medium-replay-v2_iql_tau0.05_mpi1_seed0_bd695b3aa083
+halfcheetah-medium-replay-v2,0.05,1,1,fr,baseline,1,mean,1.791060,halfcheetah-medium-replay-v2_iql_tau0.05_mpi1_seed1_af857fba1ad4
+halfcheetah-medium-replay-v2,0.05,1,2,fr,baseline,1,mean,38.744616,halfcheetah-medium-replay-v2_iql_tau0.05_mpi1_seed2_b767feaaf532
 halfcheetah-medium-v2,0.05,1,0,fr,baseline,1,mean,42.898373,halfcheetah-medium-v2_iql_tau0.05_mpi1_seed0_4c6d45f0d29e
 halfcheetah-medium-v2,0.05,1,1,fr,baseline,1,mean,42.364136,halfcheetah-medium-v2_iql_tau0.05_mpi1_seed1_4ac28b9d437d
 halfcheetah-medium-v2,0.05,1,2,fr,baseline,1,mean,42.253156,halfcheetah-medium-v2_iql_tau0.05_mpi1_seed2_7d7f041a7310
@@ -21,8 +24,11 @@ halfcheetah-medium-v2,0.1,2,2,fr,mpi,2,mean,42.837086,halfcheetah-medium-v2_iql_
 halfcheetah-medium-v2,0.1,2,3,fr,mpi,2,mean,41.902001,halfcheetah-medium-v2_iql_tau0.1_mpi2_seed3_ea67da323963
 halfcheetah-medium-v2,0.1,3,0,fr,mpi,3,mean,42.706807,halfcheetah-medium-v2_iql_tau0.1_mpi3_seed0_f65f70c6fb74
 halfcheetah-medium-v2,0.1,3,1,fr,mpi,3,mean,40.871895,halfcheetah-medium-v2_iql_tau0.1_mpi3_seed1_85af7cfa7600
+halfcheetah-medium-v2,0.1,3,2,fr,mpi,3,mean,42.226000,halfcheetah-medium-v2_iql_tau0.1_mpi3_seed2_f7fbb204ee5a
+halfcheetah-medium-v2,0.1,3,3,fr,mpi,3,mean,42.739915,halfcheetah-medium-v2_iql_tau0.1_mpi3_seed3_6e16990e5088
 halfcheetah-medium-v2,0.4,1,0,fr,baseline,1,mean,43.233550,halfcheetah-medium-v2_iql_tau0.4_mpi1_seed0_91cdd2b0d49d
 halfcheetah-medium-v2,0.4,2,0,fr,mpi,2,mean,-2.610853,halfcheetah-medium-v2_iql_tau0.4_mpi2_seed0_10294ffabdbe
+halfcheetah-medium-v2,0.4,3,0,fr,mpi,3,mean,41.751301,halfcheetah-medium-v2_iql_tau0.4_mpi3_seed0_73d728b63f70
 hopper-expert-v2,0.05,1,0,fr,baseline,1,mean,110.410351,hopper-expert-v2_iql_tau0.05_mpi1_seed0_ce60b78caee2
 hopper-expert-v2,0.05,1,1,fr,baseline,1,mean,104.143043,hopper-expert-v2_iql_tau0.05_mpi1_seed1_f7cd31e16cdc
 hopper-expert-v2,0.05,1,2,fr,baseline,1,mean,100.833957,hopper-expert-v2_iql_tau0.05_mpi1_seed2_3298af1f406a

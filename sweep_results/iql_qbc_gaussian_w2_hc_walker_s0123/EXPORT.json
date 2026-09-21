@@ -4,7 +4,7 @@
   "hostname": "DGX-H200-02",
   "source": "/raid/ext_csv/MPI_store/iql_qbc_gaussian_w2_hc_walker_s0123",
   "final_step": 1000000,
-  "complete_runs": 464,
+  "complete_runs": 468,
   "pending_directories": 7,
   "excluded": [
     {
@@ -27056,6 +27056,246 @@
         "checkpoint_sha256": "c85113cd6ed99866e620755972dab6efa915785f23e4be476483bfaf40fa1486",
         "checkpoint_bytes": 6965805,
         "eval_sha256": "c62f81d64707e71b3eec94baff2c8f6df245f4da594472ff0d71641230f0974c",
+        "evaluation_rows": 6
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "walker2d-medium-v2_iql_tau2.5_mpi3_seed0_21826a0638c8",
+      "signature": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "algorithm": {
+          "variants": [
+            "qbc_gaussian_w2"
+          ],
+          "mpi_steps": 3,
+          "tau": 2.5,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "walker2d-medium-v2",
+        "seed": 0,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "both",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "49a29ac70e250749a166fe6b15ccf803a2fced19148f36363dc62855c13bc8b8",
+        "iql_mpi_config.py": "8752a614830d0f24338fb8597d18f47cd9668ca0783af0fd393b2fba516a980b",
+        "train_iql_mpi.py": "15332ca14199adf4823432ccedc5674ad12b82c77f8d2903b87d002dfba04902",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "step": 1000000,
+        "signature": "21826a0638c8",
+        "checkpoint_sha256": "ba8ffcc1bacf5e7f38ce72a8a7e97e08a02baf7158cc468a178df8bb69809d66",
+        "checkpoint_bytes": 7848394,
+        "eval_sha256": "cbfaf503571469a72ba82ad8272377089f2a837eb26dc8392e355ca124cab11a",
+        "evaluation_rows": 6
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "walker2d-medium-v2_iql_tau2.5_mpi3_seed1_b637c6f0364e",
+      "signature": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "algorithm": {
+          "variants": [
+            "qbc_gaussian_w2"
+          ],
+          "mpi_steps": 3,
+          "tau": 2.5,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "walker2d-medium-v2",
+        "seed": 1,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "both",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "49a29ac70e250749a166fe6b15ccf803a2fced19148f36363dc62855c13bc8b8",
+        "iql_mpi_config.py": "8752a614830d0f24338fb8597d18f47cd9668ca0783af0fd393b2fba516a980b",
+        "train_iql_mpi.py": "15332ca14199adf4823432ccedc5674ad12b82c77f8d2903b87d002dfba04902",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "step": 1000000,
+        "signature": "b637c6f0364e",
+        "checkpoint_sha256": "839133e854981cadededb6ece542ab814d9a56a611b56874de9980124c35e782",
+        "checkpoint_bytes": 7848394,
+        "eval_sha256": "c584f52cbe0251741afbeae1f25a4734b2093b48e81b006c762cad46fefec6c1",
+        "evaluation_rows": 6
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "walker2d-medium-v2_iql_tau2.5_mpi3_seed2_d804c9d40e3e",
+      "signature": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "algorithm": {
+          "variants": [
+            "qbc_gaussian_w2"
+          ],
+          "mpi_steps": 3,
+          "tau": 2.5,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "walker2d-medium-v2",
+        "seed": 2,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "both",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "49a29ac70e250749a166fe6b15ccf803a2fced19148f36363dc62855c13bc8b8",
+        "iql_mpi_config.py": "8752a614830d0f24338fb8597d18f47cd9668ca0783af0fd393b2fba516a980b",
+        "train_iql_mpi.py": "15332ca14199adf4823432ccedc5674ad12b82c77f8d2903b87d002dfba04902",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "step": 1000000,
+        "signature": "d804c9d40e3e",
+        "checkpoint_sha256": "cc5b87135b8b4f9b257374883655a6dc9564cfe4b18e88249079bc205b67af1d",
+        "checkpoint_bytes": 7848394,
+        "eval_sha256": "a7ac3d06ced3bf301541c237aaeb0a1ce05e5fb56969c4d414e4e445dacf3ac4",
+        "evaluation_rows": 6
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "walker2d-medium-v2_iql_tau2.5_mpi3_seed3_0df967cf1376",
+      "signature": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "algorithm": {
+          "variants": [
+            "qbc_gaussian_w2"
+          ],
+          "mpi_steps": 3,
+          "tau": 2.5,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "walker2d-medium-v2",
+        "seed": 3,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "both",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "49a29ac70e250749a166fe6b15ccf803a2fced19148f36363dc62855c13bc8b8",
+        "iql_mpi_config.py": "8752a614830d0f24338fb8597d18f47cd9668ca0783af0fd393b2fba516a980b",
+        "train_iql_mpi.py": "15332ca14199adf4823432ccedc5674ad12b82c77f8d2903b87d002dfba04902",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v6_chain_q_scale",
+        "step": 1000000,
+        "signature": "0df967cf1376",
+        "checkpoint_sha256": "71f5747803c887b5484d715df49ab99e109a3c0e67236afaa4762d32edae2862",
+        "checkpoint_bytes": 7848394,
+        "eval_sha256": "5bd4ac4c0dff985a27fe2933aaed001af0eb325c3fea97374615e81f58b9ae4a",
         "evaluation_rows": 6
       },
       "checkpoint_size_checked": true,

@@ -6,6 +6,7 @@ halfcheetah-expert-v2,1.5,2,3,fr,mpi,2,mean,-2.553966,halfcheetah-expert-v2_iql_
 halfcheetah-expert-v2,1.5,3,0,fr,mpi,3,mean,-2.558872,halfcheetah-expert-v2_iql_tau1.5_mpi3_seed0_456b27d36dbe
 halfcheetah-expert-v2,1.5,3,1,fr,mpi,3,mean,-2.429724,halfcheetah-expert-v2_iql_tau1.5_mpi3_seed1_618cc4fa82af
 halfcheetah-expert-v2,1.5,3,2,fr,mpi,3,mean,-2.554287,halfcheetah-expert-v2_iql_tau1.5_mpi3_seed2_8ed5a3afc9f7
+halfcheetah-expert-v2,1.5,3,3,fr,mpi,3,mean,-2.899537,halfcheetah-expert-v2_iql_tau1.5_mpi3_seed3_e08904f71141
 halfcheetah-medium-replay-v2,0.05,1,0,fr,baseline,1,mean,20.901473,halfcheetah-medium-replay-v2_iql_tau0.05_mpi1_seed0_bd695b3aa083
 halfcheetah-medium-replay-v2,0.05,1,1,fr,baseline,1,mean,1.791060,halfcheetah-medium-replay-v2_iql_tau0.05_mpi1_seed1_af857fba1ad4
 halfcheetah-medium-replay-v2,0.05,1,2,fr,baseline,1,mean,38.744616,halfcheetah-medium-replay-v2_iql_tau0.05_mpi1_seed2_b767feaaf532

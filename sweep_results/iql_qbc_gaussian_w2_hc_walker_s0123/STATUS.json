@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-21T17:29:32Z",
-  "stamp_kst": "2026-09-22 02:29 KST",
+  "updated_at": "2026-09-21T17:36:04Z",
+  "stamp_kst": "2026-09-22 02:36 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -13,7 +13,7 @@
     123,
     123,
     123,
-    122
+    123
   ],
   "taus": [
     "0.05",
@@ -34,9 +34,9 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 491,
-    "running": 4,
-    "remaining": 225,
+    "complete": 492,
+    "running": 6,
+    "remaining": 222,
     "extra_dirs": 4
   },
   "queue": "2026-09-21T17:04:53+00:00 env=walker2d-medium-replay-v2 hop=1 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
@@ -47,7 +47,7 @@
       "tau": "0.4",
       "hops": 1,
       "seed": 0,
-      "step": 24064
+      "step": 607360
     },
     {
       "pid": 781416,
@@ -55,7 +55,7 @@
       "tau": "0.4",
       "hops": 1,
       "seed": 1,
-      "step": 35264
+      "step": 611904
     },
     {
       "pid": 783330,
@@ -63,7 +63,7 @@
       "tau": "0.4",
       "hops": 1,
       "seed": 2,
-      "step": 72256
+      "step": 639872
     },
     {
       "pid": 783767,
@@ -71,7 +71,7 @@
       "tau": "0.4",
       "hops": 1,
       "seed": 3,
-      "step": 0
+      "step": 621696
     },
     {
       "pid": 785415,
@@ -79,7 +79,7 @@
       "tau": "0.7",
       "hops": 1,
       "seed": 0,
-      "step": 0
+      "step": 522720
     },
     {
       "pid": 786669,
@@ -87,17 +87,17 @@
       "tau": "0.7",
       "hops": 1,
       "seed": 1,
-      "step": 0
+      "step": 522784
     }
   ],
   "eta": {
-    "label": "18.6\uc2dc\uac04 \u00b7 09/22 21:03 KST",
-    "hours": 18.6,
-    "finish_kst": "2026-09-22 21:03 KST",
+    "label": "18.1\uc2dc\uac04 \u00b7 09/22 20:39 KST",
+    "hours": 18.1,
+    "finish_kst": "2026-09-22 20:39 KST",
     "cell_min": 28.9,
     "slots": 6,
     "cells_per_hour": 12.4,
-    "assumption": "6 live slots \u00b7 median 28.9 min/cell from [ok] \u22658m \u00b7 leftover 230.9 cells"
+    "assumption": "6 live slots \u00b7 median 28.9 min/cell from [ok] \u22658m \u00b7 leftover 224.5 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -182,10 +182,10 @@
     },
     "walker2d-medium-replay-v2": {
       "1": {
-        "complete": 11,
-        "live": 4,
-        "status": "11/40 \u00b7 4 live@24k",
-        "min_step": 24064
+        "complete": 12,
+        "live": 6,
+        "status": "12/40 \u00b7 6 live@522k",
+        "min_step": 522720
       },
       "2": {
         "complete": 0,

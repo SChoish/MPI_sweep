@@ -14,7 +14,7 @@
 | 방법 | 게시된 시드 점수 | 4시드 확보 셀 |
 |---|---:|---:|
 | AWR–FR | 456 | 114 |
-| Gaussian Q+BC–W2 | 477 | 114 |
+| Gaussian Q+BC–W2 | 483 | 116 |
 | TD3+BC MPI · Implicit | 2592 | 648 |
 
 ## AWR–FR
@@ -313,8 +313,8 @@
 | T | K=1 | K=2 | K=3 | K=4 |
 |---:|---|---|---|---|
 | 0.05 | **63.84 ± 9.58** (4/4)<br>[s0: 76.35 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L362)<br>[s1: 66.32 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L363)<br>[s2: 55.84 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L364)<br>[s3: 56.87 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L365) | — | — | — |
-| 0.1 | **74.68 ± 6.33** (2/4)<br>[s0: 70.21 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L366)<br>[s1: 79.16 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L367) | — | — | — |
-| 0.2 | — | — | — | — |
+| 0.1 | **73.93 ± 3.92** (4/4)<br>[s0: 70.21 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L366)<br>[s1: 79.16 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L367)<br>[s2: 74.58 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L368)<br>[s3: 71.79 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L369) | — | — | — |
+| 0.2 | **73.06 ± 5.44** (4/4)<br>[s0: 72.52 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L370)<br>[s1: 76.91 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L371)<br>[s2: 65.56 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L372)<br>[s3: 77.24 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L373) | — | — | — |
 | 0.4 | — | — | — | — |
 | 0.7 | — | — | — | — |
 | 1.25 | — | — | — | — |

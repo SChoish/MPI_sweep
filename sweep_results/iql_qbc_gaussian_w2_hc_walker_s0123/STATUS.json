@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-21T16:50:25Z",
-  "stamp_kst": "2026-09-22 01:50 KST",
+  "updated_at": "2026-09-21T16:56:57Z",
+  "stamp_kst": "2026-09-22 01:56 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -13,7 +13,7 @@
     119,
     119,
     119,
-    119
+    120
   ],
   "taus": [
     "0.05",
@@ -34,8 +34,8 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 476,
-    "running": 4,
+    "complete": 477,
+    "running": 3,
     "remaining": 240,
     "extra_dirs": 4
   },
@@ -47,7 +47,7 @@
       "tau": "10",
       "hops": 3,
       "seed": 0,
-      "step": 602752
+      "step": 839744
     },
     {
       "pid": 507099,
@@ -55,7 +55,7 @@
       "tau": "10",
       "hops": 3,
       "seed": 1,
-      "step": 487744
+      "step": 687808
     },
     {
       "pid": 507100,
@@ -63,25 +63,17 @@
       "tau": "10",
       "hops": 3,
       "seed": 2,
-      "step": 516192
-    },
-    {
-      "pid": 507101,
-      "env": "walker2d-medium-v2",
-      "tau": "10",
-      "hops": 3,
-      "seed": 3,
-      "step": 786528
+      "step": 743840
     }
   ],
   "eta": {
-    "label": "29.8\uc2dc\uac04 \u00b7 09/23 07:38 KST",
-    "hours": 29.8,
-    "finish_kst": "2026-09-23 07:38 KST",
+    "label": "39.6\uc2dc\uac04 \u00b7 09/23 17:32 KST",
+    "hours": 39.6,
+    "finish_kst": "2026-09-23 17:32 KST",
     "cell_min": 29.6,
-    "slots": 4,
-    "cells_per_hour": 8.1,
-    "assumption": "4 live slots \u00b7 median 29.6 min/cell from [ok] \u22658m \u00b7 leftover 241.6 cells"
+    "slots": 3,
+    "cells_per_hour": 6.1,
+    "assumption": "3 live slots \u00b7 median 29.6 min/cell from [ok] \u22658m \u00b7 leftover 240.7 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -158,10 +150,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 36,
-        "live": 4,
-        "status": "36/40 \u00b7 4 live@487k",
-        "min_step": 487744
+        "complete": 37,
+        "live": 3,
+        "status": "37/40 \u00b7 3 live@687k",
+        "min_step": 687808
       }
     },
     "walker2d-medium-replay-v2": {

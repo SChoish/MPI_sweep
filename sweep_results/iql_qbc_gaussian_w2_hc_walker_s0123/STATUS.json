@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-21T10:42:00Z",
-  "stamp_kst": "2026-09-21 19:42 KST",
+  "updated_at": "2026-09-21T10:48:06Z",
+  "stamp_kst": "2026-09-21 19:48 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -13,7 +13,7 @@
     99,
     99,
     99,
-    98
+    99
   ],
   "taus": [
     "0.05",
@@ -34,8 +34,8 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 395,
-    "running": 5,
+    "complete": 396,
+    "running": 4,
     "remaining": 320,
     "extra_dirs": 4
   },
@@ -47,7 +47,7 @@
       "tau": "10",
       "hops": 1,
       "seed": 0,
-      "step": 111392
+      "step": 839808
     },
     {
       "pid": 1353639,
@@ -55,7 +55,7 @@
       "tau": "10",
       "hops": 1,
       "seed": 1,
-      "step": 89984
+      "step": 834560
     },
     {
       "pid": 1354132,
@@ -63,7 +63,7 @@
       "tau": "10",
       "hops": 1,
       "seed": 2,
-      "step": 72768
+      "step": 862016
     },
     {
       "pid": 1354277,
@@ -71,17 +71,17 @@
       "tau": "10",
       "hops": 1,
       "seed": 3,
-      "step": 120736
+      "step": 827776
     }
   ],
   "eta": {
-    "label": "16.1\uc2dc\uac04 \u00b7 09/22 11:48 KST",
-    "hours": 16.1,
-    "finish_kst": "2026-09-22 11:48 KST",
+    "label": "16.0\uc2dc\uac04 \u00b7 09/22 11:46 KST",
+    "hours": 16.0,
+    "finish_kst": "2026-09-22 11:46 KST",
     "cell_min": 11.9,
     "slots": 4,
     "cells_per_hour": 20.1,
-    "assumption": "4 live slots \u00b7 median 11.9 min/cell from [ok] \u22658m \u00b7 leftover 323.6 cells"
+    "assumption": "4 live slots \u00b7 median 11.9 min/cell from [ok] \u22658m \u00b7 leftover 320.6 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -146,10 +146,10 @@
     },
     "walker2d-medium-v2": {
       "1": {
-        "complete": 35,
-        "live": 5,
-        "status": "35/40 \u00b7 5 live@72k",
-        "min_step": 72768
+        "complete": 36,
+        "live": 4,
+        "status": "36/40 \u00b7 4 live@827k",
+        "min_step": 827776
       },
       "2": {
         "complete": 0,

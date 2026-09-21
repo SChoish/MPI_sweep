@@ -14,7 +14,7 @@
 | 방법 | 게시된 시드 점수 | 4시드 확보 셀 |
 |---|---:|---:|
 | AWR–FR | 456 | 114 |
-| Gaussian Q+BC–W2 | 508 | 122 |
+| Gaussian Q+BC–W2 | 511 | 123 |
 | TD3+BC MPI · Implicit | 2592 | 648 |
 
 ## AWR–FR
@@ -319,10 +319,10 @@
 | 0.7 | **20.15 ± 40.93** (4/4)<br>[s0: -0.31 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L378)<br>[s1: -0.33 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L379)<br>[s2: 81.54 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L380)<br>[s3: -0.31 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L381) | — | — | — |
 | 1.25 | — | — | — | — |
 | 1.5 | **-0.44 ± 0.40** (4/4)<br>[s0: -0.31 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L382)<br>[s1: -0.16 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L383)<br>[s2: -0.26 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L384)<br>[s3: -1.03 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L385) | — | — | — |
-| 2.5 | **-0.39 ± 0.12** (4/4)<br>[s0: -0.43 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L387)<br>[s1: -0.22 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L388)<br>[s2: -0.39 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L389)<br>[s3: -0.51 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L390) | — | — | — |
-| 4 | **-0.57 ± 0.54** (4/4)<br>[s0: -0.43 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L391)<br>[s1: -0.22 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L392)<br>[s2: -0.26 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L393)<br>[s3: -1.38 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L394) | — | — | — |
-| 7 | **-0.68 ± 0.75** (4/4)<br>[s0: -0.43 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L395)<br>[s1: -0.22 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L396)<br>[s2: -0.26 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L397)<br>[s3: -1.79 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L398) | — | — | — |
-| 10 | **-0.26** (1/4)<br>[s2: -0.26 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L386) | — | — | — |
+| 2.5 | **-0.39 ± 0.12** (4/4)<br>[s0: -0.43 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L390)<br>[s1: -0.22 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L391)<br>[s2: -0.39 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L392)<br>[s3: -0.51 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L393) | — | — | — |
+| 4 | **-0.57 ± 0.54** (4/4)<br>[s0: -0.43 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L394)<br>[s1: -0.22 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L395)<br>[s2: -0.26 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L396)<br>[s3: -1.38 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L397) | — | — | — |
+| 7 | **-0.68 ± 0.75** (4/4)<br>[s0: -0.43 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L398)<br>[s1: -0.22 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L399)<br>[s2: -0.26 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L400)<br>[s3: -1.79 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L401) | — | — | — |
+| 10 | **-1.07 ± 0.83** (4/4)<br>[s0: -0.43 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L386)<br>[s1: -1.79 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L387)<br>[s2: -0.26 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L388)<br>[s3: -1.79 · ext_csv](sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv#L389) | — | — | — |
 
 </details>
 

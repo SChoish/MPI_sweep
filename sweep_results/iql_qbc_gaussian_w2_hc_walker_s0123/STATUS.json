@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-21T21:00:57Z",
-  "stamp_kst": "2026-09-22 06:00 KST",
+  "updated_at": "2026-09-21T21:07:43Z",
+  "stamp_kst": "2026-09-22 06:07 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -10,7 +10,7 @@
   ],
   "per_seed": 180,
   "seed_complete": [
-    139,
+    140,
     139,
     139,
     139
@@ -34,36 +34,20 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 556,
-    "running": 4,
+    "complete": 557,
+    "running": 3,
     "remaining": 160,
     "extra_dirs": 4
   },
   "queue": "2026-09-21T20:08:24+00:00 env=walker2d-medium-replay-v2 hop=2 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 1571045,
-      "env": "walker2d-medium-replay-v2",
-      "tau": "10",
-      "hops": 2,
-      "seed": 0,
-      "step": 663744
-    },
-    {
-      "pid": 1574934,
-      "env": "walker2d-medium-replay-v2",
-      "tau": "10",
-      "hops": 2,
-      "seed": 1,
-      "step": 580192
-    },
-    {
       "pid": 1581871,
       "env": "walker2d-medium-replay-v2",
       "tau": "10",
       "hops": 2,
       "seed": 2,
-      "step": 534176
+      "step": 953696
     },
     {
       "pid": 1582787,
@@ -71,17 +55,17 @@
       "tau": "10",
       "hops": 2,
       "seed": 3,
-      "step": 509664
+      "step": 918880
     }
   ],
   "eta": {
-    "label": "15.9\uc2dc\uac04 \u00b7 09/22 21:55 KST",
-    "hours": 15.9,
-    "finish_kst": "2026-09-22 21:55 KST",
+    "label": "31.5\uc2dc\uac04 \u00b7 09/23 13:37 KST",
+    "hours": 31.5,
+    "finish_kst": "2026-09-23 13:37 KST",
     "cell_min": 23.6,
-    "slots": 4,
-    "cells_per_hour": 10.2,
-    "assumption": "4 live slots \u00b7 median 23.6 min/cell from [ok] \u22658m \u00b7 leftover 161.7 cells"
+    "slots": 2,
+    "cells_per_hour": 5.1,
+    "assumption": "2 live slots \u00b7 median 23.6 min/cell from [ok] \u22658m \u00b7 leftover 160.1 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -172,10 +156,10 @@
         "min_step": 0
       },
       "2": {
-        "complete": 36,
-        "live": 4,
-        "status": "36/40 \u00b7 4 live@509k",
-        "min_step": 509664
+        "complete": 37,
+        "live": 3,
+        "status": "37/40 \u00b7 3 live@918k",
+        "min_step": 918880
       },
       "3": {
         "complete": 0,

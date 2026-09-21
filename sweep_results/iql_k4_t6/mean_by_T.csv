@@ -32,7 +32,7 @@ qbc_deterministic_w2,20,0,
 qbc_gaussian_w2,0.05,12,54.0059
 qbc_gaussian_w2,0.1,12,55.2937
 qbc_gaussian_w2,0.2,16,46.3261
-qbc_gaussian_w2,0.4,12,49.4398
+qbc_gaussian_w2,0.4,13,49.7374
 qbc_gaussian_w2,0.7,12,67.0938
 qbc_gaussian_w2,1.25,9,73.4455
 qbc_gaussian_w2,1.5,12,34.2428

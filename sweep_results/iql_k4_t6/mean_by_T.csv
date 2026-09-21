@@ -1,6 +1,6 @@
 variant,tau,n,mean_d4rl
 awr_gaussian_fr,0.05,28,54.1948
-awr_gaussian_fr,0.1,24,48.0420
+awr_gaussian_fr,0.1,26,50.1843
 awr_gaussian_fr,0.2,4,42.9523
 awr_gaussian_fr,0.4,24,56.0745
 awr_gaussian_fr,0.7,4,48.3676

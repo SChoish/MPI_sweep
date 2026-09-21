@@ -16064,6 +16064,22 @@
     "conflict": false
   },
   {
+    "method": "Gaussian Q+BC–W2",
+    "env": "walker2d-medium-v2",
+    "T": 1.5,
+    "K": 1,
+    "seed": 3,
+    "score": -1.0316748182468432,
+    "machine": "ext_csv",
+    "source": "sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv",
+    "line": 385,
+    "priority": 2,
+    "completion": "reported_step",
+    "step": 1000000,
+    "selected": true,
+    "conflict": false
+  },
+  {
     "method": "TD3+BC MPI · Explicit",
     "env": "halfcheetah-expert-v2",
     "T": 0.05,

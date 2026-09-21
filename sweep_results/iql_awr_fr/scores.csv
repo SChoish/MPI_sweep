@@ -54,6 +54,9 @@ hopper-expert-v2,0.1,3,1,fr,mpi,3,mean,105.651708,hopper-expert-v2_iql_tau0.1_mp
 hopper-expert-v2,0.1,3,2,fr,mpi,3,mean,109.153107,hopper-expert-v2_iql_tau0.1_mpi3_seed2_e4e44fecbe5f
 hopper-expert-v2,0.1,3,3,fr,mpi,3,mean,105.007283,hopper-expert-v2_iql_tau0.1_mpi3_seed3_839358995b3a
 hopper-expert-v2,0.4,1,0,fr,baseline,1,mean,104.155345,hopper-expert-v2_iql_tau0.4_mpi1_seed0_2e5211864356
+hopper-expert-v2,0.4,1,1,fr,baseline,1,mean,105.128723,hopper-expert-v2_iql_tau0.4_mpi1_seed1_7daa3d38c832
+hopper-expert-v2,0.4,1,2,fr,baseline,1,mean,98.627141,hopper-expert-v2_iql_tau0.4_mpi1_seed2_1440b16b2d3b
+hopper-expert-v2,0.4,1,3,fr,baseline,1,mean,96.362506,hopper-expert-v2_iql_tau0.4_mpi1_seed3_ce7a1fa0b841
 hopper-expert-v2,0.4,2,0,fr,mpi,2,mean,0.720197,hopper-expert-v2_iql_tau0.4_mpi2_seed0_03e9957d1fd4
 hopper-expert-v2,0.4,3,0,fr,mpi,3,mean,0.676980,hopper-expert-v2_iql_tau0.4_mpi3_seed0_dc1071cd062f
 hopper-medium-replay-v2,0.05,1,0,fr,baseline,1,mean,14.582230,hopper-medium-replay-v2_iql_tau0.05_mpi1_seed0_c8b91c2f98ce

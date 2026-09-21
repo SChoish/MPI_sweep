@@ -2,6 +2,7 @@ env,tau,K,seed,geometry,policy,hop,eval_mode,d4rl_score,run
 halfcheetah-expert-v2,1.5,2,0,fr,mpi,2,mean,-2.551595,halfcheetah-expert-v2_iql_tau1.5_mpi2_seed0_489cc8b7a5a7
 halfcheetah-expert-v2,1.5,2,1,fr,mpi,2,mean,-2.554347,halfcheetah-expert-v2_iql_tau1.5_mpi2_seed1_d5f280db84f3
 halfcheetah-expert-v2,1.5,2,2,fr,mpi,2,mean,-3.995956,halfcheetah-expert-v2_iql_tau1.5_mpi2_seed2_384939cab525
+halfcheetah-expert-v2,1.5,2,3,fr,mpi,2,mean,-2.553966,halfcheetah-expert-v2_iql_tau1.5_mpi2_seed3_b5276437f245
 halfcheetah-medium-replay-v2,0.05,1,0,fr,baseline,1,mean,20.901473,halfcheetah-medium-replay-v2_iql_tau0.05_mpi1_seed0_bd695b3aa083
 halfcheetah-medium-replay-v2,0.05,1,1,fr,baseline,1,mean,1.791060,halfcheetah-medium-replay-v2_iql_tau0.05_mpi1_seed1_af857fba1ad4
 halfcheetah-medium-replay-v2,0.05,1,2,fr,baseline,1,mean,38.744616,halfcheetah-medium-replay-v2_iql_tau0.05_mpi1_seed2_b767feaaf532
@@ -136,6 +137,7 @@ hopper-medium-replay-v2,10,2,3,fr,mpi,2,mean,101.483964,hopper-medium-replay-v2_
 hopper-medium-replay-v2,10,3,0,fr,mpi,3,mean,101.783711,hopper-medium-replay-v2_iql_tau10_mpi3_seed0_84b6d1b4910c
 hopper-medium-replay-v2,10,3,1,fr,mpi,3,mean,101.508957,hopper-medium-replay-v2_iql_tau10_mpi3_seed1_a248f0d4ff85
 hopper-medium-replay-v2,10,3,2,fr,mpi,3,mean,99.903729,hopper-medium-replay-v2_iql_tau10_mpi3_seed2_29a0a5541d90
+hopper-medium-replay-v2,10,3,3,fr,mpi,3,mean,101.949062,hopper-medium-replay-v2_iql_tau10_mpi3_seed3_a84bb02e28a4
 hopper-medium-replay-v2,2.5,1,0,fr,baseline,1,mean,58.149704,hopper-medium-replay-v2_iql_tau2.5_mpi1_seed0_b092862a75cd
 hopper-medium-replay-v2,2.5,1,1,fr,baseline,1,mean,76.006120,hopper-medium-replay-v2_iql_tau2.5_mpi1_seed1_c91f38ebed04
 hopper-medium-replay-v2,2.5,1,2,fr,baseline,1,mean,57.382661,hopper-medium-replay-v2_iql_tau2.5_mpi1_seed2_d4ba7b0893dc

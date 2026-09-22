@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-22 17:21:54 UTC+09:00",
+  "updated_at": "2026-09-22 17:27:36 UTC+09:00",
   "schema": "iql_actor_geometry_v5_consistent_gaussian",
   "k": 4,
   "taus": [
@@ -44,7 +44,7 @@
   "total": 540,
   "started": 257,
   "done": 255,
-  "queue_ok": 349,
+  "queue_ok": 350,
   "queue_fail": 60,
   "source": "/home/shchoi/MPI_sweep/results/iql_k4_t6",
   "note": "IQL K=4 seeds 0-3. AWR-FR hopper-medium, hopper-medium-replay, halfcheetah-expert T=0.05,0.1,0.4,1.5,2.5,4,10; then Gauss-W2 loco-9 T<=10. Other AWR-FR envs and remaining Det-W2 dropped."

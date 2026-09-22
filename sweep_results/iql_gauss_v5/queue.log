@@ -573,3 +573,7 @@
 [data] ready /home/choi/MPI_sweep/data/hopper_medium_replay-v2.hdf5
 [launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi3_seed2_177b4ca1e80d pid=644792
 [launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi3_seed3_6eb82f11688f pid=644793
+[ok] hopper-medium-replay-v2_iql_tau1.5_mpi3_seed2_177b4ca1e80d 53.0m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi3_seed0_b09a010b7cf9 pid=655352
+[ok] hopper-medium-replay-v2_iql_tau1.5_mpi3_seed3_6eb82f11688f 53.7m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi3_seed1_e5c0de2bbb1e pid=655583

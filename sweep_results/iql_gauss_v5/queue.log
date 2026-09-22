@@ -703,3 +703,7 @@
 [data] ready /home/choi/MPI_sweep/data/hopper_expert-v2.hdf5
 [launch] gpu=0 hopper-expert-v2_iql_tau0.05_mpi2_seed0_79695f198555 pid=772434
 [launch] gpu=0 hopper-expert-v2_iql_tau0.05_mpi2_seed1_d96fe8e5542c pid=772435
+[ok] hopper-expert-v2_iql_tau0.05_mpi2_seed0_79695f198555 38.5m
+[launch] gpu=0 hopper-expert-v2_iql_tau0.05_mpi2_seed2_fb5b1d1a4da0 pid=778569
+[ok] hopper-expert-v2_iql_tau0.05_mpi2_seed1_d96fe8e5542c 38.5m
+[launch] gpu=0 hopper-expert-v2_iql_tau0.05_mpi2_seed3_e8d3d4f35836 pid=778570

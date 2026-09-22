@@ -2549,3 +2549,15 @@ walker2d-medium-v2,0.05,4,3,qbc_gaussian_w2,w2,mpi,1,mean,77.33653861294574,3551
 walker2d-medium-v2,0.05,4,3,qbc_gaussian_w2,w2,mpi,1,sample,70.86565794647703,3254.8382106388644,walker2d-medium-v2_iql_tau0.05_mpi4_seed3_a53e6a0fc7bd
 walker2d-medium-v2,0.05,4,3,qbc_gaussian_w2,w2,mpi,4,mean,80.56848577243277,3700.263113048718,walker2d-medium-v2_iql_tau0.05_mpi4_seed3_a53e6a0fc7bd
 walker2d-medium-v2,0.05,4,3,qbc_gaussian_w2,w2,mpi,4,sample,81.88097457158429,3760.5151556246165,walker2d-medium-v2_iql_tau0.05_mpi4_seed3_a53e6a0fc7bd
+walker2d-medium-v2,0.1,4,0,qbc_gaussian_w2,w2,baseline,1,mean,77.75063518242237,3570.9048634152105,walker2d-medium-v2_iql_tau0.1_mpi4_seed0_7d05e8b69eb6
+walker2d-medium-v2,0.1,4,0,qbc_gaussian_w2,w2,baseline,1,sample,64.60764220599934,2967.5532973659606,walker2d-medium-v2_iql_tau0.1_mpi4_seed0_7d05e8b69eb6
+walker2d-medium-v2,0.1,4,0,qbc_gaussian_w2,w2,mpi,1,mean,75.42047727587023,3463.934980331326,walker2d-medium-v2_iql_tau0.1_mpi4_seed0_7d05e8b69eb6
+walker2d-medium-v2,0.1,4,0,qbc_gaussian_w2,w2,mpi,1,sample,68.01349432672606,3123.904762702579,walker2d-medium-v2_iql_tau0.1_mpi4_seed0_7d05e8b69eb6
+walker2d-medium-v2,0.1,4,0,qbc_gaussian_w2,w2,mpi,4,mean,82.9709724638454,3810.553372678058,walker2d-medium-v2_iql_tau0.1_mpi4_seed0_7d05e8b69eb6
+walker2d-medium-v2,0.1,4,0,qbc_gaussian_w2,w2,mpi,4,sample,83.47497483375977,3833.6904632727105,walker2d-medium-v2_iql_tau0.1_mpi4_seed0_7d05e8b69eb6
+walker2d-medium-v2,0.1,4,1,qbc_gaussian_w2,w2,baseline,1,mean,74.68685816093564,3430.256940430257,walker2d-medium-v2_iql_tau0.1_mpi4_seed1_2efb6b3922e6
+walker2d-medium-v2,0.1,4,1,qbc_gaussian_w2,w2,baseline,1,sample,76.10255187484557,3495.246781090288,walker2d-medium-v2_iql_tau0.1_mpi4_seed1_2efb6b3922e6
+walker2d-medium-v2,0.1,4,1,qbc_gaussian_w2,w2,mpi,1,mean,80.09611434287305,3678.5780948574247,walker2d-medium-v2_iql_tau0.1_mpi4_seed1_2efb6b3922e6
+walker2d-medium-v2,0.1,4,1,qbc_gaussian_w2,w2,mpi,1,sample,58.91170525539431,2706.071572051926,walker2d-medium-v2_iql_tau0.1_mpi4_seed1_2efb6b3922e6
+walker2d-medium-v2,0.1,4,1,qbc_gaussian_w2,w2,mpi,4,mean,75.95184729492827,3488.328429656409,walker2d-medium-v2_iql_tau0.1_mpi4_seed1_2efb6b3922e6
+walker2d-medium-v2,0.1,4,1,qbc_gaussian_w2,w2,mpi,4,sample,83.41162964604723,3830.7824941155623,walker2d-medium-v2_iql_tau0.1_mpi4_seed1_2efb6b3922e6

@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-22T06:09:38Z",
-  "stamp_kst": "2026-09-22 15:09 KST",
+  "updated_at": "2026-09-22T06:16:34Z",
+  "stamp_kst": "2026-09-22 15:16 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -35,8 +35,8 @@
   "planned": 720,
   "counts": {
     "complete": 698,
-    "running": 5,
-    "remaining": 17,
+    "running": 6,
+    "remaining": 16,
     "extra_dirs": 4
   },
   "queue": "2026-09-22T04:34:32+00:00 env=walker2d-expert-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
@@ -47,7 +47,7 @@
       "tau": "0.7",
       "hops": 3,
       "seed": 2,
-      "step": 128160
+      "step": 347616
     },
     {
       "pid": 190053,
@@ -55,7 +55,7 @@
       "tau": "0.7",
       "hops": 3,
       "seed": 3,
-      "step": 128352
+      "step": 382432
     },
     {
       "pid": 207002,
@@ -63,7 +63,7 @@
       "tau": "1.5",
       "hops": 3,
       "seed": 0,
-      "step": 62208
+      "step": 296512
     },
     {
       "pid": 208686,
@@ -71,7 +71,7 @@
       "tau": "1.5",
       "hops": 3,
       "seed": 1,
-      "step": 76288
+      "step": 312928
     },
     {
       "pid": 208687,
@@ -79,7 +79,7 @@
       "tau": "1.5",
       "hops": 3,
       "seed": 2,
-      "step": 76736
+      "step": 315808
     },
     {
       "pid": 238954,
@@ -87,17 +87,17 @@
       "tau": "1.5",
       "hops": 3,
       "seed": 3,
-      "step": 0
+      "step": 248960
     }
   ],
   "eta": {
-    "label": "1.5\uc2dc\uac04 \u00b7 09/22 16:41 KST",
-    "hours": 1.5,
-    "finish_kst": "2026-09-22 16:41 KST",
+    "label": "1.4\uc2dc\uac04 \u00b7 09/22 16:38 KST",
+    "hours": 1.4,
+    "finish_kst": "2026-09-22 16:38 KST",
     "cell_min": 24.4,
     "slots": 6,
     "cells_per_hour": 14.8,
-    "assumption": "6 live slots \u00b7 median 24.4 min/cell from [ok] \u22658m \u00b7 leftover 22.5 cells"
+    "assumption": "6 live slots \u00b7 median 24.4 min/cell from [ok] \u22658m \u00b7 leftover 20.1 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -215,9 +215,9 @@
       },
       "3": {
         "complete": 18,
-        "live": 5,
-        "status": "18/40 \u00b7 5 live@62k",
-        "min_step": 62208
+        "live": 6,
+        "status": "18/40 \u00b7 6 live@248k",
+        "min_step": 248960
       }
     }
   },

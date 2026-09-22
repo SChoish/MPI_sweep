@@ -606,3 +606,13 @@
 [ok] hopper-medium-replay-v2_iql_tau10_mpi3_seed1_d59d1f4f9762 50.0m
 [launch] gpu=0 hopper-medium-replay-v2_iql_tau10_mpi3_seed3_d65165aeefea pid=719780
 [ok] hopper-medium-replay-v2_iql_tau10_mpi3_seed2_a1040e06d8e5 51.7m
+[ok] hopper-medium-replay-v2_iql_tau10_mpi3_seed3_d65165aeefea 29.1m
+[sweep] complete ok=18 fail=0
+[v5] 2026-09-22 23:48:19 KST stage env=hopper-medium-replay-v2 hops=3 rc=0
+[v5] 2026-09-22 23:48:19 KST start env=hopper-expert-v2 hops=1 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=1 jobs=40 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.050000000000000003 0.10000000000000001 0.20000000000000001 0.40000000000000002 0.69999999999999996 1.5 2.5 4 7 10
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_expert-v2.hdf5
+[launch] gpu=0 hopper-expert-v2_iql_tau0.05_mpi1_seed0_e94884ad3789 pid=724591
+[launch] gpu=0 hopper-expert-v2_iql_tau0.05_mpi1_seed1_cedb35d26347 pid=724592

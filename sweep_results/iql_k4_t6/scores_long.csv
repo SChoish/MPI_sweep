@@ -1499,6 +1499,12 @@ halfcheetah-medium-replay-v2,7,4,1,qbc_gaussian_w2,w2,mpi,1,mean,-2.220658277958
 halfcheetah-medium-replay-v2,7,4,1,qbc_gaussian_w2,w2,mpi,1,sample,-2.3813133269313664,-575.8232639701671,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed1_353700ee9a0a
 halfcheetah-medium-replay-v2,7,4,1,qbc_gaussian_w2,w2,mpi,4,mean,-2.5265553512132235,-593.8553211997194,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed1_353700ee9a0a
 halfcheetah-medium-replay-v2,7,4,1,qbc_gaussian_w2,w2,mpi,4,sample,-2.5295695137657948,-594.2295348745554,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed1_353700ee9a0a
+halfcheetah-medium-replay-v2,7,4,2,qbc_gaussian_w2,w2,baseline,1,mean,-2.577084079697786,-600.1285532637532,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed2_313e022952f6
+halfcheetah-medium-replay-v2,7,4,2,qbc_gaussian_w2,w2,baseline,1,sample,-2.577084079697786,-600.1285532637532,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed2_313e022952f6
+halfcheetah-medium-replay-v2,7,4,2,qbc_gaussian_w2,w2,mpi,1,mean,-2.577084079697786,-600.1285532637532,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed2_313e022952f6
+halfcheetah-medium-replay-v2,7,4,2,qbc_gaussian_w2,w2,mpi,1,sample,-2.5720112926687833,-599.498757676198,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed2_313e022952f6
+halfcheetah-medium-replay-v2,7,4,2,qbc_gaussian_w2,w2,mpi,4,mean,-2.577084079697786,-600.1285532637532,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed2_313e022952f6
+halfcheetah-medium-replay-v2,7,4,2,qbc_gaussian_w2,w2,mpi,4,sample,-2.577084079697786,-600.1285532637532,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed2_313e022952f6
 halfcheetah-medium-v2,0.2,4,0,qbc_gaussian_w2,w2,baseline,1,mean,42.85064622518531,5039.805458373696,halfcheetah-medium-v2_iql_tau0.2_mpi4_seed0_0675d6148358
 halfcheetah-medium-v2,0.2,4,0,qbc_gaussian_w2,w2,baseline,1,sample,40.696188112030555,4772.325628158106,halfcheetah-medium-v2_iql_tau0.2_mpi4_seed0_0675d6148358
 halfcheetah-medium-v2,0.2,4,0,qbc_gaussian_w2,w2,mpi,1,mean,43.186968702664444,5081.560495811894,halfcheetah-medium-v2_iql_tau0.2_mpi4_seed0_0675d6148358

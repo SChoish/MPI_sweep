@@ -1415,6 +1415,12 @@ halfcheetah-expert-v2,0.7,4,2,qbc_gaussian_w2,w2,mpi,1,mean,-0.6847452650702418,
 halfcheetah-expert-v2,0.7,4,2,qbc_gaussian_w2,w2,mpi,1,sample,-0.8518638224486662,-385.9393709928681,halfcheetah-expert-v2_iql_tau0.7_mpi4_seed2_cab4a5a61c6d
 halfcheetah-expert-v2,0.7,4,2,qbc_gaussian_w2,w2,mpi,4,mean,-1.4740780523988573,-463.1883811122152,halfcheetah-expert-v2_iql_tau0.7_mpi4_seed2_cab4a5a61c6d
 halfcheetah-expert-v2,0.7,4,2,qbc_gaussian_w2,w2,mpi,4,sample,-1.9785176302657292,-525.8154574141452,halfcheetah-expert-v2_iql_tau0.7_mpi4_seed2_cab4a5a61c6d
+halfcheetah-expert-v2,0.7,4,3,qbc_gaussian_w2,w2,baseline,1,mean,-2.5715234732058203,-599.4381940169036,halfcheetah-expert-v2_iql_tau0.7_mpi4_seed3_a10371d221f8
+halfcheetah-expert-v2,0.7,4,3,qbc_gaussian_w2,w2,baseline,1,sample,-2.5715234732058203,-599.4381940169036,halfcheetah-expert-v2_iql_tau0.7_mpi4_seed3_a10371d221f8
+halfcheetah-expert-v2,0.7,4,3,qbc_gaussian_w2,w2,mpi,1,mean,0.7764633420280873,-183.77963958276848,halfcheetah-expert-v2_iql_tau0.7_mpi4_seed3_a10371d221f8
+halfcheetah-expert-v2,0.7,4,3,qbc_gaussian_w2,w2,mpi,1,sample,0.44083500939300546,-225.44849769638398,halfcheetah-expert-v2_iql_tau0.7_mpi4_seed3_a10371d221f8
+halfcheetah-expert-v2,0.7,4,3,qbc_gaussian_w2,w2,mpi,4,mean,-0.5358320036308291,-346.70345513821286,halfcheetah-expert-v2_iql_tau0.7_mpi4_seed3_a10371d221f8
+halfcheetah-expert-v2,0.7,4,3,qbc_gaussian_w2,w2,mpi,4,sample,-2.3606376837468486,-573.2563458691254,halfcheetah-expert-v2_iql_tau0.7_mpi4_seed3_a10371d221f8
 halfcheetah-medium-replay-v2,0.1,4,1,qbc_gaussian_w2,w2,baseline,1,mean,40.012735115784416,4687.4737156145075,halfcheetah-medium-replay-v2_iql_tau0.1_mpi4_seed1_4027d0341e3a
 halfcheetah-medium-replay-v2,0.1,4,1,qbc_gaussian_w2,w2,baseline,1,sample,31.09070056809734,3579.7871602706728,halfcheetah-medium-replay-v2_iql_tau0.1_mpi4_seed1_4027d0341e3a
 halfcheetah-medium-replay-v2,0.1,4,1,qbc_gaussian_w2,w2,mpi,1,mean,38.13217792594284,4453.999175182168,halfcheetah-medium-replay-v2_iql_tau0.1_mpi4_seed1_4027d0341e3a

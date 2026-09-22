@@ -1343,6 +1343,12 @@ halfcheetah-medium-replay-v2,0.2,4,3,qbc_gaussian_w2,w2,mpi,1,mean,35.8152177171
 halfcheetah-medium-replay-v2,0.2,4,3,qbc_gaussian_w2,w2,mpi,1,sample,28.430862125474654,3249.563457758378,halfcheetah-medium-replay-v2_iql_tau0.2_mpi4_seed3_452e6b68d934
 halfcheetah-medium-replay-v2,0.2,4,3,qbc_gaussian_w2,w2,mpi,4,mean,45.93510097191021,5422.746034903896,halfcheetah-medium-replay-v2_iql_tau0.2_mpi4_seed3_452e6b68d934
 halfcheetah-medium-replay-v2,0.2,4,3,qbc_gaussian_w2,w2,mpi,4,sample,44.54377223800782,5250.010082765404,halfcheetah-medium-replay-v2_iql_tau0.2_mpi4_seed3_452e6b68d934
+halfcheetah-medium-replay-v2,0.4,4,0,qbc_gaussian_w2,w2,baseline,1,mean,42.04964134570419,4940.359269163853,halfcheetah-medium-replay-v2_iql_tau0.4_mpi4_seed0_c576d14f2ba0
+halfcheetah-medium-replay-v2,0.4,4,0,qbc_gaussian_w2,w2,baseline,1,sample,36.3498055947417,4232.714460654789,halfcheetah-medium-replay-v2_iql_tau0.4_mpi4_seed0_c576d14f2ba0
+halfcheetah-medium-replay-v2,0.4,4,0,qbc_gaussian_w2,w2,mpi,1,mean,37.89164273799485,4424.13630115349,halfcheetah-medium-replay-v2_iql_tau0.4_mpi4_seed0_c576d14f2ba0
+halfcheetah-medium-replay-v2,0.4,4,0,qbc_gaussian_w2,w2,mpi,1,sample,34.08179551064332,3951.1369500418887,halfcheetah-medium-replay-v2_iql_tau0.4_mpi4_seed0_c576d14f2ba0
+halfcheetah-medium-replay-v2,0.4,4,0,qbc_gaussian_w2,w2,mpi,4,mean,49.36408154100268,5848.460108820324,halfcheetah-medium-replay-v2_iql_tau0.4_mpi4_seed0_c576d14f2ba0
+halfcheetah-medium-replay-v2,0.4,4,0,qbc_gaussian_w2,w2,mpi,4,sample,48.29557381469021,5715.802962471998,halfcheetah-medium-replay-v2_iql_tau0.4_mpi4_seed0_c576d14f2ba0
 halfcheetah-medium-v2,0.2,4,0,qbc_gaussian_w2,w2,baseline,1,mean,42.85064622518531,5039.805458373696,halfcheetah-medium-v2_iql_tau0.2_mpi4_seed0_0675d6148358
 halfcheetah-medium-v2,0.2,4,0,qbc_gaussian_w2,w2,baseline,1,sample,40.696188112030555,4772.325628158106,halfcheetah-medium-v2_iql_tau0.2_mpi4_seed0_0675d6148358
 halfcheetah-medium-v2,0.2,4,0,qbc_gaussian_w2,w2,mpi,1,mean,43.186968702664444,5081.560495811894,halfcheetah-medium-v2_iql_tau0.2_mpi4_seed0_0675d6148358

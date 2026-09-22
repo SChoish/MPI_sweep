@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-22T07:54:59Z",
-  "stamp_kst": "2026-09-22 16:54 KST",
+  "updated_at": "2026-09-22T08:02:05Z",
+  "stamp_kst": "2026-09-22 17:02 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -10,10 +10,10 @@
   ],
   "per_seed": 180,
   "seed_complete": [
-    179,
-    179,
-    179,
-    179
+    180,
+    180,
+    180,
+    180
   ],
   "taus": [
     "0.05",
@@ -34,55 +34,14 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 716,
-    "running": 4,
+    "complete": 720,
+    "running": 0,
     "remaining": 0,
     "extra_dirs": 4
   },
   "queue": "2026-09-22T06:30:28+00:00 env=walker2d-expert-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
-  "live": [
-    {
-      "pid": 1417160,
-      "env": "walker2d-expert-v2",
-      "tau": "10",
-      "hops": 3,
-      "seed": 0,
-      "step": 814336
-    },
-    {
-      "pid": 1425065,
-      "env": "walker2d-expert-v2",
-      "tau": "10",
-      "hops": 3,
-      "seed": 1,
-      "step": 779936
-    },
-    {
-      "pid": 1428330,
-      "env": "walker2d-expert-v2",
-      "tau": "10",
-      "hops": 3,
-      "seed": 2,
-      "step": 720352
-    },
-    {
-      "pid": 1429008,
-      "env": "walker2d-expert-v2",
-      "tau": "10",
-      "hops": 3,
-      "seed": 3,
-      "step": 762272
-    }
-  ],
-  "eta": {
-    "label": "7\ubd84 \u00b7 09/22 17:01 KST",
-    "hours": 0.1,
-    "finish_kst": "2026-09-22 17:01 KST",
-    "cell_min": 29.7,
-    "slots": 4,
-    "cells_per_hour": 8.1,
-    "assumption": "4 live slots \u00b7 median 29.7 min/cell from [ok] \u22658m \u00b7 leftover 0.9 cells"
-  },
+  "live": [],
+  "eta": null,
   "by_env": {
     "halfcheetah-medium-v2": {
       "1": {
@@ -198,10 +157,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 36,
-        "live": 4,
-        "status": "36/40 \u00b7 4 live@720k",
-        "min_step": 720352
+        "complete": 40,
+        "live": 0,
+        "status": "40/40",
+        "min_step": 0
       }
     }
   },

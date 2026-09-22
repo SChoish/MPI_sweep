@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-22T00:18:24Z",
-  "stamp_kst": "2026-09-22 09:18 KST",
+  "updated_at": "2026-09-22T00:25:15Z",
+  "stamp_kst": "2026-09-22 09:25 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -47,7 +47,7 @@
       "tau": "10",
       "hops": 3,
       "seed": 0,
-      "step": 407424
+      "step": 734176
     },
     {
       "pid": 2329724,
@@ -55,7 +55,7 @@
       "tau": "10",
       "hops": 3,
       "seed": 1,
-      "step": 350432
+      "step": 678656
     },
     {
       "pid": 2344647,
@@ -63,7 +63,7 @@
       "tau": "10",
       "hops": 3,
       "seed": 2,
-      "step": 294976
+      "step": 623040
     },
     {
       "pid": 2346086,
@@ -71,17 +71,17 @@
       "tau": "10",
       "hops": 3,
       "seed": 3,
-      "step": 263616
+      "step": 595360
     }
   ],
   "eta": {
-    "label": "15.3\uc2dc\uac04 \u00b7 09/23 00:35 KST",
-    "hours": 15.3,
-    "finish_kst": "2026-09-23 00:35 KST",
+    "label": "15.1\uc2dc\uac04 \u00b7 09/23 00:32 KST",
+    "hours": 15.1,
+    "finish_kst": "2026-09-23 00:32 KST",
     "cell_min": 29.9,
     "slots": 4,
     "cells_per_hour": 8.0,
-    "assumption": "4 live slots \u00b7 median 29.9 min/cell from [ok] \u22658m \u00b7 leftover 122.7 cells"
+    "assumption": "4 live slots \u00b7 median 29.9 min/cell from [ok] \u22658m \u00b7 leftover 121.4 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -180,8 +180,8 @@
       "3": {
         "complete": 36,
         "live": 4,
-        "status": "36/40 \u00b7 4 live@263k",
-        "min_step": 263616
+        "status": "36/40 \u00b7 4 live@595k",
+        "min_step": 595360
       }
     },
     "walker2d-expert-v2": {

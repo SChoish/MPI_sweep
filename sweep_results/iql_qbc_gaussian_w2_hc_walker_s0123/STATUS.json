@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-22T00:53:09Z",
-  "stamp_kst": "2026-09-22 09:53 KST",
+  "updated_at": "2026-09-22T01:00:11Z",
+  "stamp_kst": "2026-09-22 10:00 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -10,10 +10,10 @@
   ],
   "per_seed": 180,
   "seed_complete": [
-    152,
-    152,
-    151,
-    151
+    153,
+    153,
+    153,
+    153
   ],
   "taus": [
     "0.05",
@@ -34,70 +34,70 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 606,
+    "complete": 612,
     "running": 6,
-    "remaining": 108,
+    "remaining": 102,
     "extra_dirs": 4
   },
   "queue": "2026-09-22T00:32:56+00:00 env=walker2d-expert-v2 hop=1 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 2457370,
+      "pid": 2508430,
       "env": "walker2d-expert-v2",
-      "tau": "0.1",
-      "hops": 1,
-      "seed": 2,
-      "step": 655872
-    },
-    {
-      "pid": 2457371,
-      "env": "walker2d-expert-v2",
-      "tau": "0.1",
-      "hops": 1,
-      "seed": 3,
-      "step": 691328
-    },
-    {
-      "pid": 2458370,
-      "env": "walker2d-expert-v2",
-      "tau": "0.2",
+      "tau": "0.4",
       "hops": 1,
       "seed": 0,
-      "step": 631424
+      "step": 211392
     },
     {
-      "pid": 2458511,
+      "pid": 2508542,
       "env": "walker2d-expert-v2",
-      "tau": "0.2",
+      "tau": "0.4",
       "hops": 1,
       "seed": 1,
-      "step": 580000
+      "step": 225920
     },
     {
-      "pid": 2458512,
+      "pid": 2509441,
       "env": "walker2d-expert-v2",
-      "tau": "0.2",
+      "tau": "0.4",
       "hops": 1,
       "seed": 2,
-      "step": 610432
+      "step": 180128
     },
     {
-      "pid": 2460448,
+      "pid": 2509680,
       "env": "walker2d-expert-v2",
-      "tau": "0.2",
+      "tau": "0.4",
       "hops": 1,
       "seed": 3,
-      "step": 556256
+      "step": 189536
+    },
+    {
+      "pid": 2509885,
+      "env": "walker2d-expert-v2",
+      "tau": "0.7",
+      "hops": 1,
+      "seed": 0,
+      "step": 165344
+    },
+    {
+      "pid": 2511160,
+      "env": "walker2d-expert-v2",
+      "tau": "0.7",
+      "hops": 1,
+      "seed": 1,
+      "step": 99968
     }
   ],
   "eta": {
-    "label": "9.2\uc2dc\uac04 \u00b7 09/22 19:02 KST",
-    "hours": 9.2,
-    "finish_kst": "2026-09-22 19:02 KST",
-    "cell_min": 29.9,
+    "label": "8.6\uc2dc\uac04 \u00b7 09/22 18:36 KST",
+    "hours": 8.6,
+    "finish_kst": "2026-09-22 18:36 KST",
+    "cell_min": 28.9,
     "slots": 6,
-    "cells_per_hour": 12.0,
-    "assumption": "6 live slots \u00b7 median 29.9 min/cell from [ok] \u22658m \u00b7 leftover 110.3 cells"
+    "cells_per_hour": 12.4,
+    "assumption": "6 live slots \u00b7 median 28.9 min/cell from [ok] \u22658m \u00b7 leftover 106.9 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -202,10 +202,10 @@
     },
     "walker2d-expert-v2": {
       "1": {
-        "complete": 6,
+        "complete": 12,
         "live": 6,
-        "status": "6/40 \u00b7 6 live@556k",
-        "min_step": 556256
+        "status": "12/40 \u00b7 6 live@99k",
+        "min_step": 99968
       },
       "2": {
         "complete": 0,

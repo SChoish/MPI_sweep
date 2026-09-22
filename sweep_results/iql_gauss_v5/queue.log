@@ -240,3 +240,294 @@
 [launch] gpu=0 hopper-medium-v2_iql_tau0.05_mpi3_seed2_8dde7bdc2a69 pid=251420
 [ok] hopper-medium-v2_iql_tau0.05_mpi3_seed0_b597ed74e8a1 52.4m
 [launch] gpu=0 hopper-medium-v2_iql_tau0.05_mpi3_seed3_95c28e735647 pid=251424
+[ok] hopper-medium-v2_iql_tau0.05_mpi3_seed2_8dde7bdc2a69 52.2m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.1_mpi3_seed0_46e53317ea23 pid=260717
+[ok] hopper-medium-v2_iql_tau0.05_mpi3_seed3_95c28e735647 52.2m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.1_mpi3_seed1_05fb76cb1594 pid=260718
+[ok] hopper-medium-v2_iql_tau0.1_mpi3_seed1_05fb76cb1594 52.3m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.1_mpi3_seed2_4ebcb013b4b7 pid=265802
+[ok] hopper-medium-v2_iql_tau0.1_mpi3_seed0_46e53317ea23 52.4m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.1_mpi3_seed3_fdca64a22359 pid=265803
+[ok] hopper-medium-v2_iql_tau0.1_mpi3_seed2_4ebcb013b4b7 52.3m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.2_mpi3_seed0_b86101204549 pid=271165
+[ok] hopper-medium-v2_iql_tau0.1_mpi3_seed3_fdca64a22359 52.2m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.2_mpi3_seed1_4c3339769d6a pid=271166
+[ok] hopper-medium-v2_iql_tau0.2_mpi3_seed1_4c3339769d6a 52.2m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.2_mpi3_seed2_6c370d994cf0 pid=276269
+[ok] hopper-medium-v2_iql_tau0.2_mpi3_seed0_b86101204549 52.2m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.2_mpi3_seed3_db06c455459f pid=276270
+[ok] hopper-medium-v2_iql_tau0.2_mpi3_seed2_6c370d994cf0 52.2m
+[ok] hopper-medium-v2_iql_tau0.2_mpi3_seed3_db06c455459f 52.2m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.4_mpi3_seed0_dcc6cc23f0c1 pid=281299
+[launch] gpu=0 hopper-medium-v2_iql_tau0.4_mpi3_seed1_3a29a75922d1 pid=281300
+[ok] hopper-medium-v2_iql_tau0.4_mpi3_seed1_3a29a75922d1 52.4m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.4_mpi3_seed2_927f3b30800e pid=286710
+[ok] hopper-medium-v2_iql_tau0.4_mpi3_seed0_dcc6cc23f0c1 52.4m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.4_mpi3_seed3_01e3b4edf1e2 pid=286711
+[ok] hopper-medium-v2_iql_tau0.4_mpi3_seed3_01e3b4edf1e2 52.3m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.7_mpi3_seed0_86ee22467b27 pid=291768
+[ok] hopper-medium-v2_iql_tau0.4_mpi3_seed2_927f3b30800e 52.3m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.7_mpi3_seed1_fd76049519e2 pid=291769
+[ok] hopper-medium-v2_iql_tau0.7_mpi3_seed1_fd76049519e2 52.3m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.7_mpi3_seed2_6f83557b85c4 pid=297206
+[ok] hopper-medium-v2_iql_tau0.7_mpi3_seed0_86ee22467b27 52.4m
+[launch] gpu=0 hopper-medium-v2_iql_tau0.7_mpi3_seed3_20bc96ec3d5d pid=297207
+[ok] hopper-medium-v2_iql_tau0.7_mpi3_seed3_20bc96ec3d5d 52.3m
+[launch] gpu=0 hopper-medium-v2_iql_tau1.5_mpi3_seed0_39e3159f2be1 pid=302279
+[ok] hopper-medium-v2_iql_tau0.7_mpi3_seed2_6f83557b85c4 52.3m
+[launch] gpu=0 hopper-medium-v2_iql_tau1.5_mpi3_seed1_0774ecb18e5a pid=302280
+[ok] hopper-medium-v2_iql_tau1.5_mpi3_seed0_39e3159f2be1 52.2m
+[ok] hopper-medium-v2_iql_tau1.5_mpi3_seed1_0774ecb18e5a 52.1m
+[launch] gpu=0 hopper-medium-v2_iql_tau1.5_mpi3_seed2_88bee4a26dfa pid=307776
+[launch] gpu=0 hopper-medium-v2_iql_tau1.5_mpi3_seed3_dfabd418ec38 pid=307777
+[ok] hopper-medium-v2_iql_tau1.5_mpi3_seed2_88bee4a26dfa 52.1m
+[launch] gpu=0 hopper-medium-v2_iql_tau2.5_mpi3_seed0_ac42ee1956ce pid=312779
+[ok] hopper-medium-v2_iql_tau1.5_mpi3_seed3_dfabd418ec38 52.5m
+[launch] gpu=0 hopper-medium-v2_iql_tau2.5_mpi3_seed1_e3c0bff1da3a pid=313059
+[ok] hopper-medium-v2_iql_tau2.5_mpi3_seed0_ac42ee1956ce 52.1m
+[launch] gpu=0 hopper-medium-v2_iql_tau2.5_mpi3_seed2_9a4c20b3e59b pid=318384
+[ok] hopper-medium-v2_iql_tau2.5_mpi3_seed1_e3c0bff1da3a 51.9m
+[launch] gpu=0 hopper-medium-v2_iql_tau2.5_mpi3_seed3_b1af78136abc pid=318584
+[ok] hopper-medium-v2_iql_tau2.5_mpi3_seed3_b1af78136abc 52.0m
+[launch] gpu=0 hopper-medium-v2_iql_tau4_mpi3_seed0_99336ecd5e85 pid=323610
+[ok] hopper-medium-v2_iql_tau2.5_mpi3_seed2_9a4c20b3e59b 52.1m
+[launch] gpu=0 hopper-medium-v2_iql_tau4_mpi3_seed1_0a02b277fdec pid=323718
+[ok] hopper-medium-v2_iql_tau4_mpi3_seed0_99336ecd5e85 52.1m
+[launch] gpu=0 hopper-medium-v2_iql_tau4_mpi3_seed2_9322e644efab pid=328640
+[ok] hopper-medium-v2_iql_tau4_mpi3_seed1_0a02b277fdec 52.1m
+[launch] gpu=0 hopper-medium-v2_iql_tau4_mpi3_seed3_b0c63a3e5a43 pid=328828
+[ok] hopper-medium-v2_iql_tau4_mpi3_seed2_9322e644efab 52.0m
+[launch] gpu=0 hopper-medium-v2_iql_tau7_mpi3_seed0_49b7503ad9d2 pid=333916
+[ok] hopper-medium-v2_iql_tau4_mpi3_seed3_b0c63a3e5a43 52.0m
+[launch] gpu=0 hopper-medium-v2_iql_tau7_mpi3_seed1_fb39346699f2 pid=334114
+[ok] hopper-medium-v2_iql_tau7_mpi3_seed0_49b7503ad9d2 52.0m
+[launch] gpu=0 hopper-medium-v2_iql_tau7_mpi3_seed2_6f2b6df3f092 pid=339058
+[ok] hopper-medium-v2_iql_tau7_mpi3_seed1_fb39346699f2 52.1m
+[launch] gpu=0 hopper-medium-v2_iql_tau7_mpi3_seed3_28c734cc313b pid=339292
+[ok] hopper-medium-v2_iql_tau7_mpi3_seed2_6f2b6df3f092 51.9m
+[launch] gpu=0 hopper-medium-v2_iql_tau10_mpi3_seed0_2ca11b2792af pid=344870
+[ok] hopper-medium-v2_iql_tau7_mpi3_seed3_28c734cc313b 51.9m
+[launch] gpu=0 hopper-medium-v2_iql_tau10_mpi3_seed1_9a74d935d143 pid=345152
+[ok] hopper-medium-v2_iql_tau10_mpi3_seed0_2ca11b2792af 51.9m
+[launch] gpu=0 hopper-medium-v2_iql_tau10_mpi3_seed2_cb72dd1e98f2 pid=350307
+[ok] hopper-medium-v2_iql_tau10_mpi3_seed1_9a74d935d143 51.9m
+[launch] gpu=0 hopper-medium-v2_iql_tau10_mpi3_seed3_e085e53c6c4d pid=350602
+[ok] hopper-medium-v2_iql_tau10_mpi3_seed2_cb72dd1e98f2 52.0m
+[ok] hopper-medium-v2_iql_tau10_mpi3_seed3_e085e53c6c4d 52.0m
+[sweep] complete ok=40 fail=0
+[v5] 2026-09-21 08:22:04 KST stage env=hopper-medium-v2 hops=3 rc=0
+[v5] 2026-09-21 08:22:04 KST start env=hopper-medium-replay-v2 hops=1 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=1 jobs=36 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.050000000000000003 0.10000000000000001 0.20000000000000001 0.40000000000000002 0.69999999999999996 1.5 2.5 4 7 10
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_medium_replay-v2.hdf5
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.05_mpi1_seed1_8c747912af52 pid=355819
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.05_mpi1_seed2_b7129b1c762d pid=355820
+[ok] hopper-medium-replay-v2_iql_tau0.05_mpi1_seed1_8c747912af52 13.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.05_mpi1_seed3_3652137c4bcd pid=357467
+[ok] hopper-medium-replay-v2_iql_tau0.05_mpi1_seed2_b7129b1c762d 13.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.1_mpi1_seed0_6d7ac3cc2a1e pid=357630
+[ok] hopper-medium-replay-v2_iql_tau0.05_mpi1_seed3_3652137c4bcd 13.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.1_mpi1_seed1_c588c716d970 pid=359155
+[ok] hopper-medium-replay-v2_iql_tau0.1_mpi1_seed0_6d7ac3cc2a1e 13.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.1_mpi1_seed2_12c48a7925e1 pid=359307
+[ok] hopper-medium-replay-v2_iql_tau0.1_mpi1_seed1_c588c716d970 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.1_mpi1_seed3_063ef9cdbd4a pid=360651
+[ok] hopper-medium-replay-v2_iql_tau0.1_mpi1_seed2_12c48a7925e1 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.2_mpi1_seed0_05ff75224eaf pid=360847
+[ok] hopper-medium-replay-v2_iql_tau0.1_mpi1_seed3_063ef9cdbd4a 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.2_mpi1_seed1_3dc63c89976c pid=362363
+[ok] hopper-medium-replay-v2_iql_tau0.2_mpi1_seed0_05ff75224eaf 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.2_mpi1_seed2_65776dff5b23 pid=362539
+[ok] hopper-medium-replay-v2_iql_tau0.2_mpi1_seed1_3dc63c89976c 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.2_mpi1_seed3_c1dee5af9c8f pid=364030
+[ok] hopper-medium-replay-v2_iql_tau0.2_mpi1_seed2_65776dff5b23 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.4_mpi1_seed1_dbef5e6a5773 pid=364106
+[ok] hopper-medium-replay-v2_iql_tau0.2_mpi1_seed3_c1dee5af9c8f 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.4_mpi1_seed2_6a5019d27c48 pid=365467
+[ok] hopper-medium-replay-v2_iql_tau0.4_mpi1_seed1_dbef5e6a5773 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.4_mpi1_seed3_e80421b3ed2f pid=365468
+[ok] hopper-medium-replay-v2_iql_tau0.4_mpi1_seed2_6a5019d27c48 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.7_mpi1_seed0_adbe17a2e294 pid=367161
+[ok] hopper-medium-replay-v2_iql_tau0.4_mpi1_seed3_e80421b3ed2f 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.7_mpi1_seed1_648838cb8002 pid=367162
+[ok] hopper-medium-replay-v2_iql_tau0.7_mpi1_seed0_adbe17a2e294 13.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.7_mpi1_seed2_df2fb4a9fd13 pid=368836
+[ok] hopper-medium-replay-v2_iql_tau0.7_mpi1_seed1_648838cb8002 13.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.7_mpi1_seed3_5445497a4ad5 pid=369012
+[ok] hopper-medium-replay-v2_iql_tau0.7_mpi1_seed2_df2fb4a9fd13 13.3m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi1_seed0_d7ae12615ef4 pid=370241
+[ok] hopper-medium-replay-v2_iql_tau0.7_mpi1_seed3_5445497a4ad5 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi1_seed1_48bc5668e212 pid=370779
+[ok] hopper-medium-replay-v2_iql_tau1.5_mpi1_seed0_d7ae12615ef4 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi1_seed2_dd1f23ecee72 pid=371955
+[ok] hopper-medium-replay-v2_iql_tau1.5_mpi1_seed1_48bc5668e212 13.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi1_seed3_525b5cfbb1cd pid=372153
+[ok] hopper-medium-replay-v2_iql_tau1.5_mpi1_seed2_dd1f23ecee72 13.2m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi1_seed0_dc93a4663ed2 pid=373601
+[ok] hopper-medium-replay-v2_iql_tau1.5_mpi1_seed3_525b5cfbb1cd 13.8m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi1_seed1_4b4de492be24 pid=373916
+[ok] hopper-medium-replay-v2_iql_tau2.5_mpi1_seed0_dc93a4663ed2 13.0m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi1_seed2_08e5b8dde6cf pid=375046
+[ok] hopper-medium-replay-v2_iql_tau2.5_mpi1_seed1_4b4de492be24 13.3m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi1_seed3_a393397f59d5 pid=375560
+[ok] hopper-medium-replay-v2_iql_tau2.5_mpi1_seed2_08e5b8dde6cf 13.3m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau4_mpi1_seed1_3fd5d47dfa46 pid=376715
+[ok] hopper-medium-replay-v2_iql_tau2.5_mpi1_seed3_a393397f59d5 13.9m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau4_mpi1_seed2_a8d44b4c851e pid=376958
+[ok] hopper-medium-replay-v2_iql_tau4_mpi1_seed1_3fd5d47dfa46 12.8m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau4_mpi1_seed3_53db052506f2 pid=378368
+[ok] hopper-medium-replay-v2_iql_tau4_mpi1_seed2_a8d44b4c851e 13.3m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau7_mpi1_seed0_37bb47d3b5ec pid=378665
+[ok] hopper-medium-replay-v2_iql_tau4_mpi1_seed3_53db052506f2 13.8m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau7_mpi1_seed1_ad34de21aafe pid=379842
+[ok] hopper-medium-replay-v2_iql_tau7_mpi1_seed0_37bb47d3b5ec 12.9m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau7_mpi1_seed2_d7f9f86c9913 pid=380361
+[ok] hopper-medium-replay-v2_iql_tau7_mpi1_seed1_ad34de21aafe 13.3m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau7_mpi1_seed3_3f313183d9bf pid=381505
+[ok] hopper-medium-replay-v2_iql_tau7_mpi1_seed2_d7f9f86c9913 13.3m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau10_mpi1_seed1_5aed0ba754a6 pid=381724
+[ok] hopper-medium-replay-v2_iql_tau7_mpi1_seed3_3f313183d9bf 13.9m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau10_mpi1_seed2_3d06fb93bc2c pid=383230
+[ok] hopper-medium-replay-v2_iql_tau10_mpi1_seed1_5aed0ba754a6 12.8m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau10_mpi1_seed3_75b0299f6a31 pid=383430
+[ok] hopper-medium-replay-v2_iql_tau10_mpi1_seed2_3d06fb93bc2c 13.3m
+[ok] hopper-medium-replay-v2_iql_tau10_mpi1_seed3_75b0299f6a31 13.4m
+[sweep] complete ok=36 fail=0
+[v5] 2026-09-21 12:23:11 KST stage env=hopper-medium-replay-v2 hops=1 rc=0
+[v5] 2026-09-21 12:23:11 KST start env=hopper-medium-replay-v2 hops=2 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=2 jobs=37 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.050000000000000003 0.10000000000000001 0.20000000000000001 0.40000000000000002 0.69999999999999996 1.5 2.5 4 7 10
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_medium_replay-v2.hdf5
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.05_mpi2_seed1_1520dd7ae110 pid=385035
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.05_mpi2_seed2_bdbceca8841a pid=385036
+[ok] hopper-medium-replay-v2_iql_tau0.05_mpi2_seed1_1520dd7ae110 36.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.05_mpi2_seed3_5596236fb797 pid=388608
+[ok] hopper-medium-replay-v2_iql_tau0.05_mpi2_seed2_bdbceca8841a 36.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.1_mpi2_seed0_e933f7a2ba2b pid=388791
+[ok] hopper-medium-replay-v2_iql_tau0.05_mpi2_seed3_5596236fb797 36.7m
+[ok] hopper-medium-replay-v2_iql_tau0.1_mpi2_seed0_e933f7a2ba2b 36.6m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.1_mpi2_seed1_d0daa6cbe931 pid=392605
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.1_mpi2_seed2_128d6e5b35df pid=392606
+[ok] hopper-medium-replay-v2_iql_tau0.1_mpi2_seed1_d0daa6cbe931 36.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.1_mpi2_seed3_52d19ee61f6c pid=396389
+[ok] hopper-medium-replay-v2_iql_tau0.1_mpi2_seed2_128d6e5b35df 36.7m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.2_mpi2_seed0_0f130106bf69 pid=396588
+[ok] hopper-medium-replay-v2_iql_tau0.1_mpi2_seed3_52d19ee61f6c 36.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.2_mpi2_seed1_bf87729fa565 pid=403224
+[ok] hopper-medium-replay-v2_iql_tau0.2_mpi2_seed0_0f130106bf69 36.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.2_mpi2_seed2_f6bee4650fe6 pid=403451
+[ok] hopper-medium-replay-v2_iql_tau0.2_mpi2_seed1_bf87729fa565 36.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.2_mpi2_seed3_cf7409f55179 pid=407944
+[ok] hopper-medium-replay-v2_iql_tau0.2_mpi2_seed2_f6bee4650fe6 36.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.4_mpi2_seed1_c59015649c52 pid=408170
+[ok] hopper-medium-replay-v2_iql_tau0.2_mpi2_seed3_cf7409f55179 36.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.4_mpi2_seed2_96a4bb3ece84 pid=412491
+[ok] hopper-medium-replay-v2_iql_tau0.4_mpi2_seed1_c59015649c52 36.3m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.4_mpi2_seed3_c0886bbe5dd7 pid=412666
+[ok] hopper-medium-replay-v2_iql_tau0.4_mpi2_seed2_96a4bb3ece84 36.6m
+[ok] hopper-medium-replay-v2_iql_tau0.4_mpi2_seed3_c0886bbe5dd7 36.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.7_mpi2_seed0_709ca884de9b pid=417209
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.7_mpi2_seed1_6fa74c7c65f5 pid=417210
+[ok] hopper-medium-replay-v2_iql_tau0.7_mpi2_seed1_6fa74c7c65f5 36.7m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.7_mpi2_seed2_17a22e0e3e41 pid=421612
+[ok] hopper-medium-replay-v2_iql_tau0.7_mpi2_seed0_709ca884de9b 36.7m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.7_mpi2_seed3_e1c4e9ae4961 pid=421613
+[ok] hopper-medium-replay-v2_iql_tau0.7_mpi2_seed2_17a22e0e3e41 36.7m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi2_seed0_a49923a3ba0b pid=425672
+[ok] hopper-medium-replay-v2_iql_tau0.7_mpi2_seed3_e1c4e9ae4961 36.7m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi2_seed1_c8f48428e8c1 pid=425743
+[ok] hopper-medium-replay-v2_iql_tau1.5_mpi2_seed0_a49923a3ba0b 36.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi2_seed2_e3f1ea2345d9 pid=430024
+[ok] hopper-medium-replay-v2_iql_tau1.5_mpi2_seed1_c8f48428e8c1 37.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi2_seed3_69c4df137586 pid=430260
+[ok] hopper-medium-replay-v2_iql_tau1.5_mpi2_seed2_e3f1ea2345d9 35.9m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi2_seed0_dd827c44bd9f pid=434017
+[ok] hopper-medium-replay-v2_iql_tau1.5_mpi2_seed3_69c4df137586 37.7m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi2_seed1_deb22e0c2330 pid=434395
+[ok] hopper-medium-replay-v2_iql_tau2.5_mpi2_seed0_dd827c44bd9f 34.9m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi2_seed2_d27b0de2e494 pid=438074
+[ok] hopper-medium-replay-v2_iql_tau2.5_mpi2_seed1_deb22e0c2330 36.3m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi2_seed3_db75514a747c pid=438810
+[ok] hopper-medium-replay-v2_iql_tau2.5_mpi2_seed2_d27b0de2e494 35.8m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau4_mpi2_seed1_75abf388e2e2 pid=442105
+[ok] hopper-medium-replay-v2_iql_tau2.5_mpi2_seed3_db75514a747c 38.2m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau4_mpi2_seed2_1f43968f8327 pid=442865
+[ok] hopper-medium-replay-v2_iql_tau4_mpi2_seed1_75abf388e2e2 34.8m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau4_mpi2_seed3_4e20dcdfe9cb pid=447678
+[ok] hopper-medium-replay-v2_iql_tau4_mpi2_seed2_1f43968f8327 36.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau7_mpi2_seed0_a7a26d9a6154 pid=448572
+[ok] hopper-medium-replay-v2_iql_tau4_mpi2_seed3_4e20dcdfe9cb 38.2m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau7_mpi2_seed1_1dedb447ab28 pid=452570
+[ok] hopper-medium-replay-v2_iql_tau7_mpi2_seed0_a7a26d9a6154 34.5m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau7_mpi2_seed2_bb98309d6211 pid=452997
+[ok] hopper-medium-replay-v2_iql_tau7_mpi2_seed1_1dedb447ab28 36.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau7_mpi2_seed3_7bc82ea662d4 pid=456963
+[ok] hopper-medium-replay-v2_iql_tau7_mpi2_seed2_bb98309d6211 36.3m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau10_mpi2_seed0_436cd1b8995a pid=457657
+[ok] hopper-medium-replay-v2_iql_tau7_mpi2_seed3_7bc82ea662d4 38.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau10_mpi2_seed1_913ad11427aa pid=461481
+[ok] hopper-medium-replay-v2_iql_tau10_mpi2_seed0_436cd1b8995a 34.7m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau10_mpi2_seed2_0ebac3ede692 pid=461717
+[ok] hopper-medium-replay-v2_iql_tau10_mpi2_seed1_913ad11427aa 36.2m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau10_mpi2_seed3_8c09b9fad92d pid=466108
+[ok] hopper-medium-replay-v2_iql_tau10_mpi2_seed2_0ebac3ede692 36.2m
+[ok] hopper-medium-replay-v2_iql_tau10_mpi2_seed3_8c09b9fad92d 18.1m
+[sweep] complete ok=37 fail=0
+[v5] 2026-09-21 23:37:03 KST stage env=hopper-medium-replay-v2 hops=2 rc=0
+[v5] 2026-09-21 23:37:03 KST start env=hopper-medium-replay-v2 hops=3 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=3 jobs=40 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.050000000000000003 0.10000000000000001 0.20000000000000001 0.40000000000000002 0.69999999999999996 1.5 2.5 4 7 10
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_medium_replay-v2.hdf5
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.05_mpi3_seed0_f12c5612cf22 pid=468276
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.05_mpi3_seed1_3825551e36e9 pid=468277
+[ok] hopper-medium-replay-v2_iql_tau0.05_mpi3_seed1_3825551e36e9 52.3m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.05_mpi3_seed2_6f1a2068f914 pid=480309
+[ok] hopper-medium-replay-v2_iql_tau0.05_mpi3_seed0_f12c5612cf22 52.4m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.05_mpi3_seed3_238686bddcae pid=480605
+[ok] hopper-medium-replay-v2_iql_tau0.05_mpi3_seed2_6f1a2068f914 52.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.1_mpi3_seed0_a4cd247f7d6d pid=493358
+[ok] hopper-medium-replay-v2_iql_tau0.05_mpi3_seed3_238686bddcae 52.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.1_mpi3_seed1_158c5b9b3ca2 pid=493587
+[ok] hopper-medium-replay-v2_iql_tau0.1_mpi3_seed1_158c5b9b3ca2 52.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.1_mpi3_seed2_f6812c2ad97d pid=500312
+[ok] hopper-medium-replay-v2_iql_tau0.1_mpi3_seed0_a4cd247f7d6d 52.3m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.1_mpi3_seed3_b105284522e9 pid=500501
+[ok] hopper-medium-replay-v2_iql_tau0.1_mpi3_seed2_f6812c2ad97d 52.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.2_mpi3_seed0_3eae8a20e504 pid=505916
+[ok] hopper-medium-replay-v2_iql_tau0.1_mpi3_seed3_b105284522e9 52.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.2_mpi3_seed1_af8167173398 pid=506005
+[ok] hopper-medium-replay-v2_iql_tau0.2_mpi3_seed1_af8167173398 52.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.2_mpi3_seed2_dbb8781b0b5a pid=511521
+[ok] hopper-medium-replay-v2_iql_tau0.2_mpi3_seed0_3eae8a20e504 52.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.2_mpi3_seed3_32790fffe087 pid=511522
+[ok] hopper-medium-replay-v2_iql_tau0.2_mpi3_seed3_32790fffe087 52.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.4_mpi3_seed0_1b893511d760 pid=517233
+[ok] hopper-medium-replay-v2_iql_tau0.2_mpi3_seed2_dbb8781b0b5a 52.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.4_mpi3_seed1_513ba0e18308 pid=517234
+[ok] hopper-medium-replay-v2_iql_tau0.4_mpi3_seed1_513ba0e18308 52.0m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.4_mpi3_seed2_816a08c79693 pid=523763
+[ok] hopper-medium-replay-v2_iql_tau0.4_mpi3_seed0_1b893511d760 52.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.4_mpi3_seed3_daa82746fe8b pid=523935
+[ok] hopper-medium-replay-v2_iql_tau0.4_mpi3_seed3_daa82746fe8b 51.9m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.7_mpi3_seed0_8d15aafd5eb5 pid=529149
+[ok] hopper-medium-replay-v2_iql_tau0.4_mpi3_seed2_816a08c79693 52.0m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.7_mpi3_seed1_feb40a5f1523 pid=529222
+[ok] hopper-medium-replay-v2_iql_tau0.7_mpi3_seed1_feb40a5f1523 51.9m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.7_mpi3_seed2_c86f7e0b50a6 pid=534303
+[ok] hopper-medium-replay-v2_iql_tau0.7_mpi3_seed0_8d15aafd5eb5 52.0m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau0.7_mpi3_seed3_c7e9a85625d4 pid=534479
+[ok] hopper-medium-replay-v2_iql_tau0.7_mpi3_seed2_c86f7e0b50a6 52.2m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi3_seed0_a8de049a9afa pid=539625
+[ok] hopper-medium-replay-v2_iql_tau0.7_mpi3_seed3_c7e9a85625d4 52.1m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi3_seed1_42dcac74b2af pid=539757
+[v5] 2026-09-22 09:06:42 KST start env=hopper-medium-v2 hops=1 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=1 jobs=40 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.050000000000000003 0.10000000000000001 0.20000000000000001 0.40000000000000002 0.69999999999999996 1.5 2.5 4 7 10
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_medium-v2.hdf5
+[launch] gpu=0 hopper-medium-v2_iql_tau0.05_mpi1_seed0_3a4f2627ba50 pid=547501
+[launch] gpu=0 hopper-medium-v2_iql_tau0.05_mpi1_seed1_1c3cf19284eb pid=547502
+[waiter] 2026-09-22 09:07:43 KST waiting for reeval50 + live trainers 539625 539757

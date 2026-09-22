@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-22T07:33:38Z",
-  "stamp_kst": "2026-09-22 16:33 KST",
+  "updated_at": "2026-09-22T07:40:43Z",
+  "stamp_kst": "2026-09-22 16:40 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -10,10 +10,10 @@
   ],
   "per_seed": 180,
   "seed_complete": [
-    178,
-    178,
-    177,
-    177
+    179,
+    179,
+    179,
+    179
   ],
   "taus": [
     "0.05",
@@ -34,70 +34,54 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 710,
-    "running": 6,
-    "remaining": 4,
+    "complete": 716,
+    "running": 4,
+    "remaining": 0,
     "extra_dirs": 4
   },
   "queue": "2026-09-22T06:30:28+00:00 env=walker2d-expert-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 1092293,
+      "pid": 1417160,
       "env": "walker2d-expert-v2",
-      "tau": "4",
-      "hops": 3,
-      "seed": 2,
-      "step": 819840
-    },
-    {
-      "pid": 1105554,
-      "env": "walker2d-expert-v2",
-      "tau": "4",
-      "hops": 3,
-      "seed": 3,
-      "step": 862208
-    },
-    {
-      "pid": 1124324,
-      "env": "walker2d-expert-v2",
-      "tau": "7",
+      "tau": "10",
       "hops": 3,
       "seed": 0,
-      "step": 795936
+      "step": 113888
     },
     {
-      "pid": 1126146,
+      "pid": 1425065,
       "env": "walker2d-expert-v2",
-      "tau": "7",
+      "tau": "10",
       "hops": 3,
       "seed": 1,
-      "step": 835840
+      "step": 85248
     },
     {
-      "pid": 1136428,
+      "pid": 1428330,
       "env": "walker2d-expert-v2",
-      "tau": "7",
+      "tau": "10",
       "hops": 3,
       "seed": 2,
-      "step": 801088
+      "step": 41536
     },
     {
-      "pid": 1165569,
+      "pid": 1429008,
       "env": "walker2d-expert-v2",
-      "tau": "7",
+      "tau": "10",
       "hops": 3,
       "seed": 3,
-      "step": 769568
+      "step": 74112
     }
   ],
   "eta": {
-    "label": "25\ubd84 \u00b7 09/22 16:58 KST",
-    "hours": 0.4,
-    "finish_kst": "2026-09-22 16:58 KST",
-    "cell_min": 29.4,
-    "slots": 6,
-    "cells_per_hour": 12.2,
-    "assumption": "6 live slots \u00b7 median 29.4 min/cell from [ok] \u22658m \u00b7 leftover 5.1 cells"
+    "label": "27\ubd84 \u00b7 09/22 17:08 KST",
+    "hours": 0.5,
+    "finish_kst": "2026-09-22 17:08 KST",
+    "cell_min": 29.7,
+    "slots": 4,
+    "cells_per_hour": 8.1,
+    "assumption": "4 live slots \u00b7 median 29.7 min/cell from [ok] \u22658m \u00b7 leftover 3.7 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -214,10 +198,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 30,
-        "live": 6,
-        "status": "30/40 \u00b7 6 live@769k",
-        "min_step": 769568
+        "complete": 36,
+        "live": 4,
+        "status": "36/40 \u00b7 4 live@41k",
+        "min_step": 41536
       }
     }
   },

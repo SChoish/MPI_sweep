@@ -1439,6 +1439,12 @@ halfcheetah-expert-v2,1.25,4,2,qbc_gaussian_w2,w2,mpi,1,mean,-2.5643092961908263
 halfcheetah-expert-v2,1.25,4,2,qbc_gaussian_w2,w2,mpi,1,sample,-2.4086736679834893,-579.2200992739392,halfcheetah-expert-v2_iql_tau1.25_mpi4_seed2_fceaebfa8f65
 halfcheetah-expert-v2,1.25,4,2,qbc_gaussian_w2,w2,mpi,4,mean,-1.8868135451129304,-514.4302311352137,halfcheetah-expert-v2_iql_tau1.25_mpi4_seed2_fceaebfa8f65
 halfcheetah-expert-v2,1.25,4,2,qbc_gaussian_w2,w2,mpi,4,sample,-4.148088962596363,-795.1716208359798,halfcheetah-expert-v2_iql_tau1.25_mpi4_seed2_fceaebfa8f65
+halfcheetah-expert-v2,1.25,4,3,qbc_gaussian_w2,w2,baseline,1,mean,-2.5715234732058203,-599.4381940169036,halfcheetah-expert-v2_iql_tau1.25_mpi4_seed3_0b956f3f133e
+halfcheetah-expert-v2,1.25,4,3,qbc_gaussian_w2,w2,baseline,1,sample,-2.5715234732058203,-599.4381940169036,halfcheetah-expert-v2_iql_tau1.25_mpi4_seed3_0b956f3f133e
+halfcheetah-expert-v2,1.25,4,3,qbc_gaussian_w2,w2,mpi,1,mean,-2.1343415871171403,-545.1612805088934,halfcheetah-expert-v2_iql_tau1.25_mpi4_seed3_0b956f3f133e
+halfcheetah-expert-v2,1.25,4,3,qbc_gaussian_w2,w2,mpi,1,sample,-2.131972935883783,-544.8672082194996,halfcheetah-expert-v2_iql_tau1.25_mpi4_seed3_0b956f3f133e
+halfcheetah-expert-v2,1.25,4,3,qbc_gaussian_w2,w2,mpi,4,mean,-2.5715155879347846,-599.4372150463936,halfcheetah-expert-v2_iql_tau1.25_mpi4_seed3_0b956f3f133e
+halfcheetah-expert-v2,1.25,4,3,qbc_gaussian_w2,w2,mpi,4,sample,-2.5720357866434855,-599.50179864699,halfcheetah-expert-v2_iql_tau1.25_mpi4_seed3_0b956f3f133e
 halfcheetah-medium-replay-v2,0.1,4,1,qbc_gaussian_w2,w2,baseline,1,mean,40.012735115784416,4687.4737156145075,halfcheetah-medium-replay-v2_iql_tau0.1_mpi4_seed1_4027d0341e3a
 halfcheetah-medium-replay-v2,0.1,4,1,qbc_gaussian_w2,w2,baseline,1,sample,31.09070056809734,3579.7871602706728,halfcheetah-medium-replay-v2_iql_tau0.1_mpi4_seed1_4027d0341e3a
 halfcheetah-medium-replay-v2,0.1,4,1,qbc_gaussian_w2,w2,mpi,1,mean,38.13217792594284,4453.999175182168,halfcheetah-medium-replay-v2_iql_tau0.1_mpi4_seed1_4027d0341e3a

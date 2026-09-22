@@ -1505,6 +1505,12 @@ halfcheetah-medium-replay-v2,7,4,2,qbc_gaussian_w2,w2,mpi,1,mean,-2.577084079697
 halfcheetah-medium-replay-v2,7,4,2,qbc_gaussian_w2,w2,mpi,1,sample,-2.5720112926687833,-599.498757676198,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed2_313e022952f6
 halfcheetah-medium-replay-v2,7,4,2,qbc_gaussian_w2,w2,mpi,4,mean,-2.577084079697786,-600.1285532637532,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed2_313e022952f6
 halfcheetah-medium-replay-v2,7,4,2,qbc_gaussian_w2,w2,mpi,4,sample,-2.577084079697786,-600.1285532637532,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed2_313e022952f6
+halfcheetah-medium-replay-v2,7,4,3,qbc_gaussian_w2,w2,baseline,1,mean,-2.6033087043964582,-603.3843873498461,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed3_d5bc8775fb7b
+halfcheetah-medium-replay-v2,7,4,3,qbc_gaussian_w2,w2,baseline,1,sample,-2.6033087043964582,-603.3843873498461,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed3_d5bc8775fb7b
+halfcheetah-medium-replay-v2,7,4,3,qbc_gaussian_w2,w2,mpi,1,mean,44.354941653952714,5226.566427836968,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed3_d5bc8775fb7b
+halfcheetah-medium-replay-v2,7,4,3,qbc_gaussian_w2,w2,mpi,1,sample,40.15728155477588,4705.419414685486,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed3_d5bc8775fb7b
+halfcheetah-medium-replay-v2,7,4,3,qbc_gaussian_w2,w2,mpi,4,mean,42.93572813488747,5050.368529719849,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed3_d5bc8775fb7b
+halfcheetah-medium-replay-v2,7,4,3,qbc_gaussian_w2,w2,mpi,4,sample,37.33836984575955,4355.4464814840385,halfcheetah-medium-replay-v2_iql_tau7_mpi4_seed3_d5bc8775fb7b
 halfcheetah-medium-v2,0.2,4,0,qbc_gaussian_w2,w2,baseline,1,mean,42.85064622518531,5039.805458373696,halfcheetah-medium-v2_iql_tau0.2_mpi4_seed0_0675d6148358
 halfcheetah-medium-v2,0.2,4,0,qbc_gaussian_w2,w2,baseline,1,sample,40.696188112030555,4772.325628158106,halfcheetah-medium-v2_iql_tau0.2_mpi4_seed0_0675d6148358
 halfcheetah-medium-v2,0.2,4,0,qbc_gaussian_w2,w2,mpi,1,mean,43.186968702664444,5081.560495811894,halfcheetah-medium-v2_iql_tau0.2_mpi4_seed0_0675d6148358

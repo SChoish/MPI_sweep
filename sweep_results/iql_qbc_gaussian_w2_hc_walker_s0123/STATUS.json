@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-22T00:25:15Z",
-  "stamp_kst": "2026-09-22 09:25 KST",
+  "updated_at": "2026-09-22T00:32:13Z",
+  "stamp_kst": "2026-09-22 09:32 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -10,8 +10,8 @@
   ],
   "per_seed": 180,
   "seed_complete": [
-    149,
-    149,
+    150,
+    150,
     149,
     149
   ],
@@ -34,36 +34,20 @@
   ],
   "planned": 720,
   "counts": {
-    "complete": 596,
-    "running": 4,
+    "complete": 598,
+    "running": 2,
     "remaining": 120,
     "extra_dirs": 4
   },
   "queue": "2026-09-21T23:35:49+00:00 env=walker2d-medium-replay-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_running \u00b7 portal running",
   "live": [
     {
-      "pid": 2315001,
-      "env": "walker2d-medium-replay-v2",
-      "tau": "10",
-      "hops": 3,
-      "seed": 0,
-      "step": 734176
-    },
-    {
-      "pid": 2329724,
-      "env": "walker2d-medium-replay-v2",
-      "tau": "10",
-      "hops": 3,
-      "seed": 1,
-      "step": 678656
-    },
-    {
       "pid": 2344647,
       "env": "walker2d-medium-replay-v2",
       "tau": "10",
       "hops": 3,
       "seed": 2,
-      "step": 623040
+      "step": 959520
     },
     {
       "pid": 2346086,
@@ -71,17 +55,17 @@
       "tau": "10",
       "hops": 3,
       "seed": 3,
-      "step": 595360
+      "step": 931808
     }
   ],
   "eta": {
-    "label": "15.1\uc2dc\uac04 \u00b7 09/23 00:32 KST",
-    "hours": 15.1,
-    "finish_kst": "2026-09-23 00:32 KST",
+    "label": "29.9\uc2dc\uac04 \u00b7 09/23 15:27 KST",
+    "hours": 29.9,
+    "finish_kst": "2026-09-23 15:27 KST",
     "cell_min": 29.9,
-    "slots": 4,
-    "cells_per_hour": 8.0,
-    "assumption": "4 live slots \u00b7 median 29.9 min/cell from [ok] \u22658m \u00b7 leftover 121.4 cells"
+    "slots": 2,
+    "cells_per_hour": 4.0,
+    "assumption": "2 live slots \u00b7 median 29.9 min/cell from [ok] \u22658m \u00b7 leftover 120.1 cells"
   },
   "by_env": {
     "halfcheetah-medium-v2": {
@@ -178,10 +162,10 @@
         "min_step": 0
       },
       "3": {
-        "complete": 36,
-        "live": 4,
-        "status": "36/40 \u00b7 4 live@595k",
-        "min_step": 595360
+        "complete": 38,
+        "live": 2,
+        "status": "38/40 \u00b7 2 live@931k",
+        "min_step": 931808
       }
     },
     "walker2d-expert-v2": {

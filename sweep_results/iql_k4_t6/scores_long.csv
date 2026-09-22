@@ -2693,3 +2693,9 @@ walker2d-medium-v2,1.5,4,3,qbc_gaussian_w2,w2,mpi,1,mean,-0.11590477449367872,-3
 walker2d-medium-v2,1.5,4,3,qbc_gaussian_w2,w2,mpi,1,sample,-0.10494745879064943,-3.1887845475434973,walker2d-medium-v2_iql_tau1.5_mpi4_seed3_c394ca8e488a
 walker2d-medium-v2,1.5,4,3,qbc_gaussian_w2,w2,mpi,4,mean,-0.24843931387878546,-9.776023514957235,walker2d-medium-v2_iql_tau1.5_mpi4_seed3_c394ca8e488a
 walker2d-medium-v2,1.5,4,3,qbc_gaussian_w2,w2,mpi,4,sample,-0.23918628258358976,-9.351247291408004,walker2d-medium-v2_iql_tau1.5_mpi4_seed3_c394ca8e488a
+walker2d-medium-v2,2.5,4,0,qbc_gaussian_w2,w2,baseline,1,mean,-0.20186807184819988,-7.6380910164450295,walker2d-medium-v2_iql_tau2.5_mpi4_seed0_92a3fd78de84
+walker2d-medium-v2,2.5,4,0,qbc_gaussian_w2,w2,baseline,1,sample,-0.20186807184819988,-7.6380910164450295,walker2d-medium-v2_iql_tau2.5_mpi4_seed0_92a3fd78de84
+walker2d-medium-v2,2.5,4,0,qbc_gaussian_w2,w2,mpi,1,mean,-0.20464059348387592,-7.765368362920936,walker2d-medium-v2_iql_tau2.5_mpi4_seed0_92a3fd78de84
+walker2d-medium-v2,2.5,4,0,qbc_gaussian_w2,w2,mpi,1,sample,-0.20501721623308206,-7.782657874218012,walker2d-medium-v2_iql_tau2.5_mpi4_seed0_92a3fd78de84
+walker2d-medium-v2,2.5,4,0,qbc_gaussian_w2,w2,mpi,4,mean,-0.20496209153766962,-7.780127280816286,walker2d-medium-v2_iql_tau2.5_mpi4_seed0_92a3fd78de84
+walker2d-medium-v2,2.5,4,0,qbc_gaussian_w2,w2,mpi,4,sample,-0.2028159148183239,-7.681603368724225,walker2d-medium-v2_iql_tau2.5_mpi4_seed0_92a3fd78de84

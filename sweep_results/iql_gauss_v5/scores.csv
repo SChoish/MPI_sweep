@@ -517,6 +517,12 @@ hopper-medium-replay-v2,7.0,3,0,w2,mpi,1,mean,0.8041446132330201
 hopper-medium-replay-v2,7.0,3,0,w2,mpi,1,sample,0.8046600631225111
 hopper-medium-replay-v2,7.0,3,0,w2,mpi,3,mean,0.8043706175379193
 hopper-medium-replay-v2,7.0,3,0,w2,mpi,3,sample,0.8043706175379193
+hopper-medium-replay-v2,7.0,3,1,w2,baseline,1,mean,3.875411220730913
+hopper-medium-replay-v2,7.0,3,1,w2,baseline,1,sample,4.615944907592992
+hopper-medium-replay-v2,7.0,3,1,w2,mpi,1,mean,3.875411220730913
+hopper-medium-replay-v2,7.0,3,1,w2,mpi,1,sample,4.615944907592992
+hopper-medium-replay-v2,7.0,3,1,w2,mpi,3,mean,31.787920470859675
+hopper-medium-replay-v2,7.0,3,1,w2,mpi,3,sample,6.197991594935372
 hopper-medium-v2,0.05,1,0,w2,baseline,1,mean,44.78361292559807
 hopper-medium-v2,0.05,1,0,w2,baseline,1,sample,41.39478136854126
 hopper-medium-v2,0.05,1,1,w2,baseline,1,mean,42.74645488725091

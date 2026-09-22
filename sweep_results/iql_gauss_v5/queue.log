@@ -579,3 +579,5 @@
 [launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi3_seed1_e5c0de2bbb1e pid=655583
 [ok] hopper-medium-replay-v2_iql_tau2.5_mpi3_seed0_b09a010b7cf9 52.3m
 [launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi3_seed2_3bb3a48456aa pid=664917
+[ok] hopper-medium-replay-v2_iql_tau2.5_mpi3_seed1_e5c0de2bbb1e 54.2m
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau2.5_mpi3_seed3_cf46db6ec429 pid=665786

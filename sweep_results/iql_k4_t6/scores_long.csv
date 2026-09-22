@@ -1469,6 +1469,12 @@ halfcheetah-medium-replay-v2,4,4,0,qbc_gaussian_w2,w2,mpi,1,mean,43.067969813818
 halfcheetah-medium-replay-v2,4,4,0,qbc_gaussian_w2,w2,mpi,1,sample,39.78950463505919,4659.759251954828,halfcheetah-medium-replay-v2_iql_tau4_mpi4_seed0_bb803419c3be
 halfcheetah-medium-replay-v2,4,4,0,qbc_gaussian_w2,w2,mpi,4,mean,24.278200449151612,2734.003079330222,halfcheetah-medium-replay-v2_iql_tau4_mpi4_seed0_bb803419c3be
 halfcheetah-medium-replay-v2,4,4,0,qbc_gaussian_w2,w2,mpi,4,sample,20.615991342456,2279.333265100899,halfcheetah-medium-replay-v2_iql_tau4_mpi4_seed0_bb803419c3be
+halfcheetah-medium-replay-v2,4,4,1,qbc_gaussian_w2,w2,baseline,1,mean,-2.574572436643088,-599.816728283852,halfcheetah-medium-replay-v2_iql_tau4_mpi4_seed1_d2aeedc72372
+halfcheetah-medium-replay-v2,4,4,1,qbc_gaussian_w2,w2,baseline,1,sample,-3.4312299945537084,-706.1722971128551,halfcheetah-medium-replay-v2_iql_tau4_mpi4_seed1_d2aeedc72372
+halfcheetah-medium-replay-v2,4,4,1,qbc_gaussian_w2,w2,mpi,1,mean,-1.2374781841751428,-433.81408406967887,halfcheetah-medium-replay-v2_iql_tau4_mpi4_seed1_d2aeedc72372
+halfcheetah-medium-replay-v2,4,4,1,qbc_gaussian_w2,w2,mpi,1,sample,-1.8077810435291501,-504.6182046325548,halfcheetah-medium-replay-v2_iql_tau4_mpi4_seed1_d2aeedc72372
+halfcheetah-medium-replay-v2,4,4,1,qbc_gaussian_w2,w2,mpi,4,mean,-2.536439460540998,-595.0824510606727,halfcheetah-medium-replay-v2_iql_tau4_mpi4_seed1_d2aeedc72372
+halfcheetah-medium-replay-v2,4,4,1,qbc_gaussian_w2,w2,mpi,4,sample,-2.5366016260304116,-595.1025841963834,halfcheetah-medium-replay-v2_iql_tau4_mpi4_seed1_d2aeedc72372
 halfcheetah-medium-v2,0.2,4,0,qbc_gaussian_w2,w2,baseline,1,mean,42.85064622518531,5039.805458373696,halfcheetah-medium-v2_iql_tau0.2_mpi4_seed0_0675d6148358
 halfcheetah-medium-v2,0.2,4,0,qbc_gaussian_w2,w2,baseline,1,sample,40.696188112030555,4772.325628158106,halfcheetah-medium-v2_iql_tau0.2_mpi4_seed0_0675d6148358
 halfcheetah-medium-v2,0.2,4,0,qbc_gaussian_w2,w2,mpi,1,mean,43.186968702664444,5081.560495811894,halfcheetah-medium-v2_iql_tau0.2_mpi4_seed0_0675d6148358

@@ -531,3 +531,45 @@
 [launch] gpu=0 hopper-medium-v2_iql_tau0.05_mpi1_seed0_3a4f2627ba50 pid=547501
 [launch] gpu=0 hopper-medium-v2_iql_tau0.05_mpi1_seed1_1c3cf19284eb pid=547502
 [waiter] 2026-09-22 09:07:43 KST waiting for reeval50 + live trainers 539625 539757
+[v5] 2026-09-22 15:57:09 KST start env=hopper-medium-v2 hops=1 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=1 jobs=0 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.050000000000000003 0.10000000000000001 0.20000000000000001 0.40000000000000002 0.69999999999999996 1.5 2.5 4 7 10
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_medium-v2.hdf5
+[sweep] complete ok=0 fail=0
+[v5] 2026-09-22 15:57:09 KST stage env=hopper-medium-v2 hops=1 rc=0
+[v5] 2026-09-22 15:57:09 KST start env=hopper-medium-v2 hops=2 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=2 jobs=0 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.050000000000000003 0.10000000000000001 0.20000000000000001 0.40000000000000002 0.69999999999999996 1.5 2.5 4 7 10
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_medium-v2.hdf5
+[sweep] complete ok=0 fail=0
+[v5] 2026-09-22 15:57:09 KST stage env=hopper-medium-v2 hops=2 rc=0
+[v5] 2026-09-22 15:57:09 KST start env=hopper-medium-v2 hops=3 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=3 jobs=0 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.050000000000000003 0.10000000000000001 0.20000000000000001 0.40000000000000002 0.69999999999999996 1.5 2.5 4 7 10
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_medium-v2.hdf5
+[sweep] complete ok=0 fail=0
+[v5] 2026-09-22 15:57:10 KST stage env=hopper-medium-v2 hops=3 rc=0
+[v5] 2026-09-22 15:57:10 KST start env=hopper-medium-replay-v2 hops=1 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=1 jobs=0 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.050000000000000003 0.10000000000000001 0.20000000000000001 0.40000000000000002 0.69999999999999996 1.5 2.5 4 7 10
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_medium_replay-v2.hdf5
+[sweep] complete ok=0 fail=0
+[v5] 2026-09-22 15:57:10 KST stage env=hopper-medium-replay-v2 hops=1 rc=0
+[v5] 2026-09-22 15:57:10 KST start env=hopper-medium-replay-v2 hops=2 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=2 jobs=0 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.050000000000000003 0.10000000000000001 0.20000000000000001 0.40000000000000002 0.69999999999999996 1.5 2.5 4 7 10
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_medium_replay-v2.hdf5
+[sweep] complete ok=0 fail=0
+[v5] 2026-09-22 15:57:10 KST stage env=hopper-medium-replay-v2 hops=2 rc=0
+[v5] 2026-09-22 15:57:10 KST start env=hopper-medium-replay-v2 hops=3 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=3 jobs=18 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.050000000000000003 0.10000000000000001 0.20000000000000001 0.40000000000000002 0.69999999999999996 1.5 2.5 4 7 10
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_medium_replay-v2.hdf5
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi3_seed2_177b4ca1e80d pid=644792
+[launch] gpu=0 hopper-medium-replay-v2_iql_tau1.5_mpi3_seed3_6eb82f11688f pid=644793

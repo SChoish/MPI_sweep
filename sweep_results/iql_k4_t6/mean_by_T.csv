@@ -39,7 +39,7 @@ qbc_gaussian_w2,1.5,32,42.2072
 qbc_gaussian_w2,2.5,30,20.3438
 qbc_gaussian_w2,4,28,5.0275
 qbc_gaussian_w2,7,28,1.6092
-qbc_gaussian_w2,10,26,-0.1007
+qbc_gaussian_w2,10,28,-0.0480
 qbc_gaussian_w2,12,0,
 qbc_gaussian_w2,14,0,
 qbc_gaussian_w2,17,0,

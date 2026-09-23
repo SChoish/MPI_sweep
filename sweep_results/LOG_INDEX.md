@@ -9,7 +9,7 @@
 | [STATUS.json](iql_gauss_fr_loco/STATUS.json) | Gaussian Q+BC–FR (본문 제외) | choi (계정) | 6/3924 | 6 | 0 | 2026-09-23 18:30:03 KST |
 | [STATUS.json](iql_gauss_fr_s0/STATUS.json) | Gaussian Q+BC–FR (본문 제외) | ext_csh (계정) | 124/1188 | 124 | 0 | — |
 | [STATUS.json](iql_gauss_v5/STATUS.json) | Gaussian Q+BC–W2 | choi (계정) | 324/360 | 1464 | 324 | 2026-09-23 18:30:04 KST |
-| [STATUS.json](iql_k4_t6/STATUS.json) | AWR–FR, Deterministic Q+BC–W2 (본문 제외), Gaussian Q+BC–W2 | shchoi (계정) | 361/540 | 3222 | 670 | 2026-09-23 18:25:43 UTC+09:00 |
+| [STATUS.json](iql_k4_t6/STATUS.json) | AWR–FR, Deterministic Q+BC–W2 (본문 제외), Gaussian Q+BC–W2 | shchoi (계정) | 362/540 | 3228 | 671 | 2026-09-23 18:31:40 UTC+09:00 |
 | [STATUS.json](iql_qbc_deterministic_w2_hscale_seed0/STATUS.json) | Deterministic Q+BC–W2 (본문 제외) | ext_csv (계정) | 282/1620 | 0 | 0 | 2026-09-20T01:57:44Z |
 | [STATUS.json](iql_qbc_deterministic_w2_seed0/STATUS.json) | Deterministic Q+BC–W2 (본문 제외) | ext_csv (계정) | 24/162 | 0 | 0 | 2026-09-19T05:08:26Z |
 | [STATUS.json](iql_qbc_gaussian_w2_hc_walker_s0123/STATUS.json) | Gaussian Q+BC–W2 | DGX-H200-02, ext_csv | 720/720 | 720 | 720 | 2026-09-23T09:25:07Z |
@@ -31,7 +31,7 @@
 | sweep_results/iql_gauss_fr_loco | [scores.csv](iql_gauss_fr_loco/scores.csv) (6) | 0 → 0 |
 | sweep_results/iql_gauss_fr_s0 | [scores.csv](iql_gauss_fr_s0/scores.csv) (124) | 0 → 0 |
 | sweep_results/iql_gauss_v5 | [scores.csv](iql_gauss_v5/scores.csv) (1464) | 324 → 324 |
-| sweep_results/iql_k4_t6 | [scores_long.csv](iql_k4_t6/scores_long.csv) (3222) | 1044 → 670 |
+| sweep_results/iql_k4_t6 | [scores_long.csv](iql_k4_t6/scores_long.csv) (3228) | 1046 → 671 |
 | sweep_results/iql_qbc_deterministic_w2_hscale_seed0 | 점수 CSV 없음 | 0 → 0 |
 | sweep_results/iql_qbc_deterministic_w2_seed0 | 점수 CSV 없음 | 0 → 0 |
 | sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123 | [scores_verified.csv](iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv) (720), [EXPORT.json](iql_qbc_gaussian_w2_hc_walker_s0123/EXPORT.json) | 720 → 720 |

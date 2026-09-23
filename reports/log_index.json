@@ -149,13 +149,13 @@
         "Gaussian Q+BC–W2"
       ],
       "machine": "shchoi (계정)",
-      "updated_at": "2026-09-23 15:22:16 UTC+09:00",
-      "complete_reported": 343,
+      "updated_at": "2026-09-23 15:28:11 UTC+09:00",
+      "complete_reported": 344,
       "planned_reported": 540,
       "csv_files": [
         {
           "path": "scores_long.csv",
-          "rows": 3114,
+          "rows": 3120,
           "columns": [
             "env",
             "tau",
@@ -172,12 +172,12 @@
           ]
         }
       ],
-      "csv_rows": 3114,
-      "main_candidates": 1008,
-      "main_selected": 648,
+      "csv_rows": 3120,
+      "main_candidates": 1010,
+      "main_selected": 649,
       "selected_by_method": {
         "AWR–FR": 321,
-        "Gaussian Q+BC–W2": 327
+        "Gaussian Q+BC–W2": 328
       },
       "export_manifest": null,
       "status_file": "sweep_results/iql_k4_t6/STATUS.json"
@@ -264,7 +264,7 @@
   ],
   "main_selected_by_method": {
     "AWR–FR": 572,
-    "Gaussian Q+BC–W2": 1362
+    "Gaussian Q+BC–W2": 1363
   },
   "main_parser_warnings": []
 }

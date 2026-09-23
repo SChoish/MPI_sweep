@@ -6,9 +6,9 @@
 | 게시 폴더 | 실험 | 머신·출처 | 상태 완료/계획 | CSV 원시 행 | 본문 채택 | 상태 갱신 |
 |---|---|---|---:|---:|---:|---|
 | [STATUS.json](iql_awr_fr/STATUS.json) | AWR–FR | ext_csh (계정) | 251/756 | 251 | 251 | — |
-| [STATUS.json](iql_gauss_fr_loco/STATUS.json) | Gaussian Q+BC–FR (본문 제외) | choi (계정) | 6/3924 | 6 | 0 | 2026-09-23 21:05:03 KST |
+| [STATUS.json](iql_gauss_fr_loco/STATUS.json) | Gaussian Q+BC–FR (본문 제외) | choi (계정) | 6/3924 | 6 | 0 | 2026-09-23 21:10:03 KST |
 | [STATUS.json](iql_gauss_fr_s0/STATUS.json) | Gaussian Q+BC–FR (본문 제외) | ext_csh (계정) | 124/1188 | 124 | 0 | — |
-| [STATUS.json](iql_gauss_v5/STATUS.json) | Gaussian Q+BC–W2 | choi (계정) | 329/360 | 1494 | 329 | 2026-09-23 21:05:03 KST |
+| [STATUS.json](iql_gauss_v5/STATUS.json) | Gaussian Q+BC–W2 | choi (계정) | 330/360 | 1500 | 330 | 2026-09-23 21:10:03 KST |
 | [STATUS.json](iql_k4_t6/STATUS.json) | AWR–FR, Deterministic Q+BC–W2 (본문 제외), Gaussian Q+BC–W2 | shchoi (계정) | 377/540 | 3318 | 686 | 2026-09-23 21:05:49 UTC+09:00 |
 | [STATUS.json](iql_qbc_deterministic_w2_hscale_seed0/STATUS.json) | Deterministic Q+BC–W2 (본문 제외) | ext_csv (계정) | 282/1620 | 0 | 0 | 2026-09-20T01:57:44Z |
 | [STATUS.json](iql_qbc_deterministic_w2_seed0/STATUS.json) | Deterministic Q+BC–W2 (본문 제외) | ext_csv (계정) | 24/162 | 0 | 0 | 2026-09-19T05:08:26Z |
@@ -30,7 +30,7 @@
 | sweep_results/iql_awr_fr | [scores.csv](iql_awr_fr/scores.csv) (251) | 251 → 251 |
 | sweep_results/iql_gauss_fr_loco | [scores.csv](iql_gauss_fr_loco/scores.csv) (6) | 0 → 0 |
 | sweep_results/iql_gauss_fr_s0 | [scores.csv](iql_gauss_fr_s0/scores.csv) (124) | 0 → 0 |
-| sweep_results/iql_gauss_v5 | [scores.csv](iql_gauss_v5/scores.csv) (1494) | 329 → 329 |
+| sweep_results/iql_gauss_v5 | [scores.csv](iql_gauss_v5/scores.csv) (1500) | 330 → 330 |
 | sweep_results/iql_k4_t6 | [scores_long.csv](iql_k4_t6/scores_long.csv) (3318) | 1076 → 686 |
 | sweep_results/iql_qbc_deterministic_w2_hscale_seed0 | 점수 CSV 없음 | 0 → 0 |
 | sweep_results/iql_qbc_deterministic_w2_seed0 | 점수 CSV 없음 | 0 → 0 |

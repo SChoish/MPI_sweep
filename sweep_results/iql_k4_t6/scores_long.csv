@@ -2669,6 +2669,12 @@ walker2d-medium-replay-v2,1.25,4,3,qbc_gaussian_w2,w2,mpi,1,mean,59.190608593233
 walker2d-medium-replay-v2,1.25,4,3,qbc_gaussian_w2,w2,mpi,1,sample,25.134710192281656,1155.4808577203416,walker2d-medium-replay-v2_iql_tau1.25_mpi4_seed3_af8cefc2ac3d
 walker2d-medium-replay-v2,1.25,4,3,qbc_gaussian_w2,w2,mpi,4,mean,95.87320631004216,4402.852479175419,walker2d-medium-replay-v2_iql_tau1.25_mpi4_seed3_af8cefc2ac3d
 walker2d-medium-replay-v2,1.25,4,3,qbc_gaussian_w2,w2,mpi,4,sample,95.9957819356298,4408.4795228625335,walker2d-medium-replay-v2_iql_tau1.25_mpi4_seed3_af8cefc2ac3d
+walker2d-medium-replay-v2,1.5,4,0,qbc_gaussian_w2,w2,baseline,1,mean,2.918488822877927,135.60722779661927,walker2d-medium-replay-v2_iql_tau1.5_mpi4_seed0_750a25f1e560
+walker2d-medium-replay-v2,1.5,4,0,qbc_gaussian_w2,w2,baseline,1,sample,3.7140960585722573,172.13093837589196,walker2d-medium-replay-v2_iql_tau1.5_mpi4_seed0_750a25f1e560
+walker2d-medium-replay-v2,1.5,4,0,qbc_gaussian_w2,w2,mpi,1,mean,67.30812941443389,3091.523780286236,walker2d-medium-replay-v2_iql_tau1.5_mpi4_seed0_750a25f1e560
+walker2d-medium-replay-v2,1.5,4,0,qbc_gaussian_w2,w2,mpi,1,sample,48.60137271410965,2232.758126900435,walker2d-medium-replay-v2_iql_tau1.5_mpi4_seed0_750a25f1e560
+walker2d-medium-replay-v2,1.5,4,0,qbc_gaussian_w2,w2,mpi,4,mean,97.76187393806465,4489.5549961103425,walker2d-medium-replay-v2_iql_tau1.5_mpi4_seed0_750a25f1e560
+walker2d-medium-replay-v2,1.5,4,0,qbc_gaussian_w2,w2,mpi,4,sample,97.90912490264274,4496.314803426669,walker2d-medium-replay-v2_iql_tau1.5_mpi4_seed0_750a25f1e560
 walker2d-medium-v2,0.05,4,0,qbc_gaussian_w2,w2,baseline,1,mean,70.81712831488757,3252.610374918962,walker2d-medium-v2_iql_tau0.05_mpi4_seed0_cb4f6b9e64ff
 walker2d-medium-v2,0.05,4,0,qbc_gaussian_w2,w2,baseline,1,sample,71.1927894137821,3269.8557400141417,walker2d-medium-v2_iql_tau0.05_mpi4_seed0_cb4f6b9e64ff
 walker2d-medium-v2,0.05,4,0,qbc_gaussian_w2,w2,mpi,1,mean,78.53689237700925,3606.999344369623,walker2d-medium-v2_iql_tau0.05_mpi4_seed0_cb4f6b9e64ff

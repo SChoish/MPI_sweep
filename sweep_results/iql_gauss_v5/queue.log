@@ -780,3 +780,13 @@
 [ok] hopper-expert-v2_iql_tau10_mpi2_seed1_b74f78ae70fe 36.4m
 [launch] gpu=0 hopper-expert-v2_iql_tau10_mpi2_seed3_8f5ce7a824e5 pid=899204
 [ok] hopper-expert-v2_iql_tau10_mpi2_seed2_976ba567c8a7 36.4m
+[ok] hopper-expert-v2_iql_tau10_mpi2_seed3_8f5ce7a824e5 18.8m
+[sweep] complete ok=40 fail=0
+[v5] 2026-09-23 16:34:26 KST stage env=hopper-expert-v2 hops=2 rc=0
+[v5] 2026-09-23 16:34:26 KST start env=hopper-expert-v2 hops=3 geometry=w2
+[sweep] algorithm=iql method=bar integrator=implicit hops=3 jobs=40 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=0.050000000000000003 0.10000000000000001 0.20000000000000001 0.40000000000000002 0.69999999999999996 1.5 2.5 4 7 10
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_gauss_v5/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_expert-v2.hdf5
+[launch] gpu=0 hopper-expert-v2_iql_tau0.05_mpi3_seed0_4a79ab8cc081 pid=903216
+[launch] gpu=0 hopper-expert-v2_iql_tau0.05_mpi3_seed1_4ead77a2d42d pid=903217

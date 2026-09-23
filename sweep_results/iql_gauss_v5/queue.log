@@ -777,3 +777,6 @@
 [launch] gpu=0 hopper-expert-v2_iql_tau10_mpi2_seed1_b74f78ae70fe pid=892226
 [ok] hopper-expert-v2_iql_tau10_mpi2_seed0_b49c8c5db774 36.5m
 [launch] gpu=0 hopper-expert-v2_iql_tau10_mpi2_seed2_976ba567c8a7 pid=893051
+[ok] hopper-expert-v2_iql_tau10_mpi2_seed1_b74f78ae70fe 36.4m
+[launch] gpu=0 hopper-expert-v2_iql_tau10_mpi2_seed3_8f5ce7a824e5 pid=899204
+[ok] hopper-expert-v2_iql_tau10_mpi2_seed2_976ba567c8a7 36.4m

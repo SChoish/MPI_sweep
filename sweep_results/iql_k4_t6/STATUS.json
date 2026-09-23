@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-24 01:58:25 UTC+09:00",
+  "updated_at": "2026-09-24 02:04:25 UTC+09:00",
   "schema": "iql_actor_geometry_v5_consistent_gaussian",
   "k": 4,
   "taus": [
@@ -42,8 +42,8 @@
     "walker2d-expert-v2"
   ],
   "total": 540,
-  "started": 388,
-  "done": 386,
+  "started": 389,
+  "done": 387,
   "queue_ok": 542,
   "queue_fail": 60,
   "source": "/home/shchoi/MPI_sweep/results/iql_k4_t6",

@@ -43,7 +43,7 @@
         "Gaussian Q+BC–FR (본문 제외)"
       ],
       "machine": "choi (계정)",
-      "updated_at": "2026-09-23 17:45:04 KST",
+      "updated_at": "2026-09-23 17:50:03 KST",
       "complete_reported": 6,
       "planned_reported": 3924,
       "csv_files": [
@@ -112,7 +112,7 @@
         "Gaussian Q+BC–W2"
       ],
       "machine": "choi (계정)",
-      "updated_at": "2026-09-23 17:45:04 KST",
+      "updated_at": "2026-09-23 17:50:03 KST",
       "complete_reported": 322,
       "planned_reported": 360,
       "csv_files": [
@@ -149,13 +149,13 @@
         "Gaussian Q+BC–W2"
       ],
       "machine": "shchoi (계정)",
-      "updated_at": "2026-09-23 17:44:14 UTC+09:00",
-      "complete_reported": 357,
+      "updated_at": "2026-09-23 17:50:12 UTC+09:00",
+      "complete_reported": 358,
       "planned_reported": 540,
       "csv_files": [
         {
           "path": "scores_long.csv",
-          "rows": 3198,
+          "rows": 3204,
           "columns": [
             "env",
             "tau",
@@ -172,12 +172,12 @@
           ]
         }
       ],
-      "csv_rows": 3198,
-      "main_candidates": 1036,
-      "main_selected": 666,
+      "csv_rows": 3204,
+      "main_candidates": 1038,
+      "main_selected": 667,
       "selected_by_method": {
         "AWR–FR": 321,
-        "Gaussian Q+BC–W2": 345
+        "Gaussian Q+BC–W2": 346
       },
       "export_manifest": null,
       "status_file": "sweep_results/iql_k4_t6/STATUS.json"
@@ -264,7 +264,7 @@
   ],
   "main_selected_by_method": {
     "AWR–FR": 572,
-    "Gaussian Q+BC–W2": 1387
+    "Gaussian Q+BC–W2": 1388
   },
   "main_parser_warnings": []
 }

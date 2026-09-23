@@ -43,7 +43,7 @@
         "Gaussian Q+BC–FR (본문 제외)"
       ],
       "machine": "choi (계정)",
-      "updated_at": "2026-09-23 14:25:03 KST",
+      "updated_at": "2026-09-23 14:30:03 KST",
       "complete_reported": 6,
       "planned_reported": 3924,
       "csv_files": [
@@ -112,13 +112,13 @@
         "Gaussian Q+BC–W2"
       ],
       "machine": "choi (계정)",
-      "updated_at": "2026-09-23 14:25:03 KST",
-      "complete_reported": 311,
+      "updated_at": "2026-09-23 14:30:03 KST",
+      "complete_reported": 313,
       "planned_reported": 360,
       "csv_files": [
         {
           "path": "scores.csv",
-          "rows": 1386,
+          "rows": 1398,
           "columns": [
             "env",
             "tau",
@@ -132,11 +132,11 @@
           ]
         }
       ],
-      "csv_rows": 1386,
-      "main_candidates": 311,
-      "main_selected": 311,
+      "csv_rows": 1398,
+      "main_candidates": 313,
+      "main_selected": 313,
       "selected_by_method": {
-        "Gaussian Q+BC–W2": 311
+        "Gaussian Q+BC–W2": 313
       },
       "export_manifest": null,
       "status_file": "sweep_results/iql_gauss_v5/STATUS.json"
@@ -264,7 +264,7 @@
   ],
   "main_selected_by_method": {
     "AWR–FR": 572,
-    "Gaussian Q+BC–W2": 1354
+    "Gaussian Q+BC–W2": 1356
   },
   "main_parser_warnings": []
 }

@@ -34,9 +34,9 @@ qbc_gaussian_w2,0.1,31,70.0135
 qbc_gaussian_w2,0.2,36,63.0294
 qbc_gaussian_w2,0.4,34,62.6888
 qbc_gaussian_w2,0.7,32,65.3481
-qbc_gaussian_w2,1.25,31,55.9487
+qbc_gaussian_w2,1.25,32,54.2291
 qbc_gaussian_w2,1.5,32,42.2072
-qbc_gaussian_w2,2.5,30,20.3438
+qbc_gaussian_w2,2.5,31,19.7093
 qbc_gaussian_w2,4,28,5.0275
 qbc_gaussian_w2,7,28,1.6092
 qbc_gaussian_w2,10,28,-0.0480

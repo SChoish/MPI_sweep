@@ -258,7 +258,7 @@
       "selected_by_method": {
         "Gaussian Q+BC–W2": 720
       },
-      "export_manifest": null,
+      "export_manifest": "sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/EXPORT.json",
       "status_file": "sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123/STATUS.json"
     }
   ],

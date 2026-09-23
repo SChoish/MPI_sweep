@@ -34,6 +34,6 @@
 | sweep_results/iql_k4_t6 | [scores_long.csv](iql_k4_t6/scores_long.csv) (3066) | 992 → 640 |
 | sweep_results/iql_qbc_deterministic_w2_hscale_seed0 | 점수 CSV 없음 | 0 → 0 |
 | sweep_results/iql_qbc_deterministic_w2_seed0 | 점수 CSV 없음 | 0 → 0 |
-| sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123 | [scores_verified.csv](iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv) (720) | 720 → 720 |
+| sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123 | [scores_verified.csv](iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv) (720), [EXPORT.json](iql_qbc_gaussian_w2_hc_walker_s0123/EXPORT.json) | 720 → 720 |
 
 Gaussian Q+BC–FR와 deterministic Q+BC–W2는 본문에서 제외합니다. K=4는 다른 머신에서 실행돼도 같은 방법의 K=4로 합칩니다.

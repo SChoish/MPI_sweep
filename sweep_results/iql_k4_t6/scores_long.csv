@@ -2699,6 +2699,12 @@ walker2d-expert-v2,2.5,4,0,qbc_gaussian_w2,w2,mpi,1,mean,107.68548543756094,4945
 walker2d-expert-v2,2.5,4,0,qbc_gaussian_w2,w2,mpi,1,sample,106.9686772678787,4912.209045862606,walker2d-expert-v2_iql_tau2.5_mpi4_seed0_4f3bce6e575e
 walker2d-expert-v2,2.5,4,0,qbc_gaussian_w2,w2,mpi,4,mean,4.411998898944612,204.16936162120967,walker2d-expert-v2_iql_tau2.5_mpi4_seed0_4f3bce6e575e
 walker2d-expert-v2,2.5,4,0,qbc_gaussian_w2,w2,mpi,4,sample,4.383019032149278,202.83899128271605,walker2d-expert-v2_iql_tau2.5_mpi4_seed0_4f3bce6e575e
+walker2d-expert-v2,2.5,4,1,qbc_gaussian_w2,w2,baseline,1,mean,-0.20909349695519128,-7.969786510880368,walker2d-expert-v2_iql_tau2.5_mpi4_seed1_ab5b2403be91
+walker2d-expert-v2,2.5,4,1,qbc_gaussian_w2,w2,baseline,1,sample,-0.20909785890072444,-7.969986753448647,walker2d-expert-v2_iql_tau2.5_mpi4_seed1_ab5b2403be91
+walker2d-expert-v2,2.5,4,1,qbc_gaussian_w2,w2,mpi,1,mean,-0.44845438829718776,-18.958057515910042,walker2d-expert-v2_iql_tau2.5_mpi4_seed1_ab5b2403be91
+walker2d-expert-v2,2.5,4,1,qbc_gaussian_w2,w2,mpi,1,sample,-0.4444266045076543,-18.773155213863454,walker2d-expert-v2_iql_tau2.5_mpi4_seed1_ab5b2403be91
+walker2d-expert-v2,2.5,4,1,qbc_gaussian_w2,w2,mpi,4,mean,-0.18031654378046616,-6.64873126910684,walker2d-expert-v2_iql_tau2.5_mpi4_seed1_ab5b2403be91
+walker2d-expert-v2,2.5,4,1,qbc_gaussian_w2,w2,mpi,4,sample,-0.18564253308579723,-6.893229915183696,walker2d-expert-v2_iql_tau2.5_mpi4_seed1_ab5b2403be91
 walker2d-medium-replay-v2,0.05,4,0,qbc_gaussian_w2,w2,baseline,1,mean,16.89319771602158,777.1401351706093,walker2d-medium-replay-v2_iql_tau0.05_mpi4_seed0_f660ab14a407
 walker2d-medium-replay-v2,0.05,4,0,qbc_gaussian_w2,w2,baseline,1,sample,27.824406620204233,1278.9559714098436,walker2d-medium-replay-v2_iql_tau0.05_mpi4_seed0_f660ab14a407
 walker2d-medium-replay-v2,0.05,4,0,qbc_gaussian_w2,w2,mpi,1,mean,10.885026637457559,501.32476831723716,walker2d-medium-replay-v2_iql_tau0.05_mpi4_seed0_f660ab14a407

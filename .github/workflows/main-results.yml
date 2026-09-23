@@ -6,9 +6,11 @@ on:
     paths:
       - 'sweep_results/**'
       - 'scripts/build_main_results.py'
+      - 'scripts/build_log_index.py'
       - 'scripts/publish_iql_results.py'
       - 'scripts/start_iql_results_publisher.sh'
       - 'tests/test_main_results.py'
+      - 'tests/test_log_results.py'
       - 'tests/test_publish_iql_results.py'
       - '.github/workflows/main-results.yml'
   workflow_dispatch:
@@ -46,7 +48,8 @@ jobs:
             git reset --hard origin/main
             python -m unittest discover -s tests -p 'test_*results.py'
             python scripts/build_main_results.py
-            git add -- MAIN_RESULTS.md README.md reports/main_results_audit.json
+            python scripts/build_log_index.py
+            git add -- MAIN_RESULTS.md README.md reports/main_results_audit.json sweep_results/LOG_INDEX.md reports/log_index.json
             if git diff --cached --quiet; then
               exit 0
             fi

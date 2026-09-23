@@ -1,5 +1,7 @@
 # MART sweep results
 
+IQL 게시 로그와 머신별 상태·점수 파일은 [IQL 로그 안내](LOG_INDEX.md)에 정리됩니다. 상태의 완료 수와 본문에 채택된 최종 점수 수를 구분하며, 원본 로그 경로는 그대로 유지합니다. 재생성: `python3 scripts/build_log_index.py`.
+
 Canonical scores remain in `K=<depth>/<Imp|Exp>/seed<seed>.csv`. The `tau` column is the manuscript's total nominal horizon T; h = T/K.
 
 This index separates the original 14-budget grid from the extension T = {24, 28, 34, 40}. Counts describe published final scores, not live worker status.

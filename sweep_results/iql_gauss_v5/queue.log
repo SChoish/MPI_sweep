@@ -802,3 +802,5 @@
 [launch] gpu=0 hopper-expert-v2_iql_tau0.1_mpi3_seed2_8ce84f7092f0 pid=941236
 [ok] hopper-expert-v2_iql_tau0.1_mpi3_seed0_35236429f823 54.0m
 [launch] gpu=0 hopper-expert-v2_iql_tau0.1_mpi3_seed3_8480b2529ca0 pid=941333
+[ok] hopper-expert-v2_iql_tau0.1_mpi3_seed2_8ce84f7092f0 53.8m
+[launch] gpu=0 hopper-expert-v2_iql_tau0.2_mpi3_seed0_571a23ff0226 pid=955404

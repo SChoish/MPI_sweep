@@ -68,13 +68,13 @@
         "AWR–FR"
       ],
       "machine": "choi (계정)",
-      "updated_at": "2026-09-24 17:40:03 KST",
-      "complete_reported": 12,
+      "updated_at": "2026-09-24 17:45:03 KST",
+      "complete_reported": 14,
       "planned_reported": 16,
       "csv_files": [
         {
           "path": "scores.csv",
-          "rows": 36,
+          "rows": 42,
           "columns": [
             "env",
             "tau",
@@ -88,7 +88,7 @@
           ]
         }
       ],
-      "csv_rows": 36,
+      "csv_rows": 42,
       "main_candidates": 0,
       "main_selected": 0,
       "selected_by_method": {},
@@ -101,7 +101,7 @@
         "Gaussian Q+BC–FR (본문 제외)"
       ],
       "machine": "choi (계정)",
-      "updated_at": "2026-09-24 17:40:03 KST",
+      "updated_at": "2026-09-24 17:45:03 KST",
       "complete_reported": 6,
       "planned_reported": 3924,
       "csv_files": [
@@ -170,7 +170,7 @@
         "Gaussian Q+BC–W2"
       ],
       "machine": "choi (계정)",
-      "updated_at": "2026-09-24 17:40:03 KST",
+      "updated_at": "2026-09-24 17:45:03 KST",
       "complete_reported": 360,
       "planned_reported": 360,
       "csv_files": [

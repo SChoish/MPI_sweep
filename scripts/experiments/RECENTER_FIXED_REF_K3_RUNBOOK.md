@@ -38,9 +38,15 @@ Example paths for **ext_csv**, to be used only after its existing queue drains
 and its assigned GPU is available. Run from its own host, in the interpreter
 that can import JAX, Flax, Optax and Gymnasium. The pilot is 1024 training
 updates, then 10 episodes for each actor. This verifies wiring, not return.
+Fetch the prepared branch into a separate worktree, leaving the active
+`/home/ext_csv/MPI_sweep` checkout and its current processes untouched.
 
 ```bash
-cd /home/ext_csv/MPI_sweep
+git -C /home/ext_csv/MPI_sweep fetch origin \
+  experiment/recenter-fixed-ref-k3-20260924
+git -C /home/ext_csv/MPI_sweep worktree add --detach \
+  /home/ext_csv/MPI_sweep_recenter_k3 FETCH_HEAD
+cd /home/ext_csv/MPI_sweep_recenter_k3
 git status --short --branch
 git rev-parse HEAD
 PY=/home/ext_csv/miniconda3/envs/offrl/bin/python
@@ -50,6 +56,11 @@ SAVE=/raid/ext_csv/MPI_store/recenter_fixed_ref_k3
   --pilot --execute --python "$PY" --save-dir "$SAVE" \
   --data-dir /home/ext_csv/MPI_sweep/data
 ```
+
+If that worktree already exists, inspect its current revision and changes
+before deciding whether to reuse it; never force-reset the active checkout.
+The two pilot checkpoint paths are under
+`$SAVE/pilot/hopper-medium-replay-v2_tau2.5_shared_{recenter,fixed_ref}3_seed0/params_1024.pkl`.
 
 The pilot runs `recenter` then `fixed_ref` in isolated `pilot/` output under
 `$SAVE` and automatically verifies the checkpoint pair. Inspect the printed
@@ -85,7 +96,8 @@ their own checkpoint. The runner verifies identity after each completed pair.
 The host watcher registration must point to the **actual** host configuration,
 contain both `train_td3bc.py` and the new queue command in its process/queue
 patterns, use a CPU and a GPU wrapper for the same saved results, and preserve
-the existing active queue until it drains. `server_management` owns the
+the existing active queue until it drains. Use the new worktree as the
+registered queue's working directory. `server_management` owns the
 registration; this runbook does not change its configuration or start
 training. The runner's full mode saves every 100,000 updates for soft-stop
 resume; the pilot writes at 1024. `--execute` is explicit. Record host,

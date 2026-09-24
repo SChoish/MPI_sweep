@@ -1,0 +1,31 @@
+[awr-fr] 2026-09-24 12:43:21 KST start hopper-expert K=3 T=[10 4 2.5 1.5] seeds=[3 2 1 0] mean-eval
+[sweep] algorithm=iql method=bar integrator=implicit hops=3 jobs=16 device=['0'] slots/gpu=2 concurrency=2
+[sweep] tau_grid=10 4 2.5 1.5
+[provenance] wrote /home/choi/MPI_sweep/logs/iql_awr_fr_hopper_expert_k3/SWEEP_PROVENANCE.json
+[data] ready /home/choi/MPI_sweep/data/hopper_expert-v2.hdf5
+[launch] gpu=0 hopper-expert-v2_iql_tau10_mpi3_seed3_7605a2026b6b pid=1126124
+[launch] gpu=0 hopper-expert-v2_iql_tau10_mpi3_seed2_0b5a9bbaa3a4 pid=1126125
+[ok] hopper-expert-v2_iql_tau10_mpi3_seed2_0b5a9bbaa3a4 42.4m
+[launch] gpu=0 hopper-expert-v2_iql_tau10_mpi3_seed1_21dfb0f64c73 pid=1132307
+[ok] hopper-expert-v2_iql_tau10_mpi3_seed3_7605a2026b6b 42.8m
+[launch] gpu=0 hopper-expert-v2_iql_tau10_mpi3_seed0_7610c1fe7449 pid=1132529
+[ok] hopper-expert-v2_iql_tau10_mpi3_seed1_21dfb0f64c73 42.3m
+[launch] gpu=0 hopper-expert-v2_iql_tau4_mpi3_seed3_0cc07abd5c5d pid=1138756
+[ok] hopper-expert-v2_iql_tau10_mpi3_seed0_7610c1fe7449 42.0m
+[launch] gpu=0 hopper-expert-v2_iql_tau4_mpi3_seed2_0dcc621625a8 pid=1138985
+[ok] hopper-expert-v2_iql_tau4_mpi3_seed2_0dcc621625a8 42.5m
+[launch] gpu=0 hopper-expert-v2_iql_tau4_mpi3_seed1_2cf80f4293a0 pid=1144883
+[ok] hopper-expert-v2_iql_tau4_mpi3_seed3_0cc07abd5c5d 42.7m
+[launch] gpu=0 hopper-expert-v2_iql_tau4_mpi3_seed0_078229b32083 pid=1144891
+[ok] hopper-expert-v2_iql_tau4_mpi3_seed1_2cf80f4293a0 42.3m
+[launch] gpu=0 hopper-expert-v2_iql_tau2.5_mpi3_seed3_03bc77b5da2b pid=1150712
+[ok] hopper-expert-v2_iql_tau4_mpi3_seed0_078229b32083 42.3m
+[launch] gpu=0 hopper-expert-v2_iql_tau2.5_mpi3_seed2_5661ea006a3d pid=1150724
+[ok] hopper-expert-v2_iql_tau2.5_mpi3_seed3_03bc77b5da2b 42.5m
+[ok] hopper-expert-v2_iql_tau2.5_mpi3_seed2_5661ea006a3d 42.5m
+[launch] gpu=0 hopper-expert-v2_iql_tau2.5_mpi3_seed1_0aad8ae62ad4 pid=1157013
+[launch] gpu=0 hopper-expert-v2_iql_tau2.5_mpi3_seed0_bdf292699253 pid=1157014
+[ok] hopper-expert-v2_iql_tau2.5_mpi3_seed0_bdf292699253 42.4m
+[launch] gpu=0 hopper-expert-v2_iql_tau1.5_mpi3_seed3_d89d9260a092 pid=1162745
+[ok] hopper-expert-v2_iql_tau2.5_mpi3_seed1_0aad8ae62ad4 42.5m
+[launch] gpu=0 hopper-expert-v2_iql_tau1.5_mpi3_seed2_c7fbf552f80d pid=1163108

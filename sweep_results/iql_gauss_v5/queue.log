@@ -810,3 +810,64 @@
 [launch] gpu=0 hopper-expert-v2_iql_tau0.2_mpi3_seed2_4eeca416fa1f pid=966631
 [ok] hopper-expert-v2_iql_tau0.2_mpi3_seed1_fad6392245d7 58.0m
 [launch] gpu=0 hopper-expert-v2_iql_tau0.2_mpi3_seed3_bc46edb8d2fb pid=968572
+[ok] hopper-expert-v2_iql_tau0.2_mpi3_seed2_4eeca416fa1f 52.6m
+[launch] gpu=0 hopper-expert-v2_iql_tau0.4_mpi3_seed0_d3daa717ba43 pid=985430
+[ok] hopper-expert-v2_iql_tau0.2_mpi3_seed3_bc46edb8d2fb 52.7m
+[launch] gpu=0 hopper-expert-v2_iql_tau0.4_mpi3_seed1_77805b940dba pid=986707
+[ok] hopper-expert-v2_iql_tau0.4_mpi3_seed0_d3daa717ba43 47.1m
+[launch] gpu=0 hopper-expert-v2_iql_tau0.4_mpi3_seed2_a8c9e806cc0d pid=1000151
+[ok] hopper-expert-v2_iql_tau0.4_mpi3_seed1_77805b940dba 58.0m
+[launch] gpu=0 hopper-expert-v2_iql_tau0.4_mpi3_seed3_3b5ee0624f17 pid=1004023
+[ok] hopper-expert-v2_iql_tau0.4_mpi3_seed2_a8c9e806cc0d 46.5m
+[launch] gpu=0 hopper-expert-v2_iql_tau0.7_mpi3_seed0_f97f91437ac7 pid=1012775
+[ok] hopper-expert-v2_iql_tau0.4_mpi3_seed3_3b5ee0624f17 51.9m
+[launch] gpu=0 hopper-expert-v2_iql_tau0.7_mpi3_seed1_71053db78c5b pid=1016260
+[ok] hopper-expert-v2_iql_tau0.7_mpi3_seed0_f97f91437ac7 52.3m
+[launch] gpu=0 hopper-expert-v2_iql_tau0.7_mpi3_seed2_16e2907de92e pid=1025143
+[ok] hopper-expert-v2_iql_tau0.7_mpi3_seed1_71053db78c5b 52.1m
+[launch] gpu=0 hopper-expert-v2_iql_tau0.7_mpi3_seed3_455d02dd07e3 pid=1030531
+[ok] hopper-expert-v2_iql_tau0.7_mpi3_seed2_16e2907de92e 52.1m
+[launch] gpu=0 hopper-expert-v2_iql_tau1.5_mpi3_seed0_d6b7e7e3cdbc pid=1034686
+[ok] hopper-expert-v2_iql_tau0.7_mpi3_seed3_455d02dd07e3 51.9m
+[launch] gpu=0 hopper-expert-v2_iql_tau1.5_mpi3_seed1_d929d3b88a06 pid=1037844
+[ok] hopper-expert-v2_iql_tau1.5_mpi3_seed0_d6b7e7e3cdbc 52.2m
+[launch] gpu=0 hopper-expert-v2_iql_tau1.5_mpi3_seed2_d77b54b80b9c pid=1041670
+[ok] hopper-expert-v2_iql_tau1.5_mpi3_seed1_d929d3b88a06 51.9m
+[launch] gpu=0 hopper-expert-v2_iql_tau1.5_mpi3_seed3_6a817d120885 pid=1044349
+[ok] hopper-expert-v2_iql_tau1.5_mpi3_seed2_d77b54b80b9c 52.0m
+[launch] gpu=0 hopper-expert-v2_iql_tau2.5_mpi3_seed0_de1832038961 pid=1048177
+[ok] hopper-expert-v2_iql_tau1.5_mpi3_seed3_6a817d120885 51.8m
+[launch] gpu=0 hopper-expert-v2_iql_tau2.5_mpi3_seed1_36ba6eed987a pid=1051236
+[ok] hopper-expert-v2_iql_tau2.5_mpi3_seed0_de1832038961 52.3m
+[launch] gpu=0 hopper-expert-v2_iql_tau2.5_mpi3_seed2_7c303fe18c17 pid=1055032
+[ok] hopper-expert-v2_iql_tau2.5_mpi3_seed1_36ba6eed987a 52.0m
+[launch] gpu=0 hopper-expert-v2_iql_tau2.5_mpi3_seed3_f13dcf306c55 pid=1058004
+[ok] hopper-expert-v2_iql_tau2.5_mpi3_seed2_7c303fe18c17 52.0m
+[launch] gpu=0 hopper-expert-v2_iql_tau4_mpi3_seed0_7ca081695d44 pid=1061628
+[ok] hopper-expert-v2_iql_tau2.5_mpi3_seed3_f13dcf306c55 51.9m
+[launch] gpu=0 hopper-expert-v2_iql_tau4_mpi3_seed1_f784187315d7 pid=1064141
+[ok] hopper-expert-v2_iql_tau4_mpi3_seed0_7ca081695d44 52.3m
+[launch] gpu=0 hopper-expert-v2_iql_tau4_mpi3_seed2_7b842db21efb pid=1067980
+[ok] hopper-expert-v2_iql_tau4_mpi3_seed1_f784187315d7 52.0m
+[launch] gpu=0 hopper-expert-v2_iql_tau4_mpi3_seed3_152dd74be9d7 pid=1070415
+[ok] hopper-expert-v2_iql_tau4_mpi3_seed2_7b842db21efb 52.0m
+[launch] gpu=0 hopper-expert-v2_iql_tau7_mpi3_seed0_95f6864c29a3 pid=1074022
+[ok] hopper-expert-v2_iql_tau4_mpi3_seed3_152dd74be9d7 51.9m
+[launch] gpu=0 hopper-expert-v2_iql_tau7_mpi3_seed1_47b3bbfd0fc9 pid=1076609
+[ok] hopper-expert-v2_iql_tau7_mpi3_seed0_95f6864c29a3 52.2m
+[launch] gpu=0 hopper-expert-v2_iql_tau7_mpi3_seed2_6b07817ea6ff pid=1080429
+[ok] hopper-expert-v2_iql_tau7_mpi3_seed1_47b3bbfd0fc9 51.8m
+[launch] gpu=0 hopper-expert-v2_iql_tau7_mpi3_seed3_e64ecfaf7514 pid=1082831
+[ok] hopper-expert-v2_iql_tau7_mpi3_seed2_6b07817ea6ff 52.0m
+[launch] gpu=0 hopper-expert-v2_iql_tau10_mpi3_seed0_63a513ba7441 pid=1086384
+[ok] hopper-expert-v2_iql_tau7_mpi3_seed3_e64ecfaf7514 51.9m
+[launch] gpu=0 hopper-expert-v2_iql_tau10_mpi3_seed1_ee7ea5329021 pid=1088897
+[ok] hopper-expert-v2_iql_tau10_mpi3_seed0_63a513ba7441 52.3m
+[launch] gpu=0 hopper-expert-v2_iql_tau10_mpi3_seed2_1c323ec3306c pid=1092535
+[ok] hopper-expert-v2_iql_tau10_mpi3_seed1_ee7ea5329021 52.0m
+[launch] gpu=0 hopper-expert-v2_iql_tau10_mpi3_seed3_dafdd46f7113 pid=1097998
+[ok] hopper-expert-v2_iql_tau10_mpi3_seed2_1c323ec3306c 52.0m
+[ok] hopper-expert-v2_iql_tau10_mpi3_seed3_dafdd46f7113 41.8m
+[sweep] complete ok=40 fail=0
+[v5] 2026-09-24 10:03:56 KST stage env=hopper-expert-v2 hops=3 rc=0
+[v5] 2026-09-24 10:03:57 KST chain finished

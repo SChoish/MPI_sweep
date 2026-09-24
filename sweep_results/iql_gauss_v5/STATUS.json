@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-23 21:50:03 KST",
+  "updated_at": "2026-09-24 17:08:48 KST",
   "schema": "iql_actor_geometry_v6_baseline_h",
   "explicit": "excluded",
   "variant": "qbc_gaussian_w2",
@@ -28,7 +28,7 @@
     3
   ],
   "total": 360,
-  "done": 330,
+  "done": 360,
   "source": "/home/choi/MPI_sweep/results/iql_gauss_v5",
   "note": "Gaussian DDPG+BC, hopper medium/medium-replay/expert only, seeds 0-3, implicit W2, K=1/2/3, T through 10, eval 50 episodes. Halfcheetah, walker, K=4, T>10, and Fisher-Rao are not queued."
 }

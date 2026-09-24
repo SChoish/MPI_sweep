@@ -1,0 +1,28 @@
+{
+  "updated_at": "2026-09-24 17:08:48 KST",
+  "schema": "iql_actor_geometry_v6_baseline_h",
+  "variant": "awr_gaussian_fr",
+  "geometry": "fr",
+  "env": "hopper-expert-v2",
+  "seeds": [
+    3,
+    2,
+    1,
+    0
+  ],
+  "taus": [
+    "10",
+    "4",
+    "2.5",
+    "1.5"
+  ],
+  "hops": [
+    3
+  ],
+  "eval_mode": "mean",
+  "eval_episodes": 50,
+  "total": 16,
+  "done": 12,
+  "source": "/home/choi/MPI_sweep/results/iql_awr_fr_hopper_expert_k3",
+  "note": "AWR Gaussian FR, hopper-expert only, K=3, T=10/4/2.5/1.5, seeds 3\u21920, h=T/K, mean-action eval 50ep."
+}

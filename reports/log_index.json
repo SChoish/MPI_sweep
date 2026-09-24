@@ -68,7 +68,7 @@
         "AWR–FR"
       ],
       "machine": "choi (계정)",
-      "updated_at": "2026-09-25 07:50:04 KST",
+      "updated_at": "2026-09-25 07:55:04 KST",
       "complete_reported": 16,
       "planned_reported": 16,
       "csv_files": [
@@ -101,7 +101,7 @@
         "Gaussian Q+BC–FR (본문 제외)"
       ],
       "machine": "choi (계정)",
-      "updated_at": "2026-09-25 07:50:04 KST",
+      "updated_at": "2026-09-25 07:55:03 KST",
       "complete_reported": 6,
       "planned_reported": 3924,
       "csv_files": [
@@ -170,7 +170,7 @@
         "Gaussian Q+BC–W2"
       ],
       "machine": "choi (계정)",
-      "updated_at": "2026-09-25 07:50:04 KST",
+      "updated_at": "2026-09-25 07:55:04 KST",
       "complete_reported": 360,
       "planned_reported": 360,
       "csv_files": [
@@ -280,7 +280,7 @@
         "Gaussian Q+BC–W2"
       ],
       "machine": "DGX-H200-02, ext_csv",
-      "updated_at": "2026-09-24T22:47:41Z",
+      "updated_at": "2026-09-24T22:54:51Z",
       "complete_reported": 720,
       "planned_reported": 720,
       "csv_files": [

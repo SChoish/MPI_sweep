@@ -38,12 +38,45 @@
       "status_file": "sweep_results/iql_awr_fr/STATUS.json"
     },
     {
+      "source": "sweep_results/iql_awr_fr_hopper_expert_k3",
+      "methods": [
+        "AWR–FR"
+      ],
+      "machine": "choi (계정)",
+      "updated_at": "2026-09-24 17:08:48 KST",
+      "complete_reported": 12,
+      "planned_reported": 16,
+      "csv_files": [
+        {
+          "path": "scores.csv",
+          "rows": 36,
+          "columns": [
+            "env",
+            "tau",
+            "K",
+            "seed",
+            "geometry",
+            "policy",
+            "hop",
+            "eval_mode",
+            "d4rl_score"
+          ]
+        }
+      ],
+      "csv_rows": 36,
+      "main_candidates": 0,
+      "main_selected": 0,
+      "selected_by_method": {},
+      "export_manifest": null,
+      "status_file": "sweep_results/iql_awr_fr_hopper_expert_k3/STATUS.json"
+    },
+    {
       "source": "sweep_results/iql_gauss_fr_loco",
       "methods": [
         "Gaussian Q+BC–FR (본문 제외)"
       ],
       "machine": "choi (계정)",
-      "updated_at": "2026-09-23 21:45:03 KST",
+      "updated_at": "2026-09-24 17:08:48 KST",
       "complete_reported": 6,
       "planned_reported": 3924,
       "csv_files": [
@@ -112,13 +145,13 @@
         "Gaussian Q+BC–W2"
       ],
       "machine": "choi (계정)",
-      "updated_at": "2026-09-23 21:45:03 KST",
-      "complete_reported": 330,
+      "updated_at": "2026-09-24 17:08:48 KST",
+      "complete_reported": 360,
       "planned_reported": 360,
       "csv_files": [
         {
           "path": "scores.csv",
-          "rows": 1500,
+          "rows": 1680,
           "columns": [
             "env",
             "tau",
@@ -132,11 +165,11 @@
           ]
         }
       ],
-      "csv_rows": 1500,
-      "main_candidates": 330,
-      "main_selected": 330,
+      "csv_rows": 1680,
+      "main_candidates": 360,
+      "main_selected": 360,
       "selected_by_method": {
-        "Gaussian Q+BC–W2": 330
+        "Gaussian Q+BC–W2": 360
       },
       "export_manifest": null,
       "status_file": "sweep_results/iql_gauss_v5/STATUS.json"
@@ -264,7 +297,9 @@
   ],
   "main_selected_by_method": {
     "AWR–FR": 572,
-    "Gaussian Q+BC–W2": 1482
+    "Gaussian Q+BC–W2": 1512
   },
-  "main_parser_warnings": []
+  "main_parser_warnings": [
+    "sweep_results/iql_awr_fr_hopper_expert_k3/scores.csv: step 없는 신규 소스는 집계 보류"
+  ]
 }

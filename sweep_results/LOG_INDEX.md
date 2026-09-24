@@ -6,9 +6,10 @@
 | 게시 폴더 | 실험 | 머신·출처 | 상태 완료/계획 | CSV 원시 행 | 본문 채택 | 상태 갱신 |
 |---|---|---|---:|---:|---:|---|
 | [STATUS.json](iql_awr_fr/STATUS.json) | AWR–FR | ext_csh (계정) | 251/756 | 251 | 251 | — |
-| [STATUS.json](iql_gauss_fr_loco/STATUS.json) | Gaussian Q+BC–FR (본문 제외) | choi (계정) | 6/3924 | 6 | 0 | 2026-09-23 21:45:03 KST |
+| [STATUS.json](iql_awr_fr_hopper_expert_k3/STATUS.json) | AWR–FR | choi (계정) | 12/16 | 36 | 0 | 2026-09-24 17:08:48 KST |
+| [STATUS.json](iql_gauss_fr_loco/STATUS.json) | Gaussian Q+BC–FR (본문 제외) | choi (계정) | 6/3924 | 6 | 0 | 2026-09-24 17:08:48 KST |
 | [STATUS.json](iql_gauss_fr_s0/STATUS.json) | Gaussian Q+BC–FR (본문 제외) | ext_csh (계정) | 124/1188 | 124 | 0 | — |
-| [STATUS.json](iql_gauss_v5/STATUS.json) | Gaussian Q+BC–W2 | choi (계정) | 330/360 | 1500 | 330 | 2026-09-23 21:45:03 KST |
+| [STATUS.json](iql_gauss_v5/STATUS.json) | Gaussian Q+BC–W2 | choi (계정) | 360/360 | 1680 | 360 | 2026-09-24 17:08:48 KST |
 | [STATUS.json](iql_k4_t6/STATUS.json) | AWR–FR, Deterministic Q+BC–W2 (본문 제외), Gaussian Q+BC–W2 | shchoi (계정) | 396/540 | 3678 | 753 | 2026-09-24 17:07:26 UTC+09:00 |
 | [STATUS.json](iql_qbc_deterministic_w2_hscale_seed0/STATUS.json) | Deterministic Q+BC–W2 (본문 제외) | ext_csv (계정) | 282/1620 | 0 | 0 | 2026-09-20T01:57:44Z |
 | [STATUS.json](iql_qbc_deterministic_w2_seed0/STATUS.json) | Deterministic Q+BC–W2 (본문 제외) | ext_csv (계정) | 24/162 | 0 | 0 | 2026-09-19T05:08:26Z |
@@ -28,12 +29,17 @@
 | 게시 폴더 | 점수 파일 (원시 행) | 본문 후보 → 채택 |
 |---|---|---:|
 | sweep_results/iql_awr_fr | [scores.csv](iql_awr_fr/scores.csv) (251) | 251 → 251 |
+| sweep_results/iql_awr_fr_hopper_expert_k3 | [scores.csv](iql_awr_fr_hopper_expert_k3/scores.csv) (36) | 0 → 0 |
 | sweep_results/iql_gauss_fr_loco | [scores.csv](iql_gauss_fr_loco/scores.csv) (6) | 0 → 0 |
 | sweep_results/iql_gauss_fr_s0 | [scores.csv](iql_gauss_fr_s0/scores.csv) (124) | 0 → 0 |
-| sweep_results/iql_gauss_v5 | [scores.csv](iql_gauss_v5/scores.csv) (1500) | 330 → 330 |
+| sweep_results/iql_gauss_v5 | [scores.csv](iql_gauss_v5/scores.csv) (1680) | 360 → 360 |
 | sweep_results/iql_k4_t6 | [scores_long.csv](iql_k4_t6/scores_long.csv) (3678) | 1196 → 753 |
 | sweep_results/iql_qbc_deterministic_w2_hscale_seed0 | 점수 CSV 없음 | 0 → 0 |
 | sweep_results/iql_qbc_deterministic_w2_seed0 | 점수 CSV 없음 | 0 → 0 |
 | sweep_results/iql_qbc_gaussian_w2_hc_walker_s0123 | [scores_verified.csv](iql_qbc_gaussian_w2_hc_walker_s0123/scores_verified.csv) (720), [EXPORT.json](iql_qbc_gaussian_w2_hc_walker_s0123/EXPORT.json) | 720 → 720 |
 
 Gaussian Q+BC–FR와 deterministic Q+BC–W2는 본문에서 제외합니다. K=4는 다른 머신에서 실행돼도 같은 방법의 K=4로 합칩니다.
+
+## 파서 확인 필요
+
+- sweep_results/iql_awr_fr_hopper_expert_k3/scores.csv: step 없는 신규 소스는 집계 보류

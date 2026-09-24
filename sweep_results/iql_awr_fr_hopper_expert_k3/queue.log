@@ -33,3 +33,7 @@
 [launch] gpu=0 hopper-expert-v2_iql_tau1.5_mpi3_seed1_aec6a6aa75b2 pid=1171356
 [ok] hopper-expert-v2_iql_tau1.5_mpi3_seed2_c7fbf552f80d 42.6m
 [launch] gpu=0 hopper-expert-v2_iql_tau1.5_mpi3_seed0_74f7e0960945 pid=1171368
+[ok] hopper-expert-v2_iql_tau1.5_mpi3_seed0_74f7e0960945 42.3m
+[ok] hopper-expert-v2_iql_tau1.5_mpi3_seed1_aec6a6aa75b2 42.5m
+[sweep] complete ok=16 fail=0
+[awr-fr] 2026-09-24 18:22:59 KST finished rc=0

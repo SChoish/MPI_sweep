@@ -104,8 +104,10 @@ resume; the pilot writes at 1024. `--execute` is explicit. Record host,
 git revision, dataset fingerprint, GPU ID, start/end time and any failures
 with each final score. The training script already writes `PROVENANCE.json`.
 
-The full comparison keeps the normal 5,000-update evaluation schedule and
-the existing critic/actor update order. Passing the pilot only validates a
+The full comparison evaluates only at 1M to avoid 200 intermediate evaluations
+per run; the existing critic/actor update order and per-step RNG schedule
+are unchanged. Evaluate the first and deployment actors on the same ten
+environment reset seeds. Passing the pilot only validates a
 short trajectory; it does not prove 1M-step runtime correctness or an MPI
 effect. As a primary analysis, use paired final differences per seed,
 four-seed summaries per environment × T, and an equally weighted average of

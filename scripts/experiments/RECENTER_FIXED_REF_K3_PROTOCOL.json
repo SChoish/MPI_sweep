@@ -30,7 +30,7 @@
   "training_steps_per_run": 1000000,
   "policy_freq": 2,
   "evaluated_checkpoint": "params_1000000.pkl",
-  "evaluation": {"episodes_per_run": 10, "deployment_score_column": "d4rl_pi3", "first_actor_score_column": "d4rl_score", "episode_seed_rule": "seed + 100 + episode_index"},
+  "evaluation": {"episodes_per_run": 10, "schedule": "final checkpoint only at 1000000 updates (pilot: 1024)", "deployment_score_column": "d4rl_pi3", "first_actor_score_column": "d4rl_score", "episode_seed_rule": "seed + 100 + episode_index"},
   "primary_outcome": "paired final d4rl_pi3(recenter) minus d4rl_pi3(fixed_ref) for each environment, T and seed",
   "aggregation": "Report each environment x T four-seed paired mean and sample SD; overall report an equal-weight mean over the 27 environment x T cell means, alongside the full signed cell table. No best-seed or best-T selection.",
   "pilot": {"environment": "hopper-medium-replay-v2", "T": 2.5, "seed": 0, "steps": 1024, "purpose": "Verify identical critic, first actor, targets, optimizer state, RNG and update counts, plus differing pi_3 reference; not a performance test."},

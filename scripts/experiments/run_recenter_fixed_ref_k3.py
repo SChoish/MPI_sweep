@@ -40,7 +40,7 @@ def training_command(python: str, output: Path, data: Path, env: str,
         "--deployment-branch", branch, "--integrator", "implicit",
         "--mpi-steps", "3", "--env", env, "--tau", f"{tau:g}",
         "--seed", str(seed), "--max-timesteps", str(step),
-        "--eval-freq", str(step if pilot else 5000),
+        "--eval-freq", str(step),
         "--eval-episodes", "10", "--save-interval", str(step if pilot else 100000),
         "--data-dir", str(data), "--save-dir", str(output),
     ]

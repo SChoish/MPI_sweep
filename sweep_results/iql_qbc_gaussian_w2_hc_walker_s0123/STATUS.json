@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-24T21:43:29Z",
-  "stamp_kst": "2026-09-25 06:43 KST",
+  "updated_at": "2026-09-24T21:50:37Z",
+  "stamp_kst": "2026-09-25 06:50 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -40,25 +40,8 @@
     "extra_dirs": 4
   },
   "queue": "2026-09-22T06:30:28+00:00 env=walker2d-expert-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_starting \u00b7 portal running",
-  "live": [
-    {
-      "pid": 1901314,
-      "env": "",
-      "tau": "",
-      "hops": null,
-      "seed": null,
-      "step": 0
-    }
-  ],
-  "eta": {
-    "label": "30\ubd84 \u00b7 09/25 07:13 KST",
-    "hours": 0.5,
-    "finish_kst": "2026-09-25 07:13 KST",
-    "cell_min": 29.7,
-    "slots": 1,
-    "cells_per_hour": 2.0,
-    "assumption": "1 live slots \u00b7 median 29.7 min/cell from [ok] \u22658m \u00b7 leftover 1.0 cells"
-  },
+  "live": [],
+  "eta": null,
   "by_env": {
     "halfcheetah-medium-v2": {
       "1": {

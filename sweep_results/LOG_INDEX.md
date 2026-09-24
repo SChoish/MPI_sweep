@@ -6,11 +6,11 @@
 | 게시 폴더 | 실험 | 머신·출처 | 상태 완료/계획 | CSV 원시 행 | 본문 채택 | 상태 갱신 |
 |---|---|---|---:|---:|---:|---|
 | [STATUS.json](iql_awr_fr/STATUS.json) | AWR–FR | iisl-server02, svcho | 251/756 | 283 | 283 | — |
-| [STATUS.json](iql_awr_fr_hopper_expert_k3/STATUS.json) | AWR–FR | choi (계정) | 16/16 | 48 | 0 | 2026-09-25 03:45:03 KST |
-| [STATUS.json](iql_gauss_fr_loco/STATUS.json) | Gaussian Q+BC–FR (본문 제외) | choi (계정) | 6/3924 | 6 | 0 | 2026-09-25 03:45:03 KST |
+| [STATUS.json](iql_awr_fr_hopper_expert_k3/STATUS.json) | AWR–FR | choi (계정) | 16/16 | 48 | 0 | 2026-09-25 03:50:03 KST |
+| [STATUS.json](iql_gauss_fr_loco/STATUS.json) | Gaussian Q+BC–FR (본문 제외) | choi (계정) | 6/3924 | 6 | 0 | 2026-09-25 03:50:03 KST |
 | [STATUS.json](iql_gauss_fr_s0/STATUS.json) | Gaussian Q+BC–FR (본문 제외) | ext_csh (계정) | 124/1188 | 124 | 0 | — |
-| [STATUS.json](iql_gauss_v5/STATUS.json) | Gaussian Q+BC–W2 | choi (계정) | 360/360 | 1680 | 360 | 2026-09-25 03:45:03 KST |
-| [STATUS.json](iql_k4_t6/STATUS.json) | AWR–FR, Deterministic Q+BC–W2 (본문 제외), Gaussian Q+BC–W2 | shchoi (계정) | 396/540 | 3678 | 753 | 2026-09-25 03:44:01 UTC+09:00 |
+| [STATUS.json](iql_gauss_v5/STATUS.json) | Gaussian Q+BC–W2 | choi (계정) | 360/360 | 1680 | 360 | 2026-09-25 03:50:03 KST |
+| [STATUS.json](iql_k4_t6/STATUS.json) | AWR–FR, Deterministic Q+BC–W2 (본문 제외), Gaussian Q+BC–W2 | shchoi (계정) | 396/540 | 3678 | 753 | 2026-09-25 03:50:07 UTC+09:00 |
 | [STATUS.json](iql_qbc_deterministic_w2_hscale_seed0/STATUS.json) | Deterministic Q+BC–W2 (본문 제외) | ext_csv (계정) | 282/1620 | 0 | 0 | 2026-09-20T01:57:44Z |
 | [STATUS.json](iql_qbc_deterministic_w2_seed0/STATUS.json) | Deterministic Q+BC–W2 (본문 제외) | ext_csv (계정) | 24/162 | 0 | 0 | 2026-09-19T05:08:26Z |
 | [STATUS.json](iql_qbc_gaussian_w2_hc_walker_s0123/STATUS.json) | Gaussian Q+BC–W2 | DGX-H200-02, ext_csv | 720/720 | 720 | 720 | 2026-09-24T18:43:57Z |

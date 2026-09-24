@@ -6,7 +6,7 @@
       "methods": [
         "AWR–FR"
       ],
-      "machine": "ext_csh (계정)",
+      "machine": "iisl-server02, svcho",
       "updated_at": null,
       "complete_reported": 251,
       "planned_reported": 756,
@@ -26,15 +26,40 @@
             "d4rl_score",
             "run"
           ]
+        },
+        {
+          "path": "scores_verified.csv",
+          "rows": 20,
+          "columns": [
+            "env",
+            "tau",
+            "K",
+            "seed",
+            "variant",
+            "geometry",
+            "gaussian_qbc_mode",
+            "policy",
+            "hop",
+            "eval_mode",
+            "step",
+            "status",
+            "d4rl_score",
+            "run",
+            "machine",
+            "hostname",
+            "source",
+            "schema",
+            "eval_sha256"
+          ]
         }
       ],
-      "csv_rows": 251,
-      "main_candidates": 251,
-      "main_selected": 251,
+      "csv_rows": 271,
+      "main_candidates": 271,
+      "main_selected": 271,
       "selected_by_method": {
-        "AWR–FR": 251
+        "AWR–FR": 271
       },
-      "export_manifest": null,
+      "export_manifest": "sweep_results/iql_awr_fr/EXPORT.json",
       "status_file": "sweep_results/iql_awr_fr/STATUS.json"
     },
     {
@@ -296,7 +321,7 @@
     }
   ],
   "main_selected_by_method": {
-    "AWR–FR": 572,
+    "AWR–FR": 592,
     "Gaussian Q+BC–W2": 1512
   },
   "main_parser_warnings": [

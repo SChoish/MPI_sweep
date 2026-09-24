@@ -13,7 +13,7 @@
 | [STATUS.json](iql_k4_t6/STATUS.json) | AWR–FR, Deterministic Q+BC–W2 (본문 제외), Gaussian Q+BC–W2 | shchoi (계정) | 396/540 | 3678 | 753 | 2026-09-25 02:19:07 UTC+09:00 |
 | [STATUS.json](iql_qbc_deterministic_w2_hscale_seed0/STATUS.json) | Deterministic Q+BC–W2 (본문 제외) | ext_csv (계정) | 282/1620 | 0 | 0 | 2026-09-20T01:57:44Z |
 | [STATUS.json](iql_qbc_deterministic_w2_seed0/STATUS.json) | Deterministic Q+BC–W2 (본문 제외) | ext_csv (계정) | 24/162 | 0 | 0 | 2026-09-19T05:08:26Z |
-| [STATUS.json](iql_qbc_gaussian_w2_hc_walker_s0123/STATUS.json) | Gaussian Q+BC–W2 | DGX-H200-02, ext_csv | 720/720 | 720 | 720 | 2026-09-24T17:13:59Z |
+| [STATUS.json](iql_qbc_gaussian_w2_hc_walker_s0123/STATUS.json) | Gaussian Q+BC–W2 | DGX-H200-02, ext_csv | 720/720 | 720 | 720 | 2026-09-24T17:21:27Z |
 
 ## 파일 역할
 

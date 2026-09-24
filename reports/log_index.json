@@ -29,7 +29,7 @@
         },
         {
           "path": "scores_verified.csv",
-          "rows": 20,
+          "rows": 32,
           "columns": [
             "env",
             "tau",
@@ -53,11 +53,11 @@
           ]
         }
       ],
-      "csv_rows": 271,
-      "main_candidates": 271,
-      "main_selected": 271,
+      "csv_rows": 283,
+      "main_candidates": 283,
+      "main_selected": 283,
       "selected_by_method": {
-        "AWR–FR": 271
+        "AWR–FR": 283
       },
       "export_manifest": "sweep_results/iql_awr_fr/EXPORT.json",
       "status_file": "sweep_results/iql_awr_fr/STATUS.json"
@@ -207,7 +207,7 @@
         "Gaussian Q+BC–W2"
       ],
       "machine": "shchoi (계정)",
-      "updated_at": "2026-09-25 00:11:49 UTC+09:00",
+      "updated_at": "2026-09-25 00:17:50 UTC+09:00",
       "complete_reported": 396,
       "planned_reported": 540,
       "csv_files": [
@@ -321,7 +321,7 @@
     }
   ],
   "main_selected_by_method": {
-    "AWR–FR": 592,
+    "AWR–FR": 604,
     "Gaussian Q+BC–W2": 1512
   },
   "main_parser_warnings": [

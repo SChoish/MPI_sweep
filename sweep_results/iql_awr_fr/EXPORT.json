@@ -4,8 +4,8 @@
   "hostname": "iisl-server02",
   "source": "/home/svcho/MPI_sweep/results/iql_awr_fr_hopper_expert",
   "final_step": 1000000,
-  "complete_runs": 20,
-  "pending_directories": 2,
+  "complete_runs": 32,
+  "pending_directories": 0,
   "excluded": [],
   "runs": [
     {
@@ -729,6 +729,246 @@
       "checkpoint_rehashed": false
     },
     {
+      "run": "hopper-expert-v2_iql_tau10_mpi3_seed0_bb7897c3ab9e",
+      "signature": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "algorithm": {
+          "variants": [
+            "awr_gaussian_fr"
+          ],
+          "mpi_steps": 3,
+          "tau": 10.0,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "hopper-expert-v2",
+        "seed": 0,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "mean",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "54fcc09f2e605b251a75fb5a44c4084260affba65eefc1c20cca2b77c6c96457",
+        "iql_mpi_config.py": "ba64da1e9e360758987362531822dff7a5a9b614df5d9723d2964ebb842e1dd8",
+        "train_iql_mpi.py": "5d5b3a0ba03e243e2a108506c72dd01fae500f5ed09b5195f66a951550899194",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "step": 1000000,
+        "signature": "bb7897c3ab9e",
+        "checkpoint_sha256": "8a16f8d8dd48601d41ab7e356759d24716965c2ed0e605a38e156a015c8c8cea",
+        "checkpoint_bytes": 7571582,
+        "eval_sha256": "e36eab17494d7890d8fea6e4073c7a77a302d8349f8e3784b0cb7df50eb3e074",
+        "evaluation_rows": 3
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "hopper-expert-v2_iql_tau10_mpi3_seed1_2fe0f9ec34f1",
+      "signature": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "algorithm": {
+          "variants": [
+            "awr_gaussian_fr"
+          ],
+          "mpi_steps": 3,
+          "tau": 10.0,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "hopper-expert-v2",
+        "seed": 1,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "mean",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "54fcc09f2e605b251a75fb5a44c4084260affba65eefc1c20cca2b77c6c96457",
+        "iql_mpi_config.py": "ba64da1e9e360758987362531822dff7a5a9b614df5d9723d2964ebb842e1dd8",
+        "train_iql_mpi.py": "5d5b3a0ba03e243e2a108506c72dd01fae500f5ed09b5195f66a951550899194",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "step": 1000000,
+        "signature": "2fe0f9ec34f1",
+        "checkpoint_sha256": "fd3df4827e8c4242bdae52f53959d234624db4b37556b4096181e82349feb029",
+        "checkpoint_bytes": 7571582,
+        "eval_sha256": "a0cbc83919b8bf196bf49ef101d1831855e170b4dec1cd10b650927ab32e0044",
+        "evaluation_rows": 3
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "hopper-expert-v2_iql_tau10_mpi3_seed2_c42faaa2fb7b",
+      "signature": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "algorithm": {
+          "variants": [
+            "awr_gaussian_fr"
+          ],
+          "mpi_steps": 3,
+          "tau": 10.0,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "hopper-expert-v2",
+        "seed": 2,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "mean",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "54fcc09f2e605b251a75fb5a44c4084260affba65eefc1c20cca2b77c6c96457",
+        "iql_mpi_config.py": "ba64da1e9e360758987362531822dff7a5a9b614df5d9723d2964ebb842e1dd8",
+        "train_iql_mpi.py": "5d5b3a0ba03e243e2a108506c72dd01fae500f5ed09b5195f66a951550899194",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "step": 1000000,
+        "signature": "c42faaa2fb7b",
+        "checkpoint_sha256": "cf8da7b2941e53da70267091c927fcc38e75114244351f40aaacbb02b7e6d8b9",
+        "checkpoint_bytes": 7571582,
+        "eval_sha256": "b980f62c254b1e02c8bf4eaefa42c7c99c4319095256006d5b6172fe203d3756",
+        "evaluation_rows": 3
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "hopper-expert-v2_iql_tau10_mpi3_seed3_23a41db0fb23",
+      "signature": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "algorithm": {
+          "variants": [
+            "awr_gaussian_fr"
+          ],
+          "mpi_steps": 3,
+          "tau": 10.0,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "hopper-expert-v2",
+        "seed": 3,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "mean",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "54fcc09f2e605b251a75fb5a44c4084260affba65eefc1c20cca2b77c6c96457",
+        "iql_mpi_config.py": "ba64da1e9e360758987362531822dff7a5a9b614df5d9723d2964ebb842e1dd8",
+        "train_iql_mpi.py": "5d5b3a0ba03e243e2a108506c72dd01fae500f5ed09b5195f66a951550899194",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "step": 1000000,
+        "signature": "23a41db0fb23",
+        "checkpoint_sha256": "41a1d0712ce0213999eb48df91d442bdce098d9910ca58e91915340c363fb453",
+        "checkpoint_bytes": 7571582,
+        "eval_sha256": "9c81b14d900c3e425f6ea5b1ad15b9ce0845f2c87d463152177b6588dcb5f165",
+        "evaluation_rows": 3
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
       "run": "hopper-expert-v2_iql_tau2.5_mpi2_seed0_8da2d21dc227",
       "signature": {
         "schema": "iql_actor_geometry_v5_consistent_gaussian",
@@ -969,6 +1209,246 @@
       "checkpoint_rehashed": false
     },
     {
+      "run": "hopper-expert-v2_iql_tau2.5_mpi3_seed0_d5b29965b6f0",
+      "signature": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "algorithm": {
+          "variants": [
+            "awr_gaussian_fr"
+          ],
+          "mpi_steps": 3,
+          "tau": 2.5,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "hopper-expert-v2",
+        "seed": 0,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "mean",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "54fcc09f2e605b251a75fb5a44c4084260affba65eefc1c20cca2b77c6c96457",
+        "iql_mpi_config.py": "ba64da1e9e360758987362531822dff7a5a9b614df5d9723d2964ebb842e1dd8",
+        "train_iql_mpi.py": "5d5b3a0ba03e243e2a108506c72dd01fae500f5ed09b5195f66a951550899194",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "step": 1000000,
+        "signature": "d5b29965b6f0",
+        "checkpoint_sha256": "190887da304455a1d85a635958d8fce4cf7adcc747b51cf8476e6e8fbbd0d6db",
+        "checkpoint_bytes": 7571582,
+        "eval_sha256": "5ba870af14551831b6a2ccc0efbbec5cbabd692d78a628941cfc87e9f018a52b",
+        "evaluation_rows": 3
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "hopper-expert-v2_iql_tau2.5_mpi3_seed1_9c0e032abb9e",
+      "signature": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "algorithm": {
+          "variants": [
+            "awr_gaussian_fr"
+          ],
+          "mpi_steps": 3,
+          "tau": 2.5,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "hopper-expert-v2",
+        "seed": 1,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "mean",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "54fcc09f2e605b251a75fb5a44c4084260affba65eefc1c20cca2b77c6c96457",
+        "iql_mpi_config.py": "ba64da1e9e360758987362531822dff7a5a9b614df5d9723d2964ebb842e1dd8",
+        "train_iql_mpi.py": "5d5b3a0ba03e243e2a108506c72dd01fae500f5ed09b5195f66a951550899194",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "step": 1000000,
+        "signature": "9c0e032abb9e",
+        "checkpoint_sha256": "0cb4671f01f54df436b4a3dca486ba03307265f3393a88fb71f9d01d96946560",
+        "checkpoint_bytes": 7571582,
+        "eval_sha256": "19b3d9c83819255528e4af6311ee1823a8e5f6ace0607ead401cd572befdf7e9",
+        "evaluation_rows": 3
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "hopper-expert-v2_iql_tau2.5_mpi3_seed2_1e5d22167f63",
+      "signature": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "algorithm": {
+          "variants": [
+            "awr_gaussian_fr"
+          ],
+          "mpi_steps": 3,
+          "tau": 2.5,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "hopper-expert-v2",
+        "seed": 2,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "mean",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "54fcc09f2e605b251a75fb5a44c4084260affba65eefc1c20cca2b77c6c96457",
+        "iql_mpi_config.py": "ba64da1e9e360758987362531822dff7a5a9b614df5d9723d2964ebb842e1dd8",
+        "train_iql_mpi.py": "5d5b3a0ba03e243e2a108506c72dd01fae500f5ed09b5195f66a951550899194",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "step": 1000000,
+        "signature": "1e5d22167f63",
+        "checkpoint_sha256": "2d26dda3f82dac74bb6917f188765e2190c2ba4488854d617ea06c6ac4f2ae6a",
+        "checkpoint_bytes": 7571582,
+        "eval_sha256": "fffd48c36e385c9e5231205f4cdf9dae33bdf8bf194c4bace5d4afda887ead19",
+        "evaluation_rows": 3
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "hopper-expert-v2_iql_tau2.5_mpi3_seed3_d451c38e9211",
+      "signature": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "algorithm": {
+          "variants": [
+            "awr_gaussian_fr"
+          ],
+          "mpi_steps": 3,
+          "tau": 2.5,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "hopper-expert-v2",
+        "seed": 3,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "mean",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "54fcc09f2e605b251a75fb5a44c4084260affba65eefc1c20cca2b77c6c96457",
+        "iql_mpi_config.py": "ba64da1e9e360758987362531822dff7a5a9b614df5d9723d2964ebb842e1dd8",
+        "train_iql_mpi.py": "5d5b3a0ba03e243e2a108506c72dd01fae500f5ed09b5195f66a951550899194",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "step": 1000000,
+        "signature": "d451c38e9211",
+        "checkpoint_sha256": "1e265d3c6dc2a26d34342c18bec0d5fbca1ac918289d4ef050c49a06fd85d0a4",
+        "checkpoint_bytes": 7571582,
+        "eval_sha256": "dc0eb8ab284afaba67b932ae5968d731fda31210f0d531dd68a13d1fb519ccc8",
+        "evaluation_rows": 3
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
       "run": "hopper-expert-v2_iql_tau4_mpi2_seed0_f4db7b59b2cc",
       "signature": {
         "schema": "iql_actor_geometry_v5_consistent_gaussian",
@@ -1203,6 +1683,246 @@
         "checkpoint_sha256": "2a7f743b448e9d3cb8ee92e517d7a37a2427b50b3de95ea2a41f88f38bb9cd87",
         "checkpoint_bytes": 6725929,
         "eval_sha256": "df613b13c5dec6ba850f3f920d69c825b353c582c11c3b43a0d735b249fb2669",
+        "evaluation_rows": 3
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "hopper-expert-v2_iql_tau4_mpi3_seed0_ba03d3affe83",
+      "signature": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "algorithm": {
+          "variants": [
+            "awr_gaussian_fr"
+          ],
+          "mpi_steps": 3,
+          "tau": 4.0,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "hopper-expert-v2",
+        "seed": 0,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "mean",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "54fcc09f2e605b251a75fb5a44c4084260affba65eefc1c20cca2b77c6c96457",
+        "iql_mpi_config.py": "ba64da1e9e360758987362531822dff7a5a9b614df5d9723d2964ebb842e1dd8",
+        "train_iql_mpi.py": "5d5b3a0ba03e243e2a108506c72dd01fae500f5ed09b5195f66a951550899194",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "step": 1000000,
+        "signature": "ba03d3affe83",
+        "checkpoint_sha256": "c89c28e2234494ae041a8bd2d4d4763af530f65f83a542cfe9c8f65e1be9f379",
+        "checkpoint_bytes": 7571582,
+        "eval_sha256": "7f53825a7abcc3a70c2d41be7c7f5e52817c3a8d9fa4ea186ee5295be5702df7",
+        "evaluation_rows": 3
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "hopper-expert-v2_iql_tau4_mpi3_seed1_2c8dcdf7ef8c",
+      "signature": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "algorithm": {
+          "variants": [
+            "awr_gaussian_fr"
+          ],
+          "mpi_steps": 3,
+          "tau": 4.0,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "hopper-expert-v2",
+        "seed": 1,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "mean",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "54fcc09f2e605b251a75fb5a44c4084260affba65eefc1c20cca2b77c6c96457",
+        "iql_mpi_config.py": "ba64da1e9e360758987362531822dff7a5a9b614df5d9723d2964ebb842e1dd8",
+        "train_iql_mpi.py": "5d5b3a0ba03e243e2a108506c72dd01fae500f5ed09b5195f66a951550899194",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "step": 1000000,
+        "signature": "2c8dcdf7ef8c",
+        "checkpoint_sha256": "c5d74f68663732959a98fd97e40e67d5b6578ba9eaeaf41e631242942c1bad38",
+        "checkpoint_bytes": 7571582,
+        "eval_sha256": "b56d5038c0d275e073136ee40ff4cac1bfba800fb951007cbe55fc2052ac9dea",
+        "evaluation_rows": 3
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "hopper-expert-v2_iql_tau4_mpi3_seed2_2b4f631306c4",
+      "signature": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "algorithm": {
+          "variants": [
+            "awr_gaussian_fr"
+          ],
+          "mpi_steps": 3,
+          "tau": 4.0,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "hopper-expert-v2",
+        "seed": 2,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "mean",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "54fcc09f2e605b251a75fb5a44c4084260affba65eefc1c20cca2b77c6c96457",
+        "iql_mpi_config.py": "ba64da1e9e360758987362531822dff7a5a9b614df5d9723d2964ebb842e1dd8",
+        "train_iql_mpi.py": "5d5b3a0ba03e243e2a108506c72dd01fae500f5ed09b5195f66a951550899194",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "step": 1000000,
+        "signature": "2b4f631306c4",
+        "checkpoint_sha256": "e62fe806e2aae670e97f0f85724c422a6ab915ed94cc7a57597bed477ef0376b",
+        "checkpoint_bytes": 7571582,
+        "eval_sha256": "4f0cb03584f75d455d7d9b92b37b2f1b132ff77f3b0628a1c7f133ebd247b6f9",
+        "evaluation_rows": 3
+      },
+      "checkpoint_size_checked": true,
+      "checkpoint_rehashed": false
+    },
+    {
+      "run": "hopper-expert-v2_iql_tau4_mpi3_seed3_156ebf434ba2",
+      "signature": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "algorithm": {
+          "variants": [
+            "awr_gaussian_fr"
+          ],
+          "mpi_steps": 3,
+          "tau": 4.0,
+          "expectile": 0.7,
+          "actor_lr": 0.0003,
+          "critic_lr": 0.0003,
+          "value_lr": 0.0003,
+          "discount": 0.99,
+          "polyak": 0.005,
+          "hidden_dims": [
+            256,
+            256
+          ],
+          "log_std_init": -1.0,
+          "log_std_min": -5.0,
+          "log_std_max": 2.0,
+          "mc_samples": 8,
+          "inner_updates": 1,
+          "metric_reduction": "native",
+          "q_action_transform": "identity",
+          "iql_q_scale_norm": null,
+          "gaussian_qbc_mode": "stochastic",
+          "gaussian_refinement_geometry": "native"
+        },
+        "env": "hopper-expert-v2",
+        "seed": 3,
+        "batch_size": 256,
+        "normalize_state": true,
+        "reward_scale": 1.0,
+        "reward_normalization": "iql",
+        "eval_mode": "mean",
+        "eval_hops": "endpoints",
+        "eval_episodes": 10
+      },
+      "sources": {
+        "iql_mpi.py": "54fcc09f2e605b251a75fb5a44c4084260affba65eefc1c20cca2b77c6c96457",
+        "iql_mpi_config.py": "ba64da1e9e360758987362531822dff7a5a9b614df5d9723d2964ebb842e1dd8",
+        "train_iql_mpi.py": "5d5b3a0ba03e243e2a108506c72dd01fae500f5ed09b5195f66a951550899194",
+        "train_td3bc.py": "95e2efd108fabaf7db6a8ffc28294c614d2f38966db1f4d5e3fe34a157bec113",
+        "d4rl_data.py": "a6298e6768590cdcc18e1e5c99dd716740aefc088020dc022f2f331c7618d278"
+      },
+      "completion": {
+        "schema": "iql_actor_geometry_v5_consistent_gaussian",
+        "step": 1000000,
+        "signature": "156ebf434ba2",
+        "checkpoint_sha256": "ec96ab561c18b38e3898bd4859a88e11e143453b0ea7900888824435026a220c",
+        "checkpoint_bytes": 7571582,
+        "eval_sha256": "d5af9fec7431c6b33836cb2b156586b25bd4128e96f645b75b744041548ec8e1",
         "evaluation_rows": 3
       },
       "checkpoint_size_checked": true,

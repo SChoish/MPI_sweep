@@ -1,4 +1,10 @@
 env,tau,K,seed,geometry,policy,hop,eval_mode,d4rl_score
+hopper-expert-v2,1.5,3,2,fr,baseline,1,mean,104.49205135240338
+hopper-expert-v2,1.5,3,2,fr,mpi,1,mean,104.49205135240338
+hopper-expert-v2,1.5,3,2,fr,mpi,3,mean,0.6774518955784349
+hopper-expert-v2,1.5,3,3,fr,baseline,1,mean,101.67777849563575
+hopper-expert-v2,1.5,3,3,fr,mpi,1,mean,101.67777849563575
+hopper-expert-v2,1.5,3,3,fr,mpi,3,mean,0.7421936765675337
 hopper-expert-v2,10.0,3,0,fr,baseline,1,mean,95.29960297821843
 hopper-expert-v2,10.0,3,0,fr,mpi,1,mean,95.29960297821843
 hopper-expert-v2,10.0,3,0,fr,mpi,3,mean,0.6774814034716832

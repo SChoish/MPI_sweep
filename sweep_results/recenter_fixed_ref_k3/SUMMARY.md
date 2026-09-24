@@ -1,6 +1,6 @@
 # TD3+BC K=3 recenter versus fixed_ref
 
-Updated 2026-09-24 23:58:15 UTC+09:00.
+Updated 2026-09-24 23:58:32 UTC+09:00.
 
 Final checkpoint only. `d4rl_pi3` is the deployment actor. `d4rl_score` is the first actor. Paired difference is recenter minus fixed_ref. Pilot scores are not included.
 

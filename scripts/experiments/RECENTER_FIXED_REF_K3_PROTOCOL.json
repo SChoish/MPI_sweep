@@ -1,0 +1,40 @@
+{
+  "experiment": "td3bc_recenter_vs_fixed_ref_k3",
+  "status": "prepared_no_training_launched",
+  "prepared_at": "2026-09-24",
+  "question": "At matched K=3 actor and critic work, does re-centering pi_3 on the newly updated pi_2 improve deployment return over keeping the pi_1 reference?",
+  "separate_from": "P0_SHARED_DRIVER_PROTOCOL.json (K=4; recenter versus data_anchor)",
+  "method": "shared",
+  "integrator": "implicit",
+  "K": 3,
+  "total_horizon_T": [0.4, 2.5, 10.0],
+  "per_hop_h": "T / 3",
+  "branches": {
+    "recenter": ["pi_2 references the freshly updated pi_1", "pi_3 references the freshly updated pi_2"],
+    "fixed_ref": ["pi_2 references the freshly updated pi_1", "pi_3 references the freshly updated pi_1"]
+  },
+  "environments": [
+    "hopper-medium-v2",
+    "hopper-medium-replay-v2",
+    "hopper-expert-v2",
+    "halfcheetah-medium-v2",
+    "halfcheetah-medium-replay-v2",
+    "halfcheetah-expert-v2",
+    "walker2d-medium-v2",
+    "walker2d-medium-replay-v2",
+    "walker2d-expert-v2"
+  ],
+  "seeds": [0, 1, 2, 3],
+  "pairs": 108,
+  "train_runs": 216,
+  "training_steps_per_run": 1000000,
+  "policy_freq": 2,
+  "evaluated_checkpoint": "params_1000000.pkl",
+  "evaluation": {"episodes_per_run": 10, "deployment_score_column": "d4rl_pi3", "first_actor_score_column": "d4rl_score", "episode_seed_rule": "seed + 100 + episode_index"},
+  "primary_outcome": "paired final d4rl_pi3(recenter) minus d4rl_pi3(fixed_ref) for each environment, T and seed",
+  "aggregation": "Report each environment x T four-seed paired mean and sample SD; overall report an equal-weight mean over the 27 environment x T cell means, alongside the full signed cell table. No best-seed or best-T selection.",
+  "pilot": {"environment": "hopper-medium-replay-v2", "T": 2.5, "seed": 0, "steps": 1024, "purpose": "Verify identical critic, first actor, targets, optimizer state, RNG and update counts, plus differing pi_3 reference; not a performance test."},
+  "identity_gate": "The two trusted per-branch checkpoints match bitwise on first actor and optimizer, critic and optimizer, target actor and critic, RNG and dataset normalization; actor update counts match at 1024 and 1000000 steps.",
+  "missing_or_failed_runs": "Keep missing pairs visible; do not choose the better branch or splice historical BAR, fixed_reference or data_anchor scores.",
+  "interpretation": "A consistent positive paired difference supports a benefit of sequential recentering under this TD3+BC protocol; mixed or imprecise differences do not establish equivalence. Frozen-critic experiments are outside this primary comparison."
+}

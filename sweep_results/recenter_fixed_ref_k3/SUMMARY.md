@@ -1,10 +1,10 @@
 # TD3+BC K=3 recenter versus fixed_ref
 
-Updated 2026-09-25 02:10:04 UTC+09:00.
+Updated 2026-09-25 02:20:10 UTC+09:00.
 
 Final checkpoint only. `d4rl_pi3` is the deployment actor. `d4rl_score` is the first actor. Paired difference is recenter minus fixed_ref. Pilot scores are not included.
 
-Scored runs 95/216. A blank cell has no 1M eval yet. Cell means use only seeds where both branches are scored.
+Scored runs 99/216. A blank cell has no 1M eval yet. Cell means use only seeds where both branches are scored.
 
 ## Deployment actor `d4rl_pi3`
 
@@ -19,12 +19,12 @@ Scored runs 95/216. A blank cell has no 1M eval yet. Cell means use only seeds w
 | hopper-expert-v2 | 0.4 | 4/4 | 102.2 | 106.0 | -3.8 |
 | hopper-expert-v2 | 2.5 | 4/4 | 103.3 | 104.4 | -1.1 |
 | hopper-expert-v2 | 10 | 4/4 | 23.3 | 25.3 | -2.0 |
-| halfcheetah-medium-v2 | 0.4 | 2/4 | 45.5 | 45.0 | 0.6 |
+| halfcheetah-medium-v2 | 0.4 | 3/4 | 45.7 | 45.0 | 0.7 |
 | halfcheetah-medium-v2 | 2.5 | 2/4 | 51.4 | 49.5 | 1.9 |
 | halfcheetah-medium-v2 | 10 | 2/4 | 58.9 | 56.9 | 2.0 |
 | halfcheetah-medium-replay-v2 | 0.4 | 2/4 | 43.8 | 42.9 | 0.9 |
 | halfcheetah-medium-replay-v2 | 2.5 | 2/4 | 47.6 | 46.5 | 1.2 |
-| halfcheetah-medium-replay-v2 | 10 | 1/4 | 51.7 | 51.1 | 0.5 |
+| halfcheetah-medium-replay-v2 | 10 | 2/4 | 53.3 | 51.3 | 2.0 |
 | halfcheetah-expert-v2 | 0.4 | 0/4 | — | — | — |
 | halfcheetah-expert-v2 | 2.5 | 0/4 | — | — | — |
 | halfcheetah-expert-v2 | 10 | 0/4 | — | — | — |
@@ -38,7 +38,7 @@ Scored runs 95/216. A blank cell has no 1M eval yet. Cell means use only seeds w
 | walker2d-expert-v2 | 2.5 | 0/4 | — | — | — |
 | walker2d-expert-v2 | 10 | 0/4 | — | — | — |
 
-Equal-weight mean of scored cell deltas: 1.5 over 15/27 cells.
+Equal-weight mean of scored cell deltas: 1.7 over 15/27 cells.
 
 ## First actor `d4rl_score`
 
@@ -53,12 +53,12 @@ Equal-weight mean of scored cell deltas: 1.5 over 15/27 cells.
 | hopper-expert-v2 | 0.4 | 4/4 | 96.5 | 96.5 | 0.0 |
 | hopper-expert-v2 | 2.5 | 4/4 | 94.7 | 94.7 | 0.0 |
 | hopper-expert-v2 | 10 | 4/4 | 24.5 | 24.5 | 0.0 |
-| halfcheetah-medium-v2 | 0.4 | 2/4 | 43.8 | 43.8 | 0.0 |
+| halfcheetah-medium-v2 | 0.4 | 3/4 | 43.8 | 43.8 | 0.0 |
 | halfcheetah-medium-v2 | 2.5 | 2/4 | 47.2 | 47.2 | 0.0 |
 | halfcheetah-medium-v2 | 10 | 2/4 | 52.6 | 52.6 | 0.0 |
 | halfcheetah-medium-replay-v2 | 0.4 | 2/4 | 40.9 | 40.9 | 0.0 |
 | halfcheetah-medium-replay-v2 | 2.5 | 2/4 | 43.9 | 43.9 | 0.0 |
-| halfcheetah-medium-replay-v2 | 10 | 1/4 | 47.5 | 47.5 | 0.0 |
+| halfcheetah-medium-replay-v2 | 10 | 2/4 | 47.3 | 47.3 | 0.0 |
 | halfcheetah-expert-v2 | 0.4 | 0/4 | — | — | — |
 | halfcheetah-expert-v2 | 2.5 | 0/4 | — | — | — |
 | halfcheetah-expert-v2 | 10 | 0/4 | — | — | — |
@@ -89,12 +89,12 @@ Each seed column is `recenter / fixed_ref / delta`.
 | hopper-expert-v2 | 0.4 | 85.0 / 107.7 / -22.6 | 109.9 / 101.8 / 8.0 | 106.8 / 107.8 / -1.0 | 107.2 / 106.9 / 0.3 |
 | hopper-expert-v2 | 2.5 | 89.9 / 100.9 / -11.0 | 110.4 / 109.9 / 0.5 | 102.9 / 96.4 / 6.6 | 109.9 / 110.6 / -0.7 |
 | hopper-expert-v2 | 10 | 1.8 / 2.1 / -0.4 | 84.8 / 84.2 / 0.6 | 4.2 / 7.7 / -3.4 | 2.4 / 7.4 / -5.0 |
-| halfcheetah-medium-v2 | 0.4 | 45.3 / 45.4 / 0.0 | 46.1 / — / — | 45.7 / 44.5 / 1.2 | — / — / — |
+| halfcheetah-medium-v2 | 0.4 | 45.3 / 45.4 / 0.0 | 46.1 / 45.1 / 1.0 | 45.7 / 44.5 / 1.2 | 46.2 / — / — |
 | halfcheetah-medium-v2 | 2.5 | 51.0 / 49.3 / 1.8 | — / — / — | 51.8 / 49.7 / 2.1 | — / — / — |
 | halfcheetah-medium-v2 | 10 | 59.3 / 57.3 / 2.0 | — / — / — | 58.6 / 56.6 / 2.0 | — / — / — |
 | halfcheetah-medium-replay-v2 | 0.4 | 43.4 / 42.6 / 0.8 | — / — / — | 44.3 / 43.2 / 1.1 | — / — / — |
 | halfcheetah-medium-replay-v2 | 2.5 | 47.2 / 46.3 / 0.9 | — / — / — | 48.0 / 46.6 / 1.4 | — / — / — |
-| halfcheetah-medium-replay-v2 | 10 | 51.7 / 51.1 / 0.5 | — / — / — | — / — / — | — / — / — |
+| halfcheetah-medium-replay-v2 | 10 | 51.7 / 51.1 / 0.5 | — / — / — | 54.9 / 51.4 / 3.5 | — / — / — |
 | halfcheetah-expert-v2 | 0.4 | — / — / — | — / — / — | — / — / — | — / — / — |
 | halfcheetah-expert-v2 | 2.5 | — / — / — | — / — / — | — / — / — | — / — / — |
 | halfcheetah-expert-v2 | 10 | — / — / — | — / — / — | — / — / — | — / — / — |

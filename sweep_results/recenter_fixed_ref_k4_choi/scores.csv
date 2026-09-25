@@ -1,0 +1,4 @@
+host,env,T,K,seed,first_score,recenter_pi4,fixed_ref_pi4,paired_delta,status
+choi,hopper-medium-v2,4,4,1,43.084966113357396,68.07820871178637,49.5271659929387,18.551042718847675,complete
+choi,hopper-medium-v2,4,4,3,45.38803966676998,60.7835707364837,48.54730058709701,12.23627014938669,complete
+choi,hopper-medium-v2,7,4,1,,,,,incomplete

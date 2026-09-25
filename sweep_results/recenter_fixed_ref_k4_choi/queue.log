@@ -1901,3 +1901,70 @@ Wrote /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_
 /home/choi/MPI_sweep_recenter_k4/train_td3bc.py:144: DeprecationWarning: `product` is deprecated as of NumPy 1.25.0, and will be removed in NumPy 2.0. Please use `prod` instead.
   np.array(handle["timeouts"], dtype=np.float32)
 [ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau4_shared_fixed_ref4_seed2/params_100000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau4_shared_fixed_ref4_seed2/params_200000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau4_shared_fixed_ref4_seed2/params_300000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau4_shared_fixed_ref4_seed2/params_400000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau4_shared_fixed_ref4_seed2/params_500000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau4_shared_fixed_ref4_seed2/params_600000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau4_shared_fixed_ref4_seed2/params_700000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau4_shared_fixed_ref4_seed2/params_800000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau4_shared_fixed_ref4_seed2/params_900000.pkl
+/home/choi/miniconda3/envs/offrl_backup/lib/python3.10/site-packages/gymnasium/envs/registration.py:512: DeprecationWarning: [33mWARN: The environment Walker2d-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+pybullet build time: Jan 29 2025 23:16:28
+/home/choi/miniconda3/envs/offrl_backup/lib/python3.10/site-packages/gymnasium/envs/registration.py:512: DeprecationWarning: [33mWARN: The environment Walker2d-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+[walker2d-medium-replay-v2_tau4_shared_fixed_ref4_seed2] step=1000000 return=3507.1 d4rl=76.4 d4rl_pi4=84.9 elapsed=4.1m
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau4_shared_fixed_ref4_seed2/params_1000000.pkl
+Wrote /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau4_shared_fixed_ref4_seed2/eval.csv
+{"status": "pair_verified", "env": "walker2d-medium-replay-v2", "T": 4.0, "K": 4, "seed": 2, "step": 1000000, "critic_updates": 1000000, "actor_updates_per_actor": 500000, "first_score": 76.35972321368864, "recenter_score": 87.32000805023662, "fixed_ref_score": 84.90862643352645, "paired_delta": 2.411381616710173}
+[pair 31/36] walker2d-medium-replay-v2 T=7 seed=0
+/home/choi/miniconda3/envs/offrl_backup/bin/python /home/choi/MPI_sweep_recenter_k4/train_td3bc.py --method shared --deployment-branch recenter --integrator implicit --mpi-steps 4 --env walker2d-medium-replay-v2 --tau 7 --seed 0 --max-timesteps 1000000 --eval-freq 1000000 --eval-episodes 10 --save-interval 100000 --data-dir /home/choi/MPI_sweep/data --save-dir /home/choi/MPI_store/recenter_fixed_ref_k4/full
+/home/choi/MPI_sweep_recenter_k4/train_td3bc.py:139: DeprecationWarning: `product` is deprecated as of NumPy 1.25.0, and will be removed in NumPy 2.0. Please use `prod` instead.
+  observations = np.array(handle["observations"], dtype=np.float32)
+/home/choi/MPI_sweep_recenter_k4/train_td3bc.py:140: DeprecationWarning: `product` is deprecated as of NumPy 1.25.0, and will be removed in NumPy 2.0. Please use `prod` instead.
+  actions = np.array(handle["actions"], dtype=np.float32)
+/home/choi/MPI_sweep_recenter_k4/train_td3bc.py:141: DeprecationWarning: `product` is deprecated as of NumPy 1.25.0, and will be removed in NumPy 2.0. Please use `prod` instead.
+  rewards = np.array(handle["rewards"], dtype=np.float32)
+/home/choi/MPI_sweep_recenter_k4/train_td3bc.py:142: DeprecationWarning: `product` is deprecated as of NumPy 1.25.0, and will be removed in NumPy 2.0. Please use `prod` instead.
+  terminals = np.array(handle["terminals"], dtype=np.float32)
+/home/choi/MPI_sweep_recenter_k4/train_td3bc.py:144: DeprecationWarning: `product` is deprecated as of NumPy 1.25.0, and will be removed in NumPy 2.0. Please use `prod` instead.
+  np.array(handle["timeouts"], dtype=np.float32)
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_recenter4_seed0/params_100000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_recenter4_seed0/params_200000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_recenter4_seed0/params_300000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_recenter4_seed0/params_400000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_recenter4_seed0/params_500000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_recenter4_seed0/params_600000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_recenter4_seed0/params_700000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_recenter4_seed0/params_800000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_recenter4_seed0/params_900000.pkl
+/home/choi/miniconda3/envs/offrl_backup/lib/python3.10/site-packages/gymnasium/envs/registration.py:512: DeprecationWarning: [33mWARN: The environment Walker2d-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+pybullet build time: Jan 29 2025 23:16:28
+/home/choi/miniconda3/envs/offrl_backup/lib/python3.10/site-packages/gymnasium/envs/registration.py:512: DeprecationWarning: [33mWARN: The environment Walker2d-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+[walker2d-medium-replay-v2_tau7_shared_recenter4_seed0] step=1000000 return=1053.7 d4rl=22.9 d4rl_pi4=90.9 elapsed=4.6m
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_recenter4_seed0/params_1000000.pkl
+Wrote /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_recenter4_seed0/eval.csv
+/home/choi/miniconda3/envs/offrl_backup/bin/python /home/choi/MPI_sweep_recenter_k4/train_td3bc.py --method shared --deployment-branch fixed_ref --integrator implicit --mpi-steps 4 --env walker2d-medium-replay-v2 --tau 7 --seed 0 --max-timesteps 1000000 --eval-freq 1000000 --eval-episodes 10 --save-interval 100000 --data-dir /home/choi/MPI_sweep/data --save-dir /home/choi/MPI_store/recenter_fixed_ref_k4/full
+/home/choi/MPI_sweep_recenter_k4/train_td3bc.py:139: DeprecationWarning: `product` is deprecated as of NumPy 1.25.0, and will be removed in NumPy 2.0. Please use `prod` instead.
+  observations = np.array(handle["observations"], dtype=np.float32)
+/home/choi/MPI_sweep_recenter_k4/train_td3bc.py:140: DeprecationWarning: `product` is deprecated as of NumPy 1.25.0, and will be removed in NumPy 2.0. Please use `prod` instead.
+  actions = np.array(handle["actions"], dtype=np.float32)
+/home/choi/MPI_sweep_recenter_k4/train_td3bc.py:141: DeprecationWarning: `product` is deprecated as of NumPy 1.25.0, and will be removed in NumPy 2.0. Please use `prod` instead.
+  rewards = np.array(handle["rewards"], dtype=np.float32)
+/home/choi/MPI_sweep_recenter_k4/train_td3bc.py:142: DeprecationWarning: `product` is deprecated as of NumPy 1.25.0, and will be removed in NumPy 2.0. Please use `prod` instead.
+  terminals = np.array(handle["terminals"], dtype=np.float32)
+/home/choi/MPI_sweep_recenter_k4/train_td3bc.py:144: DeprecationWarning: `product` is deprecated as of NumPy 1.25.0, and will be removed in NumPy 2.0. Please use `prod` instead.
+  np.array(handle["timeouts"], dtype=np.float32)
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_fixed_ref4_seed0/params_100000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_fixed_ref4_seed0/params_200000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_fixed_ref4_seed0/params_300000.pkl
+[ckpt] Saved to /home/choi/MPI_store/recenter_fixed_ref_k4/full/walker2d-medium-replay-v2_tau7_shared_fixed_ref4_seed0/params_400000.pkl

@@ -1,5 +1,6 @@
 host,env,T,K,seed,first_score,recenter_pi4,fixed_ref_pi4,paired_delta,status
-choi,halfcheetah-expert-v2,4,4,0,,,,,incomplete
+choi,halfcheetah-expert-v2,4,4,0,95.48323152808791,59.650714184710566,94.21499391897882,-34.564279734268254,complete
+choi,halfcheetah-expert-v2,4,4,2,,,,,incomplete
 choi,halfcheetah-medium-replay-v2,4,4,1,44.054140775573856,50.1376606507599,46.53529847274777,3.602362178012129,complete
 choi,halfcheetah-medium-replay-v2,4,4,3,44.086468825020006,49.902976412439635,46.96556972599084,2.9374066864487958,complete
 choi,halfcheetah-medium-replay-v2,7,4,1,44.44806854731537,52.090655175655506,48.57314591748214,3.5175092581733693,complete

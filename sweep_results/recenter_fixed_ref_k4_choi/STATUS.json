@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-25 22:13:02 KST",
+  "updated_at": "2026-09-25 22:23:02 KST",
   "experiment": "td3bc_recenter_vs_fixed_ref_k4_high_T",
   "host": "choi",
   "K": 4,
@@ -8,8 +8,8 @@
     "fixed_ref"
   ],
   "source": "/home/choi/MPI_store/recenter_fixed_ref_k4/full",
-  "pairs_complete": 39,
+  "pairs_complete": 40,
   "pairs_incomplete": 1,
-  "pairs_seen": 40,
+  "pairs_seen": 41,
   "note": "choi host share of matched recenter/fixed_ref pairs. Checkpoints stay local under source; only scores/STATUS are published."
 }

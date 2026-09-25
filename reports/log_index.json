@@ -8,12 +8,12 @@
       ],
       "machine": "iisl-server02, svcho",
       "updated_at": null,
-      "complete_reported": 251,
+      "complete_reported": 275,
       "planned_reported": 756,
       "csv_files": [
         {
           "path": "scores.csv",
-          "rows": 251,
+          "rows": 275,
           "columns": [
             "env",
             "tau",
@@ -53,11 +53,11 @@
           ]
         }
       ],
-      "csv_rows": 283,
-      "main_candidates": 283,
-      "main_selected": 283,
+      "csv_rows": 307,
+      "main_candidates": 307,
+      "main_selected": 297,
       "selected_by_method": {
-        "AWR–FR": 283
+        "AWR–FR": 297
       },
       "export_manifest": "sweep_results/iql_awr_fr/EXPORT.json",
       "status_file": "sweep_results/iql_awr_fr/STATUS.json"
@@ -321,7 +321,7 @@
     }
   ],
   "main_selected_by_method": {
-    "AWR–FR": 604,
+    "AWR–FR": 618,
     "Gaussian Q+BC–W2": 1512
   },
   "main_parser_warnings": [

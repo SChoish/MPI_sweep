@@ -1,0 +1,77 @@
+{
+  "experiment": "td3bc_recenter_vs_fixed_ref_k4_high_T",
+  "status": "prepared_no_training_launched",
+  "prepared_at": "2026-09-25",
+  "question": "At K=4 and high total horizon T, does sequential recentering outperform a fixed pi_1 reference on matched first-actor/critic trajectories?",
+  "base_commit": "4994f860c0db1152c4517cc5ffcece6ec2e41ecc",
+  "method": "shared",
+  "integrator": "implicit",
+  "K": 4,
+  "per_hop_h": "T / 4",
+  "branches": {
+    "recenter": "pi_2 <- pi_1, pi_3 <- pi_2, pi_4 <- pi_3 (each freshly updated in the same scheduled actor step)",
+    "fixed_ref": "pi_2, pi_3, pi_4 each reference the freshly updated pi_1; every actor still receives one update"
+  },
+  "environments": [
+    "hopper-medium-v2",
+    "hopper-medium-replay-v2",
+    "hopper-expert-v2",
+    "halfcheetah-medium-v2",
+    "halfcheetah-medium-replay-v2",
+    "halfcheetah-expert-v2",
+    "walker2d-medium-v2",
+    "walker2d-medium-replay-v2",
+    "walker2d-expert-v2"
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "stages": {
+    "primary": [
+      4,
+      7
+    ],
+    "boundary": [
+      10
+    ]
+  },
+  "pairs": {
+    "primary": 72,
+    "boundary": 36,
+    "total": 108,
+    "per_host_primary": 36,
+    "per_host_boundary": 18
+  },
+  "training_runs": {
+    "primary": 144,
+    "boundary": 72,
+    "total": 216,
+    "per_host_total": 108
+  },
+  "host_assignment": "For zero-based environment index i and seed s, assign (i+s)%2==0 to svcho and the other pairs to choi; keep recenter and fixed_ref of a pair on the same host. Both hosts run every T in each stage.",
+  "training_steps_per_run": 1000000,
+  "policy_freq": 2,
+  "evaluated_checkpoint": "params_1000000.pkl",
+  "evaluation": {
+    "episodes_per_run": 10,
+    "schedule": "final checkpoint only at 1000000 updates (pilot: 1024)",
+    "deployment_score_column": "d4rl_pi4",
+    "first_actor_score_column": "d4rl_score",
+    "episode_seed_rule": "seed + 100 + episode_index"
+  },
+  "primary_outcome": "Paired d4rl_pi4(recenter)-d4rl_pi4(fixed_ref) at T=4,7 by environment and seed. Display all nine task effects and overall equal-task effect for each T; do not select favorable tasks/seeds.",
+  "boundary_outcome": "Same signed contrast at T=10, reported separately as a boundary test.",
+  "identity_gate": "First two actors and optimizer states, critic and optimizer state, targets, RNG and normalization match exactly between arms in every paired checkpoint; all four actors have equal update counts.",
+  "pilot": {
+    "environment": "hopper-medium-replay-v2",
+    "T": 7,
+    "seed": 0,
+    "steps": 1024,
+    "purpose": "Check host wiring and pair checkpoint invariants separately on each host. Not a performance test."
+  },
+  "missing_or_failed_runs": "Retain missing/incomplete pairs in summaries, never substitute earlier K4 scores or transfer checkpoints from another host.",
+  "interpretation": "A consistent signed effect at T=4,7 tests whether recentering broadens the high-T plateau at K=4 under this shared-driver protocol. T=10 measures where benefit persists or fails; no null result proves equivalence."
+}

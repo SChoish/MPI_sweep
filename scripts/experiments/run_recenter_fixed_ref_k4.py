@@ -88,14 +88,22 @@ def main() -> None:
 
     for index, (env, tau, seed) in enumerate(pairs, start=1):
         print(f"[pair {index}/{len(pairs)}] {env} T={tau:g} seed={seed}", flush=True)
+        verify_cmd = [args.python, str(VERIFY), "--save-dir", str(output),
+                      "--env", env, "--tau", f"{tau:g}", "--seed", str(seed),
+                      "--step", str(step)]
+        if not args.pilot and all(
+            (output / f"{env}_tau{tau:g}_shared_{branch}4_seed{seed}"
+             / f"params_{step}.pkl").is_file()
+            for branch in ("recenter", "fixed_ref")
+        ):
+            subprocess.run(verify_cmd, cwd=ROOT, check=True)
+            print("[skip] final pair already verified", flush=True)
+            continue
         for branch in ("recenter", "fixed_ref"):
             command = training_command(args.python, output, data, env, tau,
                                        seed, branch, args.pilot)
             print(shlex.join(command), flush=True)
             subprocess.run(command, cwd=ROOT, check=True)
-        verify_cmd = [args.python, str(VERIFY), "--save-dir", str(output),
-                      "--env", env, "--tau", f"{tau:g}", "--seed", str(seed),
-                      "--step", str(step)]
         subprocess.run(verify_cmd, cwd=ROOT, check=True)
     if args.pilot:
         marker.write_text(json.dumps(fingerprint, indent=2) + "\n", encoding="utf-8")

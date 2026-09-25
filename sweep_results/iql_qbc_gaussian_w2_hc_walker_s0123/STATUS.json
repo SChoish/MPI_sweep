@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-25T07:42:40Z",
-  "stamp_kst": "2026-09-25 16:42 KST",
+  "updated_at": "2026-09-25T07:49:48Z",
+  "stamp_kst": "2026-09-25 16:49 KST",
   "variant": "qbc_gaussian_w2",
   "seeds": [
     0,
@@ -39,7 +39,7 @@
     "remaining": 0,
     "extra_dirs": 4
   },
-  "queue": "2026-09-22T06:30:28+00:00 env=walker2d-expert-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher gpu_starting \u00b7 portal running",
+  "queue": "2026-09-22T06:30:28+00:00 env=walker2d-expert-v2 hop=3 device=cuda taus=0.05 0.1 0.2 0.4 0.7 1.5 2.5 4 7 10 seeds=0,1,2,3 \u00b7 watcher cpu_waiting_gpu \u00b7 portal stopped",
   "live": [],
   "eta": null,
   "by_env": {

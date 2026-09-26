@@ -207,7 +207,7 @@
         "Gaussian Q+BC–W2"
       ],
       "machine": "shchoi (계정)",
-      "updated_at": "2026-09-26 12:30:30 UTC+09:00",
+      "updated_at": "2026-09-26 12:36:32 UTC+09:00",
       "complete_reported": 396,
       "planned_reported": 540,
       "csv_files": [
@@ -280,7 +280,7 @@
         "Gaussian Q+BC–W2"
       ],
       "machine": "DGX-H200-02, ext_csv",
-      "updated_at": "2026-09-26T03:29:26Z",
+      "updated_at": "2026-09-26T03:36:24Z",
       "complete_reported": 720,
       "planned_reported": 720,
       "csv_files": [

@@ -36,7 +36,28 @@ Even perfect agreement between Q and one-action MC does not certify Q at
 states that the selected snapshots miss; the two branches visit different
 state distributions. Saturation and return can covary without proving that
 saturation caused the failure. If these tests remain ambiguous, the next
-intervention is a **paired action-cap pilot** on frozen actor-4 checkpoints:
+intervention is **policy switching** on frozen actor-4 checkpoints:
+start with re-centered actor 4 and switch to fixed-reference actor 4 after
+0, 25, 100, 300, or 1000 steps, and repeat in the opposite direction.
+Full-branch controls at prefix 0/1000 must match `eval.csv`. The default
+pilot uses T=4 and T=10, both matched training seeds and ten paired episodes.
+Short re-centered prefixes that permanently lower return would indicate an
+early damaging state change; recovery after switching would indicate that
+continuing the re-centered policy drives the loss. Switching from fixed to
+re-centered separates the effect of acting in a healthy fixed-reference
+trajectory from the effect of visiting re-centered states. Either pattern is
+conditional on these frozen policies and does not by itself identify the
+training-time error source. Run:
+
+```bash
+python switch_policy.py \
+  --repo /home/choi/MPI_sweep_recenter_k4 \
+  --checkpoints /home/choi/MPI_store/recenter_fixed_ref_k4/full \
+  --output /home/choi/MPI_store/hc_expert_policy_switch
+```
+
+An optional subsequent intervention is a **paired action-cap pilot** on the
+same frozen actor-4 checkpoints:
 evaluate `clip(pi4(s), -0.95, 0.95)` for both branches at the same episode
 seeds, comparing its within-branch change in return against the unmodified
 policy. Recovery only in the re-centered branch supports a role for actions
